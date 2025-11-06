@@ -1,29 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap'); /* Importación correcta en peso 300 */
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap');
 
+/* --- RESET BÁSICO Y VARIABLES --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Añadido para la transición suave del color */
     transition: color 0.25s ease;
 }
 
-/* Variables */
 :root {
-  --glitch-final-color: #fff; /* Color final del texto del efecto: Blanco */
-  --bg: #000; /* Fondo */
-  --color: #fff; /* Color de texto base (Blanco) */
+  --dark: #111;
+  --light: #fefefe;
+  --glitch-final-color: #fff; /* Color final del texto (Blanco) */
+  --color: #00ffff; /* Color de texto neón */
+  --bg: #000;
 }
 
 body {
-    font-family: 'Funnel Display', sans-serif; /* Usando la fuente solicitada */
-    font-weight: 300; /* Aplicando el peso light */
+    font-family: 'Funnel Display', sans-serif; 
+    font-weight: 300; /* Peso correcto de la fuente */
     background: var(--bg);
     color: var(--color); 
     min-height: 100vh;
 }
 
-/* Header */
+/* --- HEADER Y NAVEGACIÓN --- */
 header {
     position: fixed;
     top: 0;
@@ -42,12 +43,15 @@ nav {
     align-items: center;
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: inherit; /* Hereda el peso 300 */
+/* Elementos de Texto (Logo, Botones, Título) */
+.logo, .nav-btn, #main-title {
+    /* Asegura que el font-weight se herede correctamente del body */
+    font-weight: inherit; 
+    /* El color base del texto (blanco) para el efecto glitch */
+    color: #fff; 
 }
 
-/* Navegación y Botones */
+/* Botones de Navegación */
 .main-nav {
     display: flex;
     gap: 20px;
@@ -58,12 +62,14 @@ nav {
     border: none;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: inherit; /* Hereda el peso 300 */
+    font-weight: inherit;
     padding: 5px 0px;
-    color: #fff; 
+    color: #fff;  
+    /* FIX CRÍTICO: Permite que Splitting.js funcione dentro del <button> */
+    display: inline-flex; 
 }
 
-/* Intro Section - Mantiene el fondo VHS y centramos el contenido */
+/* --- SECCIÓN INTRO Y TÍTULO --- */
 #intro {
     position: relative;
     min-height: 100vh;
@@ -74,23 +80,23 @@ nav {
     justify-content: center;
 }
 
-/* Título principal */
 #main-title {
     font-size: 3.5rem;
     font-weight: inherit;
     text-align: center;
-    z-index: 5; 
+    z-index: 5; /* Asegura que el texto esté por encima de los efectos VHS */
     color: #fff; 
 }
 
-
-/* --- CÓDIGO GLITCH --- */
+/* ---------------------------------- */
+/* --- CÓDIGO GLITCH (SPLITTING.JS) --- */
+/* ---------------------------------- */
 
 /* Contenedor del efecto */
 .glitch-text {
     position: relative;
-    /* CORRECCIÓN: Se eliminó la declaración de font-family para que herede 'Funnel Display' */
-    font-weight: inherit; /* Hereda el peso 300 del body */
+    font-family: inherit;
+    font-weight: inherit;
     text-decoration: none;
 }
 
@@ -104,7 +110,7 @@ nav {
   position: relative;
 }
 
-/* El pseudo-elemento que muestra el glitch y el texto final */
+/* Genera el caracter visible que se animará */
 [data-char]:after {
   --txt: attr(data-char);
   -webkit-animation-duration: 0.2s;
@@ -116,21 +122,21 @@ nav {
   -webkit-animation-fill-mode: backwards;
   animation-fill-mode: backwards;
   content: var(--txt);
-  color: var(--glitch-final-color); /* Color final Blanco */
+  color: var(--glitch-final-color); 
   position: absolute;
   left: 0;
   top: 0;
 }
 
-/* Variante de efecto: 'reveal--0' activa la animación al cargar */
-.reveal--0 [data-char]:after {
+/* Aplica la animación al cargar (o con Scroll-Out) */
+.glitch-text[data-splitting] [data-char]:after {
   -webkit-animation-iteration-count: calc(var(--char-index) * 0.55);
   animation-iteration-count: calc(var(--char-index) * 0.55);
   -webkit-animation-name: glitch-switch;
   animation-name: glitch-switch;
 }
 
-/* Animación Glitch (se mantiene sin cambios) */
+/* Keyframes de la animación Glitch (Usa los caracteres aleatorios de JS) */
 @-webkit-keyframes glitch-switch {
   0% { content: var(--char-0); } 10% { content: var(--char-1); } 20% { content: var(--char-2); }
   30% { content: var(--char-3); } 40% { content: var(--char-4); } 50% { content: var(--char-5); }
@@ -145,8 +151,11 @@ nav {
 }
 
 
-/* --- CÓDIGO VHS ORIGINAL (Se mantiene sin cambios) --- */
-/* Cuadrícula neón animada con movimiento */
+/* -------------------------------- */
+/* --- CÓDIGO FONDO VHS CORREGIDO --- */
+/* -------------------------------- */
+
+/* Cuadrícula neón animada con movimiento (Z-index 1) */
 #intro::before {
     content: "";
     position: absolute;
@@ -170,7 +179,7 @@ nav {
     }
 }
 
-/* Capa de gradiente de color (efecto VHS) */
+/* Capa de gradiente de color (efecto de sangrado de color) (Z-index 2) */
 #intro::after {
     content: "";
     position: absolute;
@@ -202,7 +211,7 @@ nav {
     }
 }
 
-/* Líneas de escaneo VHS */
+/* Líneas de escaneo VHS (Mejora de visibilidad - Z-index 3) */
 .scanlines {
     position: absolute;
     top: 0;
@@ -213,8 +222,8 @@ nav {
         0deg,
         transparent,
         transparent 2px,
-        rgba(0, 255, 255, 0.05) 2px,
-        rgba(0, 255, 255, 0.05) 4px
+        rgba(0, 255, 255, 0.1) 2px, /* Aumentado a 0.1 para mejor visibilidad */
+        rgba(0, 255, 255, 0.1) 4px  /* Aumentado a 0.1 para mejor visibilidad */
     );
     pointer-events: none;
     animation: scanlineMove 0.1s linear infinite;
@@ -230,7 +239,7 @@ nav {
     }
 }
 
-/* Estática VHS sutil */
+/* Estática VHS sutil (Mejora de visibilidad - Z-index 4) */
 .vhs-static {
     position: absolute;
     top: 0;
@@ -244,7 +253,7 @@ nav {
         rgba(255, 255, 255, 0.01) 2px,
         rgba(255, 255, 255, 0.01) 4px
     );
-    opacity: 0.3;
+    opacity: 0.5; /* Aumentado a 0.5 para hacer la estática visible */
     animation: vhsStatic 0.2s steps(2, end) infinite;
     z-index: 4;
     pointer-events: none;
@@ -256,34 +265,5 @@ nav {
     }
     100% {
         transform: translateX(4px);
-    }
-}
-
-/* Footer */
-footer {
-    background: #000;
-    padding: 20px;
-    text-align: center;
-    border-top: 1px solid rgba(0, 255, 255, 0.2);
-}
-
-footer p {
-    color: #00ffff;
-    font-size: 0.9rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    header {
-        padding: 15px 20px;
-    }
-    
-    .logo {
-        font-size: 1.2rem;
-    }
-    
-    .lang-btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
     }
 }
