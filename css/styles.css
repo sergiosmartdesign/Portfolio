@@ -43,6 +43,12 @@ nav {
     justify-content: space-between;
     align-items: center;
 }
+/* 1. Contenedor de los botones principales */
+.main-nav {
+    display: flex;
+    gap: 30px; 
+    align-items: center;
+}
 
 /* Elementos de Texto (Logo, Botones, Título) */
 .logo, .nav-btn, #main-title {
@@ -55,7 +61,7 @@ nav {
 /* Botones de Navegación */
 .nav-btn {
     background: none;
-    background-color: transparent; /* <-- AÑADIR ESTA LÍNEA CLAVE */
+    background-color: transparent; 
     border: none;
     cursor: pointer;
     font-size: 1rem;
@@ -81,12 +87,10 @@ nav {
     transition: background-position .7s, background-size .5s ease-in-out, color 0.3s;
 }
 
-/* Regla para el texto Glitch (se mantiene negra) */
 .nav-btn:hover [data-char]:after {
     color: var(--bg);
 }
 /* --- SECCIÓN INTRO Y TÍTULO --- */
-/* En tu archivo styles.css */
 #intro {
     position: relative;
     min-height: 100vh;
@@ -135,7 +139,6 @@ nav {
   position: relative;
 }
 
-/* Genera el caracter visible que se animará */
 [data-char]:after {
   --txt: attr(data-char);
   -webkit-animation-duration: 0.2s;
