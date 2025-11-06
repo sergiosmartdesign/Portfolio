@@ -31,9 +31,6 @@ window.ScrollOut({
 // PARTE 4: INICIA EL FRAGMENT SHADER (RGBA.js)
 // ====================================================================
 
-// CORRECCIÓN 1: Retrasar la ejecución del Shader
-// El efecto glitch del título tarda aprox. 5.5 segundos en terminar.
-// Iniciaremos el shader justo después de eso.
 setTimeout(() => {
     
     // Asegúrate de que la librería RGBA.js se haya cargado
@@ -194,12 +191,12 @@ void main() {
     float d = 1.;
     d = smoothstep(0.0, 0.1, d);
 
-    float t = (sin(uv.x) * 0.5 + 0.5);
+ float t = (sin(uv.x) * 0.5 + 0.5);
     vec3 fgColor = mix(
-        vec3(0.08, 0.11, 0.14), 
-        vec3(0.34, 0.83, 0.39), 
-        pow((n + (1. - n2)) * 0.5, mix(0.1, 5., t))
-    );
+        vec3(0.6078, 0.1333, 0.1490),
+        vec3(0.9333, 0.6078, 0.0),    
+        pow((n * n2) * 1.5, 5.0) * d
+    ); 
     vec3 bgColor = vec3(0.05, 0.07, 0.09);
     vec3 color = bgColor;
     if (distance(0.0, uv.y) < 0.12) {
