@@ -13,6 +13,7 @@
   --light: #fefefe;
   --glitch-final-color: #fff; /* Color final del texto (Blanco) */
   --color: #00ffff; /* Color de texto neón */
+  --hover-color: #ff3c00; /* Color de texto al pasar el ratón */
   --bg: #000;
 }
 
@@ -52,23 +53,38 @@ nav {
 }
 
 /* Botones de Navegación */
-.main-nav {
-    display: flex;
-    gap: 20px;
-}
-
 .nav-btn {
     background: none;
+    background-color: transparent; /* <-- AÑADIR ESTA LÍNEA CLAVE */
     border: none;
     cursor: pointer;
     font-size: 1rem;
     font-weight: inherit;
     padding: 5px 0px;
     color: #fff;  
-    /* FIX CRÍTICO: Permite que Splitting.js funcione dentro del <button> */
     display: inline-flex; 
+    
+    /* --- CONFIGURACIÓN DEL EFECTO DE LLENADO --- */
+    background-image: linear-gradient(var(--hover-color), var(--hover-color));
+    
+    background-size: 100% 0.5px; 
+    background-repeat: no-repeat;
+    background-position: 100% 0%; 
+    transition: background-size .7s, background-position .5s ease-in-out, color 0.3s;
 }
 
+/* Efecto al pasar el ratón (Hover) */
+.nav-btn:hover {
+    background-size: 100% 100%;
+    background-position: 0% 100%;
+    color: var(--bg); 
+    transition: background-position .7s, background-size .5s ease-in-out, color 0.3s;
+}
+
+/* Regla para el texto Glitch (se mantiene negra) */
+.nav-btn:hover [data-char]:after {
+    color: var(--bg);
+}
 /* --- SECCIÓN INTRO Y TÍTULO --- */
 /* En tu archivo styles.css */
 #intro {
