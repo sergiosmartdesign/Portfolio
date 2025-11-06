@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap'); /* Importación correcta en peso 300 */
 
-/* Usaré 'Montserrat' por ahora, ya que 'Funnel Display' no se importa correctamente con tu enlace. */
 * {
     margin: 0;
     padding: 0;
@@ -9,25 +8,23 @@
     transition: color 0.25s ease;
 }
 
+/* Variables */
 :root {
-  --dark: #111;
-  --light: #fefefe;
-  /* Ahora usaremos el esquema de color de tu tema (Negro/Blanco/Neón) */
-  --color: #00ffff; /* Color de texto neón */
-  --bg: #000;
+  --glitch-final-color: #fff; /* Color final del texto del efecto: Blanco */
+  --bg: #000; /* Fondo */
+  --color: #fff; /* Color de texto base (Blanco) */
 }
 
 body {
-   
-    font-family: 'Funnel Display', sans-serif; 
+    font-family: 'Funnel Display', sans-serif; /* Usando la fuente solicitada */
+    font-weight: 300; /* Aplicando el peso light */
     background: var(--bg);
-    color: var(--color); /* El texto base es de color neón */
+    color: var(--color); 
     min-height: 100vh;
 }
 
 /* Header */
 header {
-    /* ... (tu código anterior) ... */
     position: fixed;
     top: 0;
     left: 0;
@@ -47,7 +44,7 @@ nav {
 
 .logo {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: inherit; /* Hereda el peso 300 */
 }
 
 /* Navegación y Botones */
@@ -61,9 +58,9 @@ nav {
     border: none;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: inherit; /* Hereda el peso 300 */
     padding: 5px 0px;
-    color: #fff; /* Color base antes del glitch */
+    color: #fff; 
 }
 
 /* Intro Section - Mantiene el fondo VHS y centramos el contenido */
@@ -72,7 +69,6 @@ nav {
     min-height: 100vh;
     background: #000;
     overflow: hidden;
-    /* Centrado del título sobre el fondo VHS */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,10 +77,10 @@ nav {
 /* Título principal */
 #main-title {
     font-size: 3.5rem;
-    font-weight: bold;
+    font-weight: inherit;
     text-align: center;
-    z-index: 5; /* Asegura que esté sobre los efectos VHS */
-    color: #fff; /* Color inicial antes de ser transparente por el efecto glitch */
+    z-index: 5; 
+    color: #fff; 
 }
 
 
@@ -93,8 +89,8 @@ nav {
 /* Contenedor del efecto */
 .glitch-text {
     position: relative;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-weight: bold;
+    /* CORRECCIÓN: Se eliminó la declaración de font-family para que herede 'Funnel Display' */
+    font-weight: inherit; /* Hereda el peso 300 del body */
     text-decoration: none;
 }
 
@@ -108,6 +104,7 @@ nav {
   position: relative;
 }
 
+/* El pseudo-elemento que muestra el glitch y el texto final */
 [data-char]:after {
   --txt: attr(data-char);
   -webkit-animation-duration: 0.2s;
@@ -119,7 +116,7 @@ nav {
   -webkit-animation-fill-mode: backwards;
   animation-fill-mode: backwards;
   content: var(--txt);
-  color: var(--glitch-final-color); /* ¡Blanco como color final! */
+  color: var(--glitch-final-color); /* Color final Blanco */
   position: absolute;
   left: 0;
   top: 0;
@@ -133,7 +130,7 @@ nav {
   animation-name: glitch-switch;
 }
 
-/* Animación Glitch */
+/* Animación Glitch (se mantiene sin cambios) */
 @-webkit-keyframes glitch-switch {
   0% { content: var(--char-0); } 10% { content: var(--char-1); } 20% { content: var(--char-2); }
   30% { content: var(--char-3); } 40% { content: var(--char-4); } 50% { content: var(--char-5); }
@@ -148,7 +145,7 @@ nav {
 }
 
 
-/* --- CÓDIGO VHS ORIGINAL (Se mantiene el fondo) --- */
+/* --- CÓDIGO VHS ORIGINAL (Se mantiene sin cambios) --- */
 /* Cuadrícula neón animada con movimiento */
 #intro::before {
     content: "";
