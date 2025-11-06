@@ -1,19 +1,33 @@
-@import url(" https://fonts.google.com/specimen/Funnel+Display?categoryFilters=Feeling:%2FExpressive%2FCalm:wght@400;700;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap');
 
+/* Usaré 'Montserrat' por ahora, ya que 'Funnel Display' no se importa correctamente con tu enlace. */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Añadido para la transición suave del color */
+    transition: color 0.25s ease;
+}
+
+:root {
+  --dark: #111;
+  --light: #fefefe;
+  /* Ahora usaremos el esquema de color de tu tema (Negro/Blanco/Neón) */
+  --color: #00ffff; /* Color de texto neón */
+  --bg: #000;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-    background: #000;
-    color: #fff;
+   
+    font-family: 'Funnel Display', sans-serif; 
+    background: var(--bg);
+    color: var(--color); /* El texto base es de color neón */
+    min-height: 100vh;
 }
 
 /* Header */
 header {
+    /* ... (tu código anterior) ... */
     position: fixed;
     top: 0;
     left: 0;
@@ -31,15 +45,110 @@ nav {
     align-items: center;
 }
 
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
 
-/* Intro Section - Cuadrícula neón con efectos VHS */
+/* Navegación y Botones */
+.main-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 5px 0px;
+    color: #fff; /* Color base antes del glitch */
+}
+
+/* Intro Section - Mantiene el fondo VHS y centramos el contenido */
 #intro {
     position: relative;
     min-height: 100vh;
     background: #000;
     overflow: hidden;
+    /* Centrado del título sobre el fondo VHS */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Título principal */
+#main-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    text-align: center;
+    z-index: 5; /* Asegura que esté sobre los efectos VHS */
+    color: #fff; /* Color inicial antes de ser transparente por el efecto glitch */
+}
+
+
+/* --- CÓDIGO GLITCH --- */
+
+/* Contenedor del efecto */
+.glitch-text {
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.word {
+  position: relative;
+  display: inline-block;
+}
+
+[data-char] {
+  color: transparent; /* Hace que el texto original sea invisible */
+  position: relative;
+}
+
+[data-char]:after {
+  --txt: attr(data-char);
+  -webkit-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-delay: 0.5s;
+  animation-delay: 0.5s;
+  -webkit-animation-timing-function: steps(1);
+  animation-timing-function: steps(1);
+  -webkit-animation-fill-mode: backwards;
+  animation-fill-mode: backwards;
+  content: var(--txt);
+  color: var(--glitch-final-color); /* ¡Blanco como color final! */
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* Variante de efecto: 'reveal--0' activa la animación al cargar */
+.reveal--0 [data-char]:after {
+  -webkit-animation-iteration-count: calc(var(--char-index) * 0.55);
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+  -webkit-animation-name: glitch-switch;
+  animation-name: glitch-switch;
+}
+
+/* Animación Glitch */
+@-webkit-keyframes glitch-switch {
+  0% { content: var(--char-0); } 10% { content: var(--char-1); } 20% { content: var(--char-2); }
+  30% { content: var(--char-3); } 40% { content: var(--char-4); } 50% { content: var(--char-5); }
+  60% { content: var(--char-6); } 70% { content: var(--char-7); } 80% { content: var(--char-8); }
+  90% { content: var(--char-9); } 100% { content: var(--char-0); }
+}
+@keyframes glitch-switch {
+  0% { content: var(--char-0); } 10% { content: var(--char-1); } 20% { content: var(--char-2); }
+  30% { content: var(--char-3); } 40% { content: var(--char-4); } 50% { content: var(--char-5); }
+  60% { content: var(--char-6); } 70% { content: var(--char-7); } 80% { content: var(--char-8); }
+  90% { content: var(--char-9); } 100% { content: var(--char-0); }
+}
+
+
+/* --- CÓDIGO VHS ORIGINAL (Se mantiene el fondo) --- */
 /* Cuadrícula neón animada con movimiento */
 #intro::before {
     content: "";
