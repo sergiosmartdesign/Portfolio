@@ -70,12 +70,14 @@ nav {
 }
 
 /* --- SECCIÓN INTRO Y TÍTULO --- */
+/* En tu archivo styles.css */
 #intro {
     position: relative;
     min-height: 100vh;
     background: #000;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -98,6 +100,13 @@ nav {
     font-family: inherit;
     font-weight: inherit;
     text-decoration: none;
+    /* FIX CRÍTICO: Preserva los espacios en blanco múltiples en el código fuente */
+    white-space: pre; 
+}
+.subtitle-glitch {
+    
+    font-size: 1.5rem; 
+    margin-top: 10px; 
 }
 
 .word {
@@ -152,7 +161,7 @@ nav {
 
 
 /* -------------------------------- */
-/* --- CÓDIGO FONDO VHS CORREGIDO --- */
+/* --- CÓDIGO FONDO VHS  --- */
 /* -------------------------------- */
 
 /* Cuadrícula neón animada con movimiento (Z-index 1) */
