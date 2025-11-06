@@ -43,22 +43,14 @@ nav {
     justify-content: space-between;
     align-items: center;
 }
-/* 1. Contenedor de los botones principales */
-.main-nav {
-    display: flex;
-    gap: 30px; 
-    align-items: center;
-}
 
 /* Elementos de Texto (Logo, Botones, Título) */
 .logo, .nav-btn, #main-title {
-    /* Asegura que el font-weight se herede correctamente del body */
     font-weight: inherit; 
-    /* El color base del texto (blanco) para el efecto glitch */
     color: #fff; 
 }
 
-/* Botones de Navegación */
+/* Botones de NaveGación (Efecto Hover Naranja) */
 .nav-btn {
     background: none;
     background-color: transparent; 
@@ -70,16 +62,13 @@ nav {
     color: #fff;  
     display: inline-flex; 
     
-    /* --- CONFIGURACIÓN DEL EFECTO DE LLENADO --- */
     background-image: linear-gradient(var(--hover-color), var(--hover-color));
-    
     background-size: 100% 0.5px; 
     background-repeat: no-repeat;
     background-position: 100% 0%; 
     transition: background-size .7s, background-position .5s ease-in-out, color 0.3s;
 }
 
-/* Efecto al pasar el ratón (Hover) */
 .nav-btn:hover {
     background-size: 100% 100%;
     background-position: 0% 100%;
@@ -90,6 +79,7 @@ nav {
 .nav-btn:hover [data-char]:after {
     color: var(--bg);
 }
+
 /* --- SECCIÓN INTRO Y TÍTULO --- */
 #intro {
     position: relative;
@@ -100,13 +90,14 @@ nav {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
 }
 
 #main-title {
     font-size: 3.5rem;
     font-weight: inherit;
     text-align: center;
-    z-index: 5; /* Asegura que el texto esté por encima de los efectos VHS */
+    z-index: 5; /* Sobre el VHS (z-index 1-4) */
     color: #fff; 
 }
 
@@ -114,17 +105,14 @@ nav {
 /* --- CÓDIGO GLITCH (SPLITTING.JS) --- */
 /* ---------------------------------- */
 
-/* Contenedor del efecto */
 .glitch-text {
     position: relative;
     font-family: inherit;
     font-weight: inherit;
     text-decoration: none;
-    /* FIX CRÍTICO: Preserva los espacios en blanco múltiples en el código fuente */
     white-space: pre; 
 }
 .subtitle-glitch {
-    
     font-size: 1.5rem; 
     margin-top: 10px; 
 }
@@ -135,7 +123,7 @@ nav {
 }
 
 [data-char] {
-  color: transparent; /* Hace que el texto original sea invisible */
+  color: transparent; 
   position: relative;
 }
 
@@ -150,13 +138,12 @@ nav {
   -webkit-animation-fill-mode: backwards;
   animation-fill-mode: backwards;
   content: var(--txt);
-  color: var(--glitch-final-color); 
+  color: var(--glitch-final-color); /* Texto Blanco */
   position: absolute;
   left: 0;
   top: 0;
 }
 
-/* Aplica la animación al cargar (o con Scroll-Out) */
 .glitch-text[data-splitting] [data-char]:after {
   -webkit-animation-iteration-count: calc(var(--char-index) * 0.55);
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -164,13 +151,6 @@ nav {
   animation-name: glitch-switch;
 }
 
-/* Keyframes de la animación Glitch (Usa los caracteres aleatorios de JS) */
-@-webkit-keyframes glitch-switch {
-  0% { content: var(--char-0); } 10% { content: var(--char-1); } 20% { content: var(--char-2); }
-  30% { content: var(--char-3); } 40% { content: var(--char-4); } 50% { content: var(--char-5); }
-  60% { content: var(--char-6); } 70% { content: var(--char-7); } 80% { content: var(--char-8); }
-  90% { content: var(--char-9); } 100% { content: var(--char-0); }
-}
 @keyframes glitch-switch {
   0% { content: var(--char-0); } 10% { content: var(--char-1); } 20% { content: var(--char-2); }
   30% { content: var(--char-3); } 40% { content: var(--char-4); } 50% { content: var(--char-5); }
@@ -180,10 +160,9 @@ nav {
 
 
 /* -------------------------------- */
-/* --- CÓDIGO FONDO VHS  --- */
+/* --- CÓDIGO FONDO VHS (z-index 1-4) --- */
 /* -------------------------------- */
 
-/* Cuadrícula neón animada con movimiento (Z-index 1) */
 #intro::before {
     content: "";
     position: absolute;
@@ -195,19 +174,14 @@ nav {
         linear-gradient(90deg, rgba(255, 0, 255, 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
     animation: gridMove 20s linear infinite;
-    z-index: 1;
+    z-index: 1; /* Capa 1 */
 }
 
 @keyframes gridMove {
-    0% {
-        transform: translate(0, 0);
-    }
-    100% {
-        transform: translate(50px, 50px);
-    }
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
 }
 
-/* Capa de gradiente de color (efecto de sangrado de color) (Z-index 2) */
 #intro::after {
     content: "";
     position: absolute;
@@ -223,23 +197,16 @@ nav {
     );
     mix-blend-mode: screen;
     animation: colorShift 6s ease-in-out infinite;
-    z-index: 2;
+    z-index: 2; /* Capa 2 */
     pointer-events: none;
 }
 
 @keyframes colorShift {
-    0%, 100% {
-        filter: hue-rotate(0deg);
-    }
-    33% {
-        filter: hue-rotate(120deg);
-    }
-    66% {
-        filter: hue-rotate(240deg);
-    }
+    0%, 100% { filter: hue-rotate(0deg); }
+    33% { filter: hue-rotate(120deg); }
+    66% { filter: hue-rotate(240deg); }
 }
 
-/* Líneas de escaneo VHS (Mejora de visibilidad - Z-index 3) */
 .scanlines {
     position: absolute;
     top: 0;
@@ -250,24 +217,19 @@ nav {
         0deg,
         transparent,
         transparent 2px,
-        rgba(0, 255, 255, 0.1) 2px, /* Aumentado a 0.1 para mejor visibilidad */
-        rgba(0, 255, 255, 0.1) 4px  /* Aumentado a 0.1 para mejor visibilidad */
+        rgba(0, 255, 255, 0.1) 2px, 
+        rgba(0, 255, 255, 0.1) 4px
     );
     pointer-events: none;
     animation: scanlineMove 0.1s linear infinite;
-    z-index: 3;
+    z-index: 3; /* Capa 3 */
 }
 
 @keyframes scanlineMove {
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(4px);
-    }
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4px); }
 }
 
-/* Estática VHS sutil (Mejora de visibilidad - Z-index 4) */
 .vhs-static {
     position: absolute;
     top: 0;
@@ -281,17 +243,70 @@ nav {
         rgba(255, 255, 255, 0.01) 2px,
         rgba(255, 255, 255, 0.01) 4px
     );
-    opacity: 0.5; /* Aumentado a 0.5 para hacer la estática visible */
+    opacity: 0.5; 
     animation: vhsStatic 0.2s steps(2, end) infinite;
-    z-index: 4;
+    z-index: 4; /* Capa 4 */
     pointer-events: none;
 }
 
 @keyframes vhsStatic {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(4px);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(4px); }
+}
+
+.main-nav {
+    display: flex;
+    gap: 40px; 
+    align-items: center;
+}
+
+.language-toggle {
+    display: flex;
+    gap: 15px; 
+    align-items: center;
+}
+
+
+/* Asegura que el subtítulo esté sobre el VHS/Shader */
+.subtitle-glitch {
+    position: relative;
+    z-index: 5;
+}
+
+.main-nav {
+    display: flex;
+    gap: 40px; /* Espacio entre los botones principales */
+    align-items: center;
+}
+
+.language-toggle {
+    display: flex;
+    gap: 15px; /* Espacio entre los botones de idioma */
+    align-items: center;
+}
+
+canvas {
+    /* Posiciona el canvas para que cubra toda la pantalla */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Z-Index CERO (0) lo pone detrás de todo (detrás del VHS que empieza en z-index: 1) */
+    z-index: 0; 
+    
+    /* Evita que el canvas bloquee clics */
+    pointer-events: none; 
+    
+    /* Ayuda a que el efecto se mezcle con el fondo negro */
+    mix-blend-mode: screen; 
+}
+
+/* Asegura que el subtítulo también tenga z-index 5, 
+  igual que el #main-title, para estar sobre los efectos VHS (z-index 1-4).
+*/
+.subtitle-glitch {
+    position: relative;
+    z-index: 5;
 }
