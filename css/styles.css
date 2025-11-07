@@ -50,8 +50,25 @@ nav {
 
 /* Elementos de Texto (Logo, Botones, Título) */
 .logo, .nav-btn, #main-title {
-    font-weight: inherit; 
-    color: #fff; 
+    font-weight: inherit;
+    color: #fff;
+}
+
+/* Logo con efecto de brillo neón en hover */
+.logo {
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+
+.logo:hover {
+    color: var(--color); /* Cambia a color cyan */
+    text-shadow:
+        0 0 10px var(--color),
+        0 0 20px var(--color),
+        0 0 30px var(--color),
+        0 0 40px var(--color),
+        0 0 70px var(--color),
+        0 0 80px var(--color),
+        0 0 100px var(--color);
 }
 
 /* Botones de NaveGación (Efecto Hover Naranja) */
