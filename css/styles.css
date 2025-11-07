@@ -341,19 +341,19 @@ nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 10em; /* CORRECCIÓN: Añade perspectiva para la profundidad 3D */
+  perspective: 5em; /* Reducido 50%: 10em → 5em */
   transform-style: preserve-3d; /* CORRECCIÓN: Habilita el contexto 3D */
 }
 .texts {
   position: absolute; /* Solo este elemento necesita ser absoluto aquí */
-  font-size: 6vmin;
+  font-size: 3vmin; /* Reducido 50%: 6vmin → 3vmin */
   transform-style: preserve-3d; /* CORRECCIÓN: Permite que los hijos (.text) se rendericen en 3D */
   animation: texts 12s infinite linear;
 
   &::after {
     content: '';
     position: absolute;
-    inset: -7.5em -1.5em;
+    inset: -3.75em -0.75em; /* Reducido 50%: -7.5em -1.5em → -3.75em -0.75em */
     background-image: linear-gradient(to right, transparent, 10%, black, 90%, transparent);
   }
 }
@@ -366,15 +366,15 @@ nav {
   
   span {
     position: absolute; /* Los spans también son absolutos */
-    inset: -1em;
+    inset: -0.5em; /* Reducido 50%: -1em → -0.5em */
     display: grid;
     place-items: center;
     font-weight: 700;
     user-select: none;
     transform:
-      translateY(calc((var(--i) - 6) * 0.6em))
+      translateY(calc((var(--i) - 6) * 0.3em)) /* Reducido 50%: 0.6em → 0.3em */
       rotateY(calc(var(--i) * 20deg))
-      translateZ(1.5em)
+      translateZ(0.75em) /* Reducido 50%: 1.5em → 0.75em */
       rotateZ(-40deg);
   }
 }
