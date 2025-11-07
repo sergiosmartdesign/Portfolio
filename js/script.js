@@ -137,7 +137,50 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ====================================================================
-// PARTE 5: INICIA EL FRAGMENT SHADER (RGBA.js)
+// PARTE 5: DNA LETTER-BY-LETTER REVEAL ANIMATION
+// ====================================================================
+
+function animateDNAReveal() {
+  // Select "Mastering" text (--text: 0)
+  const masteringText = document.querySelector('.text[style*="--text: 0"]');
+  // Select "Your Brand's DNA" text (--text: 2)
+  const brandDNAText = document.querySelector('.text[style*="--text: 2"]');
+
+  if (!masteringText || !brandDNAText) return;
+
+  // Get all spans from both texts
+  const masteringSpans = Array.from(masteringText.querySelectorAll('span'));
+  const brandDNASpans = Array.from(brandDNAText.querySelectorAll('span'));
+
+  const letterDelay = 100; // Delay between each letter (ms)
+  const startDelay = 500; // Initial delay before starting
+
+  setTimeout(() => {
+    // Animate "Mastering" forward (index 0 to end)
+    masteringSpans.forEach((span, index) => {
+      setTimeout(() => {
+        span.classList.add('revealed');
+      }, index * letterDelay);
+    });
+
+    // Animate "Your Brand's DNA" backward (last index to 0)
+    brandDNASpans.reverse().forEach((span, index) => {
+      setTimeout(() => {
+        span.classList.add('revealed');
+      }, index * letterDelay);
+    });
+  }, startDelay);
+}
+
+// Initialize DNA reveal animation on page load
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    animateDNAReveal();
+  }, 300); // Start shortly after page load
+});
+
+// ====================================================================
+// PARTE 6: INICIA EL FRAGMENT SHADER (RGBA.js)
 // ====================================================================
 
 setTimeout(() => {

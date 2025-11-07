@@ -366,11 +366,18 @@ nav {
     place-items: center;
     font-weight: 700;
     user-select: none;
+    opacity: 0; /* Initially hidden for letter-by-letter reveal */
+    transition: opacity 0.3s ease-in-out;
     transform:
       translateY(calc((var(--i) - 6) * 0.6em)) /* Restored to match example */
       rotateY(calc(var(--i) * 20deg))
       translateZ(1.5em) /* Restored to match example */
       rotateZ(-40deg);
+  }
+
+  /* Show span when revealed */
+  span.revealed {
+    opacity: 1;
   }
 }
 
