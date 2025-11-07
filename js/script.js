@@ -35,6 +35,9 @@ setTimeout(() => {
     
     // Asegúrate de que la librería RGBA.js se haya cargado
     if (window.RGBA) {
+        // CORRECCIÓN 1: Habilitar el scroll
+        // Pasamos un objeto de configuración para evitar que RGBA.js
+        // aplique `overflow: hidden` al body.
         RGBA(`
 
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -211,7 +214,9 @@ void main() {
     gl_FragColor = vec4(color, 1.);
 }
 
-`);
+`, {
+    fullscreen: false // Esto evita que la librería bloquee el scroll del body
+});
     }
 
 }, 3500); // 3500 milisegundos = 3.5 segundos de retraso
