@@ -27,17 +27,33 @@ const logo = document.querySelector('.logo');
 if (logo) {
   logo.addEventListener('mouseenter', function() {
     const chars = this.querySelectorAll('[data-char]');
-    
+
     // Para cada carácter del logo
     chars.forEach((char, index) => {
       // Remover la animación momentáneamente
       char.style.animation = 'none';
-      
+
       // Forzar reflow para reiniciar la animación
       void char.offsetWidth;
-      
+
       // Restaurar la animación con nuevos parámetros
       char.style.animation = `glitch-switch 0.2s steps(1) ${index * 0.05}s ${10} backwards`;
+    });
+  });
+
+  // Detener la animación inmediatamente al quitar el mouse
+  logo.addEventListener('mouseleave', function() {
+    const chars = this.querySelectorAll('[data-char]');
+
+    chars.forEach((char) => {
+      // Remover completamente la animación
+      char.style.animation = 'none';
+
+      // Forzar reflow
+      void char.offsetWidth;
+
+      // Restaurar la animación por defecto (sin hover)
+      char.style.animation = '';
     });
   });
 }
