@@ -176,7 +176,7 @@ function animateDNAReveal() {
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     animateDNAReveal();
-  }, 300); // Start shortly after page load
+  }, 3000); // 3 seconds delay after page load
 });
 
 // ====================================================================
