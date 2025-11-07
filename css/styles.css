@@ -380,8 +380,8 @@ nav {
 }
 
 @keyframes texts {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
+  from { transform: rotateZ(0deg) rotateX(20deg) rotateZ(360deg); }
+  to { transform: rotateZ(360deg) rotateX(20deg) rotateZ(0deg); }
 }
 
 @keyframes text {
