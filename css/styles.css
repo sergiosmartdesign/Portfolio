@@ -341,40 +341,40 @@ nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 5em; /* Reducido 50%: 10em → 5em */
-  transform-style: preserve-3d; /* CORRECCIÓN: Habilita el contexto 3D */
+  perspective: 600px; /* Matches example perspective */
+  transform-style: preserve-3d;
 }
 .texts {
-  position: absolute; /* Solo este elemento necesita ser absoluto aquí */
-  font-size: 3vmin; /* Reducido 50%: 6vmin → 3vmin */
-  transform-style: preserve-3d; /* CORRECCIÓN: Permite que los hijos (.text) se rendericen en 3D */
+  position: absolute;
+  font-size: 6vmin; /* Restored to match example */
+  transform-style: preserve-3d;
   animation: texts 12s infinite linear;
 
   &::after {
     content: '';
     position: absolute;
-    inset: -3.75em -0.75em; /* Reducido 50%: -7.5em -1.5em → -3.75em -0.75em */
+    inset: -7.5em -1.5em; /* Restored to match example */
     background-image: linear-gradient(to right, transparent, 10%, black, 90%, transparent);
   }
 }
 
 .text {
-  position: absolute; /* Y este también */
-  transform-style: preserve-3d; /* CORRECCIÓN: Permite que los hijos (span) se rendericen en 3D */
+  position: absolute;
+  transform-style: preserve-3d;
   animation: text 8s calc(var(--text) * -2s) infinite linear;
   color: hsl(calc(var(--text) * 90) 75% 75%);
-  
+
   span {
-    position: absolute; /* Los spans también son absolutos */
-    inset: -0.5em; /* Reducido 50%: -1em → -0.5em */
+    position: absolute;
+    inset: -1em; /* Restored to match example */
     display: grid;
     place-items: center;
     font-weight: 700;
     user-select: none;
     transform:
-      translateY(calc((var(--i) - 6) * 0.3em)) /* Reducido 50%: 0.6em → 0.3em */
+      translateY(calc((var(--i) - 6) * 0.6em)) /* Restored to match example */
       rotateY(calc(var(--i) * 20deg))
-      translateZ(0.75em) /* Reducido 50%: 1.5em → 0.75em */
+      translateZ(1.5em) /* Restored to match example */
       rotateZ(-40deg);
   }
 }
