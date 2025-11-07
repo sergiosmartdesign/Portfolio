@@ -161,14 +161,13 @@ nav {
   animation-name: glitch-switch;
 }
 
-/* --- CORRECCIÓN: GLITCH EN LOGO AL HACER HOVER --- */
-/* 1. Desactivamos la animación automática para el logo */
-.logo[data-splitting] [data-char]:after {
-  animation-name: none;
-}
-/* 2. La reactivamos solo cuando el cursor está encima */
+/* --- GLITCH EN LOGO: PAGE LOAD Y HOVER --- */
+/* El logo usa la animación por defecto en page load */
+/* Y se reactiva al hacer hover */
 .logo:hover[data-splitting] [data-char]:after {
   animation-name: glitch-switch;
+  animation-iteration-count: 10; /* Fuerza reiniciar la animación en hover */
+  animation-delay: 0s; /* Sin delay en hover para respuesta inmediata */
 }
 
 @keyframes glitch-switch {

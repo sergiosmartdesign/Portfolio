@@ -22,6 +22,26 @@ results.forEach(result => {
   });
 });
 
+// 2. NUEVO: Añadir evento hover al logo para reiniciar animación glitch
+const logo = document.querySelector('.logo');
+if (logo) {
+  logo.addEventListener('mouseenter', function() {
+    const chars = this.querySelectorAll('[data-char]');
+    
+    // Para cada carácter del logo
+    chars.forEach((char, index) => {
+      // Remover la animación momentáneamente
+      char.style.animation = 'none';
+      
+      // Forzar reflow para reiniciar la animación
+      void char.offsetWidth;
+      
+      // Restaurar la animación con nuevos parámetros
+      char.style.animation = `glitch-switch 0.2s steps(1) ${index * 0.05}s ${10} backwards`;
+    });
+  });
+}
+
 // 3. Inicializa ScrollOut
 window.ScrollOut({
   targets: '.glitch-text' 
