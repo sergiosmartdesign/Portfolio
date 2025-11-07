@@ -84,13 +84,13 @@ nav {
     display: inline-flex;
 
     background-image: linear-gradient(var(--hover-color), var(--hover-color));
-    background-size: 0% 0.5px; /* Inicia sin línea visible */
+    background-size: 100% 0.5px; /* Estado final después de la animación */
     background-repeat: no-repeat;
     background-position: 100% 0%;
     transition: background-size .7s, background-position .5s ease-in-out, color 0.3s;
 
     /* Animación de carga al cargar la página */
-    animation: lineGrow 1s ease-out forwards;
+    animation: lineGrow 1s ease-out;
 }
 
 /* Animación de crecimiento de línea (loading bar) */
