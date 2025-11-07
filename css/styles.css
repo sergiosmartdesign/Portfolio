@@ -325,15 +325,7 @@ nav {
     100% { transform: translateX(4px); }
 }
 
-/* --- SECCIÓN ABOUT --- */
-#about {
-    min-height: 100vh; /* Asegura que la sección ocupe espacio */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Oculta partes de la animación que se salen */
-    background-color: #ff3c00;
-}
+/* EFECTO DNA */
 .scene {
   position: relative;
   width: 100%;
@@ -387,7 +379,15 @@ nav {
 @keyframes text {
   to { rotate: y -1turn; }
 }
-
+/* --- SECCIÓN ABOUT --- */
+#about {
+    min-height: 100vh; /* Asegura que la sección ocupe espacio */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Oculta partes de la animación que se salen */
+    background-color: #ff3c00;
+}
 /* --- SECCIÓN WEB --- */
 #web {
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
