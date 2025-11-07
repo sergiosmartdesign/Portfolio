@@ -60,11 +60,84 @@ if (logo) {
 
 // 3. Inicializa ScrollOut
 window.ScrollOut({
-  targets: '.glitch-text' 
+  targets: '.glitch-text'
 });
 
 // ====================================================================
-// PARTE 4: INICIA EL FRAGMENT SHADER (RGBA.js)
+// PARTE 4: CUSTOM DNA GLITCH EFFECT
+// ====================================================================
+
+// DNA Glitch effect - compatible with 3D transforms
+const dnaGlitches = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+
+function initDNAGlitch() {
+  const dnaSpans = document.querySelectorAll('.scene .text span');
+
+  if (dnaSpans.length === 0) return;
+
+  // Store original text content for each span
+  const originalTexts = new Map();
+  dnaSpans.forEach(span => {
+    originalTexts.set(span, span.textContent);
+  });
+
+  // Function to glitch a single span
+  function glitchSpan(span, duration = 100) {
+    const originalText = originalTexts.get(span);
+
+    // Replace with random glitch characters
+    const glitchText = Array.from(originalText)
+      .map(char => {
+        if (char === ' ' || char === '·' || char === '-') return char;
+        return Math.random() > 0.5 ? char : dnaGlitches[Math.floor(Math.random() * dnaGlitches.length)];
+      })
+      .join('');
+
+    span.textContent = glitchText;
+
+    // Restore original text after duration
+    setTimeout(() => {
+      span.textContent = originalText;
+    }, duration);
+  }
+
+  // Initial load glitch effect - runs once per span with staggered timing
+  dnaSpans.forEach((span, index) => {
+    setTimeout(() => {
+      // Glitch multiple times on load
+      let glitchCount = 0;
+      const maxGlitches = Math.floor(Math.random() * 5) + 3; // 3-7 glitches
+
+      const glitchInterval = setInterval(() => {
+        glitchSpan(span, 80);
+        glitchCount++;
+
+        if (glitchCount >= maxGlitches) {
+          clearInterval(glitchInterval);
+        }
+      }, 150); // Glitch every 150ms
+
+    }, index * 50); // Stagger start time
+  });
+
+  // Optional: Random occasional glitches during animation
+  setInterval(() => {
+    const randomSpan = dnaSpans[Math.floor(Math.random() * dnaSpans.length)];
+    if (Math.random() > 0.95) { // 5% chance every interval
+      glitchSpan(randomSpan, 60);
+    }
+  }, 500);
+}
+
+// Initialize DNA glitch on page load
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    initDNAGlitch();
+  }, 500); // Slight delay to ensure DOM is ready
+});
+
+// ====================================================================
+// PARTE 5: INICIA EL FRAGMENT SHADER (RGBA.js)
 // ====================================================================
 
 setTimeout(() => {

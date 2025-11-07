@@ -336,6 +336,7 @@ nav {
   align-items: center;
   perspective: 600px; /* Matches example perspective */
   transform-style: preserve-3d;
+  z-index: 0; /* Behind VHS layers (which use z-index 1-4) */
 }
 .texts {
   position: absolute;
