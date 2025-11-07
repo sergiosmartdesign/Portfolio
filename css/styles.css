@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
 
 /* --- RESET BÁSICO Y VARIABLES --- */
 * {
@@ -339,6 +340,7 @@ nav {
 .texts {
   position: absolute;
   font-size: 6vmin; /* Restored to match example */
+  font-family: 'Workbench', sans-serif; /* Workbench font for DNA scene */
   transform-style: preserve-3d;
   animation: texts 12s infinite linear;
 
@@ -369,6 +371,15 @@ nav {
       translateZ(1.5em) /* Restored to match example */
       rotateZ(-40deg);
   }
+}
+
+/* Specific color overrides for DNA text */
+.text[style*="--text: 0"] {
+  color: #CA6702; /* Orange/brown for "Mastering" */
+}
+
+.text[style*="--text: 2"] {
+  color: #0A9396; /* Teal/cyan for "Your Brand's DNA" */
 }
 
 @keyframes texts {
