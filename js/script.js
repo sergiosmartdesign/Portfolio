@@ -64,6 +64,83 @@ window.ScrollOut({
 });
 
 // ====================================================================
+// PARTE 3.5: ACTIVE SECTION INDICATOR FOR NAVIGATION
+// ====================================================================
+
+function initActiveNavigation() {
+  // Get all navigation buttons (excluding language toggle buttons)
+  const navButtons = document.querySelectorAll('.main-nav .nav-btn');
+  // Get all sections
+  const sections = document.querySelectorAll('main section');
+
+  // Create a map of section IDs to nav buttons
+  const sectionToButton = new Map();
+  navButtons.forEach(btn => {
+    const href = btn.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const sectionId = href.substring(1);
+      sectionToButton.set(sectionId, btn);
+    }
+  });
+
+  // Function to set active button
+  function setActiveButton(sectionId) {
+    // Remove active class from all nav buttons
+    navButtons.forEach(btn => btn.classList.remove('active'));
+
+    // Add active class to the corresponding button
+    const activeButton = sectionToButton.get(sectionId);
+    if (activeButton) {
+      activeButton.classList.add('active');
+    }
+  }
+
+  // Intersection Observer to detect which section is in view
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.5 // 50% of the section must be visible
+  };
+
+  const observerCallback = (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const sectionId = entry.target.id;
+        setActiveButton(sectionId);
+      }
+    });
+  };
+
+  const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+  // Observe all sections
+  sections.forEach(section => {
+    if (section.id) {
+      observer.observe(section);
+    }
+  });
+
+  // Handle click on nav buttons to immediately set active state
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const href = btn.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const sectionId = href.substring(1);
+        // Small delay to allow smooth scroll to complete
+        setTimeout(() => {
+          setActiveButton(sectionId);
+        }, 100);
+      }
+    });
+  });
+}
+
+// Initialize active navigation on DOM load
+window.addEventListener('DOMContentLoaded', () => {
+  initActiveNavigation();
+});
+
+// ====================================================================
 // PARTE 4: CUSTOM DNA GLITCH EFFECT
 // ====================================================================
 

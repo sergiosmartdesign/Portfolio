@@ -128,8 +128,13 @@ nav {
 .nav-btn:hover {
     background-size: 100% 100%;
     background-position: 0% 100%;
-    color: var(--bg); 
+    color: var(--bg);
     transition: background-position .7s, background-size .5s ease-in-out, color 0.3s;
+}
+
+/* Active state: Line moves to bottom when section is active */
+.nav-btn.active {
+    background-position: 0% 100%; /* Move line to bottom */
 }
 
 .nav-btn:hover [data-char]:after {
