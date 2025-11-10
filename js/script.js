@@ -312,6 +312,7 @@ function initRotatingSquaresGrid() {
   // Add mousemove effect
   document.addEventListener('mousemove', (e) => {
     const sqrs = document.querySelectorAll('.item');
+    const isExiting = wrapper.classList.contains('exit');
 
     const mouseX = e.pageX;
     const mouseY = e.pageY;
@@ -328,7 +329,13 @@ function initRotatingSquaresGrid() {
 
       const angle = radians * 180 / Math.PI;
 
-      sqr.style.transform = `rotate(${angle}deg)`;
+      // If exiting, combine both translate and rotate transforms
+      if (isExiting) {
+        const mergeX = sqr.style.getPropertyValue('--merge-x') || '0px';
+        sqr.style.transform = `translate(${mergeX}, 0) rotate(${angle}deg)`;
+      } else {
+        sqr.style.transform = `rotate(${angle}deg)`;
+      }
     });
   });
 }
@@ -383,12 +390,37 @@ function initIntroExitAnimation() {
       const moveDistance = (centerColumn - col) * totalSquareSize;
 
       square.style.setProperty('--merge-x', `${moveDistance}px`);
+
+      // Enable smooth transition
+      square.style.transition = 'all 1.5s ease-in-out';
+
+      // Change background color to red
+      setTimeout(() => {
+        square.style.backgroundColor = '#9B2226';
+      }, 100);
     });
 
     wrapper.classList.add('exit');
   }
 
   function deactivateMergeAnimation() {
+    const squares = document.querySelectorAll('.item');
+    const columns = 10;
+
+    squares.forEach((square, index) => {
+      const col = index % columns;
+
+      // Reset merge-x to 0
+      square.style.setProperty('--merge-x', '0px');
+
+      // Reset background color based on column
+      const colorMap = [
+        '#001219', '#005F73', '#0A9396', '#94D2BD', '#E9D8A6',
+        '#EE9B00', '#CA6702', '#BB3E03', '#AE2012', '#9B2226'
+      ];
+      square.style.backgroundColor = colorMap[col];
+    });
+
     wrapper.classList.remove('exit');
   }
 }

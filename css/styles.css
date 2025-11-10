@@ -222,21 +222,7 @@ nav {
     }
 }
 
-/* Exit animation - columns merge into single red column */
-.wrapper.exit .item {
-    animation: mergeToRed 1.5s ease-in-out forwards !important;
-    transition: none !important;
-}
-
-@keyframes mergeToRed {
-    0% {
-        transform: translate(0, 0);
-    }
-    100% {
-        transform: translate(var(--merge-x), 0);
-        background-color: #9B2226 !important;
-    }
-}
+/* Exit animation - columns merge into single red column (handled by JavaScript) */
 
 /* Color cada columna con la paleta especificada (de izquierda a derecha) */
 /* Columna 1: Negro Azulado Oscuro */
