@@ -303,6 +303,7 @@ function initRotatingSquaresGrid() {
     // Remove animation after it completes to allow mousemove transform to work
     square.addEventListener('animationend', () => {
       square.style.animation = 'none';
+      square.style.opacity = '1'; // Keep visible after animation
     });
 
     wrapper.appendChild(square);
