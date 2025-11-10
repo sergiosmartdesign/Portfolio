@@ -222,7 +222,25 @@ nav {
     }
 }
 
-/* Exit animation - columns merge into single red column (handled by JavaScript) */
+/* Exit animation - reverse of appear animation */
+.wrapper.exit .item {
+    animation: squareDisappear 0.6s ease-in forwards !important;
+}
+
+@keyframes squareDisappear {
+    0% {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: rotate(-180deg) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(-360deg) scale(0);
+    }
+}
 
 /* Color cada columna con la paleta especificada (de izquierda a derecha) */
 /* Columna 1: Negro Azulado Oscuro */

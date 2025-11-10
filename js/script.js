@@ -312,7 +312,6 @@ function initRotatingSquaresGrid() {
   // Add mousemove effect
   document.addEventListener('mousemove', (e) => {
     const sqrs = document.querySelectorAll('.item');
-    const isExiting = wrapper.classList.contains('exit');
 
     const mouseX = e.pageX;
     const mouseY = e.pageY;
@@ -329,13 +328,7 @@ function initRotatingSquaresGrid() {
 
       const angle = radians * 180 / Math.PI;
 
-      // If exiting, combine both translate and rotate transforms
-      if (isExiting) {
-        const mergeX = sqr.style.getPropertyValue('--merge-x') || '0px';
-        sqr.style.transform = `translate(${mergeX}, 0) rotate(${angle}deg)`;
-      } else {
-        sqr.style.transform = `rotate(${angle}deg)`;
-      }
+      sqr.style.transform = `rotate(${angle}deg)`;
     });
   });
 }
@@ -360,10 +353,10 @@ function initIntroExitAnimation() {
     entries.forEach(entry => {
       if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
         // User scrolled past intro section (going down)
-        activateMergeAnimation();
+        activateExitAnimation();
       } else if (entry.isIntersecting) {
         // User is back in intro section
-        deactivateMergeAnimation();
+        deactivateExitAnimation();
       }
     });
   }, {
@@ -373,55 +366,73 @@ function initIntroExitAnimation() {
 
   observer.observe(introSection);
 
-  function activateMergeAnimation() {
+  function activateExitAnimation() {
     const squares = document.querySelectorAll('.item');
     const columns = 10;
-    const squareSize = 40;
-    const gap = 24;
-    const totalSquareSize = squareSize + gap;
+    const rows = Math.ceil(window.innerHeight / 64) + 2;
 
-    // Calculate center position (column 5, which is index 4)
-    const centerColumn = 4;
+    const columnDelay = 0.3;
+    const squareDelay = 0.05;
 
     squares.forEach((square, index) => {
       const col = index % columns;
+      const row = Math.floor(index / columns);
 
-      // Calculate horizontal distance to move to center
-      const moveDistance = (centerColumn - col) * totalSquareSize;
+      // Calculate reverse delay (same logic as appear but reversed)
+      let delay = 0;
+      if (col < 5) {
+        // Columns 1-5: now disappear from bottom to top (reverse)
+        delay = (col * columnDelay) + ((rows - 1 - row) * squareDelay);
+      } else {
+        // Columns 6-10: now disappear from top to bottom (reverse)
+        delay = (col * columnDelay) + (row * squareDelay);
+      }
 
-      square.style.setProperty('--merge-x', `${moveDistance}px`);
-
-      // Enable smooth transition
-      square.style.transition = 'all 1.5s ease-in-out';
-
-      // Change background color to red
-      setTimeout(() => {
-        square.style.backgroundColor = '#9B2226';
-      }, 100);
+      square.style.animationDelay = `${delay}s`;
     });
 
     wrapper.classList.add('exit');
   }
 
-  function deactivateMergeAnimation() {
+  function deactivateExitAnimation() {
     const squares = document.querySelectorAll('.item');
     const columns = 10;
+    const rows = Math.ceil(window.innerHeight / 64) + 2;
 
-    squares.forEach((square, index) => {
-      const col = index % columns;
-
-      // Reset merge-x to 0
-      square.style.setProperty('--merge-x', '0px');
-
-      // Reset background color based on column
-      const colorMap = [
-        '#001219', '#005F73', '#0A9396', '#94D2BD', '#E9D8A6',
-        '#EE9B00', '#CA6702', '#BB3E03', '#AE2012', '#9B2226'
-      ];
-      square.style.backgroundColor = colorMap[col];
-    });
+    const columnDelay = 0.3;
+    const squareDelay = 0.05;
 
     wrapper.classList.remove('exit');
+
+    // Re-apply the appear animation with original delays
+    squares.forEach((square, index) => {
+      const col = index % columns;
+      const row = Math.floor(index / columns);
+
+      let delay = 0;
+      if (col < 5) {
+        // Columns 1-5: top to bottom
+        delay = (col * columnDelay) + (row * squareDelay);
+      } else {
+        // Columns 6-10: bottom to top
+        delay = (col * columnDelay) + ((rows - 1 - row) * squareDelay);
+      }
+
+      // Reset opacity and apply appear animation
+      square.style.opacity = '0';
+      square.style.animation = 'none';
+
+      // Force reflow
+      void square.offsetWidth;
+
+      square.style.animation = `squareAppear 0.6s ease-out ${delay}s forwards`;
+
+      // Remove animation after completion to allow mousemove
+      square.addEventListener('animationend', () => {
+        square.style.animation = 'none';
+        square.style.opacity = '1';
+      }, { once: true });
+    });
   }
 }
 
