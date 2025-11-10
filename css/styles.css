@@ -60,6 +60,10 @@ nav {
     transition: text-shadow 0.3s ease, color 0.3s ease;
 }
 
+.logo * {
+    pointer-events: none; /* Los elementos hijos no bloquean el hover del logo */
+}
+
 .logo:hover {
     color: var(--color); /* Cambia a color cyan */
     text-shadow:
