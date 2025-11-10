@@ -184,6 +184,26 @@ nav {
     justify-content: center;
 }
 
+/* --- ROTATING SQUARES GRID BACKGROUND --- */
+.wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: repeat(9, 40px);
+    grid-template-rows: repeat(7, 40px);
+    grid-gap: 1.5rem;
+    z-index: 0; /* Behind VHS effects (z-index 1-4) but above intro background */
+}
+
+.item {
+    width: 40px;
+    height: 40px;
+    background-color: #FECE00;
+    transition: transform 0.1s ease-out;
+}
+
 /* --- TÍTULOS Y TEXTO GLITCH --- */
 #main-title {
     font-size: 3.5rem;
