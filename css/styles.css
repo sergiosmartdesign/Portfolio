@@ -203,6 +203,23 @@ nav {
     width: 40px;
     height: 40px;
     transition: transform 0.1s ease-out;
+    opacity: 0;
+    animation: squareAppear 0.6s ease-out forwards;
+}
+
+@keyframes squareAppear {
+    0% {
+        opacity: 0;
+        transform: rotate(0deg) scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(360deg) scale(1);
+    }
 }
 
 /* Color cada columna con la paleta especificada (de izquierda a derecha) */

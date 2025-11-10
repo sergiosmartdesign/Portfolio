@@ -273,11 +273,32 @@ function initRotatingSquaresGrid() {
   const rows = Math.ceil(window.innerHeight / totalSquareSize) + 2; // +2 for extra coverage
   const totalSquares = columns * rows;
 
-  // Generate squares dynamically
+  // Generate squares dynamically with staggered animation delays
   wrapper.innerHTML = ''; // Clear existing squares
+
+  const columnDelay = 0.3; // Delay between each column (seconds)
+  const squareDelay = 0.05; // Delay between each square in a column (seconds)
+
   for (let i = 0; i < totalSquares; i++) {
     const square = document.createElement('div');
     square.className = 'item';
+
+    // Calculate column (0-9) and row (0-rows-1)
+    const col = i % columns;
+    const row = Math.floor(i / columns);
+
+    // Calculate animation delay
+    let delay = 0;
+
+    if (col < 5) {
+      // Columns 1-5: top to bottom
+      delay = (col * columnDelay) + (row * squareDelay);
+    } else {
+      // Columns 6-10: bottom to top
+      delay = (col * columnDelay) + ((rows - 1 - row) * squareDelay);
+    }
+
+    square.style.animationDelay = `${delay}s`;
     wrapper.appendChild(square);
   }
 
