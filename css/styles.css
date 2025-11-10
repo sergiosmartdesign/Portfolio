@@ -187,21 +187,74 @@ nav {
 /* --- ROTATING SQUARES GRID BACKGROUND --- */
 .wrapper {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: grid;
-    grid-template-columns: repeat(9, 40px);
-    grid-template-rows: repeat(7, 40px);
+    grid-template-columns: repeat(10, 40px);
     grid-gap: 1.5rem;
+    justify-content: center;
+    align-content: center;
     z-index: 0; /* Behind VHS effects (z-index 1-4) but above intro background */
 }
 
 .item {
     width: 40px;
     height: 40px;
-    background-color: #FECE00;
     transition: transform 0.1s ease-out;
+}
+
+/* Color cada columna con la paleta especificada (de izquierda a derecha) */
+/* Columna 1: Negro Azulado Oscuro */
+.item:nth-child(10n+1) {
+    background-color: #001219;
+}
+
+/* Columna 2: Azul Petróleo Oscuro */
+.item:nth-child(10n+2) {
+    background-color: #005F73;
+}
+
+/* Columna 3: Turquesa Profundo */
+.item:nth-child(10n+3) {
+    background-color: #0A9396;
+}
+
+/* Columna 4: Aguamarina Claro */
+.item:nth-child(10n+4) {
+    background-color: #94D2BD;
+}
+
+/* Columna 5: Beige/Crema Suave */
+.item:nth-child(10n+5) {
+    background-color: #E9D8A6;
+}
+
+/* Columna 6: Amarillo Ocre/Mostaza */
+.item:nth-child(10n+6) {
+    background-color: #EE9B00;
+}
+
+/* Columna 7: Naranja Quemado Medio */
+.item:nth-child(10n+7) {
+    background-color: #CA6702;
+}
+
+/* Columna 8: Terracota/Marrón Rojizo */
+.item:nth-child(10n+8) {
+    background-color: #BB3E03;
+}
+
+/* Columna 9: Rojo Ladrillo Profundo */
+.item:nth-child(10n+9) {
+    background-color: #AE2012;
+}
+
+/* Columna 10: Rojo Oscuro/Borgoña */
+.item:nth-child(10n+10),
+.item:nth-child(10n) {
+    background-color: #9B2226;
 }
 
 /* --- TÍTULOS Y TEXTO GLITCH --- */

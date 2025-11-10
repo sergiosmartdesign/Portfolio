@@ -257,26 +257,55 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ====================================================================
-// PARTE 6: ROTATING SQUARES MOUSEMOVE EFFECT
+// PARTE 6: ROTATING SQUARES GRID - GENERATE AND MOUSEMOVE EFFECT
 // ====================================================================
 
-document.addEventListener('mousemove', (e) => {
-  const sqrs = document.querySelectorAll('.item');
+function initRotatingSquaresGrid() {
+  const wrapper = document.querySelector('.wrapper');
+  if (!wrapper) return;
 
-  const mouseX = e.pageX;
-  const mouseY = e.pageY;
+  // Calculate how many squares we need to fill the viewport
+  const squareSize = 40; // px
+  const gap = 24; // 1.5rem ≈ 24px
+  const totalSquareSize = squareSize + gap;
 
-  sqrs.forEach(sqr => {
-    const sqrX = sqr.offsetLeft + 20;
-    const sqrY = sqr.offsetTop + 20;
+  const columns = 10; // Fixed at 10 columns for the color palette
+  const rows = Math.ceil(window.innerHeight / totalSquareSize) + 2; // +2 for extra coverage
+  const totalSquares = columns * rows;
 
-    const diffX = mouseX - sqrX;
-    const diffY = mouseY - sqrY;
+  // Generate squares dynamically
+  wrapper.innerHTML = ''; // Clear existing squares
+  for (let i = 0; i < totalSquares; i++) {
+    const square = document.createElement('div');
+    square.className = 'item';
+    wrapper.appendChild(square);
+  }
 
-    const radians = Math.atan2(diffY, diffX);
+  // Add mousemove effect
+  document.addEventListener('mousemove', (e) => {
+    const sqrs = document.querySelectorAll('.item');
 
-    const angle = radians * 180 / Math.PI;
+    const mouseX = e.pageX;
+    const mouseY = e.pageY;
 
-    sqr.style.transform = `rotate(${angle}deg)`;
+    sqrs.forEach(sqr => {
+      const rect = sqr.getBoundingClientRect();
+      const sqrX = rect.left + rect.width / 2 + window.scrollX;
+      const sqrY = rect.top + rect.height / 2 + window.scrollY;
+
+      const diffX = mouseX - sqrX;
+      const diffY = mouseY - sqrY;
+
+      const radians = Math.atan2(diffY, diffX);
+
+      const angle = radians * 180 / Math.PI;
+
+      sqr.style.transform = `rotate(${angle}deg)`;
+    });
   });
+}
+
+// Initialize rotating squares grid on page load
+window.addEventListener('DOMContentLoaded', () => {
+  initRotatingSquaresGrid();
 });
