@@ -203,8 +203,8 @@ nav {
     width: 40px;
     height: 40px;
     transition: transform 0.1s ease-out;
-    opacity: 0;
-    animation: squareAppear 0.6s ease-out forwards;
+    opacity: 1; /* Final state after animation */
+    animation: squareAppear 0.6s ease-out;
 }
 
 @keyframes squareAppear {

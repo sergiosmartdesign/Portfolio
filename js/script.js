@@ -299,6 +299,12 @@ function initRotatingSquaresGrid() {
     }
 
     square.style.animationDelay = `${delay}s`;
+
+    // Remove animation after it completes to allow mousemove transform to work
+    square.addEventListener('animationend', () => {
+      square.style.animation = 'none';
+    });
+
     wrapper.appendChild(square);
   }
 
