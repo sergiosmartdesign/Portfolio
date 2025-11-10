@@ -337,3 +337,63 @@ function initRotatingSquaresGrid() {
 window.addEventListener('DOMContentLoaded', () => {
   initRotatingSquaresGrid();
 });
+
+// ====================================================================
+// PARTE 7: INTRO EXIT ANIMATION - MERGE COLUMNS TO RED
+// ====================================================================
+
+function initIntroExitAnimation() {
+  const introSection = document.querySelector('#intro');
+  const wrapper = document.querySelector('.wrapper');
+
+  if (!introSection || !wrapper) return;
+
+  // Intersection Observer to detect when leaving intro section
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+        // User scrolled past intro section (going down)
+        activateMergeAnimation();
+      } else if (entry.isIntersecting) {
+        // User is back in intro section
+        deactivateMergeAnimation();
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px'
+  });
+
+  observer.observe(introSection);
+
+  function activateMergeAnimation() {
+    const squares = document.querySelectorAll('.item');
+    const columns = 10;
+    const squareSize = 40;
+    const gap = 24;
+    const totalSquareSize = squareSize + gap;
+
+    // Calculate center position (column 5, which is index 4)
+    const centerColumn = 4;
+
+    squares.forEach((square, index) => {
+      const col = index % columns;
+
+      // Calculate horizontal distance to move to center
+      const moveDistance = (centerColumn - col) * totalSquareSize;
+
+      square.style.setProperty('--merge-x', `${moveDistance}px`);
+    });
+
+    wrapper.classList.add('exit');
+  }
+
+  function deactivateMergeAnimation() {
+    wrapper.classList.remove('exit');
+  }
+}
+
+// Initialize intro exit animation
+window.addEventListener('DOMContentLoaded', () => {
+  initIntroExitAnimation();
+});
