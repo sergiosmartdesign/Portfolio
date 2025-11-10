@@ -60,12 +60,27 @@ nav {
     transition: text-shadow 0.3s ease, color 0.3s ease;
 }
 
-.logo * {
+.logo *,
+.logo [data-char],
+.logo [data-char]::after {
     pointer-events: none; /* Los elementos hijos no bloquean el hover del logo */
 }
 
 .logo:hover {
     color: var(--color); /* Cambia a color cyan */
+    text-shadow:
+        0 0 10px var(--color),
+        0 0 20px var(--color),
+        0 0 30px var(--color),
+        0 0 40px var(--color),
+        0 0 70px var(--color),
+        0 0 80px var(--color),
+        0 0 100px var(--color);
+}
+
+/* Aplicar el neon también a los caracteres internos */
+.logo:hover [data-char]::after {
+    color: var(--color);
     text-shadow:
         0 0 10px var(--color),
         0 0 20px var(--color),
