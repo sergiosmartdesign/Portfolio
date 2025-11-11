@@ -699,7 +699,12 @@ nav {
     backdrop-filter: saturate(180%) blur(6px);
     transform: translateX(-100%);
     mask: linear-gradient(#fff, hsl(0 0% 100% / 0.6) 15% 95%, #fff);
-    transition: transform 0.3s ease-out;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.cyber-panel__sidebar:hover {
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
 .cyber-panel.active .cyber-panel__sidebar {
@@ -821,7 +826,9 @@ nav {
     position: absolute;
     background: #ff3c00;
     opacity: 0;
-    pointer-events: none;
+    pointer-events: auto;
+    transition: box-shadow 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
 }
 
 /* Top horizontal line - stops exactly where right line starts */
@@ -888,6 +895,20 @@ nav {
     background: #ff3c00;
     transform-origin: center;
     scale: 0;
+}
+
+/* Hover glow effects for frame lines */
+.panel-line--top:hover,
+.panel-line--bottom:hover {
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
+}
+
+.panel-line--right:hover {
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
+}
+
+.panel-line--right:hover::before {
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00;
 }
 
 /* Animate lines after panel extends */
