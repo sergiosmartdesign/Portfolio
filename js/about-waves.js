@@ -61,7 +61,8 @@ class AboutWaves {
         this.timestamp = 0;
         this.startTime = null;
         this.animationFrame = null;
-        this.hasStarted = false; // Track if animation has been triggered
+        this.isAnimating = false; // Track if currently animating
+        this.isReversing = false; // Track if animating in reverse (exit)
 
         this.setUpVars();
         this.setUpListeners();
@@ -117,9 +118,13 @@ class AboutWaves {
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // Trigger animation when section becomes visible (at least 20% visible)
-                if (entry.isIntersecting && entry.intersectionRatio > 0.2 && !this.hasStarted) {
+                // Trigger fade-in when section becomes visible (at least 20% visible)
+                if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
                     this.startRevealAnimation();
+                }
+                // Trigger fade-out when section is leaving (less than 20% visible)
+                else if (!entry.isIntersecting || entry.intersectionRatio <= 0.2) {
+                    this.startExitAnimation();
                 }
             });
         }, {
@@ -130,12 +135,32 @@ class AboutWaves {
     }
 
     startRevealAnimation() {
-        this.hasStarted = true;
+        // Don't restart if already animating in
+        if (this.isAnimating && !this.isReversing) return;
+
+        this.isAnimating = true;
+        this.isReversing = false;
+
         // Reset all layers to invisible
         this.layers.forEach(layer => {
             layer.opacity = 0;
         });
         // Reset start time to trigger the reveal from now
+        this.startTime = null;
+    }
+
+    startExitAnimation() {
+        // Don't restart if already animating out
+        if (this.isAnimating && this.isReversing) return;
+
+        // Only trigger exit if waves are visible
+        const anyVisible = this.layers.some(layer => layer.opacity > 0);
+        if (!anyVisible) return;
+
+        this.isAnimating = true;
+        this.isReversing = true;
+
+        // Reset start time to trigger the reverse animation from now
         this.startTime = null;
     }
 
@@ -188,7 +213,7 @@ class AboutWaves {
     update(t) {
         if (t) {
             // Only start timer if animation has been triggered
-            if (this.hasStarted && !this.startTime) {
+            if (this.isAnimating && !this.startTime) {
                 this.startTime = t;
             }
 
@@ -196,25 +221,58 @@ class AboutWaves {
             this.angle += 0.0005; // Slower rotation for smoother effect
 
             let shiftNeeded = false;
+            let animationComplete = true;
 
-            this.layers.forEach(layer => {
-                // Only run reveal animation if hasStarted is true
-                if (this.hasStarted && this.startTime) {
+            this.layers.forEach((layer, index) => {
+                // Only run animation if isAnimating is true
+                if (this.isAnimating && this.startTime) {
                     const elapsedTime = (t - this.startTime) / 1000; // Convert to seconds
 
-                    // Update reveal opacity with fade-in animation
-                    const revealStartTime = layer.revealDelay;
-                    const revealEndTime = revealStartTime + this.config.revealDuration;
+                    if (this.isReversing) {
+                        // REVERSE ANIMATION (fade-out from right to left)
+                        // Last layer (highest revealDelay) starts fading out first
+                        const maxDelay = (this.config.numOfLayers - 1) * this.config.revealStagger;
+                        const reverseDelay = maxDelay - layer.revealDelay;
+                        const revealStartTime = reverseDelay;
+                        const revealEndTime = revealStartTime + this.config.revealDuration;
 
-                    if (elapsedTime >= revealStartTime) {
-                        if (elapsedTime >= revealEndTime) {
-                            layer.opacity = 1;
-                        } else {
-                            // Ease-in-out animation for smooth fade
-                            const progress = (elapsedTime - revealStartTime) / this.config.revealDuration;
-                            layer.opacity = progress < 0.5
-                                ? 2 * progress * progress
-                                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                        if (elapsedTime >= revealStartTime) {
+                            if (elapsedTime >= revealEndTime) {
+                                layer.opacity = 0;
+                            } else {
+                                // Ease-in-out animation for smooth fade-out
+                                const progress = (elapsedTime - revealStartTime) / this.config.revealDuration;
+                                const easeProgress = progress < 0.5
+                                    ? 2 * progress * progress
+                                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                                layer.opacity = 1 - easeProgress; // Reverse: 1 to 0
+                            }
+                        }
+
+                        // Check if animation is still running
+                        if (layer.opacity > 0) {
+                            animationComplete = false;
+                        }
+                    } else {
+                        // FORWARD ANIMATION (fade-in from left to right)
+                        const revealStartTime = layer.revealDelay;
+                        const revealEndTime = revealStartTime + this.config.revealDuration;
+
+                        if (elapsedTime >= revealStartTime) {
+                            if (elapsedTime >= revealEndTime) {
+                                layer.opacity = 1;
+                            } else {
+                                // Ease-in-out animation for smooth fade-in
+                                const progress = (elapsedTime - revealStartTime) / this.config.revealDuration;
+                                layer.opacity = progress < 0.5
+                                    ? 2 * progress * progress
+                                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                            }
+                        }
+
+                        // Check if animation is still running
+                        if (layer.opacity < 1) {
+                            animationComplete = false;
                         }
                     }
                 }
@@ -226,6 +284,11 @@ class AboutWaves {
                     shiftNeeded = true;
                 }
             });
+
+            // Stop animating flag when animation completes
+            if (this.isAnimating && animationComplete) {
+                this.isAnimating = false;
+            }
 
             if (shiftNeeded) {
                 this.layers.push(this.layers.shift());
