@@ -551,7 +551,21 @@ nav {
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    background-color: #ff3c00;
+    position: relative;
+}
+
+#aboutCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+#about .scene {
+    position: relative;
+    z-index: 1;
 }
 /* --- SECCIÓN WEB --- */
 #web {
