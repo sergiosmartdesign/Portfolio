@@ -42,7 +42,9 @@ class AboutWaves {
                 '#ff3c00', // Main about section color
                 '#ff6b35', // Lighter orange
             ],
-            numOfLayers: 8
+            numOfLayers: 8,
+            revealDuration: 0.5, // Duration in seconds for each layer to fade in
+            revealStagger: 0.15  // Delay between each layer reveal in seconds
         };
 
         this.canvas = document.getElementById('aboutCanvas');
@@ -57,6 +59,7 @@ class AboutWaves {
         this.shadowCtx = this.shadowCanvas.getContext('2d');
 
         this.timestamp = 0;
+        this.startTime = null;
         this.animationFrame = null;
 
         this.setUpVars();
@@ -84,7 +87,9 @@ class AboutWaves {
             layers.push({
                 id: lid,
                 progress: 1 - (lid / this.config.numOfLayers),
-                color: this.config.colorSchema[currColorId]
+                color: this.config.colorSchema[currColorId],
+                opacity: 0, // Start invisible
+                revealDelay: lid * this.config.revealStagger // Stagger the reveal
             });
 
             currColorId++;
@@ -104,6 +109,9 @@ class AboutWaves {
     }
 
     drawLayer(ctx, layer) {
+        // Skip if layer is not visible yet
+        if (layer.opacity <= 0) return;
+
         const segmentBaseSize = 10;
         const segmentCount = Math.round(this.wHypot / segmentBaseSize);
         const segmentSize = this.wHypot / segmentCount;
@@ -111,6 +119,7 @@ class AboutWaves {
         const noiseZoom = 0.025; // Slightly tighter noise for smoother waves
 
         ctx.save();
+        ctx.globalAlpha = layer.opacity; // Apply opacity for fade-in effect
         ctx.translate(this.wCenterX, this.wCenterY);
         ctx.rotate(this.angle);
 
@@ -147,12 +156,35 @@ class AboutWaves {
 
     update(t) {
         if (t) {
+            // Track start time for reveal animation
+            if (!this.startTime) {
+                this.startTime = t;
+            }
+
+            const elapsedTime = (t - this.startTime) / 1000; // Convert to seconds
+
             this.timestamp = t / 5000;
             this.angle += 0.0005; // Slower rotation for smoother effect
 
             let shiftNeeded = false;
 
             this.layers.forEach(layer => {
+                // Update reveal opacity with fade-in animation
+                const revealStartTime = layer.revealDelay;
+                const revealEndTime = revealStartTime + this.config.revealDuration;
+
+                if (elapsedTime >= revealStartTime) {
+                    if (elapsedTime >= revealEndTime) {
+                        layer.opacity = 1;
+                    } else {
+                        // Ease-in-out animation for smooth fade
+                        const progress = (elapsedTime - revealStartTime) / this.config.revealDuration;
+                        layer.opacity = progress < 0.5
+                            ? 2 * progress * progress
+                            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                    }
+                }
+
                 layer.progress += 0.0008; // Slower wave movement
 
                 if (layer.progress > 1 + (1 / (this.layers.length - 1))) {
