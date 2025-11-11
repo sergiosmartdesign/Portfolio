@@ -676,9 +676,10 @@ nav {
 /* --- CYBERPUNK PANEL ANIMATION (INTRO) --- */
 .cyber-panel {
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 0;
-    height: 100%;
+    transform: translateY(-50%);
+    height: 200px;
     display: flex;
     align-items: stretch;
     z-index: 10; /* Above grid/gradient, below VHS effects */
