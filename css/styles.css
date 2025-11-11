@@ -554,18 +554,8 @@ nav {
     position: relative;
 }
 
-#aboutCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0; /* Background layer - waves */
-}
-
 #about .scene {
     position: relative;
-    z-index: 2; /* Content layer - above waves, below VHS */
     width: 100%;
     height: 100%;
     perspective: 600px; /* Keep 3D perspective for DNA text */
@@ -619,7 +609,16 @@ nav {
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    background-color: #bb580c;
+    position: relative;
+}
+
+#illustrationCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Background layer - waves */
 }
 
 /* --- SECCIÓN CONTACT --- */

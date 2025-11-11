@@ -47,10 +47,10 @@ class AboutWaves {
             revealStagger: 0.3  // Delay between each layer reveal in seconds
         };
 
-        this.canvas = document.getElementById('aboutCanvas');
+        this.canvas = document.getElementById('illustrationCanvas');
 
         if (!this.canvas) {
-            console.warn('About canvas not found');
+            console.warn('Illustration canvas not found');
             return;
         }
 
@@ -112,9 +112,9 @@ class AboutWaves {
     }
 
     setUpIntersectionObserver() {
-        // Create observer to trigger animation when about section is visible
-        const aboutSection = document.getElementById('about');
-        if (!aboutSection) return;
+        // Create observer to trigger animation when illustration section is visible
+        const illustrationSection = document.getElementById('illustration');
+        if (!illustrationSection) return;
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -131,7 +131,7 @@ class AboutWaves {
             threshold: 0.2 // Trigger when 20% of the section is visible
         });
 
-        observer.observe(aboutSection);
+        observer.observe(illustrationSection);
     }
 
     startRevealAnimation() {
