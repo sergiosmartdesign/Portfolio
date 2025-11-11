@@ -698,7 +698,6 @@ nav {
     border: 1px solid #ff3c00;
     backdrop-filter: saturate(180%) blur(6px);
     transform: translateX(-100%);
-    transform-origin: center; /* Keep center fixed during stretch */
     mask: linear-gradient(#fff, hsl(0 0% 100% / 0.6) 15% 95%, #fff);
 }
 
@@ -708,13 +707,16 @@ nav {
 
 @keyframes sidebarSlideAndStretch {
     0% {
-        transform: translateX(-100%) scaleY(1);
+        transform: translateX(-100%) translateY(0);
+        height: 200px;
     }
     33% {
-        transform: translateX(0) scaleY(1);
+        transform: translateX(0) translateY(0);
+        height: 200px;
     }
     100% {
-        transform: translateX(0) scaleY(4);
+        transform: translateX(0) translateY(-300px);
+        height: 800px;
     }
 }
 
