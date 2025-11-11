@@ -597,6 +597,10 @@ nav {
     perspective: 600px; /* Keep 3D perspective for DNA text */
     transform-style: preserve-3d;
     z-index: 5; /* Above grid and gradient */
+    display: flex;
+    justify-content: flex-start; /* Align to left instead of center */
+    align-items: center;
+    padding-left: 10%; /* Add padding from left edge */
 }
 
 #about .scanlines {
