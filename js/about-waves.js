@@ -61,9 +61,11 @@ class AboutWaves {
         this.timestamp = 0;
         this.startTime = null;
         this.animationFrame = null;
+        this.hasStarted = false; // Track if animation has been triggered
 
         this.setUpVars();
         this.setUpListeners();
+        this.setUpIntersectionObserver();
         this.update();
     }
 
@@ -106,6 +108,35 @@ class AboutWaves {
         window.addEventListener('resize', () => {
             this.setUpVars();
         });
+    }
+
+    setUpIntersectionObserver() {
+        // Create observer to trigger animation when about section is visible
+        const aboutSection = document.getElementById('about');
+        if (!aboutSection) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Trigger animation when section becomes visible (at least 20% visible)
+                if (entry.isIntersecting && entry.intersectionRatio > 0.2 && !this.hasStarted) {
+                    this.startRevealAnimation();
+                }
+            });
+        }, {
+            threshold: 0.2 // Trigger when 20% of the section is visible
+        });
+
+        observer.observe(aboutSection);
+    }
+
+    startRevealAnimation() {
+        this.hasStarted = true;
+        // Reset all layers to invisible
+        this.layers.forEach(layer => {
+            layer.opacity = 0;
+        });
+        // Reset start time to trigger the reveal from now
+        this.startTime = null;
     }
 
     drawLayer(ctx, layer) {
@@ -156,12 +187,10 @@ class AboutWaves {
 
     update(t) {
         if (t) {
-            // Track start time for reveal animation
-            if (!this.startTime) {
+            // Only start timer if animation has been triggered
+            if (this.hasStarted && !this.startTime) {
                 this.startTime = t;
             }
-
-            const elapsedTime = (t - this.startTime) / 1000; // Convert to seconds
 
             this.timestamp = t / 5000;
             this.angle += 0.0005; // Slower rotation for smoother effect
@@ -169,19 +198,24 @@ class AboutWaves {
             let shiftNeeded = false;
 
             this.layers.forEach(layer => {
-                // Update reveal opacity with fade-in animation
-                const revealStartTime = layer.revealDelay;
-                const revealEndTime = revealStartTime + this.config.revealDuration;
+                // Only run reveal animation if hasStarted is true
+                if (this.hasStarted && this.startTime) {
+                    const elapsedTime = (t - this.startTime) / 1000; // Convert to seconds
 
-                if (elapsedTime >= revealStartTime) {
-                    if (elapsedTime >= revealEndTime) {
-                        layer.opacity = 1;
-                    } else {
-                        // Ease-in-out animation for smooth fade
-                        const progress = (elapsedTime - revealStartTime) / this.config.revealDuration;
-                        layer.opacity = progress < 0.5
-                            ? 2 * progress * progress
-                            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                    // Update reveal opacity with fade-in animation
+                    const revealStartTime = layer.revealDelay;
+                    const revealEndTime = revealStartTime + this.config.revealDuration;
+
+                    if (elapsedTime >= revealStartTime) {
+                        if (elapsedTime >= revealEndTime) {
+                            layer.opacity = 1;
+                        } else {
+                            // Ease-in-out animation for smooth fade
+                            const progress = (elapsedTime - revealStartTime) / this.config.revealDuration;
+                            layer.opacity = progress < 0.5
+                                ? 2 * progress * progress
+                                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                        }
                     }
                 }
 
