@@ -552,6 +552,42 @@ nav {
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
     position: relative;
+    background: transparent;
+}
+
+/* Grid background - same as intro */
+#about::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    z-index: 1;
+}
+
+/* Neon color gradient - same as intro */
+#about::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 0, 255, 0.1),
+        rgba(0, 255, 255, 0.1),
+        rgba(255, 255, 0, 0.1)
+    );
+    mix-blend-mode: screen;
+    animation: colorShift 6s ease-in-out infinite;
+    z-index: 2;
+    pointer-events: none;
 }
 
 #about .scene {
@@ -560,6 +596,7 @@ nav {
     height: 100%;
     perspective: 600px; /* Keep 3D perspective for DNA text */
     transform-style: preserve-3d;
+    z-index: 5; /* Above grid and gradient */
 }
 
 #about .scanlines {
@@ -568,7 +605,7 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3; /* VHS scanlines layer */
+    z-index: 6; /* VHS scanlines layer - above content */
     pointer-events: none;
 }
 
@@ -578,7 +615,7 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 4; /* VHS static layer - topmost */
+    z-index: 7; /* VHS static layer - topmost */
     pointer-events: none;
 }
 /* --- SECCIÓN WEB --- */
