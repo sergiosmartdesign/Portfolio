@@ -880,32 +880,22 @@ nav {
     clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
 }
 
-/* Diagonal connector at bottom-right corner */
+/* Diagonal connector at bottom-right corner - matches panel corner style */
 .panel-line--diagonal {
     bottom: 0;
-    left: calc(100vw - 50px);
-    height: 8px;
-    width: 8px;
-    background: transparent;
-}
-
-.panel-line--diagonal::after {
-    content: '';
-    position: absolute;
+    left: calc(100vw - 98px); /* Start where bottom line ends */
     height: 2px;
-    width: 200%;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    transform: rotate(135deg);
+    width: 48px; /* Horizontal segment connecting to right line */
     background: #ff3c00;
-    transform-origin: center;
-    scale: 0;
+    opacity: 0;
+    transform-origin: left;
+    scale: 0 1;
 }
 
 /* Hover glow effects for frame lines */
 .panel-line--top:hover,
-.panel-line--bottom:hover {
+.panel-line--bottom:hover,
+.panel-line--diagonal:hover {
     box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
@@ -935,8 +925,8 @@ nav {
     animation: fadeIn 0.3s ease-out 1.6s forwards;
 }
 
-.cyber-panel.active .panel-line--diagonal::after {
-    animation: drawDiagonal 0.3s ease-out 1.9s forwards;
+.cyber-panel.active .panel-line--diagonal {
+    animation: drawLineHorizontal 0.3s ease-out 1.9s forwards;
 }
 
 @keyframes drawLineHorizontal {
@@ -958,15 +948,6 @@ nav {
     100% {
         opacity: 1;
         scale: 1 1;
-    }
-}
-
-@keyframes drawDiagonal {
-    0% {
-        scale: 0;
-    }
-    100% {
-        scale: 1;
     }
 }
 
