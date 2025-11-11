@@ -901,7 +901,7 @@ nav {
     height: 2px;
     background: #ff3c00;
     transform-origin: left bottom;
-    transform: rotate(30.3deg); /* arctan(62/106) ≈ 30.3 degrees */
+    transform: rotate(-30.3deg); /* Upward slope from left to right: / */
     scale: 0 1;
     transition: box-shadow 0.3s ease;
 }
