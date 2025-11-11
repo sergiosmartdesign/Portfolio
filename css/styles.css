@@ -847,21 +847,21 @@ nav {
     scale: 0 1;
 }
 
-/* Bottom horizontal line - stops before diagonal corner */
+/* Bottom horizontal line - stops 50px shorter */
 .panel-line--bottom {
     bottom: 0;
     left: 100%;
     height: 2px;
-    width: calc(100vw - 106px); /* Shorter to leave space for diagonal */
+    width: calc(100vw - 156px); /* 50px shorter for diagonal space */
     transform-origin: left;
     scale: 0 1;
 }
 
-/* Right vertical line with decorative mini bar - starts after diagonal */
+/* Right vertical line with decorative mini bar - starts 50px higher */
 .panel-line--right {
-    bottom: 12px; /* Start above the diagonal corner */
+    bottom: 62px; /* Start 50px higher from previous position */
     left: calc(100vw - 50px);
-    height: calc(100% - 12px);
+    height: calc(100% - 62px);
     width: 2px;
     transform-origin: bottom;
     scale: 1 0;
@@ -880,15 +880,16 @@ nav {
     clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
 }
 
-/* Diagonal connector at bottom-right corner - creates clipped corner */
+/* Diagonal connector at bottom-right corner - connects bottom and right lines */
 .panel-line--diagonal {
     bottom: 0;
-    left: calc(100vw - 106px); /* Start where bottom line ends */
-    width: 17px; /* Diagonal length (approx 12px at 45deg) */
-    height: 17px;
+    left: calc(100vw - 156px); /* Start where bottom line ends */
+    width: 106px; /* Horizontal span to right line */
+    height: 62px; /* Vertical span to right line */
     background: transparent;
     opacity: 0;
     overflow: visible;
+    pointer-events: auto;
 }
 
 .panel-line--diagonal::after {
@@ -896,12 +897,12 @@ nav {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: 123px; /* Diagonal length: sqrt(106^2 + 62^2) */
     height: 2px;
     background: #ff3c00;
-    transform-origin: left;
-    transform: rotate(-45deg);
-    scale: 0;
+    transform-origin: left bottom;
+    transform: rotate(30.3deg); /* arctan(62/106) ≈ 30.3 degrees */
+    scale: 0 1;
     transition: box-shadow 0.3s ease;
 }
 
@@ -946,7 +947,7 @@ nav {
 }
 
 .cyber-panel.active .panel-line--diagonal::after {
-    animation: drawDiagonal 0.3s ease-out 1.7s forwards;
+    animation: drawLineHorizontal 0.4s ease-out 1.7s forwards;
 }
 
 @keyframes drawLineHorizontal {
@@ -977,14 +978,5 @@ nav {
     }
     100% {
         opacity: 0.8;
-    }
-}
-
-@keyframes drawDiagonal {
-    0% {
-        scale: 0;
-    }
-    100% {
-        scale: 1;
     }
 }
