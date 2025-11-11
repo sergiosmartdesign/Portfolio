@@ -440,3 +440,23 @@ function initContactExitAnimation() {
 window.addEventListener('DOMContentLoaded', () => {
   initContactExitAnimation();
 });
+
+// ====================================================================
+// PARTE 8: CYBERPUNK PANEL AUTO-TRIGGER
+// ====================================================================
+
+function initCyberPanelAnimation() {
+  const panel = document.getElementById('introCyberPanel');
+  
+  if (!panel) return;
+
+  // Trigger panel slide-in after 2 seconds
+  setTimeout(() => {
+    panel.classList.add('active');
+  }, 2000);
+}
+
+// Initialize cyber panel animation
+window.addEventListener('DOMContentLoaded', () => {
+  initCyberPanelAnimation();
+});
