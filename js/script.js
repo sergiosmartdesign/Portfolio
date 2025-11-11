@@ -342,20 +342,20 @@ window.addEventListener('DOMContentLoaded', () => {
 // PARTE 7: INTRO EXIT ANIMATION - MERGE COLUMNS TO RED
 // ====================================================================
 
-function initIntroExitAnimation() {
-  const introSection = document.querySelector('#intro');
+function initContactExitAnimation() {
+  const contactSection = document.querySelector('#contact');
   const wrapper = document.querySelector('.wrapper');
 
-  if (!introSection || !wrapper) return;
+  if (!contactSection || !wrapper) return;
 
-  // Intersection Observer to detect when leaving intro section
+  // Intersection Observer to detect when leaving contact section
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-        // User scrolled past intro section (going down)
+        // User scrolled past contact section (going down)
         activateExitAnimation();
       } else if (entry.isIntersecting) {
-        // User is back in intro section
+        // User is back in contact section
         deactivateExitAnimation();
       }
     });
@@ -364,7 +364,7 @@ function initIntroExitAnimation() {
     rootMargin: '0px'
   });
 
-  observer.observe(introSection);
+  observer.observe(contactSection);
 
   function activateExitAnimation() {
     const squares = document.querySelectorAll('.item');
@@ -436,7 +436,7 @@ function initIntroExitAnimation() {
   }
 }
 
-// Initialize intro exit animation
+// Initialize contact exit animation
 window.addEventListener('DOMContentLoaded', () => {
-  initIntroExitAnimation();
+  initContactExitAnimation();
 });

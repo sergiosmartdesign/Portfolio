@@ -665,10 +665,11 @@ nav {
 
 /* --- SECCIÓN CONTACT --- */
 #contact {
+    position: relative;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    background-color: #0c7bbb;
+    background: transparent;
 }
