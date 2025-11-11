@@ -565,7 +565,15 @@ nav {
 
 #about .scene {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+}
+
+#about .scanlines {
+    z-index: 3;
+}
+
+#about .vhs-static {
+    z-index: 4;
 }
 /* --- SECCIÓN WEB --- */
 #web {
