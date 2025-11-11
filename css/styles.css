@@ -692,9 +692,9 @@ nav {
 
 /* Sidebar that slides in first */
 .cyber-panel__sidebar {
-    width: 1rem;
-    background: var(--accent, #57C5C5);
-    border: 2px solid var(--accent, #57C5C5);
+    width: 8px;
+    background: #ff3c00;
+    border: 1px solid #ff3c00;
     backdrop-filter: saturate(180%) blur(6px);
     transform: translateX(-100%);
     transition: transform 0.3s ease-out;
@@ -709,7 +709,7 @@ nav {
 .cyber-panel__body {
     width: clamp(280px, 40vw, 420px);
     position: relative;
-    transform: translateX(calc(-100% - 1rem));
+    transform: translateX(calc(-100% - 8px));
     transition: transform 0.3s ease-out 0.3s; /* Slides in after sidebar */
 }
 
@@ -723,7 +723,7 @@ nav {
     width: 100%;
     height: 100%;
     backdrop-filter: saturate(180%) blur(10px);
-    background: light-dark(hsl(0 0% 100% / 0.4), hsl(0 0% 0% / 0.4));
+    background: rgba(0, 0, 0, 0.6);
     clip-path: polygon(
         0 0,
         100% 0,
@@ -731,16 +731,15 @@ nav {
         calc(100% - 12px) 100%,
         0% 100%
     );
-    border: 2px solid var(--accent, #57C5C5);
+    border: 2px solid #ff3c00;
 }
 
 /* Accent border effect */
 .cyber-panel__backdrop::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: var(--accent, #57C5C5);
-    border: 2px solid transparent;
+    inset: -2px;
+    background: linear-gradient(135deg, #ff3c00 0%, #CA6702 100%);
     clip-path: polygon(
         0 0,
         100% 0,
@@ -748,11 +747,8 @@ nav {
         calc(100% - 12px) 100%,
         0% 100%
     );
-    mask: linear-gradient(#0000 0% 100%), linear-gradient(#fff 0% 100%);
-    mask-clip: padding-box, border-box;
-    mask-repeat: no-repeat;
-    mask-composite: intersect;
-    z-index: 2;
+    z-index: -1;
+    opacity: 0.3;
 }
 
 /* Accent tab on right side */
@@ -763,8 +759,8 @@ nav {
     top: 2rem;
     width: 4px;
     height: 40%;
-    background: var(--accent, #57C5C5);
-    opacity: 0.7;
+    background: #ff3c00;
+    opacity: 0.8;
     clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
 }
 
@@ -786,17 +782,18 @@ nav {
     left: 50%;
     translate: -50% -50%;
     transform: rotate(135deg);
-    background: var(--accent, #57C5C5);
+    background: #ff3c00;
 }
 
 /* Version number in corner */
 .version {
     position: absolute;
-    right: 4px;
-    top: 4px;
-    font-size: 8px;
-    opacity: 0.5;
+    right: 8px;
+    top: 8px;
+    font-size: 10px;
+    opacity: 0.8;
     font-family: 'Workbench', monospace, sans-serif;
-    color: var(--accent, #57C5C5);
+    color: #ff3c00;
     z-index: 10;
+    letter-spacing: 1px;
 }
