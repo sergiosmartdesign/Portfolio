@@ -560,20 +560,36 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: 0; /* Background layer - waves */
 }
 
 #about .scene {
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Content layer - above waves, below VHS */
+    width: 100%;
+    height: 100%;
+    perspective: 600px; /* Keep 3D perspective for DNA text */
+    transform-style: preserve-3d;
 }
 
 #about .scanlines {
-    z-index: 3;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3; /* VHS scanlines layer */
+    pointer-events: none;
 }
 
 #about .vhs-static {
-    z-index: 4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4; /* VHS static layer - topmost */
+    pointer-events: none;
 }
 /* --- SECCIÓN WEB --- */
 #web {
