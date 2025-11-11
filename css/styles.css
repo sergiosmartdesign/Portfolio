@@ -699,15 +699,27 @@ nav {
     backdrop-filter: saturate(180%) blur(6px);
     transform: translateX(-100%);
     mask: linear-gradient(#fff, hsl(0 0% 100% / 0.6) 15% 95%, #fff);
+    transition: transform 0.3s ease-out;
 }
 
 .cyber-panel.active .cyber-panel__sidebar {
-    animation: sidebarSlideAndStretch 0.9s ease-out forwards;
+    transform: translateX(0);
 }
 
-@keyframes sidebarSlideAndStretch {
+/* Main panel body - slides in then stretches */
+.cyber-panel__body {
+    width: 36px;
+    position: relative;
+    transform: translateX(calc(-100% - 4px));
+}
+
+.cyber-panel.active .cyber-panel__body {
+    animation: panelSlideAndStretch 0.9s ease-out 0.3s forwards;
+}
+
+@keyframes panelSlideAndStretch {
     0% {
-        transform: translateX(-100%) translateY(0);
+        transform: translateX(calc(-100% - 4px)) translateY(0);
         height: 200px;
     }
     33% {
@@ -718,18 +730,6 @@ nav {
         transform: translateX(0) translateY(-300px);
         height: 800px;
     }
-}
-
-/* Main panel body */
-.cyber-panel__body {
-    width: 36px;
-    position: relative;
-    transform: translateX(calc(-100% - 4px));
-    transition: transform 0.3s ease-out 0.3s; /* Slides in after sidebar */
-}
-
-.cyber-panel.active .cyber-panel__body {
-    transform: translateX(0);
 }
 
 /* Panel backdrop with blur and clipped corners */
