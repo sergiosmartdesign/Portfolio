@@ -555,7 +555,21 @@ nav {
     background: transparent;
 }
 
-/* Grid background - same as intro */
+/* DNA effect in background - lowest layer */
+#about .scene {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    perspective: 600px; /* Keep 3D perspective for DNA text */
+    transform-style: preserve-3d;
+    z-index: 0; /* Behind everything */
+    display: flex !important;
+    justify-content: flex-start !important; /* Align to left instead of center */
+    align-items: center !important;
+    padding-left: 10%; /* Add padding from left edge */
+}
+
+/* Grid background - layer 1 */
 #about::before {
     content: "";
     position: absolute;
@@ -570,7 +584,7 @@ nav {
     z-index: 1;
 }
 
-/* Neon color gradient - same as intro */
+/* Neon color gradient - layer 2 */
 #about::after {
     content: "";
     position: absolute;
@@ -590,26 +604,13 @@ nav {
     pointer-events: none;
 }
 
-#about .scene {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    perspective: 600px; /* Keep 3D perspective for DNA text */
-    transform-style: preserve-3d;
-    z-index: 5; /* Above grid and gradient */
-    display: flex;
-    justify-content: flex-start; /* Align to left instead of center */
-    align-items: center;
-    padding-left: 10%; /* Add padding from left edge */
-}
-
 #about .scanlines {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 6; /* VHS scanlines layer - above content */
+    z-index: 3; /* VHS scanlines layer */
     pointer-events: none;
 }
 
@@ -619,7 +620,7 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 7; /* VHS static layer - topmost */
+    z-index: 4; /* VHS static layer - topmost */
     pointer-events: none;
 }
 /* --- SECCIÓN WEB --- */
