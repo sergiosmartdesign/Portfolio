@@ -698,12 +698,15 @@ nav {
     border: 1px solid #ff3c00;
     backdrop-filter: saturate(180%) blur(6px);
     transform: translateX(-100%);
+    transform-origin: center; /* Keep center fixed during stretch */
     transition: transform 0.3s ease-out;
     mask: linear-gradient(#fff, hsl(0 0% 100% / 0.6) 15% 95%, #fff);
 }
 
 .cyber-panel.active .cyber-panel__sidebar {
-    transform: translateX(0);
+    transform: translateX(0) scaleY(4); /* Slide in, then stretch to 800px (200px * 4) */
+    transition: transform 0.3s ease-out, /* Slide in first */
+                transform 0.6s ease-out 0.3s; /* Then stretch after 0.3s delay */
 }
 
 /* Main panel body */
