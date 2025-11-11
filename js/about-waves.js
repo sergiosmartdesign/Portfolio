@@ -43,8 +43,8 @@ class AboutWaves {
                 '#ff6b35', // Lighter orange
             ],
             numOfLayers: 8,
-            revealDuration: 0.5, // Duration in seconds for each layer to fade in
-            revealStagger: 0.15  // Delay between each layer reveal in seconds
+            revealDuration: 1.0, // Duration in seconds for each layer to fade in
+            revealStagger: 0.3  // Delay between each layer reveal in seconds
         };
 
         this.canvas = document.getElementById('aboutCanvas');
