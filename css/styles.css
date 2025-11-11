@@ -728,7 +728,7 @@ nav {
     }
     100% {
         transform: translateX(0) translateY(-300px);
-        height: 800px;
+        height: 870px;
     }
 }
 
