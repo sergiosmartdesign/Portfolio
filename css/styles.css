@@ -716,6 +716,11 @@ nav {
     width: 36px;
     position: relative;
     transform: translateX(calc(-100% - 4px));
+    cursor: pointer;
+}
+
+.cyber-panel__body:hover .cyber-panel__backdrop {
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
 .cyber-panel.active .cyber-panel__body {
@@ -752,6 +757,7 @@ nav {
         0% 100%
     );
     border: 2px solid #ff3c00;
+    transition: box-shadow 0.3s ease;
 }
 
 /* Accent border effect */
