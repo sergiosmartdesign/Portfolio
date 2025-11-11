@@ -566,7 +566,7 @@ nav {
     display: flex !important;
     justify-content: flex-start !important; /* Align to left instead of center */
     align-items: center !important;
-    padding-left: 10%; /* Add padding from left edge */
+    padding-left: calc(10% + 100px); /* Add padding from left edge */
 }
 
 /* Grid background - layer 1 */
