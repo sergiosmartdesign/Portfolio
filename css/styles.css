@@ -1110,7 +1110,17 @@ nav {
     top: 30px;
     left: 35px;
     background-color: #ff3c00;
-    animation: aiFace 4s linear infinite;
+    animation: aiFace 4s linear infinite, hideFaceAfterGlitch 16s ease-out 3s forwards;
+}
+
+/* Hide CSS face and show SVG after glitch */
+@keyframes hideFaceAfterGlitch {
+    0%, 90% {
+        opacity: 1;
+    }
+    90.5%, 100% {
+        opacity: 0;
+    }
 }
 
 @keyframes assistantSequence {
@@ -1119,24 +1129,28 @@ nav {
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        background-image: none;
     }
     3% {
         opacity: 1;
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        background-image: none;
     }
     75% {
         opacity: 1;
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        background-image: none;
     }
     85% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        background-image: none;
     }
     86%, 87% {
         opacity: 1;
@@ -1144,6 +1158,7 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
         transform: translate(-3px, 0);
+        background-image: none;
     }
     87.5%, 88.5% {
         opacity: 1;
@@ -1151,6 +1166,7 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(3px, 0);
+        background-image: none;
     }
     89%, 90% {
         opacity: 1;
@@ -1158,6 +1174,7 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
         transform: translate(0, 2px);
+        background-image: none;
     }
     90.5% {
         opacity: 1;
@@ -1165,13 +1182,21 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(0, 0);
+        background-image: url('../images/happy1.svg');
+        background-position: center 25px;
+        background-size: 70px auto;
+        background-repeat: no-repeat;
     }
     100% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        filter: hue-rotate(-160deg) drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) drop-shadow(0 0 40px rgba(255, 60, 0, 0.2));
         transform: translate(0, 0);
+        background-image: url('../images/happy1.svg');
+        background-position: center 25px;
+        background-size: 70px auto;
+        background-repeat: no-repeat;
     }
 }
 
