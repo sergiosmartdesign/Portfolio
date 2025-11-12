@@ -196,6 +196,34 @@ nav {
     opacity: 0.8; /* Slightly transparent to blend with other effects */
 }
 
+/* --- 3D PARTICLE ORB --- */
+.orb-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    animation: orb-rotate 14s infinite linear;
+    z-index: 1; /* Above particle canvas (0), below VHS effects (3-4) */
+    pointer-events: none;
+}
+
+@keyframes orb-rotate {
+    100% {
+        transform: rotateY(360deg) rotateX(360deg);
+    }
+}
+
+.orb-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    opacity: 0;
+}
+
 /* --- ROTATING SQUARES GRID BACKGROUND --- */
 .wrapper {
     position: absolute;
