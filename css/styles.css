@@ -1151,40 +1151,34 @@ nav {
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
-    75% {
-        opacity: 0;
-        bottom: 150px;
-        right: 60px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    85% {
+    30% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
-    86%, 87% {
+    31%, 32% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
         transform: translate(-3px, 0);
     }
-    87.5%, 88.5% {
+    32.5%, 33.5% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(3px, 0);
     }
-    89%, 90% {
+    34%, 35% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
         transform: translate(0, 2px);
     }
-    90.5% {
+    35.5% {
         opacity: 0;
         bottom: 50px;
         right: 30px;
@@ -1207,12 +1201,12 @@ nav {
         bottom: 150px;
         right: 60px;
     }
-    85% {
+    30% {
         opacity: 0;
         bottom: 150px;
         right: 60px;
     }
-    90.5% {
+    35.5% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
