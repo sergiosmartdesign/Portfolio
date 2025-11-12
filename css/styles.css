@@ -986,8 +986,8 @@ nav {
 /* --- AI ASSISTANT TAMAGOTCHI --- */
 #ai-assistant {
     position: fixed;
-    width: 120px;
-    height: 100px;
+    width: 200px;
+    height: 160px;
     bottom: 150px;
     right: 60px;
     z-index: 15;
@@ -1132,14 +1132,14 @@ nav {
         background-image: none;
     }
     3% {
-        opacity: 1;
+        opacity: 0;
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         background-image: none;
     }
     75% {
-        opacity: 1;
+        opacity: 0;
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
@@ -1182,7 +1182,7 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(0, 0);
-        background: url('../images/happy1.svg') center 25px / 70px auto no-repeat;
+        background: url('../images/happy1.svg') center center / 140px auto no-repeat;
     }
     100% {
         opacity: 1;
@@ -1190,7 +1190,7 @@ nav {
         right: 30px;
         filter: hue-rotate(-160deg) drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) drop-shadow(0 0 40px rgba(255, 60, 0, 0.2));
         transform: translate(0, 0);
-        background: url('../images/happy1.svg') center 25px / 70px auto no-repeat;
+        background: url('../images/happy1.svg') center center / 140px auto no-repeat;
     }
 }
 
