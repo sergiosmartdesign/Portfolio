@@ -460,3 +460,36 @@ function initCyberPanelAnimation() {
 window.addEventListener('DOMContentLoaded', () => {
   initCyberPanelAnimation();
 });
+
+// ====================================================================
+// PARTE 9: AI ASSISTANT SPEECH BUBBLES
+// ====================================================================
+
+function initAIAssistant() {
+  const assistant = document.getElementById('ai-assistant');
+
+  if (!assistant) return;
+
+  const messages = [
+    { text: "ohh!", delay: 3500, duration: 2000 },
+    { text: "hello!!", delay: 6000, duration: 2000 },
+    { text: "sorry, I appeared in the wrong position.", delay: 9000, duration: 3500 },
+    { text: "let me fix that..", delay: 13000, duration: 2500 }
+  ];
+
+  messages.forEach(msg => {
+    setTimeout(() => {
+      assistant.setAttribute('data-message', msg.text);
+    }, msg.delay);
+  });
+
+  // Clear message after sequence
+  setTimeout(() => {
+    assistant.removeAttribute('data-message');
+  }, 16000);
+}
+
+// Initialize AI assistant
+window.addEventListener('DOMContentLoaded', () => {
+  initAIAssistant();
+});

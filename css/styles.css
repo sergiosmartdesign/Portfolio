@@ -952,7 +952,7 @@ nav {
     right: 60px;
     z-index: 15;
     opacity: 0;
-    animation: assistantAppear 0.5s ease-out 3s forwards;
+    animation: assistantSequence 16s ease-out 3s forwards;
     background:
     /* Screen border */
     linear-gradient(90deg, #ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
@@ -965,6 +965,53 @@ nav {
     /* Base */
     linear-gradient(#ff3c00, #ff3c00) 0 95px / 120px 5px;
     background-repeat: no-repeat;
+}
+
+/* Speech bubble */
+#ai-assistant[data-message]::after {
+    content: attr(data-message);
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 18px;
+    background: rgba(255, 60, 0, 0.95);
+    border: 2px solid #ff3c00;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 0 25px rgba(255, 60, 0, 0.6);
+    opacity: 1;
+    animation: bubbleBounce 0.3s ease-out;
+    pointer-events: none;
+}
+
+/* Speech bubble arrow (triangle) */
+#ai-assistant[data-message]::after {
+    clip-path: polygon(
+        0 0, 100% 0, 100% calc(100% - 12px),
+        calc(50% + 8px) calc(100% - 12px),
+        50% 100%,
+        calc(50% - 8px) calc(100% - 12px),
+        0 calc(100% - 12px)
+    );
+}
+
+@keyframes bubbleBounce {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px) scale(0.8);
+    }
+    70% {
+        transform: translateX(-50%) translateY(-5px) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
 }
 
 /* Animated face using box-shadow pixels */
@@ -980,14 +1027,31 @@ nav {
     animation: aiFace 4s linear infinite;
 }
 
-@keyframes assistantAppear {
+@keyframes assistantSequence {
     0% {
         opacity: 0;
-        transform: translateY(20px);
+        bottom: 150px;
+        right: 60px;
+    }
+    3% {
+        opacity: 1;
+        bottom: 150px;
+        right: 60px;
+    }
+    75% {
+        opacity: 1;
+        bottom: 150px;
+        right: 60px;
+    }
+    85% {
+        opacity: 1;
+        bottom: 30px;
+        right: 30px;
     }
     100% {
         opacity: 1;
-        transform: translateY(0);
+        bottom: 30px;
+        right: 30px;
     }
 }
 
