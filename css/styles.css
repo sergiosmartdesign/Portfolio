@@ -841,12 +841,12 @@ nav {
     box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
-/* Bottom horizontal line - stops where diagonal begins */
+/* Bottom horizontal line - extends to near right edge */
 .panel-line--bottom {
     bottom: 0;
     left: 100%;
     height: 2px;
-    width: calc(100vw - 296px); /* 200px longer - ends exactly where diagonal starts */
+    width: calc(100vw - 246px); /* Extended 50px longer */
     transform-origin: left;
     scale: 0 1;
     box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
@@ -854,9 +854,9 @@ nav {
 
 /* Right vertical line with decorative mini bar - 50% closer to right border */
 .panel-line--right {
-    bottom: 162px; /* 200px lower - start above diagonal corner */
+    bottom: 112px; /* Extended 50px lower */
     left: calc(100vw - 25px); /* 50% closer to border (was 50px) */
-    height: calc(100% - 162px); /* 200px longer */
+    height: calc(100% - 112px); /* Extended 50px longer */
     width: 2px;
     transform-origin: bottom;
     scale: 1 0;
@@ -876,32 +876,6 @@ nav {
     clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
 }
 
-/* Diagonal connector at bottom-right corner - connects bottom and right lines */
-.panel-line--diagonal {
-    bottom: 0;
-    left: calc(100vw - 296px); /* Start exactly where bottom line ends */
-    width: 271px; /* Horizontal span to right line (296 - 25) */
-    height: 162px; /* Vertical span to right line */
-    background: transparent;
-    opacity: 0;
-    overflow: visible;
-    pointer-events: auto;
-}
-
-.panel-line--diagonal::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 316px; /* Diagonal length: sqrt(271^2 + 162^2) */
-    height: 12px; /* 10px thicker than standard 2px lines */
-    background: #ff3c00;
-    transform-origin: left bottom;
-    transform: rotate(-30.9deg); /* Upward slope from left to right: / */
-    scale: 0 1;
-    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
-}
-
 /* Animate lines after panel extends */
 .cyber-panel.active .panel-line--top {
     animation: drawLineHorizontal 0.4s ease-out 1.2s forwards;
@@ -918,14 +892,6 @@ nav {
 /* Animate mini bar decoration with right line */
 .cyber-panel.active .panel-line--right::before {
     animation: fadeIn 0.3s ease-out 1.6s forwards;
-}
-
-.cyber-panel.active .panel-line--diagonal {
-    animation: fadeIn 0.1s ease-out 1.7s forwards;
-}
-
-.cyber-panel.active .panel-line--diagonal::after {
-    animation: drawLineHorizontal 0.4s ease-out 1.7s forwards;
 }
 
 @keyframes drawLineHorizontal {
