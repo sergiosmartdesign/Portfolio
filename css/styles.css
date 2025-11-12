@@ -677,7 +677,7 @@ nav {
 .cyber-panel {
     position: absolute;
     top: 50%;
-    left: 0;
+    left: 30px;
     transform: translateY(-50%);
     height: 200px;
     display: flex;
@@ -846,7 +846,7 @@ nav {
     bottom: 0;
     left: 100%;
     height: 2px;
-    width: calc(100vw - 246px); /* Extended 50px longer */
+    width: calc(100vw - 196px); /* Extended 100px longer total */
     transform-origin: left;
     scale: 0 1;
     box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
