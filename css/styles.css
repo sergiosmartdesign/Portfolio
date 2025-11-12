@@ -953,6 +953,7 @@ nav {
     z-index: 15;
     opacity: 0;
     animation: assistantSequence 16s ease-out 3s forwards;
+    filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     background:
     /* Screen border */
     linear-gradient(90deg, #ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
@@ -1033,26 +1034,60 @@ nav {
         opacity: 0;
         bottom: 150px;
         right: 60px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
     3% {
         opacity: 1;
         bottom: 150px;
         right: 60px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
     75% {
         opacity: 1;
         bottom: 150px;
         right: 60px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
     85% {
         opacity: 1;
-        bottom: 70px;
+        bottom: 50px;
         right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+    }
+    86%, 87% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
+        transform: translate(-3px, 0);
+    }
+    87.5%, 88.5% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        transform: translate(3px, 0);
+    }
+    89%, 90% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
+        transform: translate(0, 2px);
+    }
+    90.5% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        transform: translate(0, 0);
     }
     100% {
         opacity: 1;
-        bottom: 70px;
+        bottom: 50px;
         right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        transform: translate(0, 0);
     }
 }
 
