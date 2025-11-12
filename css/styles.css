@@ -699,11 +699,8 @@ nav {
     backdrop-filter: saturate(180%) blur(6px);
     transform: translateX(-100%);
     mask: linear-gradient(#fff, hsl(0 0% 100% / 0.6) 15% 95%, #fff);
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+    transition: transform 0.3s ease-out;
     cursor: pointer;
-}
-
-.cyber-panel__sidebar:hover {
     box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
@@ -717,10 +714,6 @@ nav {
     position: relative;
     transform: translateX(calc(-100% - 4px));
     cursor: pointer;
-}
-
-.cyber-panel__body:hover .cyber-panel__backdrop {
-    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
 .cyber-panel.active .cyber-panel__body {
@@ -757,7 +750,7 @@ nav {
         0% 100%
     );
     border: 2px solid #ff3c00;
-    transition: box-shadow 0.3s ease;
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
 /* Accent border effect */
@@ -842,29 +835,32 @@ nav {
     top: 0;
     left: 100%;
     height: 2px;
-    width: calc(100vw - 90px); /* From panel edge to right line position */
+    width: calc(100vw - 65px); /* From panel edge to right line position */
     transform-origin: left;
     scale: 0 1;
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
-/* Bottom horizontal line - stops 50px shorter */
+/* Bottom horizontal line - stops where diagonal begins */
 .panel-line--bottom {
     bottom: 0;
     left: 100%;
     height: 2px;
-    width: calc(100vw - 156px); /* 50px shorter for diagonal space */
+    width: calc(100vw - 196px); /* Ends exactly where diagonal starts */
     transform-origin: left;
     scale: 0 1;
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
-/* Right vertical line with decorative mini bar - starts 50px higher */
+/* Right vertical line with decorative mini bar - 50% closer to right border */
 .panel-line--right {
-    bottom: 62px; /* Start 50px higher from previous position */
-    left: calc(100vw - 50px);
+    bottom: 62px; /* Start above the diagonal corner */
+    left: calc(100vw - 25px); /* 50% closer to border (was 50px) */
     height: calc(100% - 62px);
     width: 2px;
     transform-origin: bottom;
     scale: 1 0;
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
 }
 
 /* Mini bar decoration on right line */
@@ -883,8 +879,8 @@ nav {
 /* Diagonal connector at bottom-right corner - connects bottom and right lines */
 .panel-line--diagonal {
     bottom: 0;
-    left: calc(100vw - 156px); /* Start where bottom line ends */
-    width: 106px; /* Horizontal span to right line */
+    left: calc(100vw - 196px); /* Start where bottom line ends */
+    width: 171px; /* Horizontal span to right line (196 - 25) */
     height: 62px; /* Vertical span to right line */
     background: transparent;
     opacity: 0;
@@ -897,31 +893,13 @@ nav {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 123px; /* Diagonal length: sqrt(106^2 + 62^2) */
+    width: 182px; /* Diagonal length: sqrt(171^2 + 62^2) */
     height: 12px; /* 10px thicker than standard 2px lines */
     background: #ff3c00;
     transform-origin: left bottom;
-    transform: rotate(-30.3deg); /* Upward slope from left to right: / */
+    transform: rotate(-19.95deg); /* Upward slope from left to right: / */
     scale: 0 1;
-    transition: box-shadow 0.3s ease;
-}
-
-/* Hover glow effects for frame lines */
-.panel-line--top:hover,
-.panel-line--bottom:hover {
     box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
-}
-
-.panel-line--diagonal:hover::after {
-    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
-}
-
-.panel-line--right:hover {
-    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
-}
-
-.panel-line--right:hover::before {
-    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00;
 }
 
 /* Animate lines after panel extends */
