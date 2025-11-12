@@ -1046,12 +1046,12 @@ nav {
     }
     85% {
         opacity: 1;
-        bottom: 10px;
+        bottom: 70px;
         right: 30px;
     }
     100% {
         opacity: 1;
-        bottom: 10px;
+        bottom: 70px;
         right: 30px;
     }
 }
