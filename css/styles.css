@@ -983,11 +983,11 @@ nav {
     }
 }
 
-/* --- AI ASSISTANT TAMAGOTCHI --- */
+/* --- AI ASSISTANT TAMAGOTCHI (CSS VERSION - DISAPPEARS AFTER GLITCH) --- */
 #ai-assistant {
     position: fixed;
-    width: 200px;
-    height: 160px;
+    width: 120px;
+    height: 100px;
     bottom: 150px;
     right: 60px;
     z-index: 15;
@@ -1006,6 +1006,21 @@ nav {
     /* Base */
     linear-gradient(#ff3c00, #ff3c00) 0 95px / 120px 5px;
     background-repeat: no-repeat;
+}
+
+/* --- AI ASSISTANT SVG (NEW VERSION - APPEARS AFTER GLITCH) --- */
+#ai-assistant-svg {
+    position: fixed;
+    width: 200px;
+    height: 160px;
+    bottom: 150px;
+    right: 60px;
+    z-index: 15;
+    opacity: 0;
+    animation: assistantSvgSequence 16s ease-out 3s forwards;
+    filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+    background: url('../images/happy1.svg') center center / 140px auto no-repeat;
+    pointer-events: none;
 }
 
 /* Speech bubble - positioned at LEFT of assistant */
@@ -1129,28 +1144,24 @@ nav {
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-        background-image: none;
     }
     3% {
         opacity: 0;
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-        background-image: none;
     }
     75% {
         opacity: 0;
         bottom: 150px;
         right: 60px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-        background-image: none;
     }
     85% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-        background-image: none;
     }
     86%, 87% {
         opacity: 1;
@@ -1158,7 +1169,6 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
         transform: translate(-3px, 0);
-        background-image: none;
     }
     87.5%, 88.5% {
         opacity: 1;
@@ -1166,7 +1176,6 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(3px, 0);
-        background-image: none;
     }
     89%, 90% {
         opacity: 1;
@@ -1174,23 +1183,46 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
         transform: translate(0, 2px);
-        background-image: none;
+    }
+    90.5% {
+        opacity: 0;
+        bottom: 50px;
+        right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        transform: translate(0, 0);
+    }
+    100% {
+        opacity: 0;
+        bottom: 50px;
+        right: 30px;
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        transform: translate(0, 0);
+    }
+}
+
+/* SVG Assistant Animation - Appears after glitch */
+@keyframes assistantSvgSequence {
+    0% {
+        opacity: 0;
+        bottom: 150px;
+        right: 60px;
+    }
+    85% {
+        opacity: 0;
+        bottom: 150px;
+        right: 60px;
     }
     90.5% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-        transform: translate(0, 0);
-        background: url('../images/happy1.svg') center center / 140px auto no-repeat;
     }
     100% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: hue-rotate(-160deg) drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) drop-shadow(0 0 40px rgba(255, 60, 0, 0.2));
-        transform: translate(0, 0);
-        background: url('../images/happy1.svg') center center / 140px auto no-repeat;
     }
 }
 
