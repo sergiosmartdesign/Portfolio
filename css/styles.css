@@ -967,13 +967,13 @@ nav {
     background-repeat: no-repeat;
 }
 
-/* Speech bubble */
+/* Speech bubble - positioned at LEFT of assistant */
 #ai-assistant[data-message]::after {
     content: attr(data-message);
     position: absolute;
-    top: -70px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 20px;
+    right: 135px; /* Position to the left of assistant */
+    transform: none;
     padding: 12px 18px;
     background: rgba(255, 60, 0, 0.95);
     border: 2px solid #ff3c00;
@@ -985,32 +985,33 @@ nav {
     white-space: nowrap;
     box-shadow: 0 0 25px rgba(255, 60, 0, 0.6);
     opacity: 1;
-    animation: bubbleBounce 0.3s ease-out;
+    animation: bubbleBounceLeft 0.3s ease-out;
     pointer-events: none;
 }
 
-/* Speech bubble arrow (triangle) */
+/* Speech bubble arrow pointing RIGHT (toward assistant) */
 #ai-assistant[data-message]::after {
     clip-path: polygon(
-        0 0, 100% 0, 100% calc(100% - 12px),
-        calc(50% + 8px) calc(100% - 12px),
-        50% 100%,
-        calc(50% - 8px) calc(100% - 12px),
-        0 calc(100% - 12px)
+        0 0, calc(100% - 12px) 0,
+        calc(100% - 12px) calc(50% - 8px),
+        100% 50%,
+        calc(100% - 12px) calc(50% + 8px),
+        calc(100% - 12px) 100%,
+        0 100%
     );
 }
 
-@keyframes bubbleBounce {
+@keyframes bubbleBounceLeft {
     0% {
         opacity: 0;
-        transform: translateX(-50%) translateY(10px) scale(0.8);
+        transform: translateX(-10px) scale(0.8);
     }
     70% {
-        transform: translateX(-50%) translateY(-5px) scale(1.05);
+        transform: translateX(5px) scale(1.05);
     }
     100% {
         opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
+        transform: translateX(0) scale(1);
     }
 }
 
@@ -1045,12 +1046,12 @@ nav {
     }
     85% {
         opacity: 1;
-        bottom: 30px;
+        bottom: 10px;
         right: 30px;
     }
     100% {
         opacity: 1;
-        bottom: 30px;
+        bottom: 10px;
         right: 30px;
     }
 }
