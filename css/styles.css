@@ -1016,6 +1016,50 @@ nav {
     }
 }
 
+/* Glitched text overlay during glitch animation */
+#ai-assistant[data-glitch]::after {
+    content: attr(data-glitch) !important;
+    position: absolute !important;
+    top: -45px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 8px 15px !important;
+    background: rgba(0, 0, 0, 0.9) !important;
+    border: 2px solid #00ff00 !important;
+    border-radius: 0 !important;
+    color: #00ff00 !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    white-space: nowrap !important;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), inset 0 0 10px rgba(0, 255, 0, 0.3) !important;
+    opacity: 1 !important;
+    animation: glitchFlicker 0.1s infinite !important;
+    pointer-events: none !important;
+    letter-spacing: 3px !important;
+    text-shadow: 2px 2px 4px rgba(0, 255, 0, 0.5), -2px -2px 4px rgba(255, 0, 0, 0.3) !important;
+    clip-path: none !important;
+}
+
+@keyframes glitchFlicker {
+    0%, 100% {
+        opacity: 1;
+        transform: translateX(-50%) skew(0deg);
+    }
+    25% {
+        opacity: 0.8;
+        transform: translateX(-52%) skew(-2deg);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(-48%) skew(2deg);
+    }
+    75% {
+        opacity: 0.9;
+        transform: translateX(-50%) skew(-1deg);
+    }
+}
+
 /* Animated face using box-shadow pixels */
 #ai-assistant::before {
     content: "";

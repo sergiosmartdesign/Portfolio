@@ -487,6 +487,21 @@ function initAIAssistant() {
   setTimeout(() => {
     assistant.removeAttribute('data-message');
   }, 16000);
+
+  // Add glitch text during glitch animation (16s animation * 86% = 13760ms after start + 3000ms delay)
+  const glitchTexts = ['ar24@#(ND><', 'ER#0R_%$@', 'G1!TCH_<<>', '##SYS_F@!L'];
+  setTimeout(() => {
+    let glitchInterval = setInterval(() => {
+      const randomGlitch = glitchTexts[Math.floor(Math.random() * glitchTexts.length)];
+      assistant.setAttribute('data-glitch', randomGlitch);
+    }, 80);
+
+    // Stop glitch after 720ms (duration of glitch animation)
+    setTimeout(() => {
+      clearInterval(glitchInterval);
+      assistant.removeAttribute('data-glitch');
+    }, 720);
+  }, 16760);
 }
 
 // Initialize AI assistant
