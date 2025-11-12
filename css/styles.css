@@ -1182,10 +1182,7 @@ nav {
         right: 30px;
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(0, 0);
-        background-image: url('../images/happy1.svg');
-        background-position: center 25px;
-        background-size: 70px auto;
-        background-repeat: no-repeat;
+        background: url('../images/happy1.svg') center 25px / 70px auto no-repeat;
     }
     100% {
         opacity: 1;
@@ -1193,10 +1190,7 @@ nav {
         right: 30px;
         filter: hue-rotate(-160deg) drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) drop-shadow(0 0 40px rgba(255, 60, 0, 0.2));
         transform: translate(0, 0);
-        background-image: url('../images/happy1.svg');
-        background-position: center 25px;
-        background-size: 70px auto;
-        background-repeat: no-repeat;
+        background: url('../images/happy1.svg') center 25px / 70px auto no-repeat;
     }
 }
 
