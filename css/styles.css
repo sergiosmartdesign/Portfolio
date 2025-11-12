@@ -942,3 +942,105 @@ nav {
         opacity: 0.8;
     }
 }
+
+/* --- AI ASSISTANT TAMAGOTCHI --- */
+#ai-assistant {
+    position: fixed;
+    width: 120px;
+    height: 100px;
+    bottom: 150px;
+    right: 60px;
+    z-index: 15;
+    opacity: 0;
+    animation: assistantAppear 0.5s ease-out 3s forwards;
+    background:
+    /* Screen border */
+    linear-gradient(90deg, #ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
+    linear-gradient(#ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
+    /* Screen background */
+    linear-gradient(#1a1a1a, #1a1a1a) 22px 17px / 76px 46px,
+    /* Computer body */
+    linear-gradient(90deg, #ff3c00 2px, #2a2a2a 2px 98%, #ff3c00 98%) 10px 70px / 100px 25px,
+    linear-gradient(#ff3c00 2px, #2a2a2a 2px 98%, #ff3c00 98%) 10px 70px / 100px 25px,
+    /* Base */
+    linear-gradient(#ff3c00, #ff3c00) 0 95px / 120px 5px;
+    background-repeat: no-repeat;
+}
+
+/* Animated face using box-shadow pixels */
+#ai-assistant::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    top: 30px;
+    left: 35px;
+    background-color: #ff3c00;
+    animation: aiFace 4s linear infinite;
+}
+
+@keyframes assistantAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes aiFace {
+    0%, 20% {
+        /* Happy face */
+        box-shadow:
+        0 0 0 #ff3c00,
+        30px 0 0 #ff3c00,
+        6px 12px 0 #ff3c00,
+        12px 15px 0 #ff3c00,
+        18px 15px 0 #ff3c00,
+        24px 12px 0 #ff3c00;
+    }
+    25%, 45% {
+        /* Wink */
+        box-shadow:
+        -6px 0 0 #ff3c00,
+        0 0 0 #ff3c00,
+        30px 0 0 #ff3c00,
+        6px 12px 0 #ff3c00,
+        12px 15px 0 #ff3c00,
+        18px 15px 0 #ff3c00,
+        24px 12px 0 #ff3c00;
+    }
+    50%, 70% {
+        /* Thinking */
+        box-shadow:
+        0 0 0 #ff3c00,
+        30px 0 0 #ff3c00,
+        12px 12px 0 #ff3c00,
+        18px 12px 0 #ff3c00;
+    }
+    75%, 95% {
+        /* Excited */
+        box-shadow:
+        0 0 0 #ff3c00,
+        30px 0 0 #ff3c00,
+        6px 12px 0 #ff3c00,
+        12px 18px 0 #ff3c00,
+        18px 18px 0 #ff3c00,
+        24px 12px 0 #ff3c00,
+        12px 12px 0 #ff3c00,
+        18px 12px 0 #ff3c00;
+    }
+    96%, 100% {
+        /* Happy face */
+        box-shadow:
+        0 0 0 #ff3c00,
+        30px 0 0 #ff3c00,
+        6px 12px 0 #ff3c00,
+        12px 15px 0 #ff3c00,
+        18px 15px 0 #ff3c00,
+        24px 12px 0 #ff3c00;
+    }
+}
