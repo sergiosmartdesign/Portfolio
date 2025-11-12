@@ -56,7 +56,7 @@
       var zAngle = randomInt(0, 360);  // random Z rotation
       var yAngle = randomInt(0, 360);  // random Y rotation
       var hue = ((40 / config.total * i) + config.baseHue) % 360;  // hue gradient
-      var delay = (i * 0.01).toFixed(2);  // staggered start
+      var delay = (4 + i * 0.01).toFixed(2);  // 4s base delay + staggered start
 
       // Particle-specific styles
       cssRules.push(

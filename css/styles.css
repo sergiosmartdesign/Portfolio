@@ -205,7 +205,7 @@ nav {
     height: 0;
     transform-style: preserve-3d;
     perspective: 1000px;
-    animation: orb-rotate 14s infinite linear;
+    animation: orb-rotate 14s infinite linear 4s; /* 4s delay before rotation starts */
     z-index: 1; /* Above particle canvas (0), below VHS effects (3-4) */
     pointer-events: none;
 }
