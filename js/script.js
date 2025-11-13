@@ -519,8 +519,9 @@ function initSVGAssistantSequence() {
 
   if (!svgAssistant) return;
 
-  // Timing starts after glitch out (~17.5s after page load)
-  const baseDelay = 19500; // Start sequence after SVG appears
+  // Timing starts after SVG glitch entrance completes
+  // CSS glitch disappears at 90.5% (17480ms), SVG appears at 91% (17560ms), settles at 92% (17920ms)
+  const baseDelay = 18000; // Start rotation sequence after SVG fully appears
 
   // 1. laugh1.svg is already showing (from CSS)
 

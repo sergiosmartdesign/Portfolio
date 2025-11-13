@@ -1245,26 +1245,26 @@ nav {
         bottom: 50px;
         right: 30px;
     }
-    85% {
+    90.5% {
         opacity: 0;
         bottom: 50px;
         right: 30px;
     }
-    90.5% {
+    91% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: hue-rotate(90deg) drop-shadow(0 0 20px rgba(0, 255, 0, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 0, 0.6));
         transform: translate(-3px, 0);
     }
-    91% {
+    91.5% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: hue-rotate(180deg) drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 255, 0.6));
         transform: translate(3px, 0);
     }
-    91.5% {
+    92% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
