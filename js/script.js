@@ -541,15 +541,15 @@ function initSVGAssistantSequence() {
     svgAssistant.style.backgroundImage = "url('../images/flirt1.svg')";
   }, baseDelay + 1000);
 
-  // 4. Flicker between flirt1 and flirt21 (start at 2 seconds after timid)
+  // 4. Flicker between flirt1 and flirt2 (start at 2 seconds after timid)
   setTimeout(() => {
     let flickerCount = 0;
     const maxFlickers = 10;
 
     const flickerInterval = setInterval(() => {
-      // Alternate between flirt1 and flirt21
+      // Alternate between flirt1 and flirt2
       if (flickerCount % 2 === 0) {
-        svgAssistant.style.backgroundImage = "url('../images/flirt21.svg')";
+        svgAssistant.style.backgroundImage = "url('../images/flirt2.svg')";
       } else {
         svgAssistant.style.backgroundImage = "url('../images/flirt1.svg')";
       }
@@ -563,24 +563,61 @@ function initSVGAssistantSequence() {
 
   }, baseDelay + 2000);
 
-  // 5. Clear the "naked code" message before switching back
+  // 5. Clear the "naked code" message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 3500);
 
-  // 6. Switch back to laugh1.svg and show final message
+  // 6. Switch to serious1.svg
+  setTimeout(() => {
+    svgAssistant.style.backgroundImage = "url('../images/serious1.svg')";
+  }, baseDelay + 3800);
+
+  // 7. Switch to laugh1.svg and show Cyberpunk 2077 message
   setTimeout(() => {
     svgAssistant.style.backgroundImage = "url('../images/laugh1.svg')";
 
-    // Show "HAH! That's what happens..." message
+    // Show Cyberpunk 2077 reference
     setTimeout(() => {
-      svgAssistant.setAttribute('data-message', "HAH! That's what happens when you code me while 'vibing' to L0-Fi b3ats");
-    }, 500);
+      svgAssistant.setAttribute('data-message', "More glitchy than Cyberpunk 2077's launch, am I right?");
+    }, 300);
 
-  }, baseDelay + 3800);
+  }, baseDelay + 5500);
 
-  // 7. Clear final message after 4 seconds
+  // 8. Clear Cyberpunk message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 8800);
+  }, baseDelay + 9500);
+
+  // 9. Show Bethesda message and start laugh1/laugh2 flicker
+  setTimeout(() => {
+    svgAssistant.setAttribute('data-message', "Appeared in wrong position like I'm in a Bethesda game 😂");
+
+    // Start flickering between laugh1 and laugh2
+    let laughFlickerCount = 0;
+    const maxLaughFlickers = 15;
+
+    const laughFlickerInterval = setInterval(() => {
+      // Alternate between laugh1 and laugh2
+      if (laughFlickerCount % 2 === 0) {
+        svgAssistant.style.backgroundImage = "url('../images/laugh2.svg')";
+      } else {
+        svgAssistant.style.backgroundImage = "url('../images/laugh1.svg')";
+      }
+
+      laughFlickerCount++;
+
+      if (laughFlickerCount >= maxLaughFlickers) {
+        clearInterval(laughFlickerInterval);
+        // End on laugh1
+        svgAssistant.style.backgroundImage = "url('../images/laugh1.svg')";
+      }
+    }, 200); // Flicker every 200ms
+
+  }, baseDelay + 10000);
+
+  // 10. Clear final message
+  setTimeout(() => {
+    svgAssistant.removeAttribute('data-message');
+  }, baseDelay + 14000);
 }
