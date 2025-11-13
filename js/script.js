@@ -471,10 +471,10 @@ function initAIAssistant() {
   if (!assistant) return;
 
   const messages = [
-    { text: "ohh!", delay: 3500, duration: 2000 },
-    { text: "hello!!", delay: 6000, duration: 2000 },
-    { text: "sorry, I appeared in the wrong position.", delay: 9000, duration: 3500 },
-    { text: "let me fix that..", delay: 13000, duration: 2500 }
+    { text: "0hh!*", delay: 3500, duration: 2000 },
+    { text: "H3LL0", delay: 6000, duration: 2000 },
+    { text: "50rry, I app3ared in the wrr0ngggGG Position", delay: 9000, duration: 3500 },
+    { text: "L3t me Fix thathah...", delay: 13000, duration: 2500 }
   ];
 
   messages.forEach(msg => {
