@@ -987,7 +987,7 @@ nav {
 #ai-assistant {
     position: fixed;
     width: 120px;
-    height: 100px;
+    height: 110px;
     bottom: 150px;
     right: 60px;
     z-index: 15;
@@ -1000,9 +1000,17 @@ nav {
     linear-gradient(#ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
     /* Screen background */
     linear-gradient(#1a1a1a, #1a1a1a) 22px 17px / 76px 46px,
+    /* Left arm */
+    linear-gradient(#ff3c00, #ff3c00) 2px 75px / 6px 15px,
+    /* Right arm */
+    linear-gradient(#ff3c00, #ff3c00) 112px 75px / 6px 15px,
     /* Computer body */
     linear-gradient(90deg, #ff3c00 2px, #2a2a2a 2px 98%, #ff3c00 98%) 10px 70px / 100px 25px,
     linear-gradient(#ff3c00 2px, #2a2a2a 2px 98%, #ff3c00 98%) 10px 70px / 100px 25px,
+    /* Left leg */
+    linear-gradient(#ff3c00, #ff3c00) 35px 100px / 6px 10px,
+    /* Right leg */
+    linear-gradient(#ff3c00, #ff3c00) 79px 100px / 6px 10px,
     /* Base */
     linear-gradient(#ff3c00, #ff3c00) 0 95px / 120px 5px;
     background-repeat: no-repeat;
