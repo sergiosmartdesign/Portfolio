@@ -574,14 +574,14 @@ function initSVGAssistantSequence() {
 
     // Show vibe coding message
     setTimeout(() => {
-      svgAssistant.setAttribute('data-message', 'That\'s what happens when you code me like having a "VIBE CODING SESSION"');
+      svgAssistant.setAttribute('data-message', 'That\'s what happens when you try to code me like when having a "VIBE CODING SESSION"');
     }, 300);
   }, baseDelay + 3800);
 
-  // 7. Clear vibe coding message
+  // 7. Clear vibe coding message (extended duration for reading)
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 5200);
+  }, baseDelay + 7000);
 
   // 8. Switch to laugh1.svg and show Cyberpunk 2077 message
   setTimeout(() => {
@@ -592,12 +592,12 @@ function initSVGAssistantSequence() {
       svgAssistant.setAttribute('data-message', "More glitchy than Cyberpunk 2077's launch, am I right?");
     }, 300);
 
-  }, baseDelay + 5500);
+  }, baseDelay + 7500);
 
   // 9. Clear Cyberpunk message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 9500);
+  }, baseDelay + 11500);
 
   // 10. Show Bethesda message and start laugh1/laugh2 flicker
   setTimeout(() => {
@@ -624,10 +624,10 @@ function initSVGAssistantSequence() {
       }
     }, 200); // Flicker every 200ms
 
-  }, baseDelay + 10000);
+  }, baseDelay + 12000);
 
   // 11. Clear final message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 14000);
+  }, baseDelay + 16000);
 }
