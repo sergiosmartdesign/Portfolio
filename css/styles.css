@@ -987,7 +987,7 @@ nav {
 #ai-assistant {
     position: fixed;
     width: 120px;
-    height: 110px;
+    height: 90px;
     bottom: 150px;
     right: 60px;
     z-index: 15;
@@ -995,24 +995,19 @@ nav {
     animation: assistantSequence 16s ease-out 3s forwards;
     filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     background:
-    /* Screen border */
-    linear-gradient(90deg, #ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
-    linear-gradient(#ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 15px / 80px 50px,
-    /* Screen background */
-    linear-gradient(#1a1a1a, #1a1a1a) 22px 17px / 76px 46px,
-    /* Left arm */
-    linear-gradient(#ff3c00, #ff3c00) 2px 75px / 6px 15px,
-    /* Right arm */
-    linear-gradient(#ff3c00, #ff3c00) 112px 75px / 6px 15px,
-    /* Computer body */
-    linear-gradient(90deg, #ff3c00 2px, #2a2a2a 2px 98%, #ff3c00 98%) 10px 70px / 100px 25px,
-    linear-gradient(#ff3c00 2px, #2a2a2a 2px 98%, #ff3c00 98%) 10px 70px / 100px 25px,
-    /* Left leg */
-    linear-gradient(#ff3c00, #ff3c00) 35px 100px / 6px 10px,
-    /* Right leg */
-    linear-gradient(#ff3c00, #ff3c00) 79px 100px / 6px 10px,
-    /* Base */
-    linear-gradient(#ff3c00, #ff3c00) 0 95px / 120px 5px;
+    /* Screen border (head) */
+    linear-gradient(90deg, #ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 10px / 80px 50px,
+    linear-gradient(#ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 10px / 80px 50px,
+    /* Screen background (head) */
+    linear-gradient(#1a1a1a, #1a1a1a) 22px 12px / 76px 46px,
+    /* Left arm - coming from left side of screen */
+    linear-gradient(#ff3c00, #ff3c00) 12px 30px / 6px 20px,
+    /* Right arm - coming from right side of screen */
+    linear-gradient(#ff3c00, #ff3c00) 102px 30px / 6px 20px,
+    /* Left leg - coming from bottom left of screen */
+    linear-gradient(#ff3c00, #ff3c00) 35px 60px / 6px 25px,
+    /* Right leg - coming from bottom right of screen */
+    linear-gradient(#ff3c00, #ff3c00) 75px 60px / 6px 25px;
     background-repeat: no-repeat;
 }
 
