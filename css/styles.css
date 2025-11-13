@@ -1022,8 +1022,9 @@ nav {
     opacity: 0;
     animation: assistantSvgSequence 16s ease-out 3s forwards;
     filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    background: url('../images/happy1.svg') center center / 140px auto no-repeat;
+    background: url('../images/laugh1.svg') center center / 140px auto no-repeat;
     pointer-events: none;
+    transition: background-image 0.3s ease;
 }
 
 /* Speech bubble - positioned at LEFT of assistant */
@@ -1116,6 +1117,36 @@ nav {
         opacity: 0.9;
         transform: translateX(-50%) skew(-1deg);
     }
+}
+
+/* Speech bubble for SVG assistant - positioned at LEFT */
+#ai-assistant-svg[data-message]::after {
+    content: attr(data-message);
+    position: absolute;
+    top: 20px;
+    right: 215px; /* Position to the left of SVG assistant */
+    transform: none;
+    padding: 12px 18px;
+    background: rgba(255, 60, 0, 0.95);
+    border: 2px solid #ff3c00;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 0 25px rgba(255, 60, 0, 0.6);
+    opacity: 1;
+    animation: bubbleBounceLeft 0.3s ease-out;
+    pointer-events: none;
+    clip-path: polygon(
+        0 0, calc(100% - 12px) 0,
+        calc(100% - 12px) calc(50% - 8px),
+        100% 50%,
+        calc(100% - 12px) calc(50% + 8px),
+        calc(100% - 12px) 100%,
+        0 100%
+    );
 }
 
 /* Animated face using box-shadow pixels */

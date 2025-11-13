@@ -507,4 +507,79 @@ function initAIAssistant() {
 // Initialize AI assistant
 window.addEventListener('DOMContentLoaded', () => {
   initAIAssistant();
+  initSVGAssistantSequence();
 });
+
+// ====================================================================
+// PARTE 10: SVG AI ASSISTANT SEQUENCE - ROTATION AND MESSAGES
+// ====================================================================
+
+function initSVGAssistantSequence() {
+  const svgAssistant = document.getElementById('ai-assistant-svg');
+
+  if (!svgAssistant) return;
+
+  // Timing starts after glitch out (~17.5s after page load)
+  const baseDelay = 19500; // Start sequence after SVG appears
+
+  // 1. laugh1.svg is already showing (from CSS)
+
+  // 2. After 2 seconds, switch to timid1.svg
+  setTimeout(() => {
+    svgAssistant.style.backgroundImage = "url('../images/timid1.svg')";
+
+    // Show "You just saw my naked code..." message
+    setTimeout(() => {
+      svgAssistant.setAttribute('data-message', 'You just saw my naked code...');
+    }, 300);
+
+  }, baseDelay);
+
+  // 3. While showing message, switch to flirt1.svg (1 second later)
+  setTimeout(() => {
+    svgAssistant.style.backgroundImage = "url('../images/flirt1.svg')";
+  }, baseDelay + 1000);
+
+  // 4. Flicker between flirt1 and flirt21 (start at 2 seconds after timid)
+  setTimeout(() => {
+    let flickerCount = 0;
+    const maxFlickers = 10;
+
+    const flickerInterval = setInterval(() => {
+      // Alternate between flirt1 and flirt21
+      if (flickerCount % 2 === 0) {
+        svgAssistant.style.backgroundImage = "url('../images/flirt21.svg')";
+      } else {
+        svgAssistant.style.backgroundImage = "url('../images/flirt1.svg')";
+      }
+
+      flickerCount++;
+
+      if (flickerCount >= maxFlickers) {
+        clearInterval(flickerInterval);
+      }
+    }, 150); // Flicker every 150ms
+
+  }, baseDelay + 2000);
+
+  // 5. Clear the "naked code" message before switching back
+  setTimeout(() => {
+    svgAssistant.removeAttribute('data-message');
+  }, baseDelay + 3500);
+
+  // 6. Switch back to laugh1.svg and show final message
+  setTimeout(() => {
+    svgAssistant.style.backgroundImage = "url('../images/laugh1.svg')";
+
+    // Show "HAH! That's what happens..." message
+    setTimeout(() => {
+      svgAssistant.setAttribute('data-message', "HAH! That's what happens when you code me while 'vibing' to L0-Fi b3ats");
+    }, 500);
+
+  }, baseDelay + 3800);
+
+  // 7. Clear final message after 4 seconds
+  setTimeout(() => {
+    svgAssistant.removeAttribute('data-message');
+  }, baseDelay + 8800);
+}
