@@ -568,12 +568,22 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 3500);
 
-  // 6. Switch to serious1.svg
+  // 6. Switch to serious1.svg and show "vibe coding" message
   setTimeout(() => {
     svgAssistant.style.backgroundImage = "url('../images/serious1.svg')";
+
+    // Show vibe coding message
+    setTimeout(() => {
+      svgAssistant.setAttribute('data-message', 'That\'s what happens when you code me like having a "VIBE CODING SESSION"');
+    }, 300);
   }, baseDelay + 3800);
 
-  // 7. Switch to laugh1.svg and show Cyberpunk 2077 message
+  // 7. Clear vibe coding message
+  setTimeout(() => {
+    svgAssistant.removeAttribute('data-message');
+  }, baseDelay + 5200);
+
+  // 8. Switch to laugh1.svg and show Cyberpunk 2077 message
   setTimeout(() => {
     svgAssistant.style.backgroundImage = "url('../images/laugh1.svg')";
 
@@ -584,12 +594,12 @@ function initSVGAssistantSequence() {
 
   }, baseDelay + 5500);
 
-  // 8. Clear Cyberpunk message
+  // 9. Clear Cyberpunk message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 9500);
 
-  // 9. Show Bethesda message and start laugh1/laugh2 flicker
+  // 10. Show Bethesda message and start laugh1/laugh2 flicker
   setTimeout(() => {
     svgAssistant.setAttribute('data-message', "Appeared in wrong position like I'm in a Bethesda game 😂");
 
@@ -616,7 +626,7 @@ function initSVGAssistantSequence() {
 
   }, baseDelay + 10000);
 
-  // 10. Clear final message
+  // 11. Clear final message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 14000);
