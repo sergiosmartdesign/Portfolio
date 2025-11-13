@@ -1141,82 +1141,108 @@ nav {
 @keyframes assistantSequence {
     0% {
         opacity: 0;
-        bottom: 150px;
-        right: 60px;
+        bottom: 50%;
+        right: 50%;
+        transform: translate(50%, 50%);
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
     3% {
-        opacity: 0;
-        bottom: 150px;
-        right: 60px;
+        opacity: 1;
+        bottom: 50%;
+        right: 50%;
+        transform: translate(50%, 50%);
         filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
-    30% {
+    80% {
+        opacity: 1;
+        bottom: 50%;
+        right: 50%;
+        transform: translate(50%, 50%);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+    }
+    85% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    31%, 32% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
-        transform: translate(-3px, 0);
-    }
-    32.5%, 33.5% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-        transform: translate(3px, 0);
-    }
-    34%, 35% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
-        transform: translate(0, 2px);
-    }
-    35.5% {
-        opacity: 0;
-        bottom: 50px;
-        right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(0, 0);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+    }
+    86%, 87% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        transform: translate(-3px, 0);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
+    }
+    87.5%, 88.5% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        transform: translate(3px, 0);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+    }
+    89%, 90% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        transform: translate(0, 2px);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
+    }
+    90.5% {
+        opacity: 0;
+        bottom: 50px;
+        right: 30px;
+        transform: translate(0, 0);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
     100% {
         opacity: 0;
         bottom: 50px;
         right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
         transform: translate(0, 0);
+        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     }
 }
 
-/* SVG Assistant Animation - Appears after glitch */
+/* SVG Assistant Animation - Appears after glitch with glitch entrance */
 @keyframes assistantSvgSequence {
     0% {
         opacity: 0;
-        bottom: 150px;
-        right: 60px;
+        bottom: 50px;
+        right: 30px;
     }
-    30% {
+    85% {
         opacity: 0;
-        bottom: 150px;
-        right: 60px;
+        bottom: 50px;
+        right: 30px;
     }
-    35.5% {
+    90.5% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        filter: hue-rotate(90deg) drop-shadow(0 0 20px rgba(0, 255, 0, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 0, 0.6));
+        transform: translate(-3px, 0);
+    }
+    91% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        filter: hue-rotate(180deg) drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 255, 0.6));
+        transform: translate(3px, 0);
+    }
+    91.5% {
+        opacity: 1;
+        bottom: 50px;
+        right: 30px;
+        filter: hue-rotate(-160deg) drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
+        transform: translate(0, 0);
     }
     100% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: hue-rotate(-160deg) drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) drop-shadow(0 0 40px rgba(255, 60, 0, 0.2));
+        transform: translate(0, 0);
     }
 }
 
