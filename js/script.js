@@ -619,6 +619,12 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 7500);
 
+  // 8.5. Show serious1.svg for a moment (pause after scream)
+  setTimeout(() => {
+    console.log('[AI Assistant] Step 8.5: Showing serious1.svg (pause after scream)');
+    svgAssistant.style.backgroundImage = "url('../images/serious1.svg')";
+  }, baseDelay + 7500);
+
   // 9. Transition between laugh1 and laugh2 while showing Cyberpunk message
   setTimeout(() => {
     console.log('[AI Assistant] Step 9: Showing Cyberpunk 2077 message with laugh1/laugh2 transition');
@@ -643,12 +649,12 @@ function initSVGAssistantSequence() {
       }
     }, 250);
 
-  }, baseDelay + 8000);
+  }, baseDelay + 10000);
 
   // 10. Clear Cyberpunk message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 12000);
+  }, baseDelay + 14000);
 
   // 11. Random switching between laugh1, laugh2, laugh3 with Bethesda message
   setTimeout(() => {
@@ -671,12 +677,12 @@ function initSVGAssistantSequence() {
       }
     }, 150);
 
-  }, baseDelay + 12500);
+  }, baseDelay + 14500);
 
   // 12. Clear Bethesda message
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 16000);
+  }, baseDelay + 18000);
 
   // 13. Switch to devious1.svg - "If you know what I'm talking about...😏" (30% bigger)
   setTimeout(() => {
@@ -691,13 +697,13 @@ function initSVGAssistantSequence() {
       svgAssistant.setAttribute('data-message', "If you know what I'm talking about...😏");
     }, 100);
 
-  }, baseDelay + 16500);
+  }, baseDelay + 18500);
 
   // 14. Clear devious message and reset size (message stays for 5 seconds)
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
     svgAssistant.classList.remove('devious-bigger');
-  }, baseDelay + 21500);
+  }, baseDelay + 23500);
 
   // 15. Alternate between likeyou1 and likeyou2 while saying "I like you" (20% bigger)
   setTimeout(() => {
@@ -726,11 +732,11 @@ function initSVGAssistantSequence() {
       }
     }, 350); // Slower alternating for shy/nervous vibe
 
-  }, baseDelay + 23000);
+  }, baseDelay + 25000);
 
   // 16. Clear final message and remove likeyou-bigger class
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
     svgAssistant.classList.remove('likeyou-bigger');
-  }, baseDelay + 27000);
+  }, baseDelay + 29000);
 }
