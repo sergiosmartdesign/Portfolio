@@ -1065,6 +1065,37 @@ nav {
     }
 }
 
+/* Bounce entrance animation for devious1.svg */
+#ai-assistant-svg.bounce-entrance {
+    animation: bounceEntrance 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceEntrance {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    85% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Make likeyou SVGs 20% bigger */
+#ai-assistant-svg.likeyou-bigger {
+    background-size: 168px auto; /* 140px * 1.2 = 168px */
+}
+
 /* Speech bubble - positioned at LEFT of assistant */
 #ai-assistant[data-message]::after {
     content: attr(data-message);

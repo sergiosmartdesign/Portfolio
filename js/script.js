@@ -575,15 +575,22 @@ function initSVGAssistantSequence() {
     }, 300);
   }, baseDelay + 3800);
 
-  // 7. Switch to scream1.svg with "VIBE CODING SESSION" and shaking
+  // 7. Switch to scream1.svg with "VIBE CODING SESSION" and shaking, cycling through scream SVGs
   setTimeout(() => {
-    console.log('[AI Assistant] Step 7: Showing scream1.svg with shaking effect');
-    svgAssistant.style.backgroundImage = "url('../images/scream1.svg')";
+    console.log('[AI Assistant] Step 7: Showing scream SVGs with shaking effect');
     svgAssistant.setAttribute('data-message', '"VIBE CODING SESSION"');
 
-    // Apply shaking effect with JavaScript
+    // Cycle through scream1, scream2, scream31 while shaking
+    const screamSvgs = ['scream1.svg', 'scream2.svg', 'scream31.svg'];
+    let screamIndex = 0;
     let shakeCount = 0;
-    const shakeInterval = setInterval(() => {
+
+    const screamInterval = setInterval(() => {
+      // Change scream SVG
+      svgAssistant.style.backgroundImage = `url('../images/${screamSvgs[screamIndex]}')`;
+      screamIndex = (screamIndex + 1) % screamSvgs.length;
+
+      // Apply shaking effect
       const shakeValues = [
         'translate(0, 0) rotate(0deg)',
         'translate(-2px, -2px) rotate(-1deg)',
@@ -600,10 +607,10 @@ function initSVGAssistantSequence() {
       shakeCount++;
 
       if (shakeCount >= 30) { // Shake for ~1.5 seconds (30 * 50ms)
-        clearInterval(shakeInterval);
+        clearInterval(screamInterval);
         svgAssistant.style.transform = ''; // Reset transform
       }
-    }, 50); // Update every 50ms
+    }, 50); // Update every 50ms (both SVG change and shake)
 
   }, baseDelay + 6000);
 
@@ -671,13 +678,22 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 16000);
 
-  // 13. Switch to devious1.svg - "If you know what I'm talking about...😏"
+  // 13. Switch to devious1.svg with bounce entrance - "If you know what I'm talking about...😏"
   setTimeout(() => {
+    console.log('[AI Assistant] Step 13: Showing devious1.svg with bounce entrance');
     svgAssistant.style.backgroundImage = "url('../images/devious1.svg')";
+
+    // Apply bounce entrance animation
+    svgAssistant.classList.add('bounce-entrance');
 
     setTimeout(() => {
       svgAssistant.setAttribute('data-message', "If you know what I'm talking about...😏");
     }, 300);
+
+    // Remove bounce class after animation completes
+    setTimeout(() => {
+      svgAssistant.classList.remove('bounce-entrance');
+    }, 800);
   }, baseDelay + 16500);
 
   // 14. Clear devious message
@@ -685,9 +701,13 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 19500);
 
-  // 15. Alternate between likeyou1 and likeyou2 while saying "I like you"
+  // 15. Alternate between likeyou1 and likeyou2 while saying "I like you" (20% bigger)
   setTimeout(() => {
+    console.log('[AI Assistant] Step 15: Showing likeyou SVGs (20% bigger)');
     svgAssistant.setAttribute('data-message', 'I like you');
+
+    // Make likeyou SVGs 20% bigger
+    svgAssistant.classList.add('likeyou-bigger');
 
     // Alternate between likeyou1 and likeyou2 (slower, more shy/nervous)
     let likeYouCount = 0;
@@ -710,8 +730,9 @@ function initSVGAssistantSequence() {
 
   }, baseDelay + 20000);
 
-  // 16. Clear final message
+  // 16. Clear final message and remove likeyou-bigger class
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
+    svgAssistant.classList.remove('likeyou-bigger');
   }, baseDelay + 24000);
 }
