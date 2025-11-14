@@ -619,11 +619,17 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 7500);
 
-  // 8.5. Show serious1.svg for a moment (pause after scream)
+  // 8.5. Show serious1.svg for 1.5 seconds (pause after scream)
   setTimeout(() => {
     console.log('[AI Assistant] Step 8.5: Showing serious1.svg (pause after scream)');
     svgAssistant.style.backgroundImage = "url('../images/serious1.svg')";
   }, baseDelay + 7500);
+
+  // 8.75. Show timid1.svg for 1 second (calm moment before Cyberpunk)
+  setTimeout(() => {
+    console.log('[AI Assistant] Step 8.75: Showing timid1.svg (calm moment)');
+    svgAssistant.style.backgroundImage = "url('../images/timid1.svg')";
+  }, baseDelay + 9000);
 
   // 9. Transition between laugh1 and laugh2 while showing Cyberpunk message
   setTimeout(() => {
