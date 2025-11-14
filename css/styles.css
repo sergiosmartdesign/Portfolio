@@ -586,13 +586,24 @@ nav {
 }
 /* --- SECCIÓN ABOUT --- */
 #about {
-    min-height: 100vh; /* Asegura que la sección ocupe espacio */
+    height: 100vh; /* Fixed height for overlay */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    position: relative;
-    background: transparent;
+    position: fixed; /* Fixed positioning to overlay intro */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000; /* Solid black background to cover intro */
+    transform: translateY(100%); /* Initially hidden below viewport */
+    transition: transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth dramatic slide-up */
+    z-index: 1000; /* Ensure it covers intro section */
+}
+
+/* About section visible state - slides up from bottom */
+#about.about-visible {
+    transform: translateY(0); /* Slide into view */
 }
 
 /* DNA effect in background - lowest layer */

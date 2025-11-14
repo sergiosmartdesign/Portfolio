@@ -483,6 +483,69 @@ function initAIAssistant() {
 }
 
 // ====================================================================
+// PARTE 11: SCROLL BLOCKING AND ABOUT SECTION SLIDE-UP
+// ====================================================================
+
+function initScrollBlockingAndAboutReveal() {
+  const aboutSection = document.getElementById('about');
+  const body = document.body;
+  const html = document.documentElement;
+
+  if (!aboutSection) return;
+
+  let scrollEnabled = false;
+  let aboutRevealed = false;
+
+  // Block scroll initially
+  body.style.overflow = 'hidden';
+  html.style.overflow = 'hidden';
+
+  // Enable scroll when "Let's start by scrolling!!!!" message appears
+  // This happens at baseDelay (18000) + 40000 = 58000ms
+  setTimeout(() => {
+    scrollEnabled = true;
+    body.style.overflow = '';
+    html.style.overflow = '';
+    console.log('[Scroll Control] Scroll enabled - ready for about section reveal');
+  }, 58000);
+
+  // Function to reveal about section
+  function revealAboutSection() {
+    if (aboutRevealed) return;
+
+    aboutRevealed = true;
+    aboutSection.classList.add('about-visible');
+    console.log('[About Section] Sliding up from bottom');
+  }
+
+  // Scroll event listener - trigger about reveal on scroll down
+  let lastScrollTop = 0;
+  window.addEventListener('scroll', () => {
+    if (!scrollEnabled || aboutRevealed) return;
+
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Detect scroll down (any amount)
+    if (scrollTop > lastScrollTop && scrollTop > 10) {
+      revealAboutSection();
+    }
+
+    lastScrollTop = scrollTop;
+  });
+
+  // Nav button click handler - trigger about reveal on about button click
+  const aboutNavButton = document.querySelector('.main-nav a[href="#about"]');
+  if (aboutNavButton) {
+    aboutNavButton.addEventListener('click', (e) => {
+      if (scrollEnabled && !aboutRevealed) {
+        e.preventDefault(); // Prevent default anchor behavior
+        revealAboutSection();
+      }
+    });
+  }
+}
+
+// ====================================================================
 // MASTER INITIALIZATION - ALL FUNCTIONS RUN ON PAGE LOAD
 // ====================================================================
 
@@ -494,6 +557,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initCyberPanelAnimation();
   initAIAssistant();
   initSVGAssistantSequence();
+  initScrollBlockingAndAboutReveal();
 
   // DNA glitch with 500ms delay
   setTimeout(() => {
