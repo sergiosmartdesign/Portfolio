@@ -135,10 +135,7 @@ function initActiveNavigation() {
   });
 }
 
-// Initialize active navigation on DOM load
-window.addEventListener('DOMContentLoaded', () => {
-  initActiveNavigation();
-});
+// Note: initActiveNavigation is called in master initialization at bottom of file
 
 // ====================================================================
 // PARTE 4: CUSTOM DNA GLITCH EFFECT
@@ -206,12 +203,7 @@ function initDNAGlitch() {
   }, 500);
 }
 
-// Initialize DNA glitch on page load
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    initDNAGlitch();
-  }, 500); // Slight delay to ensure DOM is ready
-});
+// Note: initDNAGlitch is called in master initialization at bottom of file (with 500ms delay)
 
 // ====================================================================
 // PARTE 5: DNA LETTER-BY-LETTER REVEAL ANIMATION
@@ -249,12 +241,7 @@ function animateDNAReveal() {
   }, startDelay);
 }
 
-// Initialize DNA reveal animation on page load
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    animateDNAReveal();
-  }, 3000); // 3 seconds delay after page load
-});
+// Note: animateDNAReveal is called in master initialization at bottom of file (with 3000ms delay)
 
 // ====================================================================
 // PARTE 6: ROTATING SQUARES GRID - GENERATE AND MOUSEMOVE EFFECT
@@ -333,10 +320,7 @@ function initRotatingSquaresGrid() {
   });
 }
 
-// Initialize rotating squares grid on page load
-window.addEventListener('DOMContentLoaded', () => {
-  initRotatingSquaresGrid();
-});
+// Note: initRotatingSquaresGrid is called in master initialization at bottom of file
 
 // ====================================================================
 // PARTE 7: INTRO EXIT ANIMATION - MERGE COLUMNS TO RED
@@ -436,10 +420,7 @@ function initContactExitAnimation() {
   }
 }
 
-// Initialize contact exit animation
-window.addEventListener('DOMContentLoaded', () => {
-  initContactExitAnimation();
-});
+// Note: initContactExitAnimation is called in master initialization at bottom of file
 
 // ====================================================================
 // PARTE 8: CYBERPUNK PANEL AUTO-TRIGGER
@@ -456,10 +437,7 @@ function initCyberPanelAnimation() {
   }, 2000);
 }
 
-// Initialize cyber panel animation
-window.addEventListener('DOMContentLoaded', () => {
-  initCyberPanelAnimation();
-});
+// Note: initCyberPanelAnimation is called in master initialization at bottom of file
 
 // ====================================================================
 // PARTE 9: AI ASSISTANT SPEECH BUBBLES
@@ -504,10 +482,28 @@ function initAIAssistant() {
   }, 16760);
 }
 
-// Initialize AI assistant
+// ====================================================================
+// MASTER INITIALIZATION - ALL FUNCTIONS RUN ON PAGE LOAD
+// ====================================================================
+
 window.addEventListener('DOMContentLoaded', () => {
+  // Initialize all features in order
+  initActiveNavigation();
+  initRotatingSquaresGrid();
+  initContactExitAnimation();
+  initCyberPanelAnimation();
   initAIAssistant();
   initSVGAssistantSequence();
+
+  // DNA glitch with 500ms delay
+  setTimeout(() => {
+    initDNAGlitch();
+  }, 500);
+
+  // DNA reveal animation with 3000ms delay
+  setTimeout(() => {
+    animateDNAReveal();
+  }, 3000);
 });
 
 // ====================================================================
