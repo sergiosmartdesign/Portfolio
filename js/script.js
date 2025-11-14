@@ -678,29 +678,26 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 16000);
 
-  // 13. Switch to devious1.svg with bounce entrance - "If you know what I'm talking about...😏"
+  // 13. Switch to devious1.svg - "If you know what I'm talking about...😏" (30% bigger)
   setTimeout(() => {
-    console.log('[AI Assistant] Step 13: Showing devious1.svg with bounce entrance');
+    console.log('[AI Assistant] Step 13: Showing devious1.svg (30% bigger)');
     svgAssistant.style.backgroundImage = "url('../images/devious1.svg')";
 
-    // Apply bounce entrance animation
-    svgAssistant.classList.add('bounce-entrance');
+    // Make devious 30% bigger
+    svgAssistant.classList.add('devious-bigger');
 
-    // Text appears AFTER bounce completes (1s bounce + 0.2s pause)
+    // Show message immediately
     setTimeout(() => {
       svgAssistant.setAttribute('data-message', "If you know what I'm talking about...😏");
-    }, 1200);
+    }, 100);
 
-    // Remove bounce class after animation completes
-    setTimeout(() => {
-      svgAssistant.classList.remove('bounce-entrance');
-    }, 1000);
   }, baseDelay + 16500);
 
-  // 14. Clear devious message (appears at 1.2s, stays for 5s = clears at 6.2s)
+  // 14. Clear devious message and reset size (message stays for 5 seconds)
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 22700);
+    svgAssistant.classList.remove('devious-bigger');
+  }, baseDelay + 21500);
 
   // 15. Alternate between likeyou1 and likeyou2 while saying "I like you" (20% bigger)
   setTimeout(() => {
