@@ -688,18 +688,18 @@ function initSVGAssistantSequence() {
 
     setTimeout(() => {
       svgAssistant.setAttribute('data-message', "If you know what I'm talking about...😏");
-    }, 300);
+    }, 400);
 
     // Remove bounce class after animation completes
     setTimeout(() => {
       svgAssistant.classList.remove('bounce-entrance');
-    }, 800);
+    }, 1000);
   }, baseDelay + 16500);
 
-  // 14. Clear devious message
+  // 14. Clear devious message (extended to 6 seconds for readability)
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 19500);
+  }, baseDelay + 22500);
 
   // 15. Alternate between likeyou1 and likeyou2 while saying "I like you" (20% bigger)
   setTimeout(() => {
@@ -728,11 +728,11 @@ function initSVGAssistantSequence() {
       }
     }, 350); // Slower alternating for shy/nervous vibe
 
-  }, baseDelay + 20000);
+  }, baseDelay + 23000);
 
   // 16. Clear final message and remove likeyou-bigger class
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
     svgAssistant.classList.remove('likeyou-bigger');
-  }, baseDelay + 24000);
+  }, baseDelay + 27000);
 }
