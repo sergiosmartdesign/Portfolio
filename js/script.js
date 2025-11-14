@@ -741,4 +741,31 @@ function initSVGAssistantSequence() {
     svgAssistant.removeAttribute('data-message');
     svgAssistant.classList.remove('likeyou-bigger');
   }, baseDelay + 36000);
+
+  // 17. Show anyway1.svg with "anyway..." message
+  setTimeout(() => {
+    console.log('[AI Assistant] Step 17: Showing anyway1.svg with "anyway..." message');
+    svgAssistant.style.backgroundImage = "url('../images/anyway1.svg')";
+
+    setTimeout(() => {
+      svgAssistant.setAttribute('data-message', 'anyway...');
+    }, 100);
+  }, baseDelay + 36500);
+
+  // 18. Clear "anyway..." message and show proud1.svg with "Let's start by scrolling!!!!"
+  setTimeout(() => {
+    svgAssistant.removeAttribute('data-message');
+
+    console.log('[AI Assistant] Step 18: Showing proud1.svg with scroll message');
+    svgAssistant.style.backgroundImage = "url('../images/proud1.svg')";
+
+    setTimeout(() => {
+      svgAssistant.setAttribute('data-message', "Let's start by scrolling!!!!");
+    }, 100);
+  }, baseDelay + 40000);
+
+  // 19. Clear final scroll message (stays for 6 seconds)
+  setTimeout(() => {
+    svgAssistant.removeAttribute('data-message');
+  }, baseDelay + 46000);
 }
