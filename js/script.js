@@ -686,9 +686,10 @@ function initSVGAssistantSequence() {
     // Apply bounce entrance animation
     svgAssistant.classList.add('bounce-entrance');
 
+    // Text appears AFTER bounce completes (1s bounce + 0.2s pause)
     setTimeout(() => {
       svgAssistant.setAttribute('data-message', "If you know what I'm talking about...😏");
-    }, 400);
+    }, 1200);
 
     // Remove bounce class after animation completes
     setTimeout(() => {
@@ -696,10 +697,10 @@ function initSVGAssistantSequence() {
     }, 1000);
   }, baseDelay + 16500);
 
-  // 14. Clear devious message (extended to 6 seconds for readability)
+  // 14. Clear devious message (appears at 1.2s, stays for 5s = clears at 6.2s)
   setTimeout(() => {
     svgAssistant.removeAttribute('data-message');
-  }, baseDelay + 22500);
+  }, baseDelay + 22700);
 
   // 15. Alternate between likeyou1 and likeyou2 while saying "I like you" (20% bigger)
   setTimeout(() => {
