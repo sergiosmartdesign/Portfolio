@@ -566,6 +566,7 @@ function initSVGAssistantSequence() {
 
   // 6. Switch to serious1.svg and show shortened "vibe coding" message
   setTimeout(() => {
+    console.log('[AI Assistant] Step 6: Showing serious1.svg with lead-in message');
     svgAssistant.style.backgroundImage = "url('../images/serious1.svg')";
 
     // Show shortened vibe coding message
@@ -576,20 +577,44 @@ function initSVGAssistantSequence() {
 
   // 7. Switch to scream1.svg with "VIBE CODING SESSION" and shaking
   setTimeout(() => {
+    console.log('[AI Assistant] Step 7: Showing scream1.svg with shaking effect');
     svgAssistant.style.backgroundImage = "url('../images/scream1.svg')";
-    svgAssistant.classList.add('shaking');
-
     svgAssistant.setAttribute('data-message', '"VIBE CODING SESSION"');
+
+    // Apply shaking effect with JavaScript
+    let shakeCount = 0;
+    const shakeInterval = setInterval(() => {
+      const shakeValues = [
+        'translate(0, 0) rotate(0deg)',
+        'translate(-2px, -2px) rotate(-1deg)',
+        'translate(2px, 1px) rotate(1deg)',
+        'translate(-1px, 2px) rotate(-0.5deg)',
+        'translate(2px, -1px) rotate(0.5deg)',
+        'translate(-2px, 1px) rotate(-1deg)',
+        'translate(1px, 2px) rotate(1deg)',
+        'translate(-1px, -2px) rotate(-0.5deg)',
+        'translate(2px, 1px) rotate(0.5deg)',
+        'translate(-2px, -1px) rotate(-1deg)'
+      ];
+      svgAssistant.style.transform = shakeValues[shakeCount % shakeValues.length];
+      shakeCount++;
+
+      if (shakeCount >= 30) { // Shake for ~1.5 seconds (30 * 50ms)
+        clearInterval(shakeInterval);
+        svgAssistant.style.transform = ''; // Reset transform
+      }
+    }, 50); // Update every 50ms
+
   }, baseDelay + 6000);
 
-  // 8. Remove shaking and clear message
+  // 8. Clear message after shaking
   setTimeout(() => {
-    svgAssistant.classList.remove('shaking');
     svgAssistant.removeAttribute('data-message');
   }, baseDelay + 7500);
 
   // 9. Transition between laugh1 and laugh2 while showing Cyberpunk message
   setTimeout(() => {
+    console.log('[AI Assistant] Step 9: Showing Cyberpunk 2077 message with laugh1/laugh2 transition');
     svgAssistant.setAttribute('data-message', "More glitchy than Cyberpunk 2077's launch, am I right?");
 
     // Start transitioning between laugh1 and laugh2
