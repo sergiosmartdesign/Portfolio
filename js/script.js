@@ -496,6 +496,9 @@ function initScrollBlockingAndAboutReveal() {
   let scrollEnabled = false;
   let aboutRevealed = false;
 
+  // Initially hide about section below viewport
+  aboutSection.classList.add('about-hidden');
+
   // Block scroll initially
   body.style.overflow = 'hidden';
   html.style.overflow = 'hidden';
@@ -514,8 +517,18 @@ function initScrollBlockingAndAboutReveal() {
     if (aboutRevealed) return;
 
     aboutRevealed = true;
+
+    // Remove hidden state and trigger slide-up animation
+    aboutSection.classList.remove('about-hidden');
     aboutSection.classList.add('about-visible');
     console.log('[About Section] Sliding up from bottom');
+
+    // After animation completes (2.5s), return to normal document flow
+    setTimeout(() => {
+      aboutSection.classList.remove('about-visible');
+      aboutSection.classList.add('about-revealed');
+      console.log('[About Section] Animation complete - returned to normal flow');
+    }, 2500);
   }
 
   // Scroll event listener - trigger about reveal on scroll down

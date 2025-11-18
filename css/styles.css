@@ -586,24 +586,44 @@ nav {
 }
 /* --- SECCIÓN ABOUT --- */
 #about {
-    height: 100vh; /* Fixed height for overlay */
+    min-height: 100vh; /* Same height as other sections */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    position: fixed; /* Fixed positioning to overlay intro */
+    position: relative; /* Normal document flow */
+    background: #000; /* Solid black background */
+    transform: translateY(0); /* Normal position */
+    transition: transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth dramatic slide-up */
+}
+
+/* About section initial state - hidden below viewport with fixed positioning */
+#about.about-hidden {
+    position: fixed; /* Temporarily fixed for slide-up effect */
     bottom: 0;
     left: 0;
     right: 0;
-    background: #000; /* Solid black background to cover intro */
-    transform: translateY(100%); /* Initially hidden below viewport */
-    transition: transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth dramatic slide-up */
-    z-index: 1000; /* Ensure it covers intro section */
+    height: 100vh;
+    transform: translateY(100%); /* Hidden below viewport */
+    z-index: 999; /* Below header (header is z-index: 1000) but above intro */
 }
 
 /* About section visible state - slides up from bottom */
 #about.about-visible {
+    position: fixed; /* Keep fixed during animation */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
     transform: translateY(0); /* Slide into view */
+    z-index: 999; /* Below header */
+}
+
+/* About section after animation - return to normal flow */
+#about.about-revealed {
+    position: relative; /* Back to normal flow */
+    transform: translateY(0);
+    z-index: auto;
 }
 
 /* DNA effect in background - lowest layer */
