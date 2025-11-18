@@ -329,9 +329,12 @@ ParticleSystem.resize = function() {
 document.addEventListener('DOMContentLoaded', function() {
   ParticleSystem.setup();
 
-  // Animation loop
+  // Animation loop with pause capability
+  var isRunning = true;
   var frame = function() {
-    ParticleSystem.evolve();
+    if (isRunning) {
+      ParticleSystem.evolve();
+    }
     requestAnimationFrame(frame);
   };
   frame();
@@ -340,4 +343,15 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('resize', function() {
     ParticleSystem.resize();
   });
+
+  // Expose pause/resume methods globally
+  window.ParticleSystem = ParticleSystem;
+  window.ParticleSystem.pause = function() {
+    isRunning = false;
+    console.log('[Particle System] Paused');
+  };
+  window.ParticleSystem.resume = function() {
+    isRunning = true;
+    console.log('[Particle System] Resumed');
+  };
 });

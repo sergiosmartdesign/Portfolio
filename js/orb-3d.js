@@ -100,6 +100,24 @@
     generateOrbCSS();
   }
 
+  // Expose pause/resume methods globally
+  window.Orb3D = {
+    pause: function() {
+      var orb = document.getElementById('orb3d');
+      if (orb) {
+        orb.style.animationPlayState = 'paused';
+        console.log('[3D Orb] Paused');
+      }
+    },
+    resume: function() {
+      var orb = document.getElementById('orb3d');
+      if (orb) {
+        orb.style.animationPlayState = 'running';
+        console.log('[3D Orb] Resumed');
+      }
+    }
+  };
+
   // Wait for DOM content to be loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

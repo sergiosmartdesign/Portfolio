@@ -489,7 +489,47 @@ function initAIAssistant() {
 }
 
 // ====================================================================
-// PARTE 11: SCROLL BLOCKING AND ABOUT SECTION SLIDE-UP
+// PARTE 11: ANIMATION PERFORMANCE OPTIMIZER
+// ====================================================================
+
+function initAnimationOptimizer() {
+  const introSection = document.getElementById('intro');
+
+  if (!introSection) return;
+
+  // Observer to pause/resume intro animations when section is not visible
+  const introObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Intro section visible - resume animations
+        if (window.ParticleSystem && window.ParticleSystem.resume) {
+          window.ParticleSystem.resume();
+        }
+        if (window.Orb3D && window.Orb3D.resume) {
+          window.Orb3D.resume();
+        }
+        console.log('[Animation Optimizer] Intro animations resumed');
+      } else {
+        // Intro section not visible - pause animations
+        if (window.ParticleSystem && window.ParticleSystem.pause) {
+          window.ParticleSystem.pause();
+        }
+        if (window.Orb3D && window.Orb3D.pause) {
+          window.Orb3D.pause();
+        }
+        console.log('[Animation Optimizer] Intro animations paused');
+      }
+    });
+  }, {
+    threshold: 0.1 // Trigger when at least 10% of section is visible
+  });
+
+  introObserver.observe(introSection);
+  console.log('[Animation Optimizer] Initialized');
+}
+
+// ====================================================================
+// PARTE 12: SCROLL BLOCKING
 // ====================================================================
 
 function initScrollBlocking(navigationControl) {
@@ -540,6 +580,9 @@ window.addEventListener('DOMContentLoaded', () => {
   initCyberPanelAnimation();
   initAIAssistant();
   initSVGAssistantSequence();
+
+  // Initialize animation optimizer for performance
+  initAnimationOptimizer();
 
   // Pass navigation control to scroll blocking function
   initScrollBlocking(navigationControl);
