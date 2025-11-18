@@ -116,9 +116,9 @@ function initActiveNavigation() {
 
   const observer = new IntersectionObserver(observerCallback, observerOptions);
 
-  // Observe all sections EXCEPT about (about is handled separately)
+  // Observe all sections
   sections.forEach(section => {
-    if (section.id && section.id !== 'about') {
+    if (section.id) {
       observer.observe(section);
     }
   });
@@ -492,18 +492,12 @@ function initAIAssistant() {
 // PARTE 11: SCROLL BLOCKING AND ABOUT SECTION SLIDE-UP
 // ====================================================================
 
-function initScrollBlockingAndAboutReveal(navigationControl) {
+function initScrollBlocking(navigationControl) {
   const aboutSection = document.getElementById('about');
   const body = document.body;
   const html = document.documentElement;
 
   if (!aboutSection) return;
-
-  let scrollEnabled = false;
-  let aboutRevealed = false;
-
-  // Initially hide about section below viewport
-  aboutSection.classList.add('about-hidden');
 
   // Block scroll initially
   body.style.overflow = 'hidden';
@@ -512,83 +506,15 @@ function initScrollBlockingAndAboutReveal(navigationControl) {
   // Enable scroll when "Let's start by scrolling!!!!" message appears
   // This happens at baseDelay (18000) + 40000 = 58000ms
   setTimeout(() => {
-    scrollEnabled = true;
     body.style.overflow = '';
     html.style.overflow = '';
-    console.log('[Scroll Control] Scroll enabled - ready for about section reveal');
+    console.log('[Scroll Control] Scroll enabled - normal scrolling now available');
+
+    // Start observing about section for navigation updates
+    if (navigationControl && navigationControl.observer) {
+      navigationControl.observer.observe(aboutSection);
+    }
   }, 58000);
-
-  // Function to reveal about section
-  function revealAboutSection() {
-    if (aboutRevealed) return;
-
-    aboutRevealed = true;
-
-    // Remove hidden state and trigger slide-up animation
-    aboutSection.classList.remove('about-hidden');
-    aboutSection.classList.add('about-visible');
-    console.log('[About Section] Sliding up from bottom');
-
-    // Set about button as active
-    if (navigationControl && navigationControl.setActiveButton) {
-      navigationControl.setActiveButton('about');
-    }
-
-    // After animation completes (2.5s), return to normal document flow
-    setTimeout(() => {
-      aboutSection.classList.remove('about-visible');
-      aboutSection.classList.add('about-revealed');
-
-      // Scroll to about section smoothly
-      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      // Start observing about section for navigation updates
-      if (navigationControl && navigationControl.observer) {
-        navigationControl.observer.observe(aboutSection);
-      }
-
-      console.log('[About Section] Animation complete - returned to normal flow');
-    }, 2500);
-  }
-
-  // Scroll event listener - trigger about reveal on scroll down
-  let lastScrollTop = 0;
-  window.addEventListener('scroll', () => {
-    if (!scrollEnabled || aboutRevealed) return;
-
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    // Detect scroll down (any amount)
-    if (scrollTop > lastScrollTop && scrollTop > 10) {
-      revealAboutSection();
-    }
-
-    lastScrollTop = scrollTop;
-  });
-
-  // Nav button click handler - trigger about reveal on about button click
-  const aboutNavButton = document.querySelector('.main-nav a[href="#about"]');
-  if (aboutNavButton) {
-    aboutNavButton.addEventListener('click', (e) => {
-      e.preventDefault(); // Always prevent default
-
-      if (!scrollEnabled) {
-        console.log('[About Section] Cannot navigate - animation still playing');
-        return;
-      }
-
-      if (!aboutRevealed) {
-        // First time clicking about button - trigger reveal animation
-        revealAboutSection();
-      } else {
-        // About section already revealed - just scroll to it
-        aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        if (navigationControl && navigationControl.setActiveButton) {
-          navigationControl.setActiveButton('about');
-        }
-      }
-    });
-  }
 }
 
 // ====================================================================
@@ -616,7 +542,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initSVGAssistantSequence();
 
   // Pass navigation control to scroll blocking function
-  initScrollBlockingAndAboutReveal(navigationControl);
+  initScrollBlocking(navigationControl);
 
   // DNA glitch with 500ms delay
   setTimeout(() => {
