@@ -673,6 +673,8 @@ nav {
 }
 /* --- SECCIÓN WEB --- */
 #web {
+    position: relative;
+    z-index: 10;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
@@ -683,6 +685,8 @@ nav {
 
 /* --- SECCIÓN PHOTO --- */
 #photo {
+    position: relative;
+    z-index: 10;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
@@ -694,12 +698,14 @@ nav {
 
 /* --- SECCIÓN ILLLUSTRATION --- */
 #illustration {
+    position: relative;
+    z-index: 10;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    position: relative;
+    background: #000; /* Solid background to cover sticky intro */
 }
 
 #illustrationCanvas {
@@ -714,12 +720,13 @@ nav {
 /* --- SECCIÓN CONTACT --- */
 #contact {
     position: relative;
+    z-index: 10;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    background: transparent;
+    background: #000; /* Solid background to cover sticky intro */
 }
 /* --- CYBERPUNK PANEL ANIMATION (INTRO) --- */
 .cyber-panel {
