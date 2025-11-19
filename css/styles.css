@@ -1017,7 +1017,7 @@ nav {
 #barcodeContainer {
     position: absolute;
     bottom: 50px;
-    right: 30px;
+    right: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
