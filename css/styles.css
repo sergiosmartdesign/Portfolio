@@ -619,8 +619,20 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible; /* Allow glitch text to show above section */
+    overflow: hidden; /* Prevent intro effects from leaking through */
     background: #000; /* Solid black background */
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Smooth elastic grow effect */
+    transform-origin: center bottom; /* Grow from bottom to top */
+}
+
+/* About section starts small when not yet scrolled into view */
+#about.about-small {
+    transform: scale(0.3);
+}
+
+/* About section grows to normal size when scrolled into view */
+#about.about-grow {
+    transform: scale(1);
 }
 
 /* DNA effect in background - lowest layer */

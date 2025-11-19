@@ -138,6 +138,15 @@ function initActiveNavigation() {
           return;
         }
 
+        // Special handling for about section - ensure it's full size when clicked
+        if (sectionId === 'about') {
+          const aboutSection = document.getElementById('about');
+          if (aboutSection) {
+            aboutSection.classList.remove('about-small');
+            aboutSection.classList.add('about-grow');
+          }
+        }
+
         // Small delay to allow smooth scroll to complete
         setTimeout(() => {
           setActiveButton(sectionId);
@@ -530,7 +539,11 @@ function initAnimationOptimizer() {
           // About section visible - resume animations
           aboutSection.classList.remove('paused-animations');
 
-          console.log('[Animation Optimizer] About animations resumed');
+          // Trigger grow animation when scrolled into view
+          aboutSection.classList.remove('about-small');
+          aboutSection.classList.add('about-grow');
+
+          console.log('[Animation Optimizer] About animations resumed and grow triggered');
         } else {
           // About section not visible - pause animations
           aboutSection.classList.add('paused-animations');
@@ -648,6 +661,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const aboutSection = document.getElementById('about');
   if (aboutSection && navigationControl && navigationControl.observer) {
     navigationControl.observer.observe(aboutSection);
+  }
+
+  // Initialize about section with small scale (for scroll-triggered grow animation)
+  if (aboutSection) {
+    aboutSection.classList.add('about-small');
   }
 
   // DNA glitch with 500ms delay
