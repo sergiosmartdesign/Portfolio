@@ -495,6 +495,9 @@ function initAnimationOptimizer() {
           if (window.Orb3D && window.Orb3D.resume) {
             window.Orb3D.resume();
           }
+          if (window.BarcodeAnimation && window.BarcodeAnimation.start) {
+            window.BarcodeAnimation.start();
+          }
           console.log('[Animation Optimizer] Intro animations resumed');
         } else {
           // Intro section not visible - pause animations
@@ -505,6 +508,9 @@ function initAnimationOptimizer() {
           }
           if (window.Orb3D && window.Orb3D.pause) {
             window.Orb3D.pause();
+          }
+          if (window.BarcodeAnimation && window.BarcodeAnimation.stop) {
+            window.BarcodeAnimation.stop();
           }
           console.log('[Animation Optimizer] Intro animations paused');
         }
@@ -537,6 +543,66 @@ function initAnimationOptimizer() {
 }
 
 // ====================================================================
+// PARTE 10: BARCODE ANIMATION
+// ====================================================================
+
+function initBarcodeAnimation() {
+  const barcodeSpans = document.querySelectorAll('#barcode .barcode-span');
+
+  if (barcodeSpans.length === 0) return;
+
+  let animationInterval = null;
+
+  function runBarcodeAnimation() {
+    // First pass: Add highlighting with 200ms delay between each span
+    barcodeSpans.forEach((span, i) => {
+      setTimeout(() => {
+        span.classList.add('barcode-highlighted');
+      }, 200 * i);
+    });
+
+    // Second pass: Remove highlighting with 20ms delay between each span
+    // Start after first pass completes (200ms * span count)
+    const firstPassDuration = 200 * barcodeSpans.length;
+    barcodeSpans.forEach((span, i) => {
+      setTimeout(() => {
+        span.classList.remove('barcode-highlighted');
+      }, firstPassDuration + (20 * i));
+    });
+  }
+
+  // Start animation loop (runs every 4 seconds)
+  function startAnimation() {
+    // Run immediately
+    runBarcodeAnimation();
+    // Then repeat every 4 seconds
+    animationInterval = setInterval(runBarcodeAnimation, 4000);
+  }
+
+  function stopAnimation() {
+    if (animationInterval) {
+      clearInterval(animationInterval);
+      animationInterval = null;
+      // Clear all highlights
+      barcodeSpans.forEach(span => {
+        span.classList.remove('barcode-highlighted');
+      });
+    }
+  }
+
+  // Start animation after intro panel lines are drawn (after 2 seconds)
+  setTimeout(startAnimation, 2000);
+
+  // Expose control methods for animation optimizer
+  window.BarcodeAnimation = {
+    start: startAnimation,
+    stop: stopAnimation
+  };
+
+  console.log('[Barcode Animation] Initialized');
+}
+
+// ====================================================================
 // MASTER INITIALIZATION - ALL FUNCTIONS RUN ON PAGE LOAD
 // ====================================================================
 
@@ -557,6 +623,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initRotatingSquaresGrid();
   initContactExitAnimation();
   initCyberPanelAnimation();
+  initBarcodeAnimation();
 
   // Initialize animation optimizer for performance
   initAnimationOptimizer();
