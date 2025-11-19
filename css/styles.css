@@ -721,24 +721,48 @@ nav {
 /* Hide characters by default */
 .glitch-text-line[data-splitting] [data-char]:after {
     opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left;
+    transform: scaleX(0) scaleY(1);
+    transform-origin: left center;
 }
 
-/* Reveal animation - grows from left to right (slower) */
+/* Continuous wave animation - grows from left to right with bigger characters, then loops */
 #about.trigger-glitch .glitch-text-line[data-splitting] [data-char]:after {
-    animation: glitchReveal 0.8s forwards, glitch-switch 0.15s steps(1) infinite;
-    animation-delay: calc(var(--char-index) * 0.02s), calc(var(--char-index) * 0.02s + 0.8s);
+    animation:
+        glitchWave 8s infinite,           /* Looping wave effect */
+        glitch-switch 0.15s steps(1) infinite; /* Continuous glitch */
+    animation-delay:
+        calc(var(--char-index) * 0.02s),  /* Staggered wave */
+        calc(var(--char-index) * 0.02s);  /* Glitch starts immediately */
 }
 
-@keyframes glitchReveal {
+@keyframes glitchWave {
     0% {
         opacity: 0;
-        transform: scaleX(0);
+        transform: scaleX(0) scaleY(1);
     }
-    100% {
+    5% {
         opacity: 1;
-        transform: scaleX(1);
+        transform: scaleX(0.5) scaleY(2); /* Growing bigger */
+    }
+    10% {
+        opacity: 1;
+        transform: scaleX(1) scaleY(2.5); /* Peak size - biggest moment */
+    }
+    15% {
+        opacity: 1;
+        transform: scaleX(1) scaleY(1); /* Back to normal size */
+    }
+    85% {
+        opacity: 1;
+        transform: scaleX(1) scaleY(1); /* Stay visible */
+    }
+    90% {
+        opacity: 0.5;
+        transform: scaleX(0.5) scaleY(1); /* Start fading/shrinking */
+    }
+    95%, 100% {
+        opacity: 0;
+        transform: scaleX(0) scaleY(1); /* Hidden - ready for next loop */
     }
 }
 
