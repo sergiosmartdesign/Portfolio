@@ -114,6 +114,8 @@ function initActiveNavigation() {
         // Add glow effect to about section when it comes into view
         if (sectionId === 'about') {
           entry.target.classList.add('glow-border');
+          // Start tracking scroll position for glow movement
+          startGlowTracking();
         }
       } else {
         // Remove glow effect when leaving about section
@@ -153,6 +155,8 @@ function initActiveNavigation() {
           const aboutSection = document.getElementById('about');
           if (aboutSection) {
             aboutSection.classList.add('glow-border');
+            // Animate glow from left to right
+            animateGlowSweep(aboutSection);
           }
         }
 
@@ -175,6 +179,55 @@ function initActiveNavigation() {
         setActiveButton('intro');
       }
     });
+  }
+
+  // Function to animate glow sweep on button click
+  function animateGlowSweep(element) {
+    const duration = 1500; // 1.5 seconds
+    const startTime = performance.now();
+
+    function animate(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease-out cubic function for smooth deceleration
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const position = easeOut * 100;
+
+      element.style.setProperty('--glow-position', `${position}%`);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  // Function to update glow position based on scroll
+  function startGlowTracking() {
+    const aboutSection = document.getElementById('about');
+    if (!aboutSection) return;
+
+    function updateGlowPosition() {
+      const rect = aboutSection.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const sectionHeight = rect.height;
+
+      // Calculate how much of the section is visible from bottom
+      // When section just starts appearing from bottom: 0%
+      // When section is fully in view: 100%
+      const visibleFromBottom = Math.max(0, viewportHeight - rect.top);
+      const scrollProgress = Math.min(100, Math.max(0, (visibleFromBottom / viewportHeight) * 100));
+
+      // Update CSS variable
+      aboutSection.style.setProperty('--glow-position', `${scrollProgress}%`);
+    }
+
+    // Update on scroll
+    window.addEventListener('scroll', updateGlowPosition);
+    // Update immediately
+    updateGlowPosition();
   }
 
   // Handle scroll to detect when intro section should be active
