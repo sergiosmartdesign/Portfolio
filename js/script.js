@@ -101,8 +101,8 @@ function initActiveNavigation() {
   // Intersection Observer to detect which section is in view
   const observerOptions = {
     root: null,
-    rootMargin: '0px 0px -80% 0px', // Trigger when section is 20% visible from bottom
-    threshold: 0 // Trigger when section crosses the margin
+    rootMargin: '0px', // No margin - detect when section enters viewport
+    threshold: 0 // Trigger when section crosses the viewport edge
   };
 
   const observerCallback = (entries) => {
@@ -212,13 +212,15 @@ function initActiveNavigation() {
     function updateGlowPosition() {
       const rect = aboutSection.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const sectionHeight = rect.height;
 
-      // Calculate how much of the section is visible from bottom
-      // When section just starts appearing from bottom: 0%
-      // When section is fully in view: 100%
-      const visibleFromBottom = Math.max(0, viewportHeight - rect.top);
-      const scrollProgress = Math.min(100, Math.max(0, (visibleFromBottom / viewportHeight) * 100));
+      // Calculate glow position:
+      // - 0% when about section top is at bottom of viewport (rect.top = viewportHeight)
+      // - 100% when about section top is at top of viewport (rect.top = 0)
+      // This creates a smooth progression as the section scrolls up
+
+      const scrollProgress = Math.min(100, Math.max(0,
+        ((viewportHeight - rect.top) / viewportHeight) * 100
+      ));
 
       // Update CSS variable
       aboutSection.style.setProperty('--glow-position', `${scrollProgress}%`);
