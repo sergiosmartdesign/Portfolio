@@ -439,8 +439,7 @@ nav {
 #about.paused-animations::before,
 #about.paused-animations::after,
 #about.paused-animations .scanlines,
-#about.paused-animations .vhs-static,
-#about.paused-animations .glitch-text-line [data-char]:after {
+#about.paused-animations .vhs-static {
     animation-play-state: paused !important;
 }
 
@@ -691,84 +690,6 @@ nav {
     height: 100%;
     z-index: 4; /* VHS static layer - topmost */
     pointer-events: none;
-}
-
-/* --- TOP BORDER GLITCH TEXT EFFECT --- */
-/* Glitching text line at top of about section */
-
-.about-top-glitch {
-    position: absolute;
-    top: -10px; /* Moved 10px higher */
-    left: 0;
-    width: 100%;
-    height: auto;
-    z-index: 5; /* Above VHS static */
-    pointer-events: none;
-    overflow: visible; /* Show symbols even when positioned above section */
-    opacity: 0; /* Hidden by default */
-    padding: 5px 0;
-}
-
-#about.trigger-glitch .about-top-glitch {
-    opacity: 1; /* Show when triggered */
-}
-
-.glitch-text-line {
-    font-size: 16px;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 0.1em;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: visible;
-    --glitch-final-color: #00ffff; /* Cyan color for the text */
-}
-
-/* Hide characters by default */
-.glitch-text-line[data-splitting] [data-char]:after {
-    opacity: 0;
-    transform: scaleX(0) scaleY(1);
-    transform-origin: left center;
-}
-
-/* Continuous wave animation - grows from left to right with bigger characters, then loops */
-#about.trigger-glitch .glitch-text-line[data-splitting] [data-char]:after {
-    animation:
-        glitchWave 8s infinite,           /* Looping wave effect */
-        glitch-switch 0.15s steps(1) infinite; /* Continuous glitch */
-    animation-delay:
-        calc(var(--char-index) * 0.02s),  /* Staggered wave */
-        calc(var(--char-index) * 0.02s);  /* Glitch starts immediately */
-}
-
-@keyframes glitchWave {
-    0% {
-        opacity: 0;
-        transform: scaleX(0) scaleY(1);
-    }
-    5% {
-        opacity: 1;
-        transform: scaleX(0.5) scaleY(2); /* Growing bigger */
-    }
-    10% {
-        opacity: 1;
-        transform: scaleX(1) scaleY(2.5); /* Peak size - biggest moment */
-    }
-    15% {
-        opacity: 1;
-        transform: scaleX(1) scaleY(1); /* Back to normal size */
-    }
-    85% {
-        opacity: 1;
-        transform: scaleX(1) scaleY(1); /* Stay visible */
-    }
-    90% {
-        opacity: 0.5;
-        transform: scaleX(0.5) scaleY(1); /* Start fading/shrinking */
-    }
-    95%, 100% {
-        opacity: 0;
-        transform: scaleX(0) scaleY(1); /* Hidden - ready for next loop */
-    }
 }
 
 /* --- SECCIÓN WEB --- */

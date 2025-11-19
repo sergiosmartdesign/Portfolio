@@ -138,14 +138,6 @@ function initActiveNavigation() {
           return;
         }
 
-        // Trigger top border glitch when about button is clicked
-        if (sectionId === 'about') {
-          // Small delay to let scroll start, then trigger glitch
-          setTimeout(() => {
-            triggerAboutTopGlitch();
-          }, 300);
-        }
-
         // Small delay to allow smooth scroll to complete
         setTimeout(() => {
           setActiveButton(sectionId);
@@ -478,30 +470,6 @@ function initCyberPanelAnimation() {
 // ====================================================================
 // PARTE 9: ABOUT SECTION TOP BORDER GLITCH EFFECT
 // ====================================================================
-
-function triggerAboutTopGlitch() {
-  const aboutSection = document.getElementById('about');
-
-  if (!aboutSection) {
-    console.warn('[About Top Glitch] About section not found');
-    return;
-  }
-
-  // Remove and re-add class to restart animation if already playing
-  aboutSection.classList.remove('trigger-glitch');
-
-  // Force reflow to restart CSS animation
-  void aboutSection.offsetWidth;
-
-  // Add trigger class to start the glitch animation
-  aboutSection.classList.add('trigger-glitch');
-
-  console.log('[About Top Glitch] Top border glitch effect triggered');
-}
-
-// Note: triggerAboutTopGlitch is called by both Intersection Observer and nav click handler
-
-// ====================================================================
 // PARTE 10: ANIMATION PERFORMANCE OPTIMIZER
 // ====================================================================
 
@@ -561,9 +529,6 @@ function initAnimationOptimizer() {
         if (entry.isIntersecting) {
           // About section visible - resume animations
           aboutSection.classList.remove('paused-animations');
-
-          // Trigger top border glitch effect
-          triggerAboutTopGlitch();
 
           console.log('[Animation Optimizer] About animations resumed');
         } else {
