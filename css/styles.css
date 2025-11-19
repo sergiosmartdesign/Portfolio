@@ -1016,8 +1016,8 @@ nav {
 /* --- BARCODE ANIMATION LABEL --- */
 #barcodeContainer {
     position: absolute;
-    bottom: 90px;
-    right: 70px;
+    bottom: 50px;
+    right: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1057,11 +1057,11 @@ nav {
     margin: 0;
     position: relative;
     color: #ff3c00;
-    font-family: 'Libre Barcode 128 Text', 'Workbench', monospace, cursive;
-    font-size: 2.5rem;
-    font-weight: 100;
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 300;
     white-space: nowrap;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
 .barcode-span {
