@@ -617,6 +617,17 @@ nav {
     justify-content: center;
     overflow: hidden; /* Prevent intro effects from leaking through */
     background: #000; /* Solid black background */
+    border-top: 2px solid transparent;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Glowing border effect when section is active */
+#about.glow-border {
+    border-top-color: var(--hover-color);
+    box-shadow:
+        0 -4px 20px rgba(255, 60, 0, 0.6),
+        0 -8px 40px rgba(255, 60, 0, 0.4),
+        0 -12px 60px rgba(255, 60, 0, 0.2);
 }
 
 /* DNA effect in background - lowest layer */

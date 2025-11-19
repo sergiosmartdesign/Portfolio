@@ -110,6 +110,16 @@ function initActiveNavigation() {
       if (entry.isIntersecting) {
         const sectionId = entry.target.id;
         setActiveButton(sectionId);
+
+        // Add glow effect to about section when it comes into view
+        if (sectionId === 'about') {
+          entry.target.classList.add('glow-border');
+        }
+      } else {
+        // Remove glow effect when leaving about section
+        if (entry.target.id === 'about') {
+          entry.target.classList.remove('glow-border');
+        }
       }
     });
   };
@@ -136,6 +146,14 @@ function initActiveNavigation() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
           setActiveButton('intro');
           return;
+        }
+
+        // Add glow effect when about button is clicked
+        if (sectionId === 'about') {
+          const aboutSection = document.getElementById('about');
+          if (aboutSection) {
+            aboutSection.classList.add('glow-border');
+          }
         }
 
         // Small delay to allow smooth scroll to complete
@@ -168,12 +186,17 @@ function initActiveNavigation() {
     scrollTimeout = setTimeout(() => {
       const scrollPosition = window.scrollY || window.pageYOffset;
       const introSection = document.getElementById('intro');
+      const aboutSection = document.getElementById('about');
 
       if (introSection) {
         const introHeight = introSection.offsetHeight;
         // If we're in the top 50% of the intro section, set intro as active
         if (scrollPosition < introHeight * 0.5) {
           setActiveButton('intro');
+          // Remove glow from about section when back at intro
+          if (aboutSection) {
+            aboutSection.classList.remove('glow-border');
+          }
         }
       }
     }, 50); // 50ms debounce
