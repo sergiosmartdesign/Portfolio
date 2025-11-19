@@ -435,7 +435,8 @@ nav {
 #about.paused-animations::before,
 #about.paused-animations::after,
 #about.paused-animations .scanlines,
-#about.paused-animations .vhs-static {
+#about.paused-animations .vhs-static,
+#about.paused-animations .glitch-text-line [data-char]:after {
     animation-play-state: paused !important;
 }
 
@@ -717,13 +718,28 @@ nav {
     --glitch-final-color: #00ffff; /* Cyan color for the text */
 }
 
-/* Continuous glitch animation for border text */
+/* Hide characters by default */
+.glitch-text-line[data-splitting] [data-char]:after {
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+/* Reveal animation - grows from left to right */
 #about.trigger-glitch .glitch-text-line[data-splitting] [data-char]:after {
-    animation-name: glitch-switch;
-    animation-duration: 0.15s;
-    animation-timing-function: steps(1);
-    animation-iteration-count: infinite;
-    animation-delay: calc(var(--char-index) * 0.05s);
+    animation: glitchReveal 0.3s forwards, glitch-switch 0.15s steps(1) infinite;
+    animation-delay: calc(var(--char-index) * 0.01s), calc(var(--char-index) * 0.01s + 0.3s);
+}
+
+@keyframes glitchReveal {
+    0% {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
 }
 
 /* --- SECCIÓN WEB --- */
