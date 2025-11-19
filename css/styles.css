@@ -21,7 +21,6 @@
 html {
     scroll-behavior: smooth;
     overflow-x: hidden; /* Prevent horizontal scroll */
-    scroll-snap-type: y mandatory; /* Enable vertical snap scrolling */
 }
 
 body {
@@ -180,7 +179,6 @@ nav {
     position: sticky;
     top: 0;
     z-index: 5;
-    scroll-snap-align: start;
     min-height: 100vh;
     background: transparent;
     overflow: hidden;
@@ -614,7 +612,6 @@ nav {
 #about {
     position: relative;
     z-index: 10;
-    scroll-snap-align: start;
     min-height: 100vh; /* Same height as other sections */
     display: flex;
     align-items: center;
@@ -696,7 +693,6 @@ nav {
 #web {
     position: relative;
     z-index: 10;
-    scroll-snap-align: start;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
@@ -709,7 +705,6 @@ nav {
 #photo {
     position: relative;
     z-index: 10;
-    scroll-snap-align: start;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
@@ -723,7 +718,6 @@ nav {
 #illustration {
     position: relative;
     z-index: 10;
-    scroll-snap-align: start;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
@@ -745,7 +739,6 @@ nav {
 #contact {
     position: relative;
     z-index: 10;
-    scroll-snap-align: start;
     min-height: 100vh; /* Asegura que la sección ocupe espacio */
     display: flex;
     align-items: center;
