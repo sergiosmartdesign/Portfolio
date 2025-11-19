@@ -942,9 +942,9 @@ nav {
 
 /* Right vertical line with decorative mini bar - 45px from right border */
 .panel-line--right {
-    bottom: 112px; /* Extended 50px lower */
+    bottom: 102px; /* Extended 60px lower */
     left: calc(100vw - 45px); /* 45px away from right border */
-    height: calc(100% - 112px); /* Extended 50px longer */
+    height: calc(100% - 102px); /* Extended 60px longer */
     width: 2px;
     transform-origin: bottom;
     scale: 1 0;
