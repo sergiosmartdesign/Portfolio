@@ -1057,9 +1057,9 @@ nav {
     margin: 0;
     position: relative;
     color: #ff3c00;
-    font-family: 'Libre Barcode 128 Text', 'Funnel Display', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 100;
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
     white-space: nowrap;
     letter-spacing: 2px;
 }
