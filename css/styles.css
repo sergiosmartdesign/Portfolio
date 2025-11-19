@@ -988,35 +988,7 @@ nav {
     }
 }
 
-/* --- AI ASSISTANT TAMAGOTCHI (CSS VERSION - DISAPPEARS AFTER GLITCH) --- */
-#ai-assistant {
-    position: fixed;
-    width: 120px;
-    height: 90px;
-    bottom: 150px;
-    right: 60px;
-    z-index: 15;
-    opacity: 0;
-    animation: assistantSequence 16s ease-out 3s forwards;
-    filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    background:
-    /* Screen border (head) */
-    linear-gradient(90deg, #ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 10px / 80px 50px,
-    linear-gradient(#ff3c00 2px, transparent 2px 98%, #ff3c00 98%) 20px 10px / 80px 50px,
-    /* Screen background (head) */
-    linear-gradient(#1a1a1a, #1a1a1a) 22px 12px / 76px 46px,
-    /* Left arm - coming from left side of screen */
-    linear-gradient(#ff3c00, #ff3c00) 12px 30px / 6px 20px,
-    /* Right arm - coming from right side of screen */
-    linear-gradient(#ff3c00, #ff3c00) 102px 30px / 6px 20px,
-    /* Left leg - coming from bottom left of screen */
-    linear-gradient(#ff3c00, #ff3c00) 35px 60px / 6px 25px,
-    /* Right leg - coming from bottom right of screen */
-    linear-gradient(#ff3c00, #ff3c00) 75px 60px / 6px 25px;
-    background-repeat: no-repeat;
-}
-
-/* --- AI ASSISTANT SVG (NEW VERSION - APPEARS AFTER GLITCH) --- */
+/* --- AI ASSISTANT SVG --- */
 #ai-assistant-svg {
     position: fixed;
     width: 200px;
@@ -1025,7 +997,7 @@ nav {
     right: 60px;
     z-index: 15;
     opacity: 0;
-    animation: assistantSvgSequence 16s ease-out 3s forwards;
+    animation: assistantSvgSequence 2s ease-out 3s forwards;
     filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
     background: url('../images/laugh1.svg') center center / 140px auto no-repeat;
     pointer-events: none;
@@ -1080,98 +1052,6 @@ nav {
     background-size: 168px auto; /* 140px * 1.2 = 168px */
 }
 
-/* Speech bubble - positioned at LEFT of assistant */
-#ai-assistant[data-message]::after {
-    content: attr(data-message);
-    position: absolute;
-    top: 20px;
-    right: 135px; /* Position to the left of assistant */
-    transform: none;
-    padding: 12px 18px;
-    background: rgba(255, 60, 0, 0.95);
-    border: 2px solid #ff3c00;
-    border-radius: 10px;
-    color: #fff;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    font-weight: bold;
-    white-space: nowrap;
-    box-shadow: 0 0 25px rgba(255, 60, 0, 0.6);
-    opacity: 1;
-    animation: bubbleBounceLeft 0.3s ease-out;
-    pointer-events: none;
-}
-
-/* Speech bubble arrow pointing RIGHT (toward assistant) */
-#ai-assistant[data-message]::after {
-    clip-path: polygon(
-        0 0, calc(100% - 12px) 0,
-        calc(100% - 12px) calc(50% - 8px),
-        100% 50%,
-        calc(100% - 12px) calc(50% + 8px),
-        calc(100% - 12px) 100%,
-        0 100%
-    );
-}
-
-@keyframes bubbleBounceLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(-10px) scale(0.8);
-    }
-    70% {
-        transform: translateX(5px) scale(1.05);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
-
-/* Glitched text overlay during glitch animation */
-#ai-assistant[data-glitch]::after {
-    content: attr(data-glitch) !important;
-    position: absolute !important;
-    top: -45px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    padding: 8px 15px !important;
-    background: rgba(0, 0, 0, 0.9) !important;
-    border: 2px solid #00ff00 !important;
-    border-radius: 0 !important;
-    color: #00ff00 !important;
-    font-family: 'Courier New', monospace !important;
-    font-size: 14px !important;
-    font-weight: bold !important;
-    white-space: nowrap !important;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), inset 0 0 10px rgba(0, 255, 0, 0.3) !important;
-    opacity: 1 !important;
-    animation: glitchFlicker 0.1s infinite !important;
-    pointer-events: none !important;
-    letter-spacing: 3px !important;
-    text-shadow: 2px 2px 4px rgba(0, 255, 0, 0.5), -2px -2px 4px rgba(255, 0, 0, 0.3) !important;
-    clip-path: none !important;
-}
-
-@keyframes glitchFlicker {
-    0%, 100% {
-        opacity: 1;
-        transform: translateX(-50%) skew(0deg);
-    }
-    25% {
-        opacity: 0.8;
-        transform: translateX(-52%) skew(-2deg);
-    }
-    50% {
-        opacity: 1;
-        transform: translateX(-48%) skew(2deg);
-    }
-    75% {
-        opacity: 0.9;
-        transform: translateX(-50%) skew(-1deg);
-    }
-}
-
 /* Speech bubble for SVG assistant - positioned at LEFT */
 #ai-assistant-svg[data-message]::after {
     content: attr(data-message);
@@ -1202,122 +1082,28 @@ nav {
     );
 }
 
-/* Animated face using box-shadow pixels */
-#ai-assistant::before {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    top: 30px;
-    left: 35px;
-    background-color: #ff3c00;
-    animation: aiFace 4s linear infinite, hideFaceAfterGlitch 16s ease-out 3s forwards;
-}
-
-/* Hide CSS face and show SVG after glitch */
-@keyframes hideFaceAfterGlitch {
-    0%, 90% {
-        opacity: 1;
-    }
-    90.5%, 100% {
-        opacity: 0;
-    }
-}
-
-@keyframes assistantSequence {
-    0% {
-        opacity: 0;
-        bottom: 50%;
-        right: 50%;
-        transform: translate(50%, 50%);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    3% {
-        opacity: 1;
-        bottom: 50%;
-        right: 50%;
-        transform: translate(50%, 50%);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    80% {
-        opacity: 1;
-        bottom: 50%;
-        right: 50%;
-        transform: translate(50%, 50%);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    85% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        transform: translate(0, 0);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    86%, 87% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        transform: translate(-3px, 0);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(180deg);
-    }
-    87.5%, 88.5% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        transform: translate(3px, 0);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    89%, 90% {
-        opacity: 1;
-        bottom: 50px;
-        right: 30px;
-        transform: translate(0, 2px);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3)) hue-rotate(90deg);
-    }
-    90.5% {
-        opacity: 0;
-        bottom: 50px;
-        right: 30px;
-        transform: translate(0, 0);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-    100% {
-        opacity: 0;
-        bottom: 50px;
-        right: 30px;
-        transform: translate(0, 0);
-        filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.6)) drop-shadow(0 0 30px rgba(255, 60, 0, 0.3));
-    }
-}
-
-/* SVG Assistant Animation - Appears after glitch with glitch entrance */
+/* SVG Assistant Animation - Appears with glitch entrance */
 @keyframes assistantSvgSequence {
     0% {
         opacity: 0;
         bottom: 50px;
         right: 30px;
     }
-    90.5% {
-        opacity: 0;
-        bottom: 50px;
-        right: 30px;
-    }
-    91% {
+    5% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: hue-rotate(90deg) drop-shadow(0 0 20px rgba(0, 255, 0, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 0, 0.6));
         transform: translate(-3px, 0);
     }
-    91.5% {
+    10% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
         filter: hue-rotate(180deg) drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 40px rgba(0, 255, 255, 0.6));
         transform: translate(3px, 0);
     }
-    92% {
+    15% {
         opacity: 1;
         bottom: 50px;
         right: 30px;
@@ -1333,56 +1119,3 @@ nav {
     }
 }
 
-@keyframes aiFace {
-    0%, 20% {
-        /* Happy face */
-        box-shadow:
-        0 0 0 #ff3c00,
-        30px 0 0 #ff3c00,
-        6px 12px 0 #ff3c00,
-        12px 15px 0 #ff3c00,
-        18px 15px 0 #ff3c00,
-        24px 12px 0 #ff3c00;
-    }
-    25%, 45% {
-        /* Wink */
-        box-shadow:
-        -6px 0 0 #ff3c00,
-        0 0 0 #ff3c00,
-        30px 0 0 #ff3c00,
-        6px 12px 0 #ff3c00,
-        12px 15px 0 #ff3c00,
-        18px 15px 0 #ff3c00,
-        24px 12px 0 #ff3c00;
-    }
-    50%, 70% {
-        /* Thinking */
-        box-shadow:
-        0 0 0 #ff3c00,
-        30px 0 0 #ff3c00,
-        12px 12px 0 #ff3c00,
-        18px 12px 0 #ff3c00;
-    }
-    75%, 95% {
-        /* Excited */
-        box-shadow:
-        0 0 0 #ff3c00,
-        30px 0 0 #ff3c00,
-        6px 12px 0 #ff3c00,
-        12px 18px 0 #ff3c00,
-        18px 18px 0 #ff3c00,
-        24px 12px 0 #ff3c00,
-        12px 12px 0 #ff3c00,
-        18px 12px 0 #ff3c00;
-    }
-    96%, 100% {
-        /* Happy face */
-        box-shadow:
-        0 0 0 #ff3c00,
-        30px 0 0 #ff3c00,
-        6px 12px 0 #ff3c00,
-        12px 15px 0 #ff3c00,
-        18px 15px 0 #ff3c00,
-        24px 12px 0 #ff3c00;
-    }
-}

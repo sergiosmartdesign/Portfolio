@@ -446,50 +446,7 @@ function initCyberPanelAnimation() {
 // Note: initCyberPanelAnimation is called in master initialization at bottom of file
 
 // ====================================================================
-// PARTE 9: AI ASSISTANT SPEECH BUBBLES
-// ====================================================================
-
-function initAIAssistant() {
-  const assistant = document.getElementById('ai-assistant');
-
-  if (!assistant) return;
-
-  const messages = [
-    { text: "0hh!*", delay: 3500, duration: 2000 },
-    { text: "H3LL0", delay: 6000, duration: 2000 },
-    { text: "50rry, I app3ared in the wrr0ngggGG Position", delay: 9000, duration: 3500 },
-    { text: "L3t me Fix thathah...", delay: 13000, duration: 2500 }
-  ];
-
-  messages.forEach(msg => {
-    setTimeout(() => {
-      assistant.setAttribute('data-message', msg.text);
-    }, msg.delay);
-  });
-
-  // Clear message after sequence
-  setTimeout(() => {
-    assistant.removeAttribute('data-message');
-  }, 16000);
-
-  // Add glitch text during glitch animation (16s animation * 86% = 13760ms after start + 3000ms delay)
-  const glitchTexts = ['ar24@#(ND><', 'ER#0R_%$@', 'G1!TCH_<<>', '##SYS_F@!L'];
-  setTimeout(() => {
-    let glitchInterval = setInterval(() => {
-      const randomGlitch = glitchTexts[Math.floor(Math.random() * glitchTexts.length)];
-      assistant.setAttribute('data-glitch', randomGlitch);
-    }, 80);
-
-    // Stop glitch after 720ms (duration of glitch animation)
-    setTimeout(() => {
-      clearInterval(glitchInterval);
-      assistant.removeAttribute('data-glitch');
-    }, 720);
-  }, 16760);
-}
-
-// ====================================================================
-// PARTE 11: ANIMATION PERFORMANCE OPTIMIZER
+// PARTE 9: ANIMATION PERFORMANCE OPTIMIZER
 // ====================================================================
 
 function initAnimationOptimizer() {
@@ -529,7 +486,7 @@ function initAnimationOptimizer() {
 }
 
 // ====================================================================
-// PARTE 12: SCROLL BLOCKING
+// PARTE 10: SCROLL BLOCKING
 // ====================================================================
 
 function initScrollBlocking(navigationControl) {
@@ -544,7 +501,7 @@ function initScrollBlocking(navigationControl) {
   html.style.overflow = 'hidden';
 
   // Enable scroll when "Let's start by scrolling!!!!" message appears
-  // This happens at baseDelay (18000) + 40000 = 58000ms
+  // This happens at baseDelay (3000) + 40000 = 43000ms
   setTimeout(() => {
     body.style.overflow = '';
     html.style.overflow = '';
@@ -554,7 +511,7 @@ function initScrollBlocking(navigationControl) {
     if (navigationControl && navigationControl.observer) {
       navigationControl.observer.observe(aboutSection);
     }
-  }, 58000);
+  }, 43000);
 }
 
 // ====================================================================
@@ -578,7 +535,6 @@ window.addEventListener('DOMContentLoaded', () => {
   initRotatingSquaresGrid();
   initContactExitAnimation();
   initCyberPanelAnimation();
-  initAIAssistant();
   initSVGAssistantSequence();
 
   // Initialize animation optimizer for performance
@@ -604,7 +560,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 // ====================================================================
-// PARTE 10: SVG AI ASSISTANT SEQUENCE - ROTATION AND MESSAGES
+// PARTE 11: SVG AI ASSISTANT SEQUENCE - ROTATION AND MESSAGES
 // ====================================================================
 
 function initSVGAssistantSequence() {
@@ -613,10 +569,10 @@ function initSVGAssistantSequence() {
   if (!svgAssistant) return;
 
   // Timing starts after SVG glitch entrance completes
-  // CSS glitch disappears at 90.5% (17480ms), SVG appears at 91% (17560ms), settles at 92% (17920ms)
-  const baseDelay = 18000; // Start rotation sequence after SVG fully appears
+  // SVG appears with glitch effect from CSS animation (3s delay + quick glitch entrance)
+  const baseDelay = 3000; // Start rotation sequence after SVG appears
 
-  // 1. laugh1.svg is already showing (from CSS)
+  // 1. laugh1.svg appears with glitch entrance (from CSS animation)
 
   // 2. After 2 seconds, switch to timid1.svg
   setTimeout(() => {
