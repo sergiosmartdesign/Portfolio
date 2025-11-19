@@ -138,6 +138,17 @@ function initActiveNavigation() {
           return;
         }
 
+        // Trigger top border glitch when about button is clicked
+        if (sectionId === 'about') {
+          const aboutSection = document.getElementById('about');
+          if (aboutSection && !aboutSection.dataset.glitchTriggered) {
+            // Small delay to let scroll start, then trigger glitch
+            setTimeout(() => {
+              triggerAboutTopGlitch();
+            }, 300);
+          }
+        }
+
         // Small delay to allow smooth scroll to complete
         setTimeout(() => {
           setActiveButton(sectionId);
@@ -468,7 +479,41 @@ function initCyberPanelAnimation() {
 // Note: initCyberPanelAnimation is called in master initialization at bottom of file
 
 // ====================================================================
-// PARTE 9: ANIMATION PERFORMANCE OPTIMIZER
+// PARTE 9: ABOUT SECTION TOP BORDER GLITCH EFFECT
+// ====================================================================
+
+function triggerAboutTopGlitch() {
+  const aboutSection = document.getElementById('about');
+
+  if (!aboutSection) {
+    console.warn('[About Top Glitch] About section not found');
+    return;
+  }
+
+  // Check if glitch has already been triggered
+  if (aboutSection.dataset.glitchTriggered === 'true') {
+    console.log('[About Top Glitch] Effect already triggered, skipping');
+    return;
+  }
+
+  // Add trigger class to start the glitch animation
+  aboutSection.classList.add('trigger-glitch');
+  aboutSection.dataset.glitchTriggered = 'true';
+
+  console.log('[About Top Glitch] Top border glitch effect triggered');
+
+  // Optional: Remove the trigger class after animation completes (2.5s duration)
+  // This cleans up the DOM but keeps the flag to prevent re-triggering
+  setTimeout(() => {
+    aboutSection.classList.remove('trigger-glitch');
+    console.log('[About Top Glitch] Animation completed, class removed');
+  }, 2500);
+}
+
+// Note: triggerAboutTopGlitch is called by both Intersection Observer and nav click handler
+
+// ====================================================================
+// PARTE 10: ANIMATION PERFORMANCE OPTIMIZER
 // ====================================================================
 
 function initAnimationOptimizer() {
@@ -527,6 +572,12 @@ function initAnimationOptimizer() {
         if (entry.isIntersecting) {
           // About section visible - resume animations
           aboutSection.classList.remove('paused-animations');
+
+          // Trigger top border glitch effect (one-time only)
+          if (!aboutSection.dataset.glitchTriggered) {
+            triggerAboutTopGlitch();
+          }
+
           console.log('[Animation Optimizer] About animations resumed');
         } else {
           // About section not visible - pause animations
