@@ -1018,12 +1018,7 @@ nav {
     position: absolute;
     bottom: 50px;
     right: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    padding: 8px 16px;
-    border-radius: 8px;
+    display: block;
     z-index: 15;
     opacity: 0;
     animation: barcodeGlowing 17s infinite;
@@ -1055,6 +1050,7 @@ nav {
 /* Barcode bars */
 #barcode {
     margin: 0;
+    padding: 0;
     position: relative;
     color: #ff3c00;
     font-family: 'Libre Barcode 128 Text', cursive;
@@ -1063,6 +1059,8 @@ nav {
     white-space: nowrap;
     letter-spacing: 2px;
     line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .barcode-span {
