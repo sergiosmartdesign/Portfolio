@@ -547,10 +547,23 @@ function initAnimationOptimizer() {
 // ====================================================================
 
 function initBarcodeAnimation() {
+  const barcodeElement = document.getElementById('barcode');
+
+  if (!barcodeElement) return;
+
+  // Generate current date in format [YYYY | MM | DD]
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const dateString = `[${year} | ${month} | ${day}]`;
+
+  // Create spans for each character
+  barcodeElement.innerHTML = dateString.split('').map(char =>
+    `<span class="barcode-span">${char}</span>`
+  ).join('');
+
   const barcodeSpans = document.querySelectorAll('#barcode .barcode-span');
-
-  if (barcodeSpans.length === 0) return;
-
   let animationInterval = null;
 
   function runBarcodeAnimation() {
@@ -599,7 +612,7 @@ function initBarcodeAnimation() {
     stop: stopAnimation
   };
 
-  console.log('[Barcode Animation] Initialized');
+  console.log('[Barcode Animation] Initialized with date: ' + dateString);
 }
 
 // ====================================================================
