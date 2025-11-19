@@ -615,7 +615,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* Oculta partes de la animación que se salen */
+    overflow: visible; /* Allow glitch text to show above section */
     background: #000; /* Solid black background */
 }
 
@@ -699,7 +699,7 @@ nav {
     height: auto;
     z-index: 5; /* Above VHS static */
     pointer-events: none;
-    overflow: hidden;
+    overflow: visible; /* Show symbols even when positioned above section */
     opacity: 0; /* Hidden by default */
     padding: 5px 0;
 }
