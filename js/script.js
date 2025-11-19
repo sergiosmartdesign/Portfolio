@@ -129,6 +129,15 @@ function initActiveNavigation() {
       const href = btn.getAttribute('href');
       if (href && href.startsWith('#')) {
         const sectionId = href.substring(1);
+
+        // Special handling for intro section (sticky element)
+        if (sectionId === 'intro') {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setActiveButton('intro');
+          return;
+        }
+
         // Small delay to allow smooth scroll to complete
         setTimeout(() => {
           setActiveButton(sectionId);
@@ -136,6 +145,19 @@ function initActiveNavigation() {
       }
     });
   });
+
+  // Handle click on logo to scroll to intro
+  const logo = document.querySelector('.logo');
+  if (logo) {
+    logo.addEventListener('click', (e) => {
+      const href = logo.getAttribute('href');
+      if (href === '#intro') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setActiveButton('intro');
+      }
+    });
+  }
 
   // Return setActiveButton function for use in other modules
   return { setActiveButton, observer };
