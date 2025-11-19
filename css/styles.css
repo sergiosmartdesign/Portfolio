@@ -174,7 +174,9 @@ nav {
 
 /* --- SECCIÓN INTRO --- */
 #intro {
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 5;
     min-height: 100vh;
     background: transparent;
     overflow: hidden;
@@ -591,12 +593,13 @@ nav {
 }
 /* --- SECCIÓN ABOUT --- */
 #about {
+    position: relative;
+    z-index: 10;
     min-height: 100vh; /* Same height as other sections */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Oculta partes de la animación que se salen */
-    position: relative; /* Normal document flow */
     background: #000; /* Solid black background */
 }
 
