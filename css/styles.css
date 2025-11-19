@@ -1021,10 +1021,9 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: transparent;
     padding: 8px 16px;
     border-radius: 8px;
-    backdrop-filter: blur(10px);
     z-index: 15;
     opacity: 0;
     animation: barcodeGlowing 17s infinite;
@@ -1059,7 +1058,7 @@ nav {
     position: relative;
     color: #ff3c00;
     font-family: 'Libre Barcode 128 Text', cursive;
-    font-size: 2.5rem;
+    font-size: 1.25rem;
     font-weight: 100;
     white-space: nowrap;
     letter-spacing: 2px;
