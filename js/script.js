@@ -473,38 +473,67 @@ function initCyberPanelAnimation() {
 
 function initAnimationOptimizer() {
   const introSection = document.getElementById('intro');
+  const aboutSection = document.getElementById('about');
 
-  if (!introSection) return;
+  // Observer configuration
+  const observerOptions = {
+    threshold: 0.1, // Trigger when at least 10% of section is visible
+    rootMargin: '50px' // Start animating slightly before section enters viewport
+  };
 
   // Observer to pause/resume intro animations when section is not visible
-  const introObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // Intro section visible - resume animations
-        if (window.ParticleSystem && window.ParticleSystem.resume) {
-          window.ParticleSystem.resume();
-        }
-        if (window.Orb3D && window.Orb3D.resume) {
-          window.Orb3D.resume();
-        }
-        console.log('[Animation Optimizer] Intro animations resumed');
-      } else {
-        // Intro section not visible - pause animations
-        if (window.ParticleSystem && window.ParticleSystem.pause) {
-          window.ParticleSystem.pause();
-        }
-        if (window.Orb3D && window.Orb3D.pause) {
-          window.Orb3D.pause();
-        }
-        console.log('[Animation Optimizer] Intro animations paused');
-      }
-    });
-  }, {
-    threshold: 0.1 // Trigger when at least 10% of section is visible
-  });
+  if (introSection) {
+    const introObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Intro section visible - resume animations
+          introSection.classList.remove('paused-animations');
 
-  introObserver.observe(introSection);
-  console.log('[Animation Optimizer] Initialized');
+          if (window.ParticleSystem && window.ParticleSystem.resume) {
+            window.ParticleSystem.resume();
+          }
+          if (window.Orb3D && window.Orb3D.resume) {
+            window.Orb3D.resume();
+          }
+          console.log('[Animation Optimizer] Intro animations resumed');
+        } else {
+          // Intro section not visible - pause animations
+          introSection.classList.add('paused-animations');
+
+          if (window.ParticleSystem && window.ParticleSystem.pause) {
+            window.ParticleSystem.pause();
+          }
+          if (window.Orb3D && window.Orb3D.pause) {
+            window.Orb3D.pause();
+          }
+          console.log('[Animation Optimizer] Intro animations paused');
+        }
+      });
+    }, observerOptions);
+
+    introObserver.observe(introSection);
+  }
+
+  // Observer to pause/resume about section animations
+  if (aboutSection) {
+    const aboutObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // About section visible - resume animations
+          aboutSection.classList.remove('paused-animations');
+          console.log('[Animation Optimizer] About animations resumed');
+        } else {
+          // About section not visible - pause animations
+          aboutSection.classList.add('paused-animations');
+          console.log('[Animation Optimizer] About animations paused');
+        }
+      });
+    }, observerOptions);
+
+    aboutObserver.observe(aboutSection);
+  }
+
+  console.log('[Animation Optimizer] Initialized for intro and about sections');
 }
 
 // ====================================================================

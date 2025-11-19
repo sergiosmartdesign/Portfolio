@@ -424,6 +424,21 @@ nav {
 
 /* --- EFECTOS DE FONDO (VHS & SHADER) --- */
 
+/* Performance optimization: Pause animations when section is not visible */
+#intro.paused-animations::before,
+#intro.paused-animations::after,
+#intro.paused-animations .scanlines,
+#intro.paused-animations .vhs-static,
+#intro.paused-animations .orb-wrap,
+#about.paused-animations .scene .texts,
+#about.paused-animations .scene .text,
+#about.paused-animations::before,
+#about.paused-animations::after,
+#about.paused-animations .scanlines,
+#about.paused-animations .vhs-static {
+    animation-play-state: paused !important;
+}
+
 /* Capa 1: Rejilla móvil */
 #intro::before {
     content: "";
