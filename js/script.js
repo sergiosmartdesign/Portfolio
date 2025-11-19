@@ -548,7 +548,6 @@ function initAnimationOptimizer() {
 
 function initBarcodeAnimation() {
   const barcodeSpans = document.querySelectorAll('#barcode .barcode-span');
-  const labelSpans = document.querySelectorAll('#barcodeLabel .barcode-label-span');
 
   if (barcodeSpans.length === 0) return;
 
@@ -556,13 +555,9 @@ function initBarcodeAnimation() {
 
   function runBarcodeAnimation() {
     // First pass: Add highlighting with 200ms delay between each span
-    // Animate both barcode and label together
     barcodeSpans.forEach((span, i) => {
       setTimeout(() => {
         span.classList.add('barcode-highlighted');
-        if (labelSpans[i]) {
-          labelSpans[i].classList.add('barcode-highlighted');
-        }
       }, 200 * i);
     });
 
@@ -572,9 +567,6 @@ function initBarcodeAnimation() {
     barcodeSpans.forEach((span, i) => {
       setTimeout(() => {
         span.classList.remove('barcode-highlighted');
-        if (labelSpans[i]) {
-          labelSpans[i].classList.remove('barcode-highlighted');
-        }
       }, firstPassDuration + (20 * i));
     });
   }
@@ -591,11 +583,8 @@ function initBarcodeAnimation() {
     if (animationInterval) {
       clearInterval(animationInterval);
       animationInterval = null;
-      // Clear all highlights from both barcode and label
+      // Clear all highlights
       barcodeSpans.forEach(span => {
-        span.classList.remove('barcode-highlighted');
-      });
-      labelSpans.forEach(span => {
         span.classList.remove('barcode-highlighted');
       });
     }

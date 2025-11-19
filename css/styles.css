@@ -1019,7 +1019,6 @@ nav {
     bottom: 50px;
     right: 50px;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.6);
@@ -1029,7 +1028,6 @@ nav {
     z-index: 15;
     opacity: 0;
     animation: barcodeGlowing 17s infinite;
-    gap: 4px;
 }
 
 /* Fade in barcode container after panel lines are drawn */
@@ -1055,7 +1053,7 @@ nav {
     100% { box-shadow: 0 0 2px rgba(255, 60, 0, 0.2); }
 }
 
-/* Barcode bars on top */
+/* Barcode bars */
 #barcode {
     margin: 0;
     position: relative;
@@ -1068,21 +1066,7 @@ nav {
     line-height: 1;
 }
 
-/* Readable text label below barcode */
-#barcodeLabel {
-    margin: 0;
-    position: relative;
-    color: #ff3c00;
-    font-family: 'Funnel Display', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 300;
-    white-space: nowrap;
-    letter-spacing: 1px;
-    line-height: 1;
-}
-
-.barcode-span,
-.barcode-label-span {
+.barcode-span {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -1091,8 +1075,7 @@ nav {
     transition: color 0.3s ease;
 }
 
-.barcode-span:hover,
-.barcode-label-span:hover {
+.barcode-span:hover {
     color: #00ffff;
     cursor: crosshair;
 }
