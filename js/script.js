@@ -159,6 +159,26 @@ function initActiveNavigation() {
     });
   }
 
+  // Handle scroll to detect when intro section should be active
+  // This is needed because intro has position: sticky and stays at top
+  let scrollTimeout;
+  window.addEventListener('scroll', () => {
+    // Debounce the scroll event
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const scrollPosition = window.scrollY || window.pageYOffset;
+      const introSection = document.getElementById('intro');
+
+      if (introSection) {
+        const introHeight = introSection.offsetHeight;
+        // If we're in the top 50% of the intro section, set intro as active
+        if (scrollPosition < introHeight * 0.5) {
+          setActiveButton('intro');
+        }
+      }
+    }, 50); // 50ms debounce
+  });
+
   // Return setActiveButton function for use in other modules
   return { setActiveButton, observer };
 }
