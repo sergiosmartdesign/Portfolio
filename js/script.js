@@ -101,8 +101,8 @@ function initActiveNavigation() {
   // Intersection Observer to detect which section is in view
   const observerOptions = {
     root: null,
-    rootMargin: '0px',
-    threshold: 0.5 // 50% of the section must be visible
+    rootMargin: '-40% 0px -40% 0px', // Section must be in center 20% of viewport
+    threshold: 0 // Trigger when section crosses the margin
   };
 
   const observerCallback = (entries) => {
