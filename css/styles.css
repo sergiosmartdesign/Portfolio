@@ -1015,7 +1015,7 @@ nav {
 
 /* --- BARCODE ANIMATION LABEL --- */
 #barcodeContainer {
-    position: absolute;
+    position: fixed;
     bottom: 50px;
     right: 20px;
     display: block;
