@@ -140,13 +140,10 @@ function initActiveNavigation() {
 
         // Trigger top border glitch when about button is clicked
         if (sectionId === 'about') {
-          const aboutSection = document.getElementById('about');
-          if (aboutSection && !aboutSection.dataset.glitchTriggered) {
-            // Small delay to let scroll start, then trigger glitch
-            setTimeout(() => {
-              triggerAboutTopGlitch();
-            }, 300);
-          }
+          // Small delay to let scroll start, then trigger glitch
+          setTimeout(() => {
+            triggerAboutTopGlitch();
+          }, 300);
         }
 
         // Small delay to allow smooth scroll to complete
@@ -490,24 +487,16 @@ function triggerAboutTopGlitch() {
     return;
   }
 
-  // Check if glitch has already been triggered
-  if (aboutSection.dataset.glitchTriggered === 'true') {
-    console.log('[About Top Glitch] Effect already triggered, skipping');
-    return;
-  }
+  // Remove and re-add class to restart animation if already playing
+  aboutSection.classList.remove('trigger-glitch');
+
+  // Force reflow to restart CSS animation
+  void aboutSection.offsetWidth;
 
   // Add trigger class to start the glitch animation
   aboutSection.classList.add('trigger-glitch');
-  aboutSection.dataset.glitchTriggered = 'true';
 
   console.log('[About Top Glitch] Top border glitch effect triggered');
-
-  // Optional: Remove the trigger class after animation completes (2.5s duration)
-  // This cleans up the DOM but keeps the flag to prevent re-triggering
-  setTimeout(() => {
-    aboutSection.classList.remove('trigger-glitch');
-    console.log('[About Top Glitch] Animation completed, class removed');
-  }, 2500);
 }
 
 // Note: triggerAboutTopGlitch is called by both Intersection Observer and nav click handler
@@ -573,10 +562,8 @@ function initAnimationOptimizer() {
           // About section visible - resume animations
           aboutSection.classList.remove('paused-animations');
 
-          // Trigger top border glitch effect (one-time only)
-          if (!aboutSection.dataset.glitchTriggered) {
-            triggerAboutTopGlitch();
-          }
+          // Trigger top border glitch effect
+          triggerAboutTopGlitch();
 
           console.log('[Animation Optimizer] About animations resumed');
         } else {
