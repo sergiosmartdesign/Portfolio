@@ -111,11 +111,18 @@ function initActiveNavigation() {
         const sectionId = entry.target.id;
         setActiveButton(sectionId);
 
-        // Add glow effect to about section when it comes into view
+        // Add glow effect to about section only when intro is fully scrolled
         if (sectionId === 'about') {
-          entry.target.classList.add('glow-border');
-          // Start tracking scroll position for glow movement
-          startGlowTracking();
+          const introSection = document.getElementById('intro');
+          const scrollPosition = window.scrollY || window.pageYOffset;
+          const introHeight = introSection ? introSection.offsetHeight : window.innerHeight;
+
+          // Only activate glow when we've scrolled at least 90% of intro section
+          if (scrollPosition >= introHeight * 0.9) {
+            entry.target.classList.add('glow-border');
+            // Start tracking scroll position for glow movement
+            startGlowTracking();
+          }
         }
       } else {
         // Remove glow effect when leaving about section
@@ -245,12 +252,21 @@ function initActiveNavigation() {
 
       if (introSection) {
         const introHeight = introSection.offsetHeight;
+
         // If we're in the top 50% of the intro section, set intro as active
         if (scrollPosition < introHeight * 0.5) {
           setActiveButton('intro');
           // Remove glow from about section when back at intro
           if (aboutSection) {
             aboutSection.classList.remove('glow-border');
+          }
+        }
+        // Activate glow when intro is 90% scrolled
+        else if (scrollPosition >= introHeight * 0.9 && aboutSection) {
+          const rect = aboutSection.getBoundingClientRect();
+          // Only add glow if about section is in viewport
+          if (rect.top < window.innerHeight) {
+            aboutSection.classList.add('glow-border');
           }
         }
       }
