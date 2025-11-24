@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
 
-/* --- RESET BÁSICO Y VARIABLES --- */
 * {
     margin: 0;
     padding: 0;
@@ -745,6 +744,18 @@ nav {
     overflow: hidden; /* Oculta partes de la animación que se salen */
     background: #000; /* Solid background to cover sticky intro */
 }
+
+/* --- SECCIÓN CONTACT --- */
+#experiments {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh; /* Asegura que la sección ocupe espacio */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Oculta partes de la animación que se salen */
+    background: #000; /* Solid background to cover sticky intro */
+}
 /* --- CYBERPUNK PANEL ANIMATION (INTRO) --- */
 .cyber-panel {
     position: absolute;
@@ -876,7 +887,7 @@ nav {
     background: #ff3c00;
 }
 
-/* Date number in corner */
+/* Date in corner left bar*/
 .date {
     position: relative;
     top: 50%;
