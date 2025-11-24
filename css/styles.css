@@ -878,12 +878,11 @@ nav {
 
 /* Version number in corner */
 .version {
-    position: absolute;
-    right: 2px;
+    position: relative;
     top: 50%;
     transform: translateY(-50%) rotate(-90deg);
     transform-origin: center;
-    font-size: 8px;
+    font-size: 12px;
     opacity: 0.8;
     font-family: 'Workbench', monospace, sans-serif;
     color: #ff3c00;
