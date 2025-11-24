@@ -1,357 +1,441 @@
 /**
  * Particle System Animation
- * Adapted for vanilla JavaScript (no external dependencies)
+ * Modern ES6 class implementation with performance optimizations
  * Original concept by Alex Andrix
  */
 
-var ParticleSystem = {};
+class ParticleSystem {
+  constructor() {
+    // Configuration constants
+    this.config = {
+      lifespan: 1000,
+      popPerBirth: 1,
+      maxPop: 150,
+      birthFreq: 2,
+      gridSize: 8,
+      gridRadius: 500,
+      attractorRadius: 100,
+      springConstant: 8,
+      viscosity: 0.4,
+      zoom: 1.6,
+      hue: 180,  // Cyan for cyberpunk theme
+      saturation: 95
+    };
 
-ParticleSystem.setup = function() {
-  // Create canvas element
-  var canvas = document.createElement('canvas');
-  canvas.id = 'particleCanvas';
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  this.canvas = canvas;
+    // Animation state
+    this.stepCount = 0;
+    this.particles = [];
+    this.drawnInLastFrame = 0;
+    this.deathCount = 0;
+    this.isRunning = true;
 
-  // Insert canvas as first child of intro section (background layer)
-  var introSection = document.getElementById('intro');
-  introSection.insertBefore(canvas, introSection.firstChild);
+    // DOM elements (cached)
+    this.canvas = null;
+    this.ctx = null;
+    this.introSection = null;
 
-  this.ctx = this.canvas.getContext('2d');
-  this.width = this.canvas.width;
-  this.height = this.canvas.height;
-  this.dataToImageRatio = 1;
+    // Canvas dimensions (cached)
+    this.width = 0;
+    this.height = 0;
+    this.xC = 0;
+    this.yC = 0;
 
-  // Disable image smoothing for sharper particles
-  this.ctx.imageSmoothingEnabled = false;
-  this.ctx.webkitImageSmoothingEnabled = false;
-  this.ctx.msImageSmoothingEnabled = false;
+    // Grid system
+    this.grid = [];
+    this.gridSteps = 0;
+    this.gridMaxIndex = 0;
 
-  this.xC = this.width / 2;
-  this.yC = this.height / 2;
+    this.setup();
+    this.startAnimationLoop();
+  }
 
-  this.stepCount = 0;
-  this.particles = [];
+  /**
+   * Initial setup - creates canvas and builds motion grid
+   */
+  setup() {
+    this.createCanvas();
+    this.buildMotionGrid();
+    this.initDraw();
+    this.attachResizeListener();
+  }
 
-  // Particle system parameters - adjusted for intro section
-  this.lifespan = 1000;
-  this.popPerBirth = 1;
-  this.maxPop = 150; // Reduced from 300 for better performance
-  this.birthFreq = 2;
+  /**
+   * Creates and configures canvas element
+   */
+  createCanvas() {
+    this.canvas = document.createElement('canvas');
+    this.canvas.id = 'particleCanvas';
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
 
-  // Build motion grid
-  this.gridSize = 8;
-  this.gridSteps = Math.floor(1000 / this.gridSize);
-  this.grid = [];
+    // Cache canvas dimensions
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+    this.xC = this.width / 2;
+    this.yC = this.height / 2;
 
-  var i = 0;
-  for (var xx = -500; xx < 500; xx += this.gridSize) {
-    for (var yy = -500; yy < 500; yy += this.gridSize) {
-      // Radial field - creates attraction pattern
-      var r = Math.sqrt(xx * xx + yy * yy);
-      var r0 = 100;
-      var field;
-
-      if (r < r0) {
-        field = 255 / r0 * r;
-      } else if (r > r0) {
-        field = 255 - Math.min(255, (r - r0) / 2);
-      }
-
-      this.grid.push({
-        x: xx,
-        y: yy,
-        busyAge: 0,
-        spotIndex: i,
-        isEdge: (xx == -500 ? 'left' :
-                 (xx == (-500 + this.gridSize * (this.gridSteps - 1)) ? 'right' :
-                  (yy == -500 ? 'top' :
-                   (yy == (-500 + this.gridSize * (this.gridSteps - 1)) ? 'bottom' :
-                    false
-                   )
-                  )
-                 )
-                ),
-        field: field
-      });
-      i++;
+    // Insert as first child of intro section
+    this.introSection = document.getElementById('intro');
+    if (this.introSection) {
+      this.introSection.insertBefore(this.canvas, this.introSection.firstChild);
     }
-  }
-  this.gridMaxIndex = i;
 
-  // Counters
-  this.drawnInLastFrame = 0;
-  this.deathCount = 0;
-
-  this.initDraw();
-};
-
-ParticleSystem.evolve = function() {
-  this.stepCount++;
-
-  // Increment all grid ages
-  for (var i = 0; i < this.grid.length; i++) {
-    if (this.grid[i].busyAge > 0) {
-      this.grid[i].busyAge++;
-    }
+    // Get context and disable smoothing for sharper particles
+    this.ctx = this.canvas.getContext('2d');
+    this.ctx.imageSmoothingEnabled = false;
+    this.ctx.webkitImageSmoothingEnabled = false;
+    this.ctx.msImageSmoothingEnabled = false;
   }
 
-  // Birth new particles
-  if (this.stepCount % this.birthFreq == 0 &&
-      (this.particles.length + this.popPerBirth) < this.maxPop) {
-    this.birth();
-  }
+  /**
+   * Builds the radial attraction field grid
+   */
+  buildMotionGrid() {
+    const { gridSize, gridRadius, attractorRadius } = this.config;
+    this.gridSteps = Math.floor((gridRadius * 2) / gridSize);
+    this.grid = [];
 
-  this.move();
-  this.draw();
-};
+    let spotIndex = 0;
+    const edgeMin = -gridRadius;
+    const edgeMax = edgeMin + gridSize * (this.gridSteps - 1);
 
-ParticleSystem.birth = function() {
-  var gridSpotIndex = Math.floor(Math.random() * this.gridMaxIndex);
-  var gridSpot = this.grid[gridSpotIndex];
-  var x = gridSpot.x;
-  var y = gridSpot.y;
+    for (let xx = -gridRadius; xx < gridRadius; xx += gridSize) {
+      for (let yy = -gridRadius; yy < gridRadius; yy += gridSize) {
+        // Calculate radial field strength
+        const r = Math.sqrt(xx * xx + yy * yy);
+        const field = r < attractorRadius
+          ? (255 / attractorRadius) * r
+          : 255 - Math.min(255, (r - attractorRadius) / 2);
 
-  var particle = {
-    // Cyberpunk cyan color scheme - matches your theme
-    hue: 180, // Cyan (change to 20 for orange)
-    sat: 95,
-    lum: 20 + Math.floor(40 * Math.random()),
-    x: x,
-    y: y,
-    xLast: x,
-    yLast: y,
-    xSpeed: 0,
-    ySpeed: 0,
-    age: 0,
-    ageSinceStuck: 0,
-    attractor: {
-      oldIndex: gridSpotIndex,
-      gridSpotIndex: gridSpotIndex
-    },
-    name: 'particle-' + Math.ceil(10000000 * Math.random())
-  };
+        // Determine if this is an edge spot
+        const isEdge = xx === edgeMin ? 'left'
+          : xx === edgeMax ? 'right'
+          : yy === edgeMin ? 'top'
+          : yy === edgeMax ? 'bottom'
+          : false;
 
-  this.particles.push(particle);
-};
-
-ParticleSystem.kill = function(particleName) {
-  // Vanilla JS replacement for _.reject() and _.cloneDeep()
-  this.particles = this.particles.filter(function(particle) {
-    return particle.name !== particleName;
-  });
-};
-
-ParticleSystem.move = function() {
-  for (var i = 0; i < this.particles.length; i++) {
-    var p = this.particles[i];
-
-    // Save last position
-    p.xLast = p.x;
-    p.yLast = p.y;
-
-    // Get attractor and grid spot
-    var index = p.attractor.gridSpotIndex;
-    var gridSpot = this.grid[index];
-
-    // Maybe move attractor
-    if (Math.random() < 0.5) {
-      if (!gridSpot.isEdge) {
-        // Get neighbor indices
-        var topIndex = index - 1;
-        var bottomIndex = index + 1;
-        var leftIndex = index - this.gridSteps;
-        var rightIndex = index + this.gridSteps;
-
-        var neighbors = [
-          this.grid[topIndex],
-          this.grid[bottomIndex],
-          this.grid[leftIndex],
-          this.grid[rightIndex]
-        ];
-
-        // Vanilla JS replacement for _.maxBy()
-        var chaos = 30;
-        var maxFieldSpot = neighbors.reduce(function(max, spot) {
-          var value = spot.field + chaos * Math.random();
-          return value > (max.field + chaos * Math.random()) ? spot : max;
+        this.grid.push({
+          x: xx,
+          y: yy,
+          busyAge: 0,
+          spotIndex: spotIndex++,
+          isEdge,
+          field
         });
+      }
+    }
+    this.gridMaxIndex = spotIndex;
+  }
 
-        var potentialNewGridSpot = maxFieldSpot;
+  /**
+   * Main evolution step - called every frame
+   */
+  evolve() {
+    this.stepCount++;
+    this.updateGridAges();
 
-        // Check if spot is available
-        if (potentialNewGridSpot.busyAge == 0 || potentialNewGridSpot.busyAge > 15) {
-          p.ageSinceStuck = 0;
-          p.attractor.oldIndex = index;
-          p.attractor.gridSpotIndex = potentialNewGridSpot.spotIndex;
-          gridSpot = potentialNewGridSpot;
-          gridSpot.busyAge = 1;
-        } else {
-          p.ageSinceStuck++;
-        }
+    // Birth new particles when needed
+    if (this.shouldBirthParticles()) {
+      this.birthParticle();
+    }
 
-      } else {
-        p.ageSinceStuck++;
+    this.moveParticles();
+    this.draw();
+  }
+
+  /**
+   * Increment busy ages for all grid spots
+   */
+  updateGridAges() {
+    for (let i = 0; i < this.grid.length; i++) {
+      if (this.grid[i].busyAge > 0) {
+        this.grid[i].busyAge++;
+      }
+    }
+  }
+
+  /**
+   * Check if we should birth new particles this frame
+   */
+  shouldBirthParticles() {
+    return this.stepCount % this.config.birthFreq === 0 &&
+           (this.particles.length + this.config.popPerBirth) < this.config.maxPop;
+  }
+
+  /**
+   * Create a new particle at a random grid spot
+   */
+  birthParticle() {
+    const gridSpotIndex = Math.floor(Math.random() * this.gridMaxIndex);
+    const gridSpot = this.grid[gridSpotIndex];
+    const { x, y } = gridSpot;
+
+    this.particles.push({
+      hue: this.config.hue,
+      sat: this.config.saturation,
+      lum: 20 + Math.floor(40 * Math.random()),
+      x,
+      y,
+      xLast: x,
+      yLast: y,
+      xSpeed: 0,
+      ySpeed: 0,
+      age: 0,
+      ageSinceStuck: 0,
+      attractor: {
+        oldIndex: gridSpotIndex,
+        gridSpotIndex
+      },
+      name: `particle-${Math.ceil(10000000 * Math.random())}`
+    });
+  }
+
+  /**
+   * Remove a particle by name
+   */
+  killParticle(particleName) {
+    this.particles = this.particles.filter(p => p.name !== particleName);
+  }
+
+  /**
+   * Update all particle positions using spring physics
+   */
+  moveParticles() {
+    const { springConstant, viscosity, lifespan } = this.config;
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+
+      // Save last position
+      p.xLast = p.x;
+      p.yLast = p.y;
+
+      // Get current attractor grid spot
+      let gridSpot = this.grid[p.attractor.gridSpotIndex];
+
+      // Maybe move attractor to neighboring spot
+      if (Math.random() < 0.5) {
+        gridSpot = this.updateAttractor(p, gridSpot);
       }
 
       // Kill stuck particles
-      if (p.ageSinceStuck == 10) {
-        this.kill(p.name);
+      if (p.ageSinceStuck >= 10) {
+        this.particles.splice(i, 1);
         continue;
+      }
+
+      // Apply spring physics
+      this.applySpringPhysics(p, gridSpot, springConstant, viscosity);
+
+      // Age and kill old particles
+      p.age++;
+      if (p.age > lifespan) {
+        this.particles.splice(i, 1);
+        this.deathCount++;
+      }
+    }
+  }
+
+  /**
+   * Update particle's attractor to best neighboring grid spot
+   */
+  updateAttractor(particle, currentSpot) {
+    if (currentSpot.isEdge) {
+      particle.ageSinceStuck++;
+      return currentSpot;
+    }
+
+    // Get neighbor indices
+    const index = particle.attractor.gridSpotIndex;
+    const neighbors = [
+      this.grid[index - 1],              // top
+      this.grid[index + 1],              // bottom
+      this.grid[index - this.gridSteps], // left
+      this.grid[index + this.gridSteps]  // right
+    ];
+
+    // Find best neighbor with chaos factor
+    const chaos = 30;
+    let maxFieldSpot = neighbors[0];
+    let maxValue = maxFieldSpot.field + chaos * Math.random();
+
+    for (let i = 1; i < neighbors.length; i++) {
+      const value = neighbors[i].field + chaos * Math.random();
+      if (value > maxValue) {
+        maxValue = value;
+        maxFieldSpot = neighbors[i];
       }
     }
 
-    // Spring physics to attractor
-    var k = 8;
-    var visc = 0.4;
-    var dx = p.x - gridSpot.x;
-    var dy = p.y - gridSpot.y;
-    var dist = Math.sqrt(dx * dx + dy * dy);
+    // Move to new spot if available
+    if (maxFieldSpot.busyAge === 0 || maxFieldSpot.busyAge > 15) {
+      particle.ageSinceStuck = 0;
+      particle.attractor.oldIndex = index;
+      particle.attractor.gridSpotIndex = maxFieldSpot.spotIndex;
+      maxFieldSpot.busyAge = 1;
+      return maxFieldSpot;
+    }
 
-    // Spring force
-    var xAcc = -k * dx;
-    var yAcc = -k * dy;
+    particle.ageSinceStuck++;
+    return currentSpot;
+  }
 
-    p.xSpeed += xAcc;
-    p.ySpeed += yAcc;
+  /**
+   * Apply spring physics to move particle toward attractor
+   */
+  applySpringPhysics(particle, attractor, k, visc) {
+    const dx = particle.x - attractor.x;
+    const dy = particle.y - attractor.y;
+
+    // Spring force (Hooke's law)
+    particle.xSpeed += -k * dx;
+    particle.ySpeed += -k * dy;
 
     // Viscosity damping
-    p.xSpeed *= visc;
-    p.ySpeed *= visc;
+    particle.xSpeed *= visc;
+    particle.ySpeed *= visc;
 
-    // Store in particle
-    p.speed = Math.sqrt(p.xSpeed * p.xSpeed + p.ySpeed * p.ySpeed);
-    p.dist = dist;
+    // Store distance and speed for rendering
+    particle.speed = Math.sqrt(particle.xSpeed * particle.xSpeed + particle.ySpeed * particle.ySpeed);
+    particle.dist = Math.sqrt(dx * dx + dy * dy);
 
     // Update position
-    p.x += 0.1 * p.xSpeed;
-    p.y += 0.1 * p.ySpeed;
-
-    // Age
-    p.age++;
-
-    // Kill old particles
-    if (p.age > this.lifespan) {
-      this.kill(p.name);
-      this.deathCount++;
-    }
+    particle.x += 0.1 * particle.xSpeed;
+    particle.y += 0.1 * particle.ySpeed;
   }
-};
 
-ParticleSystem.initDraw = function() {
-  this.ctx.beginPath();
-  this.ctx.rect(0, 0, this.width, this.height);
-  this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-  this.ctx.fill();
-  this.ctx.closePath();
-};
+  /**
+   * Initial canvas clear
+   */
+  initDraw() {
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
 
-ParticleSystem.draw = function() {
-  this.drawnInLastFrame = 0;
-  if (!this.particles.length) return false;
+  /**
+   * Draw all particles with trails
+   */
+  draw() {
+    this.drawnInLastFrame = 0;
+    if (!this.particles.length) return;
 
-  // Fade effect - creates trails
-  this.ctx.beginPath();
-  this.ctx.rect(0, 0, this.width, this.height);
-  this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Subtle fade for trails
-  this.ctx.fill();
-  this.ctx.closePath();
+    // Fade effect for trails
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.fillRect(0, 0, this.width, this.height);
 
-  for (var i = 0; i < this.particles.length; i++) {
-    var p = this.particles[i];
+    // Batch drawing operations
+    this.particles.forEach(p => {
+      this.drawParticle(p);
+      this.drawnInLastFrame++;
+    });
+  }
 
-    // Color with hue rotation over time
-    var h = p.hue + this.stepCount / 30;
-    var s = p.sat;
-    var l = p.lum;
-    var a = 1;
+  /**
+   * Draw individual particle with trail and attractor
+   */
+  drawParticle(particle) {
+    // Calculate color with hue rotation
+    const h = particle.hue + this.stepCount / 30;
+    const s = particle.sat;
+    const l = particle.lum;
+    const color = `hsla(${h}, ${s}%, ${l}%, 1)`;
 
-    // Transform data coordinates to canvas coordinates
-    var last = this.dataXYtoCanvasXY(p.xLast, p.yLast);
-    var now = this.dataXYtoCanvasXY(p.x, p.y);
+    // Transform coordinates
+    const last = this.dataToCanvasXY(particle.xLast, particle.yLast);
+    const now = this.dataToCanvasXY(particle.x, particle.y);
 
-    var attracSpot = this.grid[p.attractor.gridSpotIndex];
-    var attracXY = this.dataXYtoCanvasXY(attracSpot.x, attracSpot.y);
+    const attracSpot = this.grid[particle.attractor.gridSpotIndex];
+    const attracXY = this.dataToCanvasXY(attracSpot.x, attracSpot.y);
 
-    var oldAttracSpot = this.grid[p.attractor.oldIndex];
-    var oldAttracXY = this.dataXYtoCanvasXY(oldAttracSpot.x, oldAttracSpot.y);
+    const oldAttracSpot = this.grid[particle.attractor.oldIndex];
+    const oldAttracXY = this.dataToCanvasXY(oldAttracSpot.x, oldAttracSpot.y);
 
     // Draw particle trail
     this.ctx.beginPath();
-    this.ctx.strokeStyle = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
-    this.ctx.fillStyle = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
-
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 1.5;
     this.ctx.moveTo(last.x, last.y);
     this.ctx.lineTo(now.x, now.y);
-
-    this.ctx.lineWidth = 1.5 * this.dataToImageRatio;
     this.ctx.stroke();
-    this.ctx.closePath();
 
-    // Draw attractor positions (subtle)
+    // Draw attractor positions
     this.ctx.beginPath();
-    this.ctx.lineWidth = 1.5 * this.dataToImageRatio;
+    this.ctx.strokeStyle = color;
+    this.ctx.fillStyle = color;
+    this.ctx.lineWidth = 1.5;
     this.ctx.moveTo(oldAttracXY.x, oldAttracXY.y);
     this.ctx.lineTo(attracXY.x, attracXY.y);
-    this.ctx.arc(attracXY.x, attracXY.y, 1.5 * this.dataToImageRatio, 0, 2 * Math.PI, false);
-
-    this.ctx.strokeStyle = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
-    this.ctx.fillStyle = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
+    this.ctx.arc(attracXY.x, attracXY.y, 1.5, 0, 2 * Math.PI, false);
     this.ctx.stroke();
     this.ctx.fill();
-
-    this.ctx.closePath();
-
-    this.drawnInLastFrame++;
   }
-};
 
-ParticleSystem.dataXYtoCanvasXY = function(x, y) {
-  var zoom = 1.6;
-  var xx = this.xC + x * zoom * this.dataToImageRatio;
-  var yy = this.yC + y * zoom * this.dataToImageRatio;
+  /**
+   * Transform data coordinates to canvas coordinates
+   */
+  dataToCanvasXY(x, y) {
+    return {
+      x: this.xC + x * this.config.zoom,
+      y: this.yC + y * this.config.zoom
+    };
+  }
 
-  return {x: xx, y: yy};
-};
+  /**
+   * Handle window resize
+   */
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+    this.xC = this.width / 2;
+    this.yC = this.height / 2;
+  }
 
-// Handle window resize
-ParticleSystem.resize = function() {
-  this.canvas.width = window.innerWidth;
-  this.canvas.height = window.innerHeight;
-  this.width = this.canvas.width;
-  this.height = this.canvas.height;
-  this.xC = this.width / 2;
-  this.yC = this.height / 2;
-};
+  /**
+   * Attach resize event listener
+   */
+  attachResizeListener() {
+    window.addEventListener('resize', () => this.resize());
+  }
+
+  /**
+   * Start the animation loop
+   */
+  startAnimationLoop() {
+    const frame = () => {
+      if (this.isRunning) {
+        this.evolve();
+      }
+      requestAnimationFrame(frame);
+    };
+    frame();
+  }
+
+  /**
+   * Pause the animation
+   */
+  pause() {
+    this.isRunning = false;
+    console.log('[Particle System] Paused');
+  }
+
+  /**
+   * Resume the animation
+   */
+  resume() {
+    this.isRunning = true;
+    console.log('[Particle System] Resumed');
+  }
+}
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-  ParticleSystem.setup();
+document.addEventListener('DOMContentLoaded', () => {
+  const particleSystem = new ParticleSystem();
 
-  // Animation loop with pause capability
-  var isRunning = true;
-  var frame = function() {
-    if (isRunning) {
-      ParticleSystem.evolve();
-    }
-    requestAnimationFrame(frame);
-  };
-  frame();
-
-  // Handle resize
-  window.addEventListener('resize', function() {
-    ParticleSystem.resize();
-  });
-
-  // Expose pause/resume methods globally
-  window.ParticleSystem = ParticleSystem;
-  window.ParticleSystem.pause = function() {
-    isRunning = false;
-    console.log('[Particle System] Paused');
-  };
-  window.ParticleSystem.resume = function() {
-    isRunning = true;
-    console.log('[Particle System] Resumed');
+  // Expose globally for animation optimizer
+  window.ParticleSystem = {
+    pause: () => particleSystem.pause(),
+    resume: () => particleSystem.resume()
   };
 });

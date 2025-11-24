@@ -1,466 +1,478 @@
-// 1. Inicializa Splitting en todos los elementos que tienen la clase 'glitch-text'
-// ... (El código de Splitting y glitches se mantiene igual) ...
-const results = window.Splitting({
-    target: '.glitch-text',
-    by: 'chars'
-});
+/**
+ * Main Application Script
+ * Organized into modular ES6 classes for better maintainability
+ */
 
-const glitches = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+// ============================================================================
+// CONSTANTS AND CONFIGURATION
+// ============================================================================
 
-results.forEach(result => {
-  const chars = result.chars;
-  if (!result.el.classList.contains('reveal--0')) {
-    result.el.classList.add('reveal--0');
+const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+
+const TIMING = {
+  CYBER_PANEL_DELAY: 2000,
+  BARCODE_START_DELAY: 2000,
+  BARCODE_LOOP_INTERVAL: 4000,
+  DNA_GLITCH_DELAY: 500,
+  DNA_REVEAL_DELAY: 3000,
+  DNA_LETTER_DELAY: 100,
+  DNA_START_DELAY: 500,
+  NAV_SCROLL_DELAY: 100,
+  NAV_DEBOUNCE: 50
+};
+
+// ============================================================================
+// GLITCH SYSTEM - Manages all glitch effects
+// ============================================================================
+
+class GlitchSystem {
+  constructor() {
+    this.glitchChars = GLITCH_CHARS;
+    this.initSplitting();
+    this.initLogoGlitch();
   }
-  chars.forEach(char => {
-    char.style.setProperty('--count', Math.random() * 5 + 1);
-    for (let g = 0; g < 10; g++) {
-      char.style.setProperty(
-      `--char-${g}`,
-      `"${glitches[Math.floor(Math.random() * glitches.length)]}"`);
-    }
-  });
-});
 
-// 2. NUEVO: Añadir evento hover al logo para reiniciar animación glitch
-const logo = document.querySelector('.logo');
-if (logo) {
-  logo.addEventListener('mouseenter', function() {
-    const chars = this.querySelectorAll('[data-char]');
-
-    // Para cada carácter del logo
-    chars.forEach((char, index) => {
-      // Remover la animación momentáneamente
-      char.style.animation = 'none';
-
-      // Forzar reflow para reiniciar la animación
-      void char.offsetWidth;
-
-      // Restaurar la animación con nuevos parámetros
-      char.style.animation = `glitch-switch 0.2s steps(1) ${index * 0.05}s ${10} backwards`;
+  /**
+   * Initialize Splitting.js for all glitch text elements
+   */
+  initSplitting() {
+    const results = window.Splitting({
+      target: '.glitch-text',
+      by: 'chars'
     });
-  });
 
-  // Detener la animación inmediatamente al quitar el mouse
-  logo.addEventListener('mouseleave', function() {
-    const chars = this.querySelectorAll('[data-char]');
+    results.forEach(result => {
+      const chars = result.chars;
+      if (!result.el.classList.contains('reveal--0')) {
+        result.el.classList.add('reveal--0');
+      }
 
-    chars.forEach((char) => {
-      // Remover completamente la animación
-      char.style.animation = 'none';
-
-      // Forzar reflow
-      void char.offsetWidth;
-
-      // Restaurar la animación por defecto (sin hover)
-      char.style.animation = '';
+      chars.forEach(char => {
+        char.style.setProperty('--count', Math.random() * 5 + 1);
+        for (let g = 0; g < 10; g++) {
+          const randomChar = this.glitchChars[Math.floor(Math.random() * this.glitchChars.length)];
+          char.style.setProperty(`--char-${g}`, `"${randomChar}"`);
+        }
+      });
     });
-  });
+
+    // Initialize ScrollOut for scroll-based animations
+    window.ScrollOut({ targets: '.glitch-text' });
+  }
+
+  /**
+   * Add glitch animation to logo on hover
+   */
+  initLogoGlitch() {
+    const logo = document.querySelector('.logo');
+    if (!logo) return;
+
+    logo.addEventListener('mouseenter', function() {
+      const chars = this.querySelectorAll('[data-char]');
+      chars.forEach((char, index) => {
+        char.style.animation = 'none';
+        void char.offsetWidth;  // Force reflow
+        char.style.animation = `glitch-switch 0.2s steps(1) ${index * 0.05}s ${10} backwards`;
+      });
+    });
+
+    logo.addEventListener('mouseleave', function() {
+      const chars = this.querySelectorAll('[data-char]');
+      chars.forEach((char) => {
+        char.style.animation = 'none';
+        void char.offsetWidth;  // Force reflow
+        char.style.animation = '';
+      });
+    });
+  }
+
+  /**
+   * Initialize DNA text glitch effect
+   */
+  initDNAGlitch() {
+    const dnaSpans = document.querySelectorAll('.scene .text span');
+    if (!dnaSpans.length) return;
+
+    // Store original text for each span
+    const originalTexts = new Map();
+    dnaSpans.forEach(span => originalTexts.set(span, span.textContent));
+
+    // Glitch a single span temporarily
+    const glitchSpan = (span, duration = 100) => {
+      const originalText = originalTexts.get(span);
+      const glitchText = Array.from(originalText)
+        .map(char => {
+          if (char === ' ' || char === '·' || char === '-') return char;
+          return Math.random() > 0.5 ? char : this.glitchChars[Math.floor(Math.random() * this.glitchChars.length)];
+        })
+        .join('');
+
+      span.textContent = glitchText;
+      setTimeout(() => { span.textContent = originalText; }, duration);
+    };
+
+    // Initial load glitch with staggered timing
+    dnaSpans.forEach((span, index) => {
+      setTimeout(() => {
+        let glitchCount = 0;
+        const maxGlitches = Math.floor(Math.random() * 5) + 3;
+
+        const glitchInterval = setInterval(() => {
+          glitchSpan(span, 80);
+          glitchCount++;
+          if (glitchCount >= maxGlitches) {
+            clearInterval(glitchInterval);
+          }
+        }, 150);
+      }, index * 50);
+    });
+
+    // Occasional random glitches
+    setInterval(() => {
+      const randomSpan = dnaSpans[Math.floor(Math.random() * dnaSpans.length)];
+      if (Math.random() > 0.95) {
+        glitchSpan(randomSpan, 60);
+      }
+    }, 500);
+  }
+
+  /**
+   * Animate DNA text reveal letter by letter
+   */
+  animateDNAReveal() {
+    const masteringText = document.querySelector('.text[style*="--text: 0"]');
+    const brandDNAText = document.querySelector('.text[style*="--text: 2"]');
+
+    if (!masteringText || !brandDNAText) return;
+
+    const masteringSpans = Array.from(masteringText.querySelectorAll('span'));
+    const brandDNASpans = Array.from(brandDNAText.querySelectorAll('span'));
+
+    setTimeout(() => {
+      // Animate "Mastering" forward
+      masteringSpans.forEach((span, index) => {
+        setTimeout(() => {
+          span.classList.add('revealed');
+        }, index * TIMING.DNA_LETTER_DELAY);
+      });
+
+      // Animate "Your Brand's DNA" backward
+      brandDNASpans.reverse().forEach((span, index) => {
+        setTimeout(() => {
+          span.classList.add('revealed');
+        }, index * TIMING.DNA_LETTER_DELAY);
+      });
+    }, TIMING.DNA_START_DELAY);
+  }
 }
 
-// 3. Inicializa ScrollOut
-window.ScrollOut({
-  targets: '.glitch-text'
-});
+// ============================================================================
+// NAVIGATION MANAGER - Handles section navigation and active states
+// ============================================================================
 
-// ====================================================================
-// PARTE 3.5: ACTIVE SECTION INDICATOR FOR NAVIGATION
-// ====================================================================
+class NavigationManager {
+  constructor() {
+    this.navButtons = document.querySelectorAll('.main-nav .nav-btn');
+    this.sections = document.querySelectorAll('main section');
+    this.sectionToButton = new Map();
+    this.scrollTimeout = null;
 
-function initActiveNavigation() {
-  // Get all navigation buttons (excluding language toggle buttons)
-  const navButtons = document.querySelectorAll('.main-nav .nav-btn');
-  // Get all sections
-  const sections = document.querySelectorAll('main section');
+    this.init();
+  }
 
-  // Create a map of section IDs to nav buttons
-  const sectionToButton = new Map();
-  navButtons.forEach(btn => {
-    const href = btn.getAttribute('href');
-    if (href && href.startsWith('#')) {
-      const sectionId = href.substring(1);
-      sectionToButton.set(sectionId, btn);
-    }
-  });
+  /**
+   * Initialize navigation system
+   */
+  init() {
+    this.buildSectionMap();
+    this.setupIntersectionObserver();
+    this.setupClickHandlers();
+    this.setupScrollHandler();
+  }
 
-  // Function to set active button
-  function setActiveButton(sectionId) {
-    // Remove active class from all nav buttons
-    navButtons.forEach(btn => btn.classList.remove('active'));
+  /**
+   * Build map of section IDs to navigation buttons
+   */
+  buildSectionMap() {
+    this.navButtons.forEach(btn => {
+      const href = btn.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const sectionId = href.substring(1);
+        this.sectionToButton.set(sectionId, btn);
+      }
+    });
+  }
 
-    // Add active class to the corresponding button
-    const activeButton = sectionToButton.get(sectionId);
+  /**
+   * Set active navigation button
+   */
+  setActiveButton(sectionId) {
+    this.navButtons.forEach(btn => btn.classList.remove('active'));
+
+    const activeButton = this.sectionToButton.get(sectionId);
     if (activeButton) {
       activeButton.classList.add('active');
     }
   }
 
-  // Intersection Observer to detect which section is in view
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px 0px -60% 0px', // Section is active when it passes 40% from top of viewport
-    threshold: 0 // Trigger when section crosses the threshold
-  };
+  /**
+   * Setup Intersection Observer for section detection
+   */
+  setupIntersectionObserver() {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -60% 0px',
+      threshold: 0
+    };
 
-  const observerCallback = (entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const sectionId = entry.target.id;
-        // Don't activate button for intro section (it has no nav button)
-        if (sectionId !== 'intro') {
-          setActiveButton(sectionId);
+    const observerCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          if (sectionId !== 'intro') {
+            this.setActiveButton(sectionId);
+          }
         }
+      });
+    };
+
+    this.observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all sections except intro
+    this.sections.forEach(section => {
+      if (section.id && section.id !== 'intro') {
+        this.observer.observe(section);
       }
     });
-  };
+  }
 
-  const observer = new IntersectionObserver(observerCallback, observerOptions);
+  /**
+   * Setup click handlers for navigation buttons
+   */
+  setupClickHandlers() {
+    // Navigation button clicks
+    this.navButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const href = btn.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const sectionId = href.substring(1);
 
-  // Observe all sections except intro (intro is handled by scroll event)
-  sections.forEach(section => {
-    if (section.id && section.id !== 'intro') {
-      observer.observe(section);
-    }
-  });
+          if (sectionId === 'intro') {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.setActiveButton('intro');
+            return;
+          }
 
-  // Handle click on nav buttons to immediately set active state
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const href = btn.getAttribute('href');
-      if (href && href.startsWith('#')) {
-        const sectionId = href.substring(1);
+          setTimeout(() => {
+            this.setActiveButton(sectionId);
+          }, TIMING.NAV_SCROLL_DELAY);
+        }
+      });
+    });
 
-        // Special handling for intro section (sticky element)
-        if (sectionId === 'intro') {
+    // Logo click handler
+    const logo = document.querySelector('.logo');
+    if (logo) {
+      logo.addEventListener('click', (e) => {
+        const href = logo.getAttribute('href');
+        if (href === '#intro') {
           e.preventDefault();
           window.scrollTo({ top: 0, behavior: 'smooth' });
-          setActiveButton('intro');
-          return;
+          this.setActiveButton('intro');
         }
-
-        // Small delay to allow smooth scroll to complete
-        setTimeout(() => {
-          setActiveButton(sectionId);
-        }, 100);
-      }
-    });
-  });
-
-  // Handle click on logo to scroll to intro
-  const logo = document.querySelector('.logo');
-  if (logo) {
-    logo.addEventListener('click', (e) => {
-      const href = logo.getAttribute('href');
-      if (href === '#intro') {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setActiveButton('intro');
-      }
-    });
-  }
-
-  // Handle scroll to detect when in intro section
-  // When in intro section, no button should be active
-  let scrollTimeout;
-  window.addEventListener('scroll', () => {
-    // Debounce the scroll event
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      const scrollPosition = window.scrollY || window.pageYOffset;
-      const introSection = document.getElementById('intro');
-
-      if (introSection) {
-        const introHeight = introSection.offsetHeight;
-
-        // If we're in the intro section (top 70% of intro height), clear all active buttons
-        if (scrollPosition < introHeight * 0.7) {
-          navButtons.forEach(btn => btn.classList.remove('active'));
-        }
-      }
-    }, 50); // 50ms debounce
-  });
-
-  // Return setActiveButton function for use in other modules
-  return { setActiveButton, observer };
-}
-
-// Note: initActiveNavigation is called in master initialization at bottom of file
-
-// ====================================================================
-// PARTE 4: CUSTOM DNA GLITCH EFFECT
-// ====================================================================
-
-// DNA Glitch effect - compatible with 3D transforms
-const dnaGlitches = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
-
-function initDNAGlitch() {
-  const dnaSpans = document.querySelectorAll('.scene .text span');
-
-  if (dnaSpans.length === 0) return;
-
-  // Store original text content for each span
-  const originalTexts = new Map();
-  dnaSpans.forEach(span => {
-    originalTexts.set(span, span.textContent);
-  });
-
-  // Function to glitch a single span
-  function glitchSpan(span, duration = 100) {
-    const originalText = originalTexts.get(span);
-
-    // Replace with random glitch characters
-    const glitchText = Array.from(originalText)
-      .map(char => {
-        if (char === ' ' || char === '·' || char === '-') return char;
-        return Math.random() > 0.5 ? char : dnaGlitches[Math.floor(Math.random() * dnaGlitches.length)];
-      })
-      .join('');
-
-    span.textContent = glitchText;
-
-    // Restore original text after duration
-    setTimeout(() => {
-      span.textContent = originalText;
-    }, duration);
-  }
-
-  // Initial load glitch effect - runs once per span with staggered timing
-  dnaSpans.forEach((span, index) => {
-    setTimeout(() => {
-      // Glitch multiple times on load
-      let glitchCount = 0;
-      const maxGlitches = Math.floor(Math.random() * 5) + 3; // 3-7 glitches
-
-      const glitchInterval = setInterval(() => {
-        glitchSpan(span, 80);
-        glitchCount++;
-
-        if (glitchCount >= maxGlitches) {
-          clearInterval(glitchInterval);
-        }
-      }, 150); // Glitch every 150ms
-
-    }, index * 50); // Stagger start time
-  });
-
-  // Optional: Random occasional glitches during animation
-  setInterval(() => {
-    const randomSpan = dnaSpans[Math.floor(Math.random() * dnaSpans.length)];
-    if (Math.random() > 0.95) { // 5% chance every interval
-      glitchSpan(randomSpan, 60);
+      });
     }
-  }, 500);
+  }
+
+  /**
+   * Setup scroll handler for intro section
+   */
+  setupScrollHandler() {
+    window.addEventListener('scroll', () => {
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = setTimeout(() => {
+        const scrollPosition = window.scrollY || window.pageYOffset;
+        const introSection = document.getElementById('intro');
+
+        if (introSection) {
+          const introHeight = introSection.offsetHeight;
+
+          // Clear active buttons when in intro section
+          if (scrollPosition < introHeight * 0.7) {
+            this.navButtons.forEach(btn => btn.classList.remove('active'));
+          }
+        }
+      }, TIMING.NAV_DEBOUNCE);
+    });
+  }
 }
 
-// Note: initDNAGlitch is called in master initialization at bottom of file (with 500ms delay)
+// ============================================================================
+// SQUARE GRID MANAGER - Manages rotating squares in contact section
+// ============================================================================
 
-// ====================================================================
-// PARTE 5: DNA LETTER-BY-LETTER REVEAL ANIMATION
-// ====================================================================
+class SquareGridManager {
+  constructor() {
+    this.wrapper = document.querySelector('.wrapper');
+    this.contactSection = document.querySelector('#contact');
 
-function animateDNAReveal() {
-  // Select "Mastering" text (--text: 0)
-  const masteringText = document.querySelector('.text[style*="--text: 0"]');
-  // Select "Your Brand's DNA" text (--text: 2)
-  const brandDNAText = document.querySelector('.text[style*="--text: 2"]');
+    if (!this.wrapper || !this.contactSection) return;
 
-  if (!masteringText || !brandDNAText) return;
+    this.config = {
+      squareSize: 40,
+      gap: 24,
+      columns: 10,
+      columnDelay: 0.3,
+      squareDelay: 0.05
+    };
 
-  // Get all spans from both texts
-  const masteringSpans = Array.from(masteringText.querySelectorAll('span'));
-  const brandDNASpans = Array.from(brandDNAText.querySelectorAll('span'));
+    this.init();
+  }
 
-  const letterDelay = 100; // Delay between each letter (ms)
-  const startDelay = 500; // Initial delay before starting
+  /**
+   * Initialize square grid
+   */
+  init() {
+    this.generateSquares();
+    this.setupMouseMove();
+    this.setupExitAnimation();
+  }
 
-  setTimeout(() => {
-    // Animate "Mastering" forward (index 0 to end)
-    masteringSpans.forEach((span, index) => {
-      setTimeout(() => {
-        span.classList.add('revealed');
-      }, index * letterDelay);
-    });
+  /**
+   * Calculate animation delay for a square
+   */
+  calculateDelay(col, row, rows, reverse = false) {
+    const { columnDelay, squareDelay } = this.config;
 
-    // Animate "Your Brand's DNA" backward (last index to 0)
-    brandDNASpans.reverse().forEach((span, index) => {
-      setTimeout(() => {
-        span.classList.add('revealed');
-      }, index * letterDelay);
-    });
-  }, startDelay);
-}
-
-// Note: animateDNAReveal is called in master initialization at bottom of file (with 3000ms delay)
-
-// ====================================================================
-// PARTE 6: ROTATING SQUARES GRID - GENERATE AND MOUSEMOVE EFFECT
-// ====================================================================
-
-function initRotatingSquaresGrid() {
-  const wrapper = document.querySelector('.wrapper');
-  if (!wrapper) return;
-
-  // Calculate how many squares we need to fill the viewport
-  const squareSize = 40; // px
-  const gap = 24; // 1.5rem ≈ 24px
-  const totalSquareSize = squareSize + gap;
-
-  const columns = 10; // Fixed at 10 columns for the color palette
-  const rows = Math.ceil(window.innerHeight / totalSquareSize) + 2; // +2 for extra coverage
-  const totalSquares = columns * rows;
-
-  // Generate squares dynamically with staggered animation delays
-  wrapper.innerHTML = ''; // Clear existing squares
-
-  const columnDelay = 0.3; // Delay between each column (seconds)
-  const squareDelay = 0.05; // Delay between each square in a column (seconds)
-
-  for (let i = 0; i < totalSquares; i++) {
-    const square = document.createElement('div');
-    square.className = 'item';
-
-    // Calculate column (0-9) and row (0-rows-1)
-    const col = i % columns;
-    const row = Math.floor(i / columns);
-
-    // Calculate animation delay
-    let delay = 0;
-
-    if (col < 5) {
-      // Columns 1-5: top to bottom
-      delay = (col * columnDelay) + (row * squareDelay);
+    if (reverse) {
+      // Reverse animation
+      if (col < 5) {
+        return (col * columnDelay) + ((rows - 1 - row) * squareDelay);
+      } else {
+        return (col * columnDelay) + (row * squareDelay);
+      }
     } else {
-      // Columns 6-10: bottom to top
-      delay = (col * columnDelay) + ((rows - 1 - row) * squareDelay);
+      // Forward animation
+      if (col < 5) {
+        return (col * columnDelay) + (row * squareDelay);
+      } else {
+        return (col * columnDelay) + ((rows - 1 - row) * squareDelay);
+      }
     }
-
-    square.style.animationDelay = `${delay}s`;
-
-    // Remove animation after it completes to allow mousemove transform to work
-    square.addEventListener('animationend', () => {
-      square.style.animation = 'none';
-      square.style.opacity = '1'; // Keep visible after animation
-    });
-
-    wrapper.appendChild(square);
   }
 
-  // Add mousemove effect
-  document.addEventListener('mousemove', (e) => {
-    const sqrs = document.querySelectorAll('.item');
+  /**
+   * Generate all square elements
+   */
+  generateSquares() {
+    const { squareSize, gap, columns } = this.config;
+    const totalSquareSize = squareSize + gap;
+    const rows = Math.ceil(window.innerHeight / totalSquareSize) + 2;
+    const totalSquares = columns * rows;
 
-    const mouseX = e.pageX;
-    const mouseY = e.pageY;
+    this.wrapper.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
-    sqrs.forEach(sqr => {
-      const rect = sqr.getBoundingClientRect();
-      const sqrX = rect.left + rect.width / 2 + window.scrollX;
-      const sqrY = rect.top + rect.height / 2 + window.scrollY;
+    for (let i = 0; i < totalSquares; i++) {
+      const square = document.createElement('div');
+      square.className = 'item';
 
-      const diffX = mouseX - sqrX;
-      const diffY = mouseY - sqrY;
+      const col = i % columns;
+      const row = Math.floor(i / columns);
+      const delay = this.calculateDelay(col, row, rows);
 
-      const radians = Math.atan2(diffY, diffX);
+      square.style.animationDelay = `${delay}s`;
 
-      const angle = radians * 180 / Math.PI;
+      square.addEventListener('animationend', () => {
+        square.style.animation = 'none';
+        square.style.opacity = '1';
+      }, { once: true });
 
-      sqr.style.transform = `rotate(${angle}deg)`;
+      fragment.appendChild(square);
+    }
+
+    this.wrapper.appendChild(fragment);
+    this.rows = rows;
+  }
+
+  /**
+   * Setup mousemove effect for squares
+   */
+  setupMouseMove() {
+    document.addEventListener('mousemove', (e) => {
+      const squares = this.wrapper.querySelectorAll('.item');
+      const mouseX = e.pageX;
+      const mouseY = e.pageY;
+
+      squares.forEach(square => {
+        const rect = square.getBoundingClientRect();
+        const sqrX = rect.left + rect.width / 2 + window.scrollX;
+        const sqrY = rect.top + rect.height / 2 + window.scrollY;
+
+        const diffX = mouseX - sqrX;
+        const diffY = mouseY - sqrY;
+        const angle = Math.atan2(diffY, diffX) * 180 / Math.PI;
+
+        square.style.transform = `rotate(${angle}deg)`;
+      });
     });
-  });
-}
+  }
 
-// Note: initRotatingSquaresGrid is called in master initialization at bottom of file
+  /**
+   * Setup exit animation for contact section
+   */
+  setupExitAnimation() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+          this.activateExitAnimation();
+        } else if (entry.isIntersecting) {
+          this.deactivateExitAnimation();
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px' });
 
-// ====================================================================
-// PARTE 7: INTRO EXIT ANIMATION - MERGE COLUMNS TO RED
-// ====================================================================
+    observer.observe(this.contactSection);
+  }
 
-function initContactExitAnimation() {
-  const contactSection = document.querySelector('#contact');
-  const wrapper = document.querySelector('.wrapper');
-
-  if (!contactSection || !wrapper) return;
-
-  // Intersection Observer to detect when leaving contact section
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-        // User scrolled past contact section (going down)
-        activateExitAnimation();
-      } else if (entry.isIntersecting) {
-        // User is back in contact section
-        deactivateExitAnimation();
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px'
-  });
-
-  observer.observe(contactSection);
-
-  function activateExitAnimation() {
-    const squares = document.querySelectorAll('.item');
-    const columns = 10;
-    const rows = Math.ceil(window.innerHeight / 64) + 2;
-
-    const columnDelay = 0.3;
-    const squareDelay = 0.05;
+  /**
+   * Activate exit animation (squares disappear)
+   */
+  activateExitAnimation() {
+    const squares = this.wrapper.querySelectorAll('.item');
+    const { columns } = this.config;
 
     squares.forEach((square, index) => {
       const col = index % columns;
       const row = Math.floor(index / columns);
-
-      // Calculate reverse delay (same logic as appear but reversed)
-      let delay = 0;
-      if (col < 5) {
-        // Columns 1-5: now disappear from bottom to top (reverse)
-        delay = (col * columnDelay) + ((rows - 1 - row) * squareDelay);
-      } else {
-        // Columns 6-10: now disappear from top to bottom (reverse)
-        delay = (col * columnDelay) + (row * squareDelay);
-      }
+      const delay = this.calculateDelay(col, row, this.rows, true);
 
       square.style.animationDelay = `${delay}s`;
     });
 
-    wrapper.classList.add('exit');
+    this.wrapper.classList.add('exit');
   }
 
-  function deactivateExitAnimation() {
-    const squares = document.querySelectorAll('.item');
-    const columns = 10;
-    const rows = Math.ceil(window.innerHeight / 64) + 2;
+  /**
+   * Deactivate exit animation (squares reappear)
+   */
+  deactivateExitAnimation() {
+    const squares = this.wrapper.querySelectorAll('.item');
+    const { columns } = this.config;
 
-    const columnDelay = 0.3;
-    const squareDelay = 0.05;
+    this.wrapper.classList.remove('exit');
 
-    wrapper.classList.remove('exit');
-
-    // Re-apply the appear animation with original delays
     squares.forEach((square, index) => {
       const col = index % columns;
       const row = Math.floor(index / columns);
+      const delay = this.calculateDelay(col, row, this.rows, false);
 
-      let delay = 0;
-      if (col < 5) {
-        // Columns 1-5: top to bottom
-        delay = (col * columnDelay) + (row * squareDelay);
-      } else {
-        // Columns 6-10: bottom to top
-        delay = (col * columnDelay) + ((rows - 1 - row) * squareDelay);
-      }
-
-      // Reset opacity and apply appear animation
       square.style.opacity = '0';
       square.style.animation = 'none';
-
-      // Force reflow
-      void square.offsetWidth;
-
+      void square.offsetWidth;  // Force reflow
       square.style.animation = `squareAppear 0.6s ease-out ${delay}s forwards`;
 
-      // Remove animation after completion to allow mousemove
       square.addEventListener('animationend', () => {
         square.style.animation = 'none';
         square.style.opacity = '1';
@@ -469,179 +481,151 @@ function initContactExitAnimation() {
   }
 }
 
-// Note: initContactExitAnimation is called in master initialization at bottom of file
+// ============================================================================
+// ANIMATION COORDINATOR - Manages intro animations
+// ============================================================================
 
-// ====================================================================
-// PARTE 8: CYBERPUNK PANEL AUTO-TRIGGER
-// ====================================================================
+class AnimationCoordinator {
+  /**
+   * Initialize cyberpunk panel animation
+   */
+  static initCyberPanel() {
+    const panel = document.getElementById('introCyberPanel');
+    if (!panel) return;
 
-function initCyberPanelAnimation() {
-  const panel = document.getElementById('introCyberPanel');
-  
-  if (!panel) return;
+    setTimeout(() => {
+      panel.classList.add('active');
+    }, TIMING.CYBER_PANEL_DELAY);
+  }
 
-  // Trigger panel slide-in after 2 seconds
-  setTimeout(() => {
-    panel.classList.add('active');
-  }, 2000);
-}
+  /**
+   * Initialize barcode animation
+   */
+  static initBarcode() {
+    const barcodeElement = document.getElementById('barcode');
+    if (!barcodeElement) return;
 
-// Note: initCyberPanelAnimation is called in master initialization at bottom of file
+    // Generate current date
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateString = `[${year} | ${month} | ${day}]`;
 
-// ====================================================================
-// PARTE 9: ABOUT SECTION TOP BORDER GLITCH EFFECT
-// ====================================================================
-// PARTE 10: ANIMATION PERFORMANCE OPTIMIZER
-// ====================================================================
+    // Create spans for each character
+    barcodeElement.innerHTML = dateString.split('').map(char =>
+      `<span class="barcode-span">${char}</span>`
+    ).join('');
 
-function initAnimationOptimizer() {
-  const introSection = document.getElementById('intro');
-  const aboutSection = document.getElementById('about');
+    const barcodeSpans = barcodeElement.querySelectorAll('.barcode-span');
+    let animationInterval = null;
 
-  // Observer configuration
-  const observerOptions = {
-    threshold: 0.1, // Trigger when at least 10% of section is visible
-    rootMargin: '50px' // Start animating slightly before section enters viewport
-  };
-
-  // Observer to pause/resume intro animations when section is not visible
-  if (introSection) {
-    const introObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Intro section visible - resume animations
-          introSection.classList.remove('paused-animations');
-
-          if (window.ParticleSystem && window.ParticleSystem.resume) {
-            window.ParticleSystem.resume();
-          }
-          if (window.Orb3D && window.Orb3D.resume) {
-            window.Orb3D.resume();
-          }
-          if (window.BarcodeAnimation && window.BarcodeAnimation.start) {
-            window.BarcodeAnimation.start();
-          }
-          console.log('[Animation Optimizer] Intro animations resumed');
-        } else {
-          // Intro section not visible - pause animations
-          introSection.classList.add('paused-animations');
-
-          if (window.ParticleSystem && window.ParticleSystem.pause) {
-            window.ParticleSystem.pause();
-          }
-          if (window.Orb3D && window.Orb3D.pause) {
-            window.Orb3D.pause();
-          }
-          if (window.BarcodeAnimation && window.BarcodeAnimation.stop) {
-            window.BarcodeAnimation.stop();
-          }
-          console.log('[Animation Optimizer] Intro animations paused');
-        }
+    const runBarcodeAnimation = () => {
+      // First pass: Add highlighting
+      barcodeSpans.forEach((span, i) => {
+        setTimeout(() => {
+          span.classList.add('barcode-highlighted');
+        }, 200 * i);
       });
-    }, observerOptions);
 
-    introObserver.observe(introSection);
-  }
-
-  // Observer to pause/resume about section animations
-  if (aboutSection) {
-    const aboutObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // About section visible - resume animations
-          aboutSection.classList.remove('paused-animations');
-
-          console.log('[Animation Optimizer] About animations resumed');
-        } else {
-          // About section not visible - pause animations
-          aboutSection.classList.add('paused-animations');
-          console.log('[Animation Optimizer] About animations paused');
-        }
+      // Second pass: Remove highlighting
+      const firstPassDuration = 200 * barcodeSpans.length;
+      barcodeSpans.forEach((span, i) => {
+        setTimeout(() => {
+          span.classList.remove('barcode-highlighted');
+        }, firstPassDuration + (20 * i));
       });
-    }, observerOptions);
+    };
 
-    aboutObserver.observe(aboutSection);
+    const startAnimation = () => {
+      runBarcodeAnimation();
+      animationInterval = setInterval(runBarcodeAnimation, TIMING.BARCODE_LOOP_INTERVAL);
+    };
+
+    const stopAnimation = () => {
+      if (animationInterval) {
+        clearInterval(animationInterval);
+        animationInterval = null;
+        barcodeSpans.forEach(span => {
+          span.classList.remove('barcode-highlighted');
+        });
+      }
+    };
+
+    setTimeout(startAnimation, TIMING.BARCODE_START_DELAY);
+
+    // Expose control methods
+    window.BarcodeAnimation = {
+      start: startAnimation,
+      stop: stopAnimation
+    };
+
+    console.log('[Barcode Animation] Initialized with date: ' + dateString);
   }
 
-  console.log('[Animation Optimizer] Initialized for intro and about sections');
-}
+  /**
+   * Initialize animation performance optimizer
+   */
+  static initAnimationOptimizer() {
+    const introSection = document.getElementById('intro');
+    const aboutSection = document.getElementById('about');
 
-// ====================================================================
-// PARTE 10: BARCODE ANIMATION
-// ====================================================================
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '50px'
+    };
 
-function initBarcodeAnimation() {
-  const barcodeElement = document.getElementById('barcode');
+    // Optimize intro animations
+    if (introSection) {
+      const introObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            introSection.classList.remove('paused-animations');
 
-  if (!barcodeElement) return;
+            if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
+            if (window.Orb3D?.resume) window.Orb3D.resume();
+            if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
 
-  // Generate current date in format [YYYY | MM | DD]
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const dateString = `[${year} | ${month} | ${day}]`;
+            console.log('[Animation Optimizer] Intro animations resumed');
+          } else {
+            introSection.classList.add('paused-animations');
 
-  // Create spans for each character
-  barcodeElement.innerHTML = dateString.split('').map(char =>
-    `<span class="barcode-span">${char}</span>`
-  ).join('');
+            if (window.ParticleSystem?.pause) window.ParticleSystem.pause();
+            if (window.Orb3D?.pause) window.Orb3D.pause();
+            if (window.BarcodeAnimation?.stop) window.BarcodeAnimation.stop();
 
-  const barcodeSpans = document.querySelectorAll('#barcode .barcode-span');
-  let animationInterval = null;
+            console.log('[Animation Optimizer] Intro animations paused');
+          }
+        });
+      }, observerOptions);
 
-  function runBarcodeAnimation() {
-    // First pass: Add highlighting with 200ms delay between each span
-    barcodeSpans.forEach((span, i) => {
-      setTimeout(() => {
-        span.classList.add('barcode-highlighted');
-      }, 200 * i);
-    });
-
-    // Second pass: Remove highlighting with 20ms delay between each span
-    // Start after first pass completes (200ms * span count)
-    const firstPassDuration = 200 * barcodeSpans.length;
-    barcodeSpans.forEach((span, i) => {
-      setTimeout(() => {
-        span.classList.remove('barcode-highlighted');
-      }, firstPassDuration + (20 * i));
-    });
-  }
-
-  // Start animation loop (runs every 4 seconds)
-  function startAnimation() {
-    // Run immediately
-    runBarcodeAnimation();
-    // Then repeat every 4 seconds
-    animationInterval = setInterval(runBarcodeAnimation, 4000);
-  }
-
-  function stopAnimation() {
-    if (animationInterval) {
-      clearInterval(animationInterval);
-      animationInterval = null;
-      // Clear all highlights
-      barcodeSpans.forEach(span => {
-        span.classList.remove('barcode-highlighted');
-      });
+      introObserver.observe(introSection);
     }
+
+    // Optimize about section animations
+    if (aboutSection) {
+      const aboutObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            aboutSection.classList.remove('paused-animations');
+            console.log('[Animation Optimizer] About animations resumed');
+          } else {
+            aboutSection.classList.add('paused-animations');
+            console.log('[Animation Optimizer] About animations paused');
+          }
+        });
+      }, observerOptions);
+
+      aboutObserver.observe(aboutSection);
+    }
+
+    console.log('[Animation Optimizer] Initialized for intro and about sections');
   }
-
-  // Start animation after intro panel lines are drawn (after 2 seconds)
-  setTimeout(startAnimation, 2000);
-
-  // Expose control methods for animation optimizer
-  window.BarcodeAnimation = {
-    start: startAnimation,
-    stop: stopAnimation
-  };
-
-  console.log('[Barcode Animation] Initialized with date: ' + dateString);
 }
 
-// ====================================================================
-// MASTER INITIALIZATION - ALL FUNCTIONS RUN ON PAGE LOAD
-// ====================================================================
+// ============================================================================
+// MASTER INITIALIZATION - Application Entry Point
+// ============================================================================
 
 window.addEventListener('DOMContentLoaded', () => {
   // Always scroll to top on page load
@@ -653,30 +637,27 @@ window.addEventListener('DOMContentLoaded', () => {
     introSection.scrollIntoView({ behavior: 'instant', block: 'start' });
   }
 
-  // Initialize navigation and get control object
-  const navigationControl = initActiveNavigation();
+  // Initialize all systems
+  const glitchSystem = new GlitchSystem();
+  const navigationManager = new NavigationManager();
+  const squareGridManager = new SquareGridManager();
 
-  // Initialize all features in order
-  initRotatingSquaresGrid();
-  initContactExitAnimation();
-  initCyberPanelAnimation();
-  initBarcodeAnimation();
+  // Initialize animations
+  AnimationCoordinator.initCyberPanel();
+  AnimationCoordinator.initBarcode();
+  AnimationCoordinator.initAnimationOptimizer();
 
-  // Initialize animation optimizer for performance
-  initAnimationOptimizer();
-
-  // DNA glitch with 500ms delay
+  // Initialize DNA effects with delays
   setTimeout(() => {
-    initDNAGlitch();
-  }, 500);
+    glitchSystem.initDNAGlitch();
+  }, TIMING.DNA_GLITCH_DELAY);
 
-  // DNA reveal animation with 3000ms delay
   setTimeout(() => {
-    animateDNAReveal();
-  }, 3000);
+    glitchSystem.animateDNAReveal();
+  }, TIMING.DNA_REVEAL_DELAY);
 });
 
-// Also scroll to top when page is refreshed or navigated to
+// Scroll to top before page unload
 window.addEventListener('beforeunload', () => {
   window.scrollTo(0, 0);
 });
