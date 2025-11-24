@@ -617,40 +617,6 @@ nav {
     justify-content: center;
     overflow: hidden; /* Prevent intro effects from leaking through */
     background: #000; /* Solid black background */
-    --glow-position: 0%; /* CSS variable for glow position */
-}
-
-/* Top border with traveling glow effect */
-#about::before {
-    content: '';
-    position: absolute;
-    top: -2px; /* Position above the section */
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background:
-        radial-gradient(
-            ellipse 200px 30px at var(--glow-position) 0,
-            rgba(255, 60, 0, 1) 0%,
-            rgba(255, 60, 0, 0.6) 30%,
-            rgba(255, 60, 0, 0.2) 60%,
-            transparent 100%
-        ),
-        linear-gradient(90deg,
-            rgba(255, 60, 0, 0.3) 0%,
-            rgba(255, 60, 0, 0.3) 100%
-        );
-    box-shadow:
-        0 -4px 20px rgba(255, 60, 0, 0.8),
-        0 -8px 40px rgba(255, 60, 0, 0.4);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 100;
-}
-
-/* Show border when section has glow-border class */
-#about.glow-border::before {
-    opacity: 1;
 }
 
 /* DNA effect in background - lowest layer */

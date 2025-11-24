@@ -95,39 +95,20 @@ function initActiveNavigation() {
     }
   }
 
-  // Set intro as active on page load
-  setActiveButton('intro');
-
   // Intersection Observer to detect which section is in view
   const observerOptions = {
     root: null,
-    rootMargin: '0px', // No margin - detect when section enters viewport
-    threshold: 0 // Trigger when section crosses the viewport edge
+    rootMargin: '0px 0px -60% 0px', // Section is active when it passes 40% from top of viewport
+    threshold: 0 // Trigger when section crosses the threshold
   };
 
   const observerCallback = (entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const sectionId = entry.target.id;
-        setActiveButton(sectionId);
-
-        // Add glow effect to about section only when intro is fully scrolled
-        if (sectionId === 'about') {
-          const introSection = document.getElementById('intro');
-          const scrollPosition = window.scrollY || window.pageYOffset;
-          const introHeight = introSection ? introSection.offsetHeight : window.innerHeight;
-
-          // Only activate glow when we've scrolled at least 90% of intro section
-          if (scrollPosition >= introHeight * 0.9) {
-            entry.target.classList.add('glow-border');
-            // Start tracking scroll position for glow movement
-            startGlowTracking();
-          }
-        }
-      } else {
-        // Remove glow effect when leaving about section
-        if (entry.target.id === 'about') {
-          entry.target.classList.remove('glow-border');
+        // Don't activate button for intro section (it has no nav button)
+        if (sectionId !== 'intro') {
+          setActiveButton(sectionId);
         }
       }
     });
@@ -135,9 +116,9 @@ function initActiveNavigation() {
 
   const observer = new IntersectionObserver(observerCallback, observerOptions);
 
-  // Observe all sections
+  // Observe all sections except intro (intro is handled by scroll event)
   sections.forEach(section => {
-    if (section.id) {
+    if (section.id && section.id !== 'intro') {
       observer.observe(section);
     }
   });
@@ -155,16 +136,6 @@ function initActiveNavigation() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
           setActiveButton('intro');
           return;
-        }
-
-        // Add glow effect when about button is clicked
-        if (sectionId === 'about') {
-          const aboutSection = document.getElementById('about');
-          if (aboutSection) {
-            aboutSection.classList.add('glow-border');
-            // Animate glow from left to right
-            animateGlowSweep(aboutSection);
-          }
         }
 
         // Small delay to allow smooth scroll to complete
@@ -188,59 +159,8 @@ function initActiveNavigation() {
     });
   }
 
-  // Function to animate glow sweep on button click
-  function animateGlowSweep(element) {
-    const duration = 1500; // 1.5 seconds
-    const startTime = performance.now();
-
-    function animate(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Ease-out cubic function for smooth deceleration
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const position = easeOut * 100;
-
-      element.style.setProperty('--glow-position', `${position}%`);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    }
-
-    requestAnimationFrame(animate);
-  }
-
-  // Function to update glow position based on scroll
-  function startGlowTracking() {
-    const aboutSection = document.getElementById('about');
-    if (!aboutSection) return;
-
-    function updateGlowPosition() {
-      const rect = aboutSection.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-
-      // Calculate glow position:
-      // - 0% when about section top is at bottom of viewport (rect.top = viewportHeight)
-      // - 100% when about section top is at top of viewport (rect.top = 0)
-      // This creates a smooth progression as the section scrolls up
-
-      const scrollProgress = Math.min(100, Math.max(0,
-        ((viewportHeight - rect.top) / viewportHeight) * 100
-      ));
-
-      // Update CSS variable
-      aboutSection.style.setProperty('--glow-position', `${scrollProgress}%`);
-    }
-
-    // Update on scroll
-    window.addEventListener('scroll', updateGlowPosition);
-    // Update immediately
-    updateGlowPosition();
-  }
-
-  // Handle scroll to detect when intro section should be active
-  // This is needed because intro has position: sticky and stays at top
+  // Handle scroll to detect when in intro section
+  // When in intro section, no button should be active
   let scrollTimeout;
   window.addEventListener('scroll', () => {
     // Debounce the scroll event
@@ -248,26 +168,13 @@ function initActiveNavigation() {
     scrollTimeout = setTimeout(() => {
       const scrollPosition = window.scrollY || window.pageYOffset;
       const introSection = document.getElementById('intro');
-      const aboutSection = document.getElementById('about');
 
       if (introSection) {
         const introHeight = introSection.offsetHeight;
 
-        // If we're in the top 50% of the intro section, set intro as active
-        if (scrollPosition < introHeight * 0.5) {
-          setActiveButton('intro');
-          // Remove glow from about section when back at intro
-          if (aboutSection) {
-            aboutSection.classList.remove('glow-border');
-          }
-        }
-        // Activate glow when intro is 90% scrolled
-        else if (scrollPosition >= introHeight * 0.9 && aboutSection) {
-          const rect = aboutSection.getBoundingClientRect();
-          // Only add glow if about section is in viewport
-          if (rect.top < window.innerHeight) {
-            aboutSection.classList.add('glow-border');
-          }
+        // If we're in the intro section (top 70% of intro height), clear all active buttons
+        if (scrollPosition < introHeight * 0.7) {
+          navButtons.forEach(btn => btn.classList.remove('active'));
         }
       }
     }, 50); // 50ms debounce
@@ -757,12 +664,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Initialize animation optimizer for performance
   initAnimationOptimizer();
-
-  // Start observing about section for navigation updates
-  const aboutSection = document.getElementById('about');
-  if (aboutSection && navigationControl && navigationControl.observer) {
-    navigationControl.observer.observe(aboutSection);
-  }
 
   // DNA glitch with 500ms delay
   setTimeout(() => {
