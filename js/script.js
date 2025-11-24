@@ -499,71 +499,6 @@ class AnimationCoordinator {
   }
 
   /**
-   * Initialize barcode animation
-   */
-  static initBarcode() {
-    const barcodeElement = document.getElementById('barcode');
-    if (!barcodeElement) return;
-
-    // Generate current date
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const dateString = `[${year} | ${month} | ${day}]`;
-
-    // Create spans for each character
-    barcodeElement.innerHTML = dateString.split('').map(char =>
-      `<span class="barcode-span">${char}</span>`
-    ).join('');
-
-    const barcodeSpans = barcodeElement.querySelectorAll('.barcode-span');
-    let animationInterval = null;
-
-    const runBarcodeAnimation = () => {
-      // First pass: Add highlighting
-      barcodeSpans.forEach((span, i) => {
-        setTimeout(() => {
-          span.classList.add('barcode-highlighted');
-        }, 200 * i);
-      });
-
-      // Second pass: Remove highlighting
-      const firstPassDuration = 200 * barcodeSpans.length;
-      barcodeSpans.forEach((span, i) => {
-        setTimeout(() => {
-          span.classList.remove('barcode-highlighted');
-        }, firstPassDuration + (20 * i));
-      });
-    };
-
-    const startAnimation = () => {
-      runBarcodeAnimation();
-      animationInterval = setInterval(runBarcodeAnimation, TIMING.BARCODE_LOOP_INTERVAL);
-    };
-
-    const stopAnimation = () => {
-      if (animationInterval) {
-        clearInterval(animationInterval);
-        animationInterval = null;
-        barcodeSpans.forEach(span => {
-          span.classList.remove('barcode-highlighted');
-        });
-      }
-    };
-
-    setTimeout(startAnimation, TIMING.BARCODE_START_DELAY);
-
-    // Expose control methods
-    window.BarcodeAnimation = {
-      start: startAnimation,
-      stop: stopAnimation
-    };
-
-    console.log('[Barcode Animation] Initialized with date: ' + dateString);
-  }
-
-  /**
    * Initialize animation performance optimizer
    */
   static initAnimationOptimizer() {
@@ -644,7 +579,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Initialize animations
   AnimationCoordinator.initCyberPanel();
-  AnimationCoordinator.initBarcode();
   AnimationCoordinator.initAnimationOptimizer();
 
   // Initialize DNA effects with delays
