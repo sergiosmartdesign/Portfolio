@@ -534,6 +534,202 @@ nav {
     100% { transform: translateX(4px); }
 }
 
+/* --- SOCIAL MEDIA ICONS --- */
+.social-media-icons {
+    position: absolute;
+    bottom: 30px;
+    right: 35px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 30px;
+    z-index: 15; /* Above panel and lines */
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Animate icons when panel becomes active */
+.cyber-panel.active ~ .social-media-icons {
+    animation: socialIconsGrow 0.6s ease-out 1.5s forwards;
+}
+
+@keyframes socialIconsGrow {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Auto-play hover animation on load */
+.cyber-panel.active ~ .social-media-icons li a {
+    animation: iconColorChange 1s ease-in-out 1.5s;
+}
+
+@keyframes iconColorChange {
+    0%, 100% {
+        color: #ff3c00;
+        text-shadow: none;
+    }
+    50% {
+        color: #00ffff;
+        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+    }
+}
+
+/* Horizontal spans - disappear then reappear on load */
+.cyber-panel.active ~ .social-media-icons li a span:nth-child(1),
+.cyber-panel.active ~ .social-media-icons li a span:nth-child(3) {
+    animation: spanHorizontalDisappear 1s ease-in-out 1.5s;
+}
+
+@keyframes spanHorizontalDisappear {
+    0%, 100% {
+        background: #ff3c00;
+        box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
+        transform: scaleX(1);
+    }
+    50% {
+        background: #00ffff;
+        box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+        transform: scaleX(0);
+    }
+}
+
+/* Vertical spans - appear then disappear on load */
+.cyber-panel.active ~ .social-media-icons li a span:nth-child(2),
+.cyber-panel.active ~ .social-media-icons li a span:nth-child(4) {
+    animation: spanVerticalAppear 1s ease-in-out 1.5s;
+}
+
+@keyframes spanVerticalAppear {
+    0%, 100% {
+        background: #ff3c00;
+        box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
+        transform: scale(0);
+    }
+    50% {
+        background: #00ffff;
+        box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+        transform: scale(1);
+    }
+}
+
+.social-media-icons li {
+    list-style: none;
+}
+
+.social-media-icons li a {
+    display: block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 28px;
+    text-align: center;
+    text-decoration: none;
+    color: #ff3c00;
+    transition: .5s;
+}
+
+.social-media-icons li a span {
+    position: absolute;
+    transition: transform .5s;
+}
+
+/* Horizontal spans (top and bottom) */
+.social-media-icons li a span:nth-child(1),
+.social-media-icons li a span:nth-child(3) {
+    width: 100%;
+    height: 2px;
+    background: #ff3c00;
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
+}
+
+.social-media-icons li a span:nth-child(1) {
+    top: 0;
+    left: 0;
+    transform-origin: right;
+}
+
+.social-media-icons li a:hover span:nth-child(1) {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .5s;
+}
+
+.social-media-icons li a span:nth-child(3) {
+    bottom: 0;
+    left: 0;
+    transform-origin: left;
+}
+
+.social-media-icons li a:hover span:nth-child(3) {
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .5s;
+}
+
+/* Vertical spans (left and right) */
+.social-media-icons li a span:nth-child(2),
+.social-media-icons li a span:nth-child(4) {
+    width: 2px;
+    height: 100%;
+    background: #ff3c00;
+    box-shadow: 0 0 10px #ff3c00, 0 0 20px #ff3c00, 0 0 30px #ff3c00;
+}
+
+.social-media-icons li a span:nth-child(2) {
+    top: 0;
+    left: 0;
+    transform: scale(0);
+    transform-origin: bottom;
+}
+
+.social-media-icons li a:hover span:nth-child(2) {
+    transform: scale(1);
+    transform-origin: top;
+    transition: transform .5s;
+}
+
+.social-media-icons li a span:nth-child(4) {
+    top: 0;
+    right: 0;
+    transform: scale(0);
+    transform-origin: top;
+}
+
+.social-media-icons li a:hover span:nth-child(4) {
+    transform: scale(1);
+    transform-origin: bottom;
+    transition: transform .5s;
+}
+
+/* Icon hover effects with cyan glow */
+.social-media-icons .instagram:hover {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+}
+
+.social-media-icons .instagram:hover span {
+    background: #00ffff;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+}
+
+.social-media-icons .linkedin:hover {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+}
+
+.social-media-icons .linkedin:hover span {
+    background: #00ffff;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+}
+
 /* EFECTO DNA */
 .scene {
   position: relative;
@@ -941,7 +1137,7 @@ nav {
     right: -84px; /* Position after the solid line */
     bottom: 0;
     height: 2px;
-    width: 84px; /* Dotted section length */
+    width: 75px; /* Dotted section length */
     background: repeating-linear-gradient(
         to right,
         #ff3c00 0px,
