@@ -406,6 +406,16 @@ nav {
   animation-name: glitch-switch;
 }
 
+/* Prevent about section h2 glitch on page load */
+#about h2.glitch-text[data-splitting] [data-char]:after {
+  animation-name: none;
+}
+
+/* Enable glitch animation when section is in view */
+#about.glitch-active h2.glitch-text[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+}
+
 /* --- GLITCH EN LOGO: PAGE LOAD Y HOVER --- */
 /* El logo usa la animación por defecto en page load */
 /* Y se reactiva al hacer hover */
@@ -812,20 +822,58 @@ nav {
     justify-content: center;
     overflow: hidden; /* Prevent intro effects from leaking through */
     background: #000; /* Solid black background */
+    padding: 100px 60px;
 }
 
-/* DNA effect in background - lowest layer */
-#about .scene {
-    position: absolute;
+/* About container - two column layout */
+.about-container {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    max-width: 1400px;
     width: 100%;
-    height: 100%;
+    align-items: start;
+}
+
+/* Left column */
+.about-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Right column */
+.about-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* DNA effect in right column */
+#about .scene {
+    position: relative;
+    width: 100%;
+    height: 400px;
     perspective: 600px; /* Keep 3D perspective for DNA text */
     transform-style: preserve-3d;
-    z-index: 0; /* Behind everything */
     display: flex !important;
-    justify-content: flex-start !important; /* Align to left instead of center */
+    justify-content: center !important;
     align-items: center !important;
-    padding-left: calc(10% + 100px); /* Add padding from left edge */
+}
+
+/* About section typography */
+#about h2 {
+    font-size: 2rem;
+    color: #00ffff;
+    margin-bottom: 10px;
+}
+
+#about p {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: #fff;
 }
 
 /* Grid background - layer 1 */

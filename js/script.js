@@ -537,10 +537,20 @@ class AnimationCoordinator {
 
     // Optimize about section animations
     if (aboutSection) {
+      let glitchTriggered = false;
+
       const aboutObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             aboutSection.classList.remove('paused-animations');
+
+            // Trigger glitch animation on first view
+            if (!glitchTriggered) {
+              aboutSection.classList.add('glitch-active');
+              glitchTriggered = true;
+              console.log('[Animation Optimizer] About section glitch activated');
+            }
+
             console.log('[Animation Optimizer] About animations resumed');
           } else {
             aboutSection.classList.add('paused-animations');
