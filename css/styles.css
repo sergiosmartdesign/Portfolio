@@ -876,8 +876,8 @@ nav {
     background: #ff3c00;
 }
 
-/* Version number in corner */
-.version {
+/* Date number in corner */
+.date {
     position: relative;
     top: 50%;
     transform: translateY(-50%) rotate(-90deg);

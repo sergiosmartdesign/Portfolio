@@ -562,9 +562,26 @@ class AnimationCoordinator {
 // MASTER INITIALIZATION - Application Entry Point
 // ============================================================================
 
+/**
+ * Updates the date element with the current date.
+ */
+function updateDate() {
+  const dateElement = document.querySelector('.date');
+  if (dateElement) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    dateElement.textContent = `${year}.${month}.${day}`;
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   // Always scroll to top on page load
   window.scrollTo(0, 0);
+
+  // Update date
+  updateDate();
 
   // Ensure intro section is in view
   const introSection = document.getElementById('intro');
