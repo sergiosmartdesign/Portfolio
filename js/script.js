@@ -14,7 +14,7 @@ const TIMING = {
   DNA_GLITCH_DELAY: 500,
   DNA_REVEAL_DELAY: 3000,
   DNA_LETTER_DELAY: 100,
-  DNA_START_DELAY: 500,
+  DNA_START_DELAY: 200, // Start after dnacapsule1.svg animation completes
   NAV_SCROLL_DELAY: 100,
   NAV_DEBOUNCE: 50
 };

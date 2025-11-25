@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Monofett&display=swap');
 
 /* ============================================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)
@@ -792,6 +791,9 @@ nav {
   pointer-events: none;
   transform: scale(0);
   transform-origin: bottom left;
+  filter: drop-shadow(0 0 2px rgba(10, 147, 150, 0.6))
+          drop-shadow(0 0 4px rgba(10, 147, 150, 0.4))
+          drop-shadow(0 0 8px rgba(10, 147, 150, 0.2));
 }
 
 /* Scale animation - grows horizontally first, then vertically */
@@ -978,7 +980,7 @@ nav {
 }
 
 .text[style*="--text: 2"] {
-  color: var(--teal);
+  color: #9B2226;
 }
 
 @keyframes texts {
