@@ -172,6 +172,7 @@ class NavigationManager {
   constructor() {
     this.navButtons = document.querySelectorAll('.main-nav .nav-btn');
     this.sections = document.querySelectorAll('main section');
+    this.header = document.querySelector('header');
     this.sectionToButton = new Map();
     this.scrollTimeout = null;
 
@@ -202,7 +203,7 @@ class NavigationManager {
   }
 
   /**
-   * Set active navigation button
+   * Set active navigation button and update header background
    */
   setActiveButton(sectionId) {
     this.navButtons.forEach(btn => btn.classList.remove('active'));
@@ -210,6 +211,32 @@ class NavigationManager {
     const activeButton = this.sectionToButton.get(sectionId);
     if (activeButton) {
       activeButton.classList.add('active');
+    }
+
+    // Update header background color
+    this.updateHeaderBackground(sectionId);
+  }
+
+  /**
+   * Update header background based on active section
+   */
+  updateHeaderBackground(sectionId) {
+    if (!this.header) return;
+
+    // Remove all section classes
+    this.header.classList.remove(
+      'section-intro',
+      'section-about',
+      'section-web',
+      'section-photo',
+      'section-illustration',
+      'section-experiments',
+      'section-contact'
+    );
+
+    // Add new section class
+    if (sectionId) {
+      this.header.classList.add(`section-${sectionId}`);
     }
   }
 
@@ -296,9 +323,10 @@ class NavigationManager {
         if (introSection) {
           const introHeight = introSection.offsetHeight;
 
-          // Clear active buttons when in intro section
+          // Clear active buttons and set intro header when in intro section
           if (scrollPosition < introHeight * 0.7) {
             this.navButtons.forEach(btn => btn.classList.remove('active'));
+            this.updateHeaderBackground('intro');
           }
         }
       }, TIMING.NAV_DEBOUNCE);
@@ -621,6 +649,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const glitchSystem = new GlitchSystem();
   const navigationManager = new NavigationManager();
   const squareGridManager = new SquareGridManager();
+
+  // Set initial header background for intro section
+  navigationManager.updateHeaderBackground('intro');
 
   // Initialize animations
   AnimationCoordinator.initCyberPanel();
