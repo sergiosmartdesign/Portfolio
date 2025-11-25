@@ -421,6 +421,8 @@ nav {
 /* Y se reactiva al hacer hover */
 .logo:hover[data-splitting] [data-char]:after {
   animation-name: glitch-switch;
+  animation-duration: 0.2s;
+  animation-timing-function: steps(1);
   animation-iteration-count: 10; /* Fuerza reiniciar la animación en hover */
   animation-delay: 0s; /* Sin delay en hover para respuesta inmediata */
 }
@@ -868,6 +870,7 @@ nav {
     font-size: 2rem;
     color: #00ffff;
     margin-bottom: 10px;
+    text-shadow: none;
 }
 
 #about p {

@@ -544,11 +544,23 @@ class AnimationCoordinator {
           if (entry.isIntersecting) {
             aboutSection.classList.remove('paused-animations');
 
-            // Trigger glitch animation on first view
+            // Trigger glitch animation and DNA effects on first view
             if (!glitchTriggered) {
               aboutSection.classList.add('glitch-active');
+
+              // Trigger DNA animations with delays
+              if (window.glitchSystem) {
+                setTimeout(() => {
+                  window.glitchSystem.initDNAGlitch();
+                }, TIMING.DNA_GLITCH_DELAY);
+
+                setTimeout(() => {
+                  window.glitchSystem.animateDNAReveal();
+                }, TIMING.DNA_REVEAL_DELAY);
+              }
+
               glitchTriggered = true;
-              console.log('[Animation Optimizer] About section glitch activated');
+              console.log('[Animation Optimizer] About section glitch and DNA animations activated');
             }
 
             console.log('[Animation Optimizer] About animations resumed');
@@ -606,14 +618,11 @@ window.addEventListener('DOMContentLoaded', () => {
   AnimationCoordinator.initCyberPanel();
   AnimationCoordinator.initAnimationOptimizer();
 
-  // Initialize DNA effects with delays
-  setTimeout(() => {
-    glitchSystem.initDNAGlitch();
-  }, TIMING.DNA_GLITCH_DELAY);
+  // Store glitchSystem globally for DNA animation trigger
+  window.glitchSystem = glitchSystem;
 
-  setTimeout(() => {
-    glitchSystem.animateDNAReveal();
-  }, TIMING.DNA_REVEAL_DELAY);
+  // DNA effects will be initialized when about section becomes visible
+  // (handled in AnimationCoordinator.initAnimationOptimizer)
 });
 
 // Scroll to top before page unload
