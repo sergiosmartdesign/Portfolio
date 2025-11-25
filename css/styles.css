@@ -766,12 +766,12 @@ nav {
 }
 
 /* ============================================================================
-   DNA EFFECT (3D Text Animation)
+   DNA EFFECT (3D Text Animation) - SVG OPTIMIZED
    ============================================================================ */
 .dna-capsule {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 200px;
   height: 400px;
   display: flex;
   justify-content: center;
@@ -779,135 +779,6 @@ nav {
   margin: 0 auto;
 }
 
-/* Capsule border container */
-.dna-capsule__border {
-  position: absolute;
-  inset: 0;
-  border-radius: 200px;
-  pointer-events: none;
-  z-index: var(--z-layer-2);
-}
-
-/* Border segments - hidden by default */
-.dna-border-segment {
-  position: absolute;
-  background: var(--teal);
-  box-shadow: 0 0 10px var(--teal), 0 0 20px var(--teal);
-  opacity: 0;
-}
-
-/* Left vertical border */
-.dna-border-segment--left {
-  left: 0;
-  bottom: 0;
-  width: 3px;
-  height: 100%;
-  border-radius: 200px 0 0 200px;
-  transform-origin: bottom;
-  scale: 1 0;
-}
-
-/* Top horizontal border */
-.dna-border-segment--top {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  border-radius: 200px 200px 0 0;
-  transform-origin: left;
-  scale: 0 1;
-}
-
-/* Right vertical border */
-.dna-border-segment--right {
-  right: 0;
-  top: 0;
-  width: 3px;
-  height: 100%;
-  border-radius: 0 200px 200px 0;
-  transform-origin: top;
-  scale: 1 0;
-}
-
-/* Bottom horizontal border */
-.dna-border-segment--bottom {
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 3px;
-  border-radius: 0 0 200px 200px;
-  transform-origin: right;
-  scale: 0 1;
-}
-
-/* Corner accent tabs */
-.dna-capsule__accent {
-  position: absolute;
-  width: 4px;
-  height: 80px;
-  background: var(--teal);
-  opacity: 0;
-  box-shadow: 0 0 10px var(--teal);
-}
-
-.dna-capsule__accent--top {
-  top: 60px;
-  right: -8px;
-  clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
-}
-
-.dna-capsule__accent--bottom {
-  bottom: 60px;
-  left: -8px;
-  clip-path: polygon(0 6px, 0 calc(100% - 6px), 100% 100%, 100% 0);
-}
-
-/* Animation when about section becomes active */
-#about.glitch-active .dna-border-segment--left {
-  animation: growVertical 0.5s ease-out 0s forwards;
-}
-
-#about.glitch-active .dna-border-segment--top {
-  animation: growHorizontal 0.5s ease-out 0.15s forwards;
-}
-
-#about.glitch-active .dna-border-segment--right {
-  animation: growVertical 0.5s ease-out 0.3s forwards;
-}
-
-#about.glitch-active .dna-border-segment--bottom {
-  animation: growHorizontal 0.5s ease-out 0.45s forwards;
-}
-
-#about.glitch-active .dna-capsule__accent--top {
-  animation: fadeIn 0.3s ease-out 0.6s forwards;
-}
-
-#about.glitch-active .dna-capsule__accent--bottom {
-  animation: fadeIn 0.3s ease-out 0.7s forwards;
-}
-
-@keyframes growVertical {
-  0% {
-    opacity: 1;
-    scale: 1 0;
-  }
-  100% {
-    opacity: 1;
-    scale: 1 1;
-  }
-}
-
-@keyframes growHorizontal {
-  0% {
-    opacity: 1;
-    scale: 0 1;
-  }
-  100% {
-    opacity: 1;
-    scale: 1 1;
-  }
-}
 
 .scene {
   position: relative;
