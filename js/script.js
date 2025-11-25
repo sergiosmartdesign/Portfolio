@@ -584,15 +584,23 @@ class AnimationCoordinator {
 
 /**
  * Updates the date element with the current date.
+ * Format: [· Y Y Y Y · M M · D D ·]
  */
 function updateDate() {
   const dateElement = document.querySelector('.date');
   if (dateElement) {
     const now = new Date();
-    const year = now.getFullYear();
+    const year = String(now.getFullYear());
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    dateElement.textContent = `${year}.${month}.${day}`;
+
+    // Split digits with spaces
+    const yearSpaced = year.split('').join(' ');
+    const monthSpaced = month.split('').join(' ');
+    const daySpaced = day.split('').join(' ');
+
+    // Format: [· Y Y Y Y · M M · D D ·]
+    dateElement.textContent = `[· ${yearSpaced} · ${monthSpaced} · ${daySpaced} ·]`;
   }
 }
 

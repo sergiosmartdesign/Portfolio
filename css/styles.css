@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Monofett&display=swap');
 
 /* ============================================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)
@@ -762,7 +763,7 @@ nav {
 
 .texts {
   position: absolute;
-  font-size: 6vmin;
+  font-size: 3.5vmin; /* Further reduced for better readability */
   font-family: 'Workbench', sans-serif;
   transform-style: preserve-3d;
   animation: texts 12s infinite linear;
@@ -771,8 +772,8 @@ nav {
 .texts::after {
   content: '';
   position: absolute;
-  inset: -7.5em -1.5em;
-  background-image: linear-gradient(to right, transparent, 10%, var(--black), 90%, transparent);
+  inset: -6em -1.2em; /* Reduced by 20% from -7.5em -1.5em */
+  background-image: none; /* Removed vignette shadow effect - DNA now fully visible */
 }
 
 .text {
@@ -784,14 +785,14 @@ nav {
 
 .text span {
   position: absolute;
-  inset: -1em;
+  inset: -0.8em; /* Reduced by 20% from -1em */
   display: grid;
   place-items: center;
   font-weight: 700;
   user-select: none;
   opacity: 0;
   transition: opacity var(--transition-base) var(--easing-ease-in-out);
-  transform: translateY(calc((var(--i) - 6) * 0.6em)) rotateY(calc(var(--i) * 20deg)) translateZ(1.5em) rotateZ(-40deg);
+  transform: translateY(calc((var(--i) - 6) * 0.48em)) rotateY(calc(var(--i) * 20deg)) translateZ(1.2em) rotateZ(-40deg); /* Reduced by 20%: 0.6em -> 0.48em, 1.5em -> 1.2em */
 }
 
 .text span.revealed {
@@ -850,7 +851,7 @@ nav {
   gap: var(--spacing-md);
 }
 
-/* DNA effect in right column */
+/* DNA effect in right column - positioned behind VHS effects */
 #about .scene {
   position: relative;
   width: 100%;
@@ -860,6 +861,7 @@ nav {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
+  z-index: 0; /* Behind VHS effects (z-index 3-4) */
 }
 
 /* About section typography */
@@ -1062,17 +1064,24 @@ nav {
 
 /* Date in corner left bar */
 .date {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
+  position: absolute;
+  top: calc(50% - 35px); /* Moved 50px towards the top */
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
   transform-origin: center;
   font-size: 12px;
   opacity: 0.8;
   font-family: 'Workbench', monospace, sans-serif;
-  color: var(--orange);
+  color: #9B2226;
   z-index: var(--z-layer-10);
   letter-spacing: 0.5px;
   white-space: nowrap;
+}
+
+/* Delay date glitch animation until after panel animations complete */
+.date.glitch-text[data-splitting] [data-char]:after {
+  animation-delay: 3.5s; /* Starts after panel body stretch (2s + 0.3s + 0.9s = 3.2s) + small buffer */
+  color: #9B2226 !important; /* Override white glitch color with burgundy red */
 }
 
 /* ============================================================================
