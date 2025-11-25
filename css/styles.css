@@ -779,6 +779,148 @@ nav {
   margin: 0 auto;
 }
 
+/* ============================================================================
+   DNA CAPSULE SVG ANIMATION
+   Sequential parts-based entrance animation
+   ============================================================================ */
+.dna-capsule-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-layer-5); /* Above DNA text */
+  pointer-events: none;
+  transform: scale(0);
+  transform-origin: bottom left;
+}
+
+/* Scale animation - grows horizontally first, then vertically */
+#about.glitch-active .dna-capsule-svg {
+  animation: capsuleGrow 1.5s ease-out 0s forwards;
+}
+
+@keyframes capsuleGrow {
+  0% {
+    transform: scaleX(0) scaleY(0.025); /* Start: 0 width, ~10px height (10/400 = 0.025) */
+  }
+  40% {
+    transform: scaleX(1) scaleY(0.025); /* Grow to full width, maintain ~10px height */
+  }
+  100% {
+    transform: scaleX(1) scaleY(1); /* Grow to full height */
+  }
+}
+
+/* Hide all capsule elements initially */
+.capsule-outline,
+.capsule-accent-left,
+.capsule-accent-right,
+.capsule-bar-top-1,
+.capsule-bar-top-2,
+.capsule-line-left,
+.capsule-line-left-dashed,
+.capsule-line-indicator-1,
+.capsule-line-indicator-2,
+.capsule-line-indicator-3,
+.capsule-lines-right,
+.capsule-corner-accent,
+.capsule-text,
+.capsule-diagonals rect,
+.capsule-clip-border {
+  opacity: 0;
+}
+
+/* Sequential animations when about section becomes active */
+/* 1. Main outline appears first */
+#about.glitch-active .capsule-outline {
+  animation: fadeIn 0.6s ease-out 0s forwards;
+}
+
+/* 2. Top bars appear */
+#about.glitch-active .capsule-bar-top-1 {
+  animation: fadeIn 0.3s ease-out 0.3s forwards;
+}
+
+#about.glitch-active .capsule-bar-top-2 {
+  animation: fadeIn 0.3s ease-out 0.4s forwards;
+}
+
+/* 3. Accent polygons appear */
+#about.glitch-active .capsule-accent-left {
+  animation: fadeIn 0.3s ease-out 0.5s forwards;
+}
+
+#about.glitch-active .capsule-accent-right {
+  animation: fadeIn 0.3s ease-out 0.6s forwards;
+}
+
+/* 4. Corner accent */
+#about.glitch-active .capsule-corner-accent {
+  animation: fadeIn 0.2s ease-out 0.7s forwards;
+}
+
+/* 5. Vertical lines */
+#about.glitch-active .capsule-line-left {
+  animation: fadeIn 0.3s ease-out 0.8s forwards;
+}
+
+#about.glitch-active .capsule-line-left-dashed {
+  animation: fadeIn 0.4s ease-out 0.9s forwards;
+}
+
+/* 6. Indicator lines */
+#about.glitch-active .capsule-line-indicator-1 {
+  animation: fadeIn 0.2s ease-out 1.0s forwards;
+}
+
+#about.glitch-active .capsule-line-indicator-2 {
+  animation: fadeIn 0.2s ease-out 1.1s forwards;
+}
+
+#about.glitch-active .capsule-line-indicator-3 {
+  animation: fadeIn 0.2s ease-out 1.2s forwards;
+}
+
+/* 7. Right side lines */
+#about.glitch-active .capsule-lines-right {
+  animation: fadeIn 0.3s ease-out 1.3s forwards;
+}
+
+/* 8. Binary text data */
+#about.glitch-active .capsule-text {
+  animation: fadeIn 0.5s ease-out 1.4s forwards;
+}
+
+/* 9. Diagonal bars at bottom - animate one by one */
+#about.glitch-active .capsule-diagonals rect:nth-child(1) {
+  animation: fadeIn 0.15s ease-out 1.6s forwards;
+}
+
+#about.glitch-active .capsule-diagonals rect:nth-child(2) {
+  animation: fadeIn 0.15s ease-out 1.7s forwards;
+}
+
+#about.glitch-active .capsule-diagonals rect:nth-child(3) {
+  animation: fadeIn 0.15s ease-out 1.8s forwards;
+}
+
+#about.glitch-active .capsule-diagonals rect:nth-child(4) {
+  animation: fadeIn 0.15s ease-out 1.9s forwards;
+}
+
+#about.glitch-active .capsule-diagonals rect:nth-child(5) {
+  animation: fadeIn 0.15s ease-out 2.0s forwards;
+}
+
+#about.glitch-active .capsule-diagonals rect:nth-child(6) {
+  animation: fadeIn 0.15s ease-out 2.1s forwards;
+}
+
+/* 10. Bottom clip border appears last */
+#about.glitch-active .capsule-clip-border {
+  animation: fadeIn 0.3s ease-out 2.2s forwards;
+}
+
 
 .scene {
   position: relative;
