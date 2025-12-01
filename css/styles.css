@@ -516,8 +516,7 @@ nav {
 }
 
 /* Layer 2: Color Shift - Shared between intro and about */
-#intro::after,
-#about::after {
+#intro::after {
   content: "";
   position: absolute;
   top: 0;
@@ -527,6 +526,20 @@ nav {
   background: linear-gradient(45deg, var(--magenta-alpha-10), var(--cyan-alpha-10), var(--yellow-alpha-10));
   mix-blend-mode: screen;
   animation: colorShift 6s var(--easing-ease-in-out) infinite;
+  z-index: var(--z-layer-2);
+  pointer-events: none;
+}
+
+/* Layer 2: About section - Static gradient from bottom-left to top-right */
+#about::after {
+  content: "";
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  right: 50px;
+  bottom: 0px;
+  background: linear-gradient(to top right, #CA6702, #BB3E03, #AE2012, #9B2226);
+  mix-blend-mode: screen;
   z-index: var(--z-layer-2);
   pointer-events: none;
 }
@@ -1041,10 +1054,12 @@ nav {
 
 /* About section typography */
 #about h2 {
-  font-size: 2rem;
+  font-size: 8rem;
+  font-weight: 900;
   color: var(--cyan);
   margin-bottom: var(--spacing-xs);
   text-shadow: none;
+  line-height: 1.2;
 }
 
 #about p {
