@@ -1091,11 +1091,20 @@ nav {
   animation-iteration-count: calc(var(--char-index) * 0.55);
 }
 
+/* DNA Capsule and Title Wrapper - Side by Side Layout */
+.dna-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  width: 100%;
+}
+
 /* DNA title - smaller to match capsule height */
 #about #dnatitle {
   font-size: 3rem;
   font-weight: 700;
   line-height: 1.3;
+  flex: 1;
 }
 
 #about p {
@@ -1423,4 +1432,62 @@ nav {
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 0.8; }
+}
+
+/* ============================================================================
+   RESPONSIVE MEDIA QUERIES
+   ============================================================================ */
+
+/* Tablet and smaller screens - Stack DNA capsule and title vertically */
+@media (max-width: 1024px) {
+  /* About section - adjust grid to single column on smaller screens */
+  .about-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  /* DNA capsule and title wrapper - stack vertically on tablet */
+  .dna-title-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  /* Reduce title size on smaller screens */
+  #about #dnatitle {
+    font-size: 2.5rem;
+  }
+
+  #about h2 {
+    font-size: 6rem;
+  }
+}
+
+/* Mobile screens - further adjustments */
+@media (max-width: 768px) {
+  #about {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+  }
+
+  .about-right {
+    padding: var(--spacing-lg);
+  }
+
+  #about #dnatitle {
+    font-size: 2rem;
+  }
+
+  #about h2 {
+    font-size: 4rem;
+  }
+
+  #about p {
+    font-size: 1rem;
+  }
+
+  /* Make DNA capsule smaller on mobile */
+  .dna-capsule {
+    max-width: 150px;
+    height: 300px;
+  }
 }
