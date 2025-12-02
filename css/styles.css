@@ -534,7 +534,7 @@ nav {
 #about::after {
   content: "";
   position: absolute;
-  top: 50px;
+  top: 0px;
   left: 50px;
   right: 50px;
   bottom: 0px;
