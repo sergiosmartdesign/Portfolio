@@ -1064,7 +1064,7 @@ nav {
 
 /* About section typography */
 #about h2 {
-  font-size: 8rem;
+  font-size: 5rem;
   font-weight: 800;
   color: var(--cyan);
   margin-bottom: var(--spacing-xs);
@@ -1075,6 +1075,40 @@ nav {
 /* About title - dark color */
 #about #abouttitle {
   color: #001219;
+}
+
+/* Individual line sizes for abouttitle - Edit these to control each line independently */
+#about #abouttitle .title-line-1 {
+  font-size: 1em; /* Hello! */
+  position: relative;
+  top: 0;
+  left: 0;
+  display: inline-block;
+}
+
+#about #abouttitle .title-line-2 {
+  font-size: 1.8em;
+  margin-top: -50px; /* I'm */
+  position: relative;
+  top: 0;
+  left: 0;
+  display: inline-block;
+}
+
+#about #abouttitle .title-line-3 {
+  font-size: 1em; /* Sergio */
+  position: relative;
+  top: 0;
+  left: 0;
+  display: inline-block;
+}
+
+#about #abouttitle .title-line-4 {
+  font-size: 1em; /* Ayala */
+  position: relative;
+  top: 0;
+  left: 0;
+  display: inline-block;
 }
 
 /* Apply dark color and font-weight to glitch pseudo-elements */
