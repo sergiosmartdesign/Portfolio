@@ -530,7 +530,7 @@ nav {
   pointer-events: none;
 }
 
-/* Layer 2: About section - Static gradient from bottom-left to top-right */
+/* Layer 2: About section - Background image */
 #about::after {
   content: "";
   position: absolute;
@@ -538,7 +538,10 @@ nav {
   left: 50px;
   right: 50px;
   bottom: 0px;
-  background: linear-gradient(to top right, #CA6702, #BB3E03, #AE2012, #9B2226);
+  background-image: url('../images/about.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   mix-blend-mode: screen;
   z-index: var(--z-layer-2);
   pointer-events: none;
@@ -804,9 +807,9 @@ nav {
   pointer-events: none;
   transform: scale(0);
   transform-origin: bottom left;
-  filter: drop-shadow(0 0 2px rgba(10, 147, 150, 0.6))
-          drop-shadow(0 0 4px rgba(10, 147, 150, 0.4))
-          drop-shadow(0 0 8px rgba(10, 147, 150, 0.2));
+  filter: drop-shadow(0 0 2px rgba(0, 18, 25, 0.6))
+          drop-shadow(0 0 4px rgba(0, 18, 25, 0.4))
+          drop-shadow(0 0 8px rgba(0, 18, 25, 0.2));
 }
 
 /* Scale animation - grows horizontally first, then vertically */
@@ -1030,6 +1033,7 @@ nav {
   max-width: 1400px;
   width: 100%;
   align-items: start;
+  margin-top: -50px;
 }
 
 .about-left {
@@ -1042,7 +1046,6 @@ nav {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  background: #001219;
   padding: 40px;
 }
 
@@ -1111,6 +1114,11 @@ nav {
   font-size: 1.25rem;
   line-height: 1.8;
   color: var(--white);
+}
+
+/* Left column paragraphs - dark color */
+.about-left p {
+  color: #001219;
 }
 
 /* VHS effect layers for about section */
