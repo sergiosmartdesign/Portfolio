@@ -1211,10 +1211,11 @@ nav {
   color: #001219;
   position: relative;
   top: -100px;   /* Moves paragraphs 150px up */
-  left: 0;       /* Modify this to move paragraphs left (negative) or right (positive) */
+  left:0px;       /* Modify this to move paragraphs left (negative) or right (positive) */
   opacity: 0;
   transform: translateX(-100px);
-}
+} 
+
 
 /* Slide in animation for paragraphs when section becomes active */
 #about.glitch-active .about-left p:nth-of-type(1) {
