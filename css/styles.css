@@ -1073,7 +1073,7 @@ nav {
   flex-direction: column;
   gap: var(--spacing-md);
   padding: 40px;
-  margin-top: 0px;
+  margin-top: 500px;
   margin-left: 80px;
 }
 
@@ -1218,17 +1218,153 @@ nav {
   transform: translateX(-100px);
 }
 
+/* ID1 SVG - Same color and glow as capsule container */
+#id1svg {
+  position: relative;
+  width: 465px;     /* Change this to resize - Customizable */
+  top: -464px;      /* Move up (more negative) or down (more positive) - Customizable */
+  left: 350px;      /* Move left (negative) or right (positive) - Customizable */
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: bottom left;
+  /* Apply capsule color #001219 and same glow effect */
+  filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%)
+          drop-shadow(0 0 2px rgba(0, 18, 25, 0.6))
+          drop-shadow(0 0 4px rgba(0, 18, 25, 0.4))
+          drop-shadow(0 0 8px rgba(0, 18, 25, 0.2));
+  animation-fill-mode: forwards;
+}
+
+/* Animate ID1 SVG when section becomes active - Multi-stage animation */
+#about.glitch-active #id1svg {
+  animation: id1SvgGrow 1.5s ease-out 0.5s forwards,
+             id1Pulse 0.8s ease-in-out 2.2s,
+             id1Shimmer 3s ease-in-out 3s infinite,
+             id1Glow 2s ease-in-out 3s infinite alternate;
+}
+
+/* ID1 SVG entrance animation - grows horizontally first, then vertically */
+@keyframes id1SvgGrow {
+  0% {
+    opacity: 1;
+    transform: scaleX(0) scaleY(0.025);
+  }
+  40% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(0.025);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
+/* ID1 SVG pulse animation - subtle scale pulse after entrance */
+@keyframes id1Pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* ID1 SVG shimmer animation - creates scanning effect */
+@keyframes id1Shimmer {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* ID1 SVG glow animation - pulsing glow effect */
+@keyframes id1Glow {
+  0% {
+    filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%)
+            drop-shadow(0 0 2px rgba(0, 18, 25, 0.6))
+            drop-shadow(0 0 4px rgba(0, 18, 25, 0.4))
+            drop-shadow(0 0 8px rgba(0, 18, 25, 0.2));
+  }
+  100% {
+    filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%)
+            drop-shadow(0 0 4px rgba(0, 18, 25, 0.8))
+            drop-shadow(0 0 8px rgba(0, 18, 25, 0.6))
+            drop-shadow(0 0 12px rgba(0, 18, 25, 0.4));
+  }
+}
+
+/* ============================================================================
+   ID1 SVG INTERNAL ELEMENT ANIMATIONS
+   Sequential animations for SVG elements (border, face, hexagons, etc.)
+   ============================================================================ */
+
+/* Hide all internal elements initially */
+#id1svg .id1-border,
+#id1svg .id1-rect,
+#id1svg .id1-hexagon,
+#id1svg .id1-circle,
+#id1svg .id1-face,
+#id1svg .id1-star,
+#id1svg .id1-side-circle {
+  opacity: 0;
+}
+
+/* Animate elements when about section becomes active */
+/* 1. Border appears first */
+#about.glitch-active #id1svg .id1-border {
+  animation: fadeIn 0.6s ease-out 2s forwards;
+}
+
+/* 2. Rectangles/bars appear */
+#about.glitch-active #id1svg .id1-rect {
+  animation: fadeIn 0.3s ease-out calc(2.2s + var(--rect-index) * 0.1s) forwards;
+}
+
+/* 3. Hexagons appear one by one */
+#about.glitch-active #id1svg .id1-hexagon {
+  animation: fadeIn 0.4s ease-out calc(2.5s + var(--hex-index) * 0.15s) forwards;
+}
+
+/* 4. Circles appear */
+#about.glitch-active #id1svg .id1-circle {
+  animation: fadeIn 0.3s ease-out calc(3s + var(--circle-index) * 0.1s) forwards;
+}
+
+/* 5. Side circles appear sequentially */
+#about.glitch-active #id1svg .id1-side-circle {
+  animation: fadeIn 0.3s ease-out calc(3.3s + var(--side-circle-index) * 0.15s) forwards;
+}
+
+/* 6. Stars appear */
+#about.glitch-active #id1svg .id1-star {
+  animation: fadeIn 0.2s ease-out calc(3.8s + var(--star-index) * 0.1s) forwards;
+}
+
+/* 7. Face appears last */
+#about.glitch-active #id1svg .id1-face {
+  animation: fadeIn 0.8s ease-out 4.2s forwards;
+}
+
 /* Specific positioning for first paragraph */
 #aboutp1 {
-  top: -465px;    /* Move up (more negative) or down (more positive) */
-  left: 320px;      /* Move left (negative) or right (positive) */
+  top: -820px;    /* Move up (more negative) or down (more positive) */
+  left: 890px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
 
 /* Specific positioning for second paragraph */
 #aboutp2 {
-  top: -340px;    /* Move up (more negative) or down (more positive) */
+  top: -760px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
+}
+
+/* Specific positioning for third paragraph */
+#aboutp3 {
+  top: 0px;    /* Move up (more negative) or down (more positive) */
+  left: 0px;      /* Move left (negative) or right (positive) */
+  width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
 
 /* Slide in animation for paragraphs when section becomes active */

@@ -632,12 +632,89 @@ function updateDate() {
   }
 }
 
+// ============================================================================
+// ID1 SVG INLINE CONVERTER - Converts img to inline SVG for element animations
+// ============================================================================
+
+/**
+ * Converts id1svg img tag to inline SVG and adds animation classes
+ */
+function convertID1SvgToInline() {
+  const imgElement = document.getElementById('id1svg');
+  if (!imgElement) return;
+
+  const imgURL = imgElement.src;
+
+  fetch(imgURL)
+    .then(response => response.text())
+    .then(data => {
+      // Parse SVG data
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(data, 'image/svg+xml');
+      const svgElement = svgDoc.documentElement;
+
+      // Copy attributes from img to svg
+      const imgWidth = imgElement.getAttribute('width');
+      const imgStyle = imgElement.style.cssText;
+      const imgClass = imgElement.className;
+      const imgId = imgElement.id;
+
+      // Set SVG attributes
+      svgElement.setAttribute('id', imgId);
+      if (imgClass) svgElement.setAttribute('class', imgClass);
+      if (imgWidth) svgElement.setAttribute('width', imgWidth);
+      if (imgStyle) svgElement.style.cssText = imgStyle;
+
+      // Add animation classes to internal elements
+      const border = svgElement.querySelector('#border');
+      const face = svgElement.querySelector('#face');
+      const hexagons = svgElement.querySelectorAll('polygon[points*="39.43"], polygon[points*="77.83"], polygon[points*="116.41"], polygon[points*="154.28"]');
+      const circles = svgElement.querySelectorAll('circle[cx="27.6"], circle[cx="66"], circle[cx="104.57"]');
+      const sideCircles = svgElement.querySelectorAll('circle[cx="49.26"]');
+      const stars = svgElement.querySelectorAll('polygon[points*="442.2"], polygon[points*="410.07"], polygon[points*="377.94"], polygon[points*="345.32"], polygon[points*="506.54"], polygon[points*="474.82"]');
+      const rects = svgElement.querySelectorAll('rect');
+
+      // Apply classes
+      if (border) border.classList.add('id1-border');
+      if (face) face.classList.add('id1-face');
+      hexagons.forEach((hex, i) => {
+        hex.classList.add('id1-hexagon');
+        hex.style.setProperty('--hex-index', i);
+      });
+      circles.forEach((circle, i) => {
+        circle.classList.add('id1-circle');
+        circle.style.setProperty('--circle-index', i);
+      });
+      sideCircles.forEach((circle, i) => {
+        circle.classList.add('id1-side-circle');
+        circle.style.setProperty('--side-circle-index', i);
+      });
+      stars.forEach((star, i) => {
+        star.classList.add('id1-star');
+        star.style.setProperty('--star-index', i);
+      });
+      rects.forEach((rect, i) => {
+        rect.classList.add('id1-rect');
+        rect.style.setProperty('--rect-index', i);
+      });
+
+      // Replace img with inline SVG
+      imgElement.parentNode.replaceChild(svgElement, imgElement);
+
+      console.log('[ID1 SVG] Converted to inline SVG with animation classes');
+    })
+    .catch(error => console.error('[ID1 SVG] Error loading SVG:', error));
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   // Always scroll to top on page load
   window.scrollTo(0, 0);
 
   // Update date
   updateDate();
+
+  // Convert ID1 SVG to inline for animations
+  convertID1SvgToInline();
 
   // Ensure intro section is in view
   const introSection = document.getElementById('intro');
