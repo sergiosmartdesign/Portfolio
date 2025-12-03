@@ -1008,6 +1008,28 @@ nav {
   to { rotate: y -1turn; }
 }
 
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ============================================================================
    ABOUT SECTION
    ============================================================================ */
@@ -1042,6 +1064,10 @@ nav {
   gap: var(--spacing-md);
 }
 
+.about-left p {
+  width: 550px;
+  text-align: inherit;
+}
 .about-right {
   display: flex;
   flex-direction: column;
@@ -1079,36 +1105,66 @@ nav {
 
 /* Individual line sizes for abouttitle - Edit these to control each line independently */
 #about #abouttitle .title-line-1 {
-  font-size: 1em; /* Hello! */
+  font-size: 1.20em; /* Hello! */
   position: relative;
   top: 0;
   left: 0;
   display: inline-block;
+  width: 200px; /* Adjust this value to set the width for all lines */
+  opacity: 0;
+  transform: translateY(-100px);
 }
 
 #about #abouttitle .title-line-2 {
-  font-size: 1.8em;
-  margin-top: -50px; /* I'm */
+  font-size: 2.2em;
+  margin-top: -70px; /* I'm */
   position: relative;
   top: 0;
   left: 0;
+  margin-left: -7px;
   display: inline-block;
+  width: 200px; /* Same width as line 1 */
+  opacity: 0;
+  transform: translateY(-100px);
 }
 
 #about #abouttitle .title-line-3 {
   font-size: 1em; /* Sergio */
   position: relative;
-  top: 0;
+  top: -64px; /* Moves "Sergio" up by 70px */
   left: 0;
   display: inline-block;
+  width: 200px; /* Same width as line 1 */
+  opacity: 0;
+  transform: translateY(-100px);
 }
 
 #about #abouttitle .title-line-4 {
-  font-size: 1em; /* Ayala */
+  font-size: 1.1em; /* Ayala */
   position: relative;
-  top: 0;
+  top:-90px;
   left: 0;
   display: inline-block;
+  width: 200px; /* Same width as line 1 */
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+/* Slide down animation when section becomes active */
+#about.glitch-active #abouttitle .title-line-1 {
+  animation: slideDownFade 0.8s ease-out 0s forwards;
+}
+
+#about.glitch-active #abouttitle .title-line-2 {
+  animation: slideDownFade 0.8s ease-out 0.15s forwards;
+}
+
+#about.glitch-active #abouttitle .title-line-3 {
+  animation: slideDownFade 0.8s ease-out 0.3s forwards;
+}
+
+#about.glitch-active #abouttitle .title-line-4 {
+  animation: slideDownFade 0.8s ease-out 0.45s forwards;
 }
 
 /* Apply dark color and font-weight to glitch pseudo-elements */
@@ -1145,14 +1201,48 @@ nav {
 }
 
 #about p {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   line-height: 1.8;
-  color: var(--white);
+  color: #001219;
 }
 
-/* Left column paragraphs - dark color */
+/* Left column paragraphs - dark color and positioning */
 .about-left p {
   color: #001219;
+  position: relative;
+  top: -100px;   /* Moves paragraphs 150px up */
+  left: 0;       /* Modify this to move paragraphs left (negative) or right (positive) */
+  opacity: 0;
+  transform: translateX(-100px);
+}
+
+/* Slide in animation for paragraphs when section becomes active */
+#about.glitch-active .about-left p:nth-of-type(1) {
+  animation: slideInFromLeft 0.8s ease-out 0.6s forwards;
+}
+
+#about.glitch-active .about-left p:nth-of-type(2) {
+  animation: slideInFromLeft 0.8s ease-out 0.8s forwards;
+}
+
+#about.glitch-active .about-left p:nth-of-type(3) {
+  animation: slideInFromLeft 0.8s ease-out 1s forwards;
+}
+
+/* First letter of first paragraph - Large with same glitch effect as h2 titles */
+.first-letter-glitch {
+  font-size: 3.5em;
+  font-weight: 800;
+  float: left;
+  line-height: 0.85;
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+/* Apply dark color to first letter glitch characters */
+.first-letter-glitch[data-splitting] [data-char]:after {
+  color: #001219 !important;
+  font-weight: 800;
 }
 
 /* VHS effect layers for about section */
