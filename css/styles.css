@@ -1073,6 +1073,8 @@ nav {
   flex-direction: column;
   gap: var(--spacing-md);
   padding: 40px;
+  margin-top: 0px;
+  margin-left: 80px;
 }
 
 /* DNA effect in right column - positioned behind VHS effects */
@@ -1214,8 +1216,20 @@ nav {
   left:0px;       /* Modify this to move paragraphs left (negative) or right (positive) */
   opacity: 0;
   transform: translateX(-100px);
-} 
+}
 
+/* Specific positioning for first paragraph */
+#aboutp1 {
+  top: -465px;    /* Move up (more negative) or down (more positive) */
+  left: 320px;      /* Move left (negative) or right (positive) */
+  width: 450px;   /* Change this value to make the paragraph wider or narrower */
+}
+
+/* Specific positioning for second paragraph */
+#aboutp2 {
+  top: -340px;    /* Move up (more negative) or down (more positive) */
+  left: 0px;      /* Move left (negative) or right (positive) */
+}
 
 /* Slide in animation for paragraphs when section becomes active */
 #about.glitch-active .about-left p:nth-of-type(1) {
