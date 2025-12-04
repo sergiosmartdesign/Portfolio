@@ -1108,12 +1108,34 @@ nav {
 }
 
 .about-right {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
   padding: 40px;
-  margin-top: 500px;
-  margin-left: 80px;
+  margin-top: 700px;
+  margin-left: -30px;
+}
+
+/* Animated vertical line on the left of right column */
+.about-right::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--border-medium);
+  height: 100%;
+  background: #ee9b00;
+  transform-origin: top;
+  scale: 1 0;
+  opacity: 0;
+  box-shadow: 0 0 10px #ee9b00, 0 0 20px #ee9b00, 0 0 30px #ee9b00;
+  pointer-events: none;
+}
+
+/* Animate line when about section becomes active */
+#about.glitch-active .about-right::before {
+  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 1.2s forwards;
 }
 
 /* --- About Typography --- */
@@ -1130,6 +1152,11 @@ nav {
   font-size: 1.1rem;
   line-height: 1.8;
   color: #001219;
+}
+
+/* Specific color for aboutp4 paragraph */
+#about #aboutp4 {
+  color: #ffffff !important;
 }
 
 /* --- About Title (Left Column) --- */
@@ -1241,7 +1268,7 @@ nav {
 /* Specific positioning for first paragraph */
 #aboutp1 {
   top: -820px;    /* Move up (more negative) or down (more positive) */
-  left: 890px;      /* Move left (negative) or right (positive) */
+  left: 300px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
 
@@ -1543,15 +1570,12 @@ nav {
   position: relative;
   width: 465px;     /* Change this to resize - Customizable */
   top: -464px;      /* Move up (more negative) or down (more positive) - Customizable */
-  left: 350px;      /* Move left (negative) or right (positive) - Customizable */
+  left: 980px;      /* Move left (negative) or right (positive) - Customizable */
   opacity: 0;
   transform: translateY(-100px);
   transform-origin: bottom left;
-  /* Apply capsule color #001219 and same glow effect */
-  filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%)
-          drop-shadow(0 0 2px rgba(0, 18, 25, 0.6))
-          drop-shadow(0 0 4px rgba(0, 18, 25, 0.4))
-          drop-shadow(0 0 8px rgba(0, 18, 25, 0.2));
+  /* Apply capsule color #001219 */
+  filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%);
   animation-fill-mode: forwards;
 }
 
@@ -1559,8 +1583,7 @@ nav {
 #about.glitch-active #id1svg {
   animation: slideDownFade 0.4s ease-out 0.3s forwards,
              id1Pulse 0.4s ease-in-out 0.3s,
-             id1Shimmer 1.5s ease-in-out 0.3s infinite,
-             id1Glow 1s ease-in-out 0.3s infinite alternate;
+             id1Shimmer 1.5s ease-in-out 0.3s infinite;
 }
 
 /* ID1 SVG pulse animation - subtle scale pulse after entrance */
@@ -1583,21 +1606,6 @@ nav {
   }
 }
 
-/* ID1 SVG glow animation - pulsing glow effect */
-@keyframes id1Glow {
-  0% {
-    filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%)
-            drop-shadow(0 0 2px rgba(0, 18, 25, 0.6))
-            drop-shadow(0 0 4px rgba(0, 18, 25, 0.4))
-            drop-shadow(0 0 8px rgba(0, 18, 25, 0.2));
-  }
-  100% {
-    filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%)
-            drop-shadow(0 0 4px rgba(0, 18, 25, 0.8))
-            drop-shadow(0 0 8px rgba(0, 18, 25, 0.6))
-            drop-shadow(0 0 12px rgba(0, 18, 25, 0.4));
-  }
-}
 
 /* --- ID1 SVG Internal Element Animations --- */
 /* Hide all internal elements initially */
@@ -1662,6 +1670,7 @@ nav {
 .svg-decorations img {
   position: absolute;
   pointer-events: auto;
+  opacity: 0;
 }
 
 .decoration-bar1 {
@@ -1669,6 +1678,7 @@ nav {
   height: 27.3px;
   top: 480px;
   left: 160px;
+  transform: translateX(-100px);
 }
 
 .decoration-bar2 {
@@ -1676,13 +1686,39 @@ nav {
   height: 997.6px;
   top: 30px;
   left: 80px;
+  transform: translateY(-100px);
 }
 
 .decoration-skills {
-  
   height: 600px;
   top: 700px;
   left: 200px;
+  transform: scale(0.8);
+}
+
+/* Animate decorations when about section becomes active */
+#about.glitch-active .decoration-bar1 {
+  animation: slideInFromLeft 0.8s ease-out 0.5s forwards;
+}
+
+#about.glitch-active .decoration-bar2 {
+  animation: slideDownFade 0.8s ease-out 0.7s forwards;
+}
+
+#about.glitch-active .decoration-skills {
+  animation: skillsFadeIn 1s ease-out 0.9s forwards;
+}
+
+/* Skills decoration fade and scale animation */
+@keyframes skillsFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ============================================================================
