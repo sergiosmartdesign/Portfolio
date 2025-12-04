@@ -5,14 +5,14 @@
     <style>
       .st0 {
         fill: none;
-        stroke: #cdedf9;
+        stroke: #001219;
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 2px;
       }
 
       .st1 {
-        fill: #cdedf9;
+        fill: #001219;
       }
     </style>
   </defs>

@@ -1648,6 +1648,43 @@ nav {
   animation: slideDownFade 0.4s ease-out 0.8s forwards;
 }
 
+/* --- SVG Decorations --- */
+.svg-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.svg-decorations img {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.decoration-bar1 {
+  width: 981.6px;
+  height: 27.3px;
+  top: 480px;
+  left: 160px;
+}
+
+.decoration-bar2 {
+  width: 37.5px;
+  height: 997.6px;
+  top: 30px;
+  left: 80px;
+}
+
+.decoration-skills {
+  
+  height: 600px;
+  top: 700px;
+  left: 200px;
+}
+
 /* ============================================================================
    CONTENT SECTIONS (Web, Photo, Illustration, Experiments, Contact)
    ============================================================================ */

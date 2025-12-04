@@ -18,12 +18,12 @@
       }
 
       .st1, .st3 {
-        fill: #cdedf9;
+        fill: #001219;
       }
 
       .st4 {
         fill: none;
-        stroke: #cdedf9;
+        stroke: #001219;
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 2px;
