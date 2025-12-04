@@ -1,1 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?><svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 981.59 27.3"><defs><radialGradient id="radial-gradient" cx="490.8" cy="26.3" fx="490.8" fy="26.3" r="346.34" gradientTransform="translate(0 -204.67) scale(1 8.78)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffed"/><stop offset="1" stop-color="#0033ad" stop-opacity=".5"/></radialGradient><radialGradient id="radial-gradient-2" cx="155.43" cy="13.65" fx="155.43" fy="13.65" r="109.56" gradientTransform="translate(0 -106.23) scale(1 8.78)" xlink:href="#radial-gradient"/></defs><g id="bar"><line x1="1" y1="26.3" x2="980.59" y2="26.3" style="fill:url(#radial-gradient); stroke:#cdedf9; stroke-linecap:round; stroke-linejoin:round; stroke-width:2px;"/><polygon points="281.27 1 1 1 1 26.3 309.86 26.3 281.27 1" style="fill:url(#radial-gradient-2); stroke:#cdedf9; stroke-linecap:round; stroke-linejoin:round; stroke-width:2px;"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 981.6 27.3">
+  <!-- Generator: Adobe Illustrator 30.0.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 123)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+        stroke: #cdedf9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .st1 {
+        fill: #cdedf9;
+      }
+    </style>
+  </defs>
+  <g id="bar">
+    <line class="st0" x1="1" y1="26.3" x2="980.6" y2="26.3"/>
+    <polygon class="st1" points="281.3 1 1 1 1 26.3 309.9 26.3 281.3 1"/>
+  </g>
+</svg>
