@@ -1247,7 +1247,7 @@ nav {
 
 /* Specific positioning for second paragraph */
 #aboutp2 {
-  top: -760px;    /* Move up (more negative) or down (more positive) */
+  top: -700px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
 }
 
