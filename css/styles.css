@@ -141,6 +141,187 @@ body {
 }
 
 /* ============================================================================
+   REUSABLE COMPONENTS & EFFECTS
+   Shared components, animations, and effects used across multiple sections
+   ============================================================================ */
+
+/* --- Glitch Text & Titles --- */
+.glitch-text {
+  position: relative;
+  font-family: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+  white-space: pre;
+}
+
+.word {
+  position: relative;
+  display: inline-block;
+}
+
+/* Glitch Animation (Splitting.js) */
+[data-char] {
+  color: transparent;
+  position: relative;
+}
+
+[data-char]:after {
+  --txt: attr(data-char);
+  content: var(--txt);
+  color: var(--glitch-final-color);
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+}
+
+.glitch-text[data-splitting] [data-char]:after {
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+  animation-name: glitch-switch;
+}
+
+@keyframes glitch-switch {
+  0% { content: var(--char-0); }
+  10% { content: var(--char-1); }
+  20% { content: var(--char-2); }
+  30% { content: var(--char-3); }
+  40% { content: var(--char-4); }
+  50% { content: var(--char-5); }
+  60% { content: var(--char-6); }
+  70% { content: var(--char-7); }
+  80% { content: var(--char-8); }
+  90% { content: var(--char-9); }
+  100% { content: var(--char-0); }
+}
+
+/* --- VHS & Shader Effects (Reusable) --- */
+/* Performance optimization: Pause animations when sections not visible */
+#intro.paused-animations::before,
+#intro.paused-animations::after,
+#intro.paused-animations .scanlines,
+#intro.paused-animations .vhs-static,
+#intro.paused-animations .orb-wrap,
+#about.paused-animations .scene .texts,
+#about.paused-animations .scene .text,
+#about.paused-animations::before,
+#about.paused-animations::after,
+#about.paused-animations .scanlines,
+#about.paused-animations .vhs-static {
+  animation-play-state: paused !important;
+}
+
+/* Layer 1: Moving Grid - Shared between intro and about */
+#intro::before,
+#about::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(var(--cyan-alpha-10) 1px, transparent 1px),
+    linear-gradient(90deg, var(--magenta-alpha-10) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  animation: gridMove 20s linear infinite;
+  z-index: var(--z-layer-1);
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(var(--grid-size), var(--grid-size)); }
+}
+
+/* Layer 2: Color Shift - Intro section */
+#intro::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--magenta-alpha-10), var(--cyan-alpha-10), var(--yellow-alpha-10));
+  mix-blend-mode: screen;
+  animation: colorShift 6s var(--easing-ease-in-out) infinite;
+  z-index: var(--z-layer-2);
+  pointer-events: none;
+}
+
+@keyframes colorShift {
+  0%, 100% { filter: hue-rotate(0deg); }
+  33% { filter: hue-rotate(120deg); }
+  66% { filter: hue-rotate(240deg); }
+}
+
+/* Layer 3: Scanlines - Uses performant transform instead of position */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--cyan-alpha-10) 2px, var(--cyan-alpha-10) 4px);
+  pointer-events: none;
+  animation: scanlineMove 0.1s linear infinite;
+  z-index: var(--z-layer-3);
+}
+
+@keyframes scanlineMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* Layer 4: VHS Static - Uses performant transform */
+.vhs-static {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, transparent, transparent 2px, var(--white-alpha-01) 2px, var(--white-alpha-01) 4px);
+  opacity: 0.5;
+  animation: vhsStatic var(--transition-fast) steps(2, end) infinite;
+  z-index: var(--z-layer-4);
+  pointer-events: none;
+}
+
+@keyframes vhsStatic {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(4px); }
+}
+
+/* --- Common Keyframe Animations --- */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 0.8; }
+}
+
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================================
    HEADER & NAVIGATION
    ============================================================================ */
 header {
@@ -198,6 +379,15 @@ nav {
 .logo:hover [data-char]::after {
   color: var(--cyan);
   text-shadow: var(--glow-cyan-intense);
+}
+
+/* Logo glitch on hover */
+.logo:hover[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-timing-function: steps(1);
+  animation-iteration-count: 10;
+  animation-delay: 0s;
 }
 
 /* --- Navigation Buttons --- */
@@ -271,6 +461,24 @@ nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+/* --- Main Title --- */
+#main-title {
+  font-size: 3.5rem;
+  font-weight: inherit;
+  text-align: center;
+  z-index: var(--z-layer-5);
+  color: var(--white);
+  text-shadow: var(--text-shadow-dark);
+}
+
+.subtitle-glitch {
+  font-size: 1.5rem;
+  margin-top: var(--spacing-xs);
+  position: relative;
+  z-index: var(--z-layer-5);
+  text-shadow: var(--text-shadow-dark);
 }
 
 /* --- Particle System Canvas --- */
@@ -385,214 +593,258 @@ nav {
 .item:nth-child(10n+10),
 .item:nth-child(10n) { background-color: var(--grid-color-10); }
 
-/* ============================================================================
-   GLITCH TEXT & TITLES
-   ============================================================================ */
-#main-title {
-  font-size: 3.5rem;
-  font-weight: inherit;
-  text-align: center;
-  z-index: var(--z-layer-5);
-  color: var(--white);
-  text-shadow: var(--text-shadow-dark);
-}
-
-.subtitle-glitch {
-  font-size: 1.5rem;
-  margin-top: var(--spacing-xs);
-  position: relative;
-  z-index: var(--z-layer-5);
-  text-shadow: var(--text-shadow-dark);
-}
-
-.glitch-text {
-  position: relative;
-  font-family: inherit;
-  font-weight: inherit;
-  text-decoration: none;
-  white-space: pre;
-}
-
-.word {
-  position: relative;
-  display: inline-block;
-}
-
-/* --- Glitch Animation (Splitting.js) --- */
-[data-char] {
-  color: transparent;
-  position: relative;
-}
-
-[data-char]:after {
-  --txt: attr(data-char);
-  content: var(--txt);
-  color: var(--glitch-final-color);
+/* --- Cyberpunk Panel Animation --- */
+.cyber-panel {
   position: absolute;
-  left: 0;
-  top: 0;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
-  animation-timing-function: steps(1);
-  animation-fill-mode: backwards;
+  top: 50%;
+  left: var(--spacing-sm);
+  transform: translateY(-50%);
+  height: 200px;
+  display: flex;
+  align-items: stretch;
+  z-index: var(--z-layer-10);
+  pointer-events: none;
+  opacity: 0;
 }
 
-.glitch-text[data-splitting] [data-char]:after {
-  animation-iteration-count: calc(var(--char-index) * 0.55);
-  animation-name: glitch-switch;
+.cyber-panel.active {
+  opacity: 1;
 }
 
-/* Prevent about section h2 glitch on page load */
-#about h2.glitch-text[data-splitting] [data-char]:after {
-  animation-name: none;
+/* Sidebar that slides in first */
+.cyber-panel__sidebar {
+  width: var(--border-thick);
+  background: var(--orange);
+  border: var(--border-thin) solid var(--orange);
+  backdrop-filter: saturate(180%) blur(6px);
+  transform: translateX(-100%);
+  mask: linear-gradient(var(--white), hsl(0 0% 100% / 0.6) 15% 95%, var(--white));
+  transition: transform var(--transition-base) var(--easing-ease-out);
+  cursor: pointer;
+  box-shadow: var(--glow-orange);
 }
 
-/* Enable glitch animation when section is in view */
-#about.glitch-active h2.glitch-text[data-splitting] [data-char]:after {
-  animation-name: glitch-switch;
+.cyber-panel.active .cyber-panel__sidebar {
+  transform: translateX(0);
 }
 
-/* Logo glitch on hover */
-.logo:hover[data-splitting] [data-char]:after {
-  animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-timing-function: steps(1);
-  animation-iteration-count: 10;
-  animation-delay: 0s;
+/* Main panel body - slides in then stretches
+   NOTE: Uses height animation (causes reflow) for deliberate stretching effect.
+   Alternative transform: scaleY would scale content, altering visual appearance. */
+.cyber-panel__body {
+  width: 36px;
+  position: relative;
+  transform: translateX(calc(-100% - 4px));
+  cursor: pointer;
 }
 
-@keyframes glitch-switch {
-  0% { content: var(--char-0); }
-  10% { content: var(--char-1); }
-  20% { content: var(--char-2); }
-  30% { content: var(--char-3); }
-  40% { content: var(--char-4); }
-  50% { content: var(--char-5); }
-  60% { content: var(--char-6); }
-  70% { content: var(--char-7); }
-  80% { content: var(--char-8); }
-  90% { content: var(--char-9); }
-  100% { content: var(--char-0); }
+.cyber-panel.active .cyber-panel__body {
+  animation: panelSlideAndStretch 0.9s var(--easing-ease-out) 0.3s forwards;
 }
 
-/* ============================================================================
-   VHS & SHADER EFFECTS (Reusable)
-   Performance optimization: Pause animations when sections not visible
-   ============================================================================ */
-#intro.paused-animations::before,
-#intro.paused-animations::after,
-#intro.paused-animations .scanlines,
-#intro.paused-animations .vhs-static,
-#intro.paused-animations .orb-wrap,
-#about.paused-animations .scene .texts,
-#about.paused-animations .scene .text,
-#about.paused-animations::before,
-#about.paused-animations::after,
-#about.paused-animations .scanlines,
-#about.paused-animations .vhs-static {
-  animation-play-state: paused !important;
+@keyframes panelSlideAndStretch {
+  0% {
+    transform: translateX(calc(-100% - 4px)) translateY(0);
+    height: 200px;
+  }
+  33% {
+    transform: translateX(0) translateY(0);
+    height: 200px;
+  }
+  100% {
+    transform: translateX(0) translateY(-300px);
+    height: 870px;
+  }
 }
 
-/* Layer 1: Moving Grid - Shared between intro and about */
-#intro::before,
-#about::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Panel backdrop with blur and clipped corners */
+.cyber-panel__backdrop {
+  position: relative;
   width: 100%;
   height: 100%;
-  background-image:
-    linear-gradient(var(--cyan-alpha-10) 1px, transparent 1px),
-    linear-gradient(90deg, var(--magenta-alpha-10) 1px, transparent 1px);
-  background-size: var(--grid-size) var(--grid-size);
-  animation: gridMove 20s linear infinite;
-  z-index: var(--z-layer-1);
+  backdrop-filter: saturate(180%) blur(10px);
+  background: var(--black-alpha-60);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%);
+  border: var(--border-medium) solid var(--orange);
+  box-shadow: var(--glow-orange);
 }
 
-@keyframes gridMove {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(var(--grid-size), var(--grid-size)); }
-}
-
-/* Layer 2: Color Shift - Shared between intro and about */
-#intro::after {
-  content: "";
+/* Accent border effect */
+.cyber-panel__backdrop::before {
+  content: '';
   position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-brown) 100%);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%);
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* Accent tab on right side */
+.cyber-panel__backdrop::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 2rem;
+  width: var(--border-thick);
+  height: 40%;
+  background: var(--orange);
+  opacity: 0.8;
+  clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
+}
+
+/* Clipped corner decoration */
+.cyber-panel__backdrop .corner {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 8px;
+  width: 8px;
+}
+
+.cyber-panel__backdrop .corner::after {
+  content: '';
+  height: var(--border-thick);
+  width: 200%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  transform: rotate(135deg);
+  background: var(--orange);
+}
+
+/* Date in corner left bar */
+.date {
+  position: absolute;
+  top: calc(50% - 35px); /* Moved 50px towards the top */
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+  font-size: 12px;
+  opacity: 0.8;
+  font-family: 'Workbench', monospace, sans-serif;
+  color: #9B2226;
+  z-index: var(--z-layer-10);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Delay date glitch animation until after panel animations complete */
+.date.glitch-text[data-splitting] [data-char]:after {
+  animation-delay: 3.5s; /* Starts after panel body stretch (2s + 0.3s + 0.9s = 3.2s) + small buffer */
+  color: #9B2226 !important; /* Override white glitch color with burgundy red */
+}
+
+/* --- Panel Frame Lines --- */
+/* All lines use performant scale transform instead of width/height animation */
+.panel-line {
+  position: absolute;
+  background: var(--orange);
+  opacity: 0;
+  pointer-events: auto;
+  transition: box-shadow var(--transition-base) var(--easing-ease), filter var(--transition-base) var(--easing-ease);
+  cursor: pointer;
+}
+
+/* Top horizontal line */
+.panel-line--top {
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, var(--magenta-alpha-10), var(--cyan-alpha-10), var(--yellow-alpha-10));
-  mix-blend-mode: screen;
-  animation: colorShift 6s var(--easing-ease-in-out) infinite;
-  z-index: var(--z-layer-2);
-  pointer-events: none;
+  left: 100%;
+  height: var(--border-medium);
+  width: calc(100vw - 100px);
+  transform-origin: left;
+  scale: 0 1;
+  box-shadow: var(--glow-orange);
 }
 
-/* Layer 2: About section - Background image */
-#about::after {
-  content: "";
+/* Bottom horizontal line */
+.panel-line--bottom {
+  bottom: 0;
+  left: 100%;
+  height: var(--border-medium);
+  width: calc(100vw - 330px);
+  transform-origin: left;
+  scale: 0 1;
+  box-shadow: var(--glow-orange);
+}
+
+/* Dotted line section at the end of bottom line */
+.panel-line--bottom::after {
+  content: '';
   position: absolute;
-  top: 0px;
-  left: 50px;
-  right: 50px;
-  bottom: 0px;
-  background-image: url('../images/about.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  mix-blend-mode: screen;
-  z-index: var(--z-layer-2);
-  pointer-events: none;
+  right: -84px;
+  bottom: 0;
+  height: var(--border-medium);
+  width: 75px;
+  background: repeating-linear-gradient(to right, var(--orange) 0px, var(--orange) 8px, transparent 8px, transparent 16px);
+  box-shadow: var(--glow-orange);
 }
 
-@keyframes colorShift {
-  0%, 100% { filter: hue-rotate(0deg); }
-  33% { filter: hue-rotate(120deg); }
-  66% { filter: hue-rotate(240deg); }
+/* Right vertical line */
+.panel-line--right {
+  bottom: 62px;
+  left: calc(100vw - 45px);
+  height: calc(100% - 62px);
+  width: var(--border-medium);
+  transform-origin: bottom;
+  scale: 1 0;
+  box-shadow: var(--glow-orange);
 }
 
-/* Layer 3: Scanlines - Uses performant transform instead of position */
-.scanlines {
+/* Mini bar decoration on right line */
+.panel-line--right::before {
+  content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--cyan-alpha-10) 2px, var(--cyan-alpha-10) 4px);
-  pointer-events: none;
-  animation: scanlineMove 0.1s linear infinite;
-  z-index: var(--z-layer-3);
+  left: 100%;
+  top: 2rem;
+  width: var(--border-thick);
+  height: 40%;
+  background: var(--orange);
+  opacity: 0.8;
+  clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
 }
 
-@keyframes scanlineMove {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(4px); }
+/* Animate lines after panel extends - Uses performant scale property */
+.cyber-panel.active .panel-line--top {
+  animation: drawLineHorizontal 0.4s var(--easing-ease-out) 1.2s forwards;
 }
 
-/* Layer 4: VHS Static - Uses performant transform */
-.vhs-static {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(90deg, transparent, transparent 2px, var(--white-alpha-01) 2px, var(--white-alpha-01) 4px);
-  opacity: 0.5;
-  animation: vhsStatic var(--transition-fast) steps(2, end) infinite;
-  z-index: var(--z-layer-4);
-  pointer-events: none;
+.cyber-panel.active .panel-line--bottom {
+  animation: drawLineHorizontal 0.4s var(--easing-ease-out) 1.3s forwards;
 }
 
-@keyframes vhsStatic {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(4px); }
+.cyber-panel.active .panel-line--right {
+  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 1.4s forwards;
 }
 
-/* ============================================================================
-   SOCIAL MEDIA ICONS
-   ============================================================================ */
+.cyber-panel.active .panel-line--right::before {
+  animation: fadeIn var(--transition-base) var(--easing-ease-out) 1.6s forwards;
+}
+
+@keyframes drawLineHorizontal {
+  0% {
+    opacity: 1;
+    scale: 0 1;
+  }
+  100% {
+    opacity: 1;
+    scale: 1 1;
+  }
+}
+
+@keyframes drawLineVertical {
+  0% {
+    opacity: 1;
+    scale: 1 0;
+  }
+  100% {
+    opacity: 1;
+    scale: 1 1;
+  }
+}
+
+/* --- Social Media Icons --- */
 .social-media-icons {
   position: absolute;
   bottom: var(--spacing-lg);
@@ -781,8 +1033,277 @@ nav {
 }
 
 /* ============================================================================
-   DNA EFFECT (3D Text Animation) - SVG OPTIMIZED
+   ABOUT SECTION
    ============================================================================ */
+#about {
+  position: relative;
+  z-index: var(--z-layer-10);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--black);
+  padding: var(--spacing-3xl) var(--spacing-2xl);
+}
+
+/* Layer 2: About section - Background image */
+#about::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 50px;
+  right: 50px;
+  bottom: 0px;
+  background-image: url('../images/about.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  z-index: var(--z-layer-2);
+  pointer-events: none;
+}
+
+/* VHS effect layers for about section */
+#about .scanlines,
+#about .vhs-static {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#about .scanlines {
+  z-index: var(--z-layer-3);
+}
+
+#about .vhs-static {
+  z-index: var(--z-layer-4);
+}
+
+/* --- About Container Layout --- */
+.about-container {
+  position: relative;
+  z-index: var(--z-layer-5);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  max-width: 1400px;
+  width: 100%;
+  align-items: start;
+  margin-top: -50px;
+}
+
+.about-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.about-left p {
+  width: 550px;
+  text-align: inherit;
+}
+
+.about-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: 40px;
+  margin-top: 500px;
+  margin-left: 80px;
+}
+
+/* --- About Typography --- */
+#about h2 {
+  font-size: 5rem;
+  font-weight: 800;
+  color: var(--cyan);
+  margin-bottom: var(--spacing-xs);
+  text-shadow: none;
+  line-height: 1.2;
+}
+
+#about p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #001219;
+}
+
+/* --- About Title (Left Column) --- */
+#about #abouttitle {
+  color: #001219;
+}
+
+/* Prevent about section h2 glitch on page load */
+#about h2.glitch-text[data-splitting] [data-char]:after {
+  animation-name: none;
+}
+
+/* Enable glitch animation when section is in view */
+#about.glitch-active h2.glitch-text[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+}
+
+/* Apply dark color and font-weight to glitch pseudo-elements */
+#about #abouttitle[data-splitting] [data-char]:after {
+  color: #001219 !important;
+  font-weight: 800;
+  animation-name: none;
+}
+
+/* Enable glitch animation for abouttitle when section is active */
+#about.glitch-active #abouttitle[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+}
+
+/* Individual line sizes for abouttitle - Edit these to control each line independently */
+#about #abouttitle .title-line-1 {
+  font-size: 1.20em; /* Hello! */
+  position: relative;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  width: 200px; /* Adjust this value to set the width for all lines */
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+#about #abouttitle .title-line-2 {
+  font-size: 2.2em;
+  margin-top: -70px; /* I'm */
+  position: relative;
+  top: 0;
+  left: 0;
+  margin-left: -7px;
+  display: inline-block;
+  width: 200px; /* Same width as line 1 */
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+#about #abouttitle .title-line-3 {
+  font-size: 1em; /* Sergio */
+  position: relative;
+  top: -64px; /* Moves "Sergio" up by 70px */
+  left: 0;
+  display: inline-block;
+  width: 200px; /* Same width as line 1 */
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+#about #abouttitle .title-line-4 {
+  font-size: 1.1em; /* Ayala */
+  position: relative;
+  top:-90px;
+  left: 0;
+  display: inline-block;
+  width: 200px; /* Same width as line 1 */
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+/* Slide down animation when section becomes active */
+#about.glitch-active #abouttitle .title-line-1 {
+  animation: slideDownFade 0.8s ease-out 0s forwards;
+}
+
+#about.glitch-active #abouttitle .title-line-2 {
+  animation: slideDownFade 0.8s ease-out 0.15s forwards;
+}
+
+#about.glitch-active #abouttitle .title-line-3 {
+  animation: slideDownFade 0.8s ease-out 0.3s forwards;
+}
+
+#about.glitch-active #abouttitle .title-line-4 {
+  animation: slideDownFade 0.8s ease-out 0.45s forwards;
+}
+
+/* --- About Paragraphs (Left Column) --- */
+.about-left p {
+  color: #001219;
+  position: relative;
+  top: -100px;   /* Moves paragraphs 150px up */
+  left:0px;       /* Modify this to move paragraphs left (negative) or right (positive) */
+  opacity: 0;
+  transform: translateX(-100px);
+}
+
+/* Specific positioning for first paragraph */
+#aboutp1 {
+  top: -820px;    /* Move up (more negative) or down (more positive) */
+  left: 890px;      /* Move left (negative) or right (positive) */
+  width: 450px;   /* Change this value to make the paragraph wider or narrower */
+}
+
+/* Specific positioning for second paragraph */
+#aboutp2 {
+  top: -760px;    /* Move up (more negative) or down (more positive) */
+  left: 0px;      /* Move left (negative) or right (positive) */
+}
+
+/* Specific positioning for third paragraph */
+#aboutp3 {
+  top: 0px;    /* Move up (more negative) or down (more positive) */
+  left: 0px;      /* Move left (negative) or right (positive) */
+  width: 450px;   /* Change this value to make the paragraph wider or narrower */
+}
+
+/* Slide in animation for paragraphs when section becomes active */
+#about.glitch-active .about-left p:nth-of-type(1) {
+  animation: slideInFromLeft 0.8s ease-out 0.6s forwards;
+}
+
+#about.glitch-active .about-left p:nth-of-type(2) {
+  animation: slideInFromLeft 0.8s ease-out 0.8s forwards;
+}
+
+#about.glitch-active .about-left p:nth-of-type(3) {
+  animation: slideInFromLeft 0.8s ease-out 1s forwards;
+}
+
+/* First letter of first paragraph - Large with same glitch effect as h2 titles */
+.first-letter-glitch {
+  font-size: 3.5em;
+  font-weight: 800;
+  float: left;
+  line-height: 0.85;
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+/* Apply dark color to first letter glitch characters */
+.first-letter-glitch[data-splitting] [data-char]:after {
+  color: #001219 !important;
+  font-weight: 800;
+}
+
+/* --- DNA Capsule and Title (Right Column) --- */
+.dna-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  width: 100%;
+}
+
+/* DNA title - smaller to match capsule height */
+#about #dnatitle {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  flex: 1;
+}
+
+/* --- DNA Capsule Container --- */
 .dna-capsule {
   position: relative;
   width: 100%;
@@ -794,10 +1315,88 @@ nav {
   margin: 0 auto;
 }
 
-/* ============================================================================
-   DNA CAPSULE SVG ANIMATION
-   Sequential parts-based entrance animation
-   ============================================================================ */
+/* --- DNA 3D Text Animation --- */
+#about .scene {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  perspective: 600px;
+  transform-style: preserve-3d;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 0; /* Behind VHS effects (z-index 3-4) */
+}
+
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 600px;
+  transform-style: preserve-3d;
+  z-index: var(--z-background);
+}
+
+.texts {
+  position: absolute;
+  font-size: 3.5vmin; /* Further reduced for better readability */
+  font-family: 'Workbench', sans-serif;
+  transform-style: preserve-3d;
+  animation: texts 12s infinite linear;
+}
+
+.texts::after {
+  content: '';
+  position: absolute;
+  inset: -6em -1.2em; /* Reduced by 20% from -7.5em -1.5em */
+  background-image: none; /* Removed vignette shadow effect - DNA now fully visible */
+}
+
+.text {
+  position: absolute;
+  transform-style: preserve-3d;
+  animation: text 8s calc(var(--text) * -2s) infinite linear;
+  color: hsl(calc(var(--text) * 90) 75% 75%);
+}
+
+.text span {
+  position: absolute;
+  inset: -0.8em; /* Reduced by 20% from -1em */
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  user-select: none;
+  opacity: 0;
+  transition: opacity var(--transition-base) var(--easing-ease-in-out);
+  transform: translateY(calc((var(--i) - 6) * 0.48em)) rotateY(calc(var(--i) * 20deg)) translateZ(1.2em) rotateZ(-40deg); /* Reduced by 20%: 0.6em -> 0.48em, 1.5em -> 1.2em */
+}
+
+.text span.revealed {
+  opacity: 1;
+}
+
+/* Specific color overrides for DNA text */
+.text[style*="--text: 0"] {
+  color: var(--orange-brown);
+}
+
+.text[style*="--text: 2"] {
+  color: #9B2226;
+}
+
+@keyframes texts {
+  from { transform: rotateZ(0deg) rotateX(20deg) rotateZ(360deg); }
+  to { transform: rotateZ(360deg) rotateX(20deg) rotateZ(0deg); }
+}
+
+@keyframes text {
+  to { rotate: y -1turn; }
+}
+
+/* --- DNA Capsule SVG Animation --- */
 .dna-capsule-svg {
   position: absolute;
   inset: 0;
@@ -939,286 +1538,7 @@ nav {
   animation: fadeIn 0.3s ease-out 2.2s forwards;
 }
 
-
-.scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 600px;
-  transform-style: preserve-3d;
-  z-index: var(--z-background);
-}
-
-.texts {
-  position: absolute;
-  font-size: 3.5vmin; /* Further reduced for better readability */
-  font-family: 'Workbench', sans-serif;
-  transform-style: preserve-3d;
-  animation: texts 12s infinite linear;
-}
-
-.texts::after {
-  content: '';
-  position: absolute;
-  inset: -6em -1.2em; /* Reduced by 20% from -7.5em -1.5em */
-  background-image: none; /* Removed vignette shadow effect - DNA now fully visible */
-}
-
-.text {
-  position: absolute;
-  transform-style: preserve-3d;
-  animation: text 8s calc(var(--text) * -2s) infinite linear;
-  color: hsl(calc(var(--text) * 90) 75% 75%);
-}
-
-.text span {
-  position: absolute;
-  inset: -0.8em; /* Reduced by 20% from -1em */
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  user-select: none;
-  opacity: 0;
-  transition: opacity var(--transition-base) var(--easing-ease-in-out);
-  transform: translateY(calc((var(--i) - 6) * 0.48em)) rotateY(calc(var(--i) * 20deg)) translateZ(1.2em) rotateZ(-40deg); /* Reduced by 20%: 0.6em -> 0.48em, 1.5em -> 1.2em */
-}
-
-.text span.revealed {
-  opacity: 1;
-}
-
-/* Specific color overrides for DNA text */
-.text[style*="--text: 0"] {
-  color: var(--orange-brown);
-}
-
-.text[style*="--text: 2"] {
-  color: #9B2226;
-}
-
-@keyframes texts {
-  from { transform: rotateZ(0deg) rotateX(20deg) rotateZ(360deg); }
-  to { transform: rotateZ(360deg) rotateX(20deg) rotateZ(0deg); }
-}
-
-@keyframes text {
-  to { rotate: y -1turn; }
-}
-
-@keyframes slideDownFade {
-  0% {
-    opacity: 0;
-    transform: translateY(-100px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInFromLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-100px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* ============================================================================
-   ABOUT SECTION
-   ============================================================================ */
-#about {
-  position: relative;
-  z-index: var(--z-layer-10);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: var(--black);
-  padding: var(--spacing-3xl) var(--spacing-2xl);
-}
-
-/* About container - two column layout */
-.about-container {
-  position: relative;
-  z-index: var(--z-layer-5);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-2xl);
-  max-width: 1400px;
-  width: 100%;
-  align-items: start;
-  margin-top: -50px;
-}
-
-.about-left {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.about-left p {
-  width: 550px;
-  text-align: inherit;
-}
-.about-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding: 40px;
-  margin-top: 500px;
-  margin-left: 80px;
-}
-
-/* DNA effect in right column - positioned behind VHS effects */
-#about .scene {
-  position: relative;
-  width: 100%;
-  height: 400px;
-  perspective: 600px;
-  transform-style: preserve-3d;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 0; /* Behind VHS effects (z-index 3-4) */
-}
-
-/* About section typography */
-#about h2 {
-  font-size: 5rem;
-  font-weight: 800;
-  color: var(--cyan);
-  margin-bottom: var(--spacing-xs);
-  text-shadow: none;
-  line-height: 1.2;
-}
-
-/* About title - dark color */
-#about #abouttitle {
-  color: #001219;
-}
-
-/* Individual line sizes for abouttitle - Edit these to control each line independently */
-#about #abouttitle .title-line-1 {
-  font-size: 1.20em; /* Hello! */
-  position: relative;
-  top: 0;
-  left: 0;
-  display: inline-block;
-  width: 200px; /* Adjust this value to set the width for all lines */
-  opacity: 0;
-  transform: translateY(-100px);
-}
-
-#about #abouttitle .title-line-2 {
-  font-size: 2.2em;
-  margin-top: -70px; /* I'm */
-  position: relative;
-  top: 0;
-  left: 0;
-  margin-left: -7px;
-  display: inline-block;
-  width: 200px; /* Same width as line 1 */
-  opacity: 0;
-  transform: translateY(-100px);
-}
-
-#about #abouttitle .title-line-3 {
-  font-size: 1em; /* Sergio */
-  position: relative;
-  top: -64px; /* Moves "Sergio" up by 70px */
-  left: 0;
-  display: inline-block;
-  width: 200px; /* Same width as line 1 */
-  opacity: 0;
-  transform: translateY(-100px);
-}
-
-#about #abouttitle .title-line-4 {
-  font-size: 1.1em; /* Ayala */
-  position: relative;
-  top:-90px;
-  left: 0;
-  display: inline-block;
-  width: 200px; /* Same width as line 1 */
-  opacity: 0;
-  transform: translateY(-100px);
-}
-
-/* Slide down animation when section becomes active */
-#about.glitch-active #abouttitle .title-line-1 {
-  animation: slideDownFade 0.8s ease-out 0s forwards;
-}
-
-#about.glitch-active #abouttitle .title-line-2 {
-  animation: slideDownFade 0.8s ease-out 0.15s forwards;
-}
-
-#about.glitch-active #abouttitle .title-line-3 {
-  animation: slideDownFade 0.8s ease-out 0.3s forwards;
-}
-
-#about.glitch-active #abouttitle .title-line-4 {
-  animation: slideDownFade 0.8s ease-out 0.45s forwards;
-}
-
-/* Apply dark color and font-weight to glitch pseudo-elements */
-#about #abouttitle[data-splitting] [data-char]:after {
-  color: #001219 !important;
-  font-weight: 800;
-  animation-name: none;
-}
-
-/* Enable glitch animation for abouttitle when section is active */
-#about.glitch-active #abouttitle[data-splitting] [data-char]:after {
-  animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
-  animation-timing-function: steps(1);
-  animation-fill-mode: backwards;
-  animation-iteration-count: calc(var(--char-index) * 0.55);
-}
-
-/* DNA Capsule and Title Wrapper - Side by Side Layout */
-.dna-title-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xl);
-  width: 100%;
-}
-
-/* DNA title - smaller to match capsule height */
-#about #dnatitle {
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1.3;
-  flex: 1;
-}
-
-#about p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #001219;
-}
-
-/* Left column paragraphs - dark color and positioning */
-.about-left p {
-  color: #001219;
-  position: relative;
-  top: -100px;   /* Moves paragraphs 150px up */
-  left:0px;       /* Modify this to move paragraphs left (negative) or right (positive) */
-  opacity: 0;
-  transform: translateX(-100px);
-}
-
-/* ID1 SVG - Same color and glow as capsule container */
+/* --- ID1 SVG --- */
 #id1svg {
   position: relative;
   width: 465px;     /* Change this to resize - Customizable */
@@ -1279,11 +1599,7 @@ nav {
   }
 }
 
-/* ============================================================================
-   ID1 SVG INTERNAL ELEMENT ANIMATIONS
-   Sequential animations for SVG elements (border, face, hexagons, etc.)
-   ============================================================================ */
-
+/* --- ID1 SVG Internal Element Animations --- */
 /* Hide all internal elements initially */
 #id1svg .id1-border,
 #id1svg .id1-rect,
@@ -1332,77 +1648,8 @@ nav {
   animation: slideDownFade 0.4s ease-out 0.8s forwards;
 }
 
-/* Specific positioning for first paragraph */
-#aboutp1 {
-  top: -820px;    /* Move up (more negative) or down (more positive) */
-  left: 890px;      /* Move left (negative) or right (positive) */
-  width: 450px;   /* Change this value to make the paragraph wider or narrower */
-}
-
-/* Specific positioning for second paragraph */
-#aboutp2 {
-  top: -760px;    /* Move up (more negative) or down (more positive) */
-  left: 0px;      /* Move left (negative) or right (positive) */
-}
-
-/* Specific positioning for third paragraph */
-#aboutp3 {
-  top: 0px;    /* Move up (more negative) or down (more positive) */
-  left: 0px;      /* Move left (negative) or right (positive) */
-  width: 450px;   /* Change this value to make the paragraph wider or narrower */
-}
-
-/* Slide in animation for paragraphs when section becomes active */
-#about.glitch-active .about-left p:nth-of-type(1) {
-  animation: slideInFromLeft 0.8s ease-out 0.6s forwards;
-}
-
-#about.glitch-active .about-left p:nth-of-type(2) {
-  animation: slideInFromLeft 0.8s ease-out 0.8s forwards;
-}
-
-#about.glitch-active .about-left p:nth-of-type(3) {
-  animation: slideInFromLeft 0.8s ease-out 1s forwards;
-}
-
-/* First letter of first paragraph - Large with same glitch effect as h2 titles */
-.first-letter-glitch {
-  font-size: 3.5em;
-  font-weight: 800;
-  float: left;
-  line-height: 0.85;
-  margin-right: 8px;
-  margin-top: 8px;
-}
-
-/* Apply dark color to first letter glitch characters */
-.first-letter-glitch[data-splitting] [data-char]:after {
-  color: #001219 !important;
-  font-weight: 800;
-}
-
-/* VHS effect layers for about section */
-#about .scanlines,
-#about .vhs-static {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-#about .scanlines {
-  z-index: var(--z-layer-3);
-}
-
-#about .vhs-static {
-  z-index: var(--z-layer-4);
-}
-
 /* ============================================================================
-   CONTENT SECTIONS (Shared Styles)
-   Base styles for web, photo, illustration, contact, experiments sections
+   CONTENT SECTIONS (Web, Photo, Illustration, Experiments, Contact)
    ============================================================================ */
 #web,
 #photo,
@@ -1418,18 +1665,18 @@ nav {
   overflow: hidden;
 }
 
-/* Section-specific backgrounds */
+/* --- Web Section --- */
 #web {
   background-color: var(--bg-web);
 }
 
+/* --- Photo Section --- */
 #photo {
   background-color: var(--bg-photo);
 }
 
-#illustration,
-#contact,
-#experiments {
+/* --- Illustration Section --- */
+#illustration {
   background: var(--black);
 }
 
@@ -1442,264 +1689,14 @@ nav {
   z-index: var(--z-background);
 }
 
-/* ============================================================================
-   CYBERPUNK PANEL ANIMATION (INTRO)
-   ============================================================================ */
-.cyber-panel {
-  position: absolute;
-  top: 50%;
-  left: var(--spacing-sm);
-  transform: translateY(-50%);
-  height: 200px;
-  display: flex;
-  align-items: stretch;
-  z-index: var(--z-layer-10);
-  pointer-events: none;
-  opacity: 0;
+/* --- Experiments Section --- */
+#experiments {
+  background: var(--black);
 }
 
-.cyber-panel.active {
-  opacity: 1;
-}
-
-/* Sidebar that slides in first */
-.cyber-panel__sidebar {
-  width: var(--border-thick);
-  background: var(--orange);
-  border: var(--border-thin) solid var(--orange);
-  backdrop-filter: saturate(180%) blur(6px);
-  transform: translateX(-100%);
-  mask: linear-gradient(var(--white), hsl(0 0% 100% / 0.6) 15% 95%, var(--white));
-  transition: transform var(--transition-base) var(--easing-ease-out);
-  cursor: pointer;
-  box-shadow: var(--glow-orange);
-}
-
-.cyber-panel.active .cyber-panel__sidebar {
-  transform: translateX(0);
-}
-
-/* Main panel body - slides in then stretches
-   NOTE: Uses height animation (causes reflow) for deliberate stretching effect.
-   Alternative transform: scaleY would scale content, altering visual appearance. */
-.cyber-panel__body {
-  width: 36px;
-  position: relative;
-  transform: translateX(calc(-100% - 4px));
-  cursor: pointer;
-}
-
-.cyber-panel.active .cyber-panel__body {
-  animation: panelSlideAndStretch 0.9s var(--easing-ease-out) 0.3s forwards;
-}
-
-@keyframes panelSlideAndStretch {
-  0% {
-    transform: translateX(calc(-100% - 4px)) translateY(0);
-    height: 200px;
-  }
-  33% {
-    transform: translateX(0) translateY(0);
-    height: 200px;
-  }
-  100% {
-    transform: translateX(0) translateY(-300px);
-    height: 870px;
-  }
-}
-
-/* Panel backdrop with blur and clipped corners */
-.cyber-panel__backdrop {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: saturate(180%) blur(10px);
-  background: var(--black-alpha-60);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%);
-  border: var(--border-medium) solid var(--orange);
-  box-shadow: var(--glow-orange);
-}
-
-/* Accent border effect */
-.cyber-panel__backdrop::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-brown) 100%);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%);
-  z-index: -1;
-  opacity: 0.3;
-}
-
-/* Accent tab on right side */
-.cyber-panel__backdrop::after {
-  content: '';
-  position: absolute;
-  left: 100%;
-  top: 2rem;
-  width: var(--border-thick);
-  height: 40%;
-  background: var(--orange);
-  opacity: 0.8;
-  clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
-}
-
-/* Clipped corner decoration */
-.cyber-panel__backdrop .corner {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  height: 8px;
-  width: 8px;
-}
-
-.cyber-panel__backdrop .corner::after {
-  content: '';
-  height: var(--border-thick);
-  width: 200%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  transform: rotate(135deg);
-  background: var(--orange);
-}
-
-/* Date in corner left bar */
-.date {
-  position: absolute;
-  top: calc(50% - 35px); /* Moved 50px towards the top */
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-90deg);
-  transform-origin: center;
-  font-size: 12px;
-  opacity: 0.8;
-  font-family: 'Workbench', monospace, sans-serif;
-  color: #9B2226;
-  z-index: var(--z-layer-10);
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* Delay date glitch animation until after panel animations complete */
-.date.glitch-text[data-splitting] [data-char]:after {
-  animation-delay: 3.5s; /* Starts after panel body stretch (2s + 0.3s + 0.9s = 3.2s) + small buffer */
-  color: #9B2226 !important; /* Override white glitch color with burgundy red */
-}
-
-/* ============================================================================
-   PANEL FRAME LINES
-   All lines use performant scale transform instead of width/height animation
-   ============================================================================ */
-.panel-line {
-  position: absolute;
-  background: var(--orange);
-  opacity: 0;
-  pointer-events: auto;
-  transition: box-shadow var(--transition-base) var(--easing-ease), filter var(--transition-base) var(--easing-ease);
-  cursor: pointer;
-}
-
-/* Top horizontal line */
-.panel-line--top {
-  top: 0;
-  left: 100%;
-  height: var(--border-medium);
-  width: calc(100vw - 100px);
-  transform-origin: left;
-  scale: 0 1;
-  box-shadow: var(--glow-orange);
-}
-
-/* Bottom horizontal line */
-.panel-line--bottom {
-  bottom: 0;
-  left: 100%;
-  height: var(--border-medium);
-  width: calc(100vw - 330px);
-  transform-origin: left;
-  scale: 0 1;
-  box-shadow: var(--glow-orange);
-}
-
-/* Dotted line section at the end of bottom line */
-.panel-line--bottom::after {
-  content: '';
-  position: absolute;
-  right: -84px;
-  bottom: 0;
-  height: var(--border-medium);
-  width: 75px;
-  background: repeating-linear-gradient(to right, var(--orange) 0px, var(--orange) 8px, transparent 8px, transparent 16px);
-  box-shadow: var(--glow-orange);
-}
-
-/* Right vertical line */
-.panel-line--right {
-  bottom: 62px;
-  left: calc(100vw - 45px);
-  height: calc(100% - 62px);
-  width: var(--border-medium);
-  transform-origin: bottom;
-  scale: 1 0;
-  box-shadow: var(--glow-orange);
-}
-
-/* Mini bar decoration on right line */
-.panel-line--right::before {
-  content: '';
-  position: absolute;
-  left: 100%;
-  top: 2rem;
-  width: var(--border-thick);
-  height: 40%;
-  background: var(--orange);
-  opacity: 0.8;
-  clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
-}
-
-/* Animate lines after panel extends - Uses performant scale property */
-.cyber-panel.active .panel-line--top {
-  animation: drawLineHorizontal 0.4s var(--easing-ease-out) 1.2s forwards;
-}
-
-.cyber-panel.active .panel-line--bottom {
-  animation: drawLineHorizontal 0.4s var(--easing-ease-out) 1.3s forwards;
-}
-
-.cyber-panel.active .panel-line--right {
-  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 1.4s forwards;
-}
-
-.cyber-panel.active .panel-line--right::before {
-  animation: fadeIn var(--transition-base) var(--easing-ease-out) 1.6s forwards;
-}
-
-@keyframes drawLineHorizontal {
-  0% {
-    opacity: 1;
-    scale: 0 1;
-  }
-  100% {
-    opacity: 1;
-    scale: 1 1;
-  }
-}
-
-@keyframes drawLineVertical {
-  0% {
-    opacity: 1;
-    scale: 1 0;
-  }
-  100% {
-    opacity: 1;
-    scale: 1 1;
-  }
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 0.8; }
+/* --- Contact Section --- */
+#contact {
+  background: var(--black);
 }
 
 /* ============================================================================
