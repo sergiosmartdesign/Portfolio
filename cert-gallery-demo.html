@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Gallery Demo</title>
+    <link rel="stylesheet" href="css/cert-gallery.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;800&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Funnel Display', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ee9b00;
+            text-shadow: 0 0 10px #ee9b00,
+                         0 0 20px #ee9b00,
+                         0 0 30px #ee9b00;
+            margin-bottom: 2rem;
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ee9b00;
+            color: #ee9b00;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-family: 'Funnel Display', sans-serif;
+            cursor: pointer;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #ee9b00,
+                        0 0 20px #ee9b00;
+            transition: all 0.3s ease;
+        }
+
+        .demo-btn:hover {
+            background: #ee9b00;
+            color: #000;
+            box-shadow: 0 0 15px #ee9b00,
+                        0 0 30px #ee9b00,
+                        0 0 45px #ee9b00;
+            transform: scale(1.05);
+        }
+
+        .demo-info {
+            margin-top: 3rem;
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #ee9b00;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .demo-info h2 {
+            color: #ee9b00;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .demo-info li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(238, 155, 0, 0.2);
+        }
+
+        .demo-info li:last-child {
+            border-bottom: none;
+        }
+
+        .demo-info code {
+            background: rgba(238, 155, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ee9b00;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>Certificate Gallery Demo</h1>
+
+        <div class="demo-buttons">
+            <button class="demo-btn" onclick="window.certGallery.open()">
+                🎓 Open Gallery
+            </button>
+            <button class="demo-btn" onclick="window.certGallery.goTo(0)">
+                Go to First
+            </button>
+            <button class="demo-btn" onclick="window.certGallery.goTo(4)">
+                Go to Middle
+            </button>
+        </div>
+
+        <div class="demo-info">
+            <h2>Controls:</h2>
+            <ul>
+                <li><strong>Drag</strong> - Drag cards left/right to navigate</li>
+                <li><strong>Click</strong> - Click any card to center it</li>
+                <li><strong>Prev/Next</strong> - Use buttons to navigate</li>
+                <li><strong>Arrow Keys</strong> - ← → to navigate</li>
+                <li><strong>ESC</strong> - Close the gallery</li>
+                <li><strong>× Button</strong> - Close the gallery</li>
+            </ul>
+
+            <h2 style="margin-top: 2rem;">JavaScript API:</h2>
+            <ul>
+                <li><code>window.certGallery.open()</code> - Open gallery</li>
+                <li><code>window.certGallery.close()</code> - Close gallery</li>
+                <li><code>window.certGallery.next()</code> - Next card</li>
+                <li><code>window.certGallery.prev()</code> - Previous card</li>
+                <li><code>window.certGallery.goTo(index)</code> - Go to card</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Certificate Gallery Layer -->
+    <div class="cert-gallery hidden with-backdrop">
+        <ul class="cards">
+            <li style="background-image: url('images/cert/certificadoplatzi1.png')"></li>
+            <li style="background-image: url('images/cert/certificadoplatzi2.png')"></li>
+            <li style="background-image: url('images/cert/certificadoplatzi3.png')"></li>
+            <li style="background-image: url('images/cert/certificadoplatzi4.png')"></li>
+            <li style="background-image: url('images/cert/certificadoplatzi5.png')"></li>
+            <li style="background-image: url('images/cert/certificadoplatzi6.png')"></li>
+            <li style="background-image: url('images/cert/certificadoyoast1.png')"></li>
+            <li style="background-image: url('images/cert/certificadoyoast2.png')"></li>
+            <li style="background-image: url('images/cert/certificadoyoast3.png')"></li>
+        </ul>
+        <div class="actions">
+            <button class="prev">Prev</button>
+            <button class="next">Next</button>
+        </div>
+        <button class="close-btn">&times;</button>
+    </div>
+    <div class="drag-proxy"></div>
+
+    <script src="js/cert-gallery.js"></script>
+</body>
+</html>
