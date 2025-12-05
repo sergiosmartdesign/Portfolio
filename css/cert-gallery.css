@@ -4,21 +4,33 @@
    ============================================================================ */
 
 /* ============================================================================
-   EMBEDDED CERTIFICATE GALLERY (In About Section)
+   CERTIFICATE GALLERY LAYER - Independent & Movable
    ============================================================================ */
+.cert-gallery-layer {
+  position: absolute;
+
+  /* CUSTOMIZE POSITION HERE */
+  top: 1450px;      /* Distance from top - adjust this */
+  left: 20px;      /* Distance from left - adjust this */
+  /* bottom: 100px; */ /* OR use bottom instead of top */
+  /* right: 100px; */  /* OR use right instead of left */
+
+  width: 600px;     /* Gallery width */
+  height: 500px;    /* Gallery height */
+  z-index: 100;     /* High z-index to appear above other content */
+  pointer-events: auto;
+}
+
+/* Inner gallery container */
 .cert-gallery-embedded {
   position: relative;
   width: 100%;
-  height: 400px;
-  margin-top: 3rem;
+  height: 100%;
   overflow: visible;
-  z-index: 10;
 }
 
 .cert-gallery-embedded .cards {
   position: absolute;
-  width: 150px;
-  height: calc(150px * 1.414);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -33,31 +45,38 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  width: 150px;
-  height: calc(150px * 1.414);
   position: absolute;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
   top: 0;
   left: 0;
-  border-radius: 8px;
   cursor: grab;
+  border-radius: 8px;
+  display: inline-block;
 
-  /* Capsule glow effect - Same as column 2 About section */
-  box-shadow: 0 0 10px #ee9b00,
-              0 0 20px #ee9b00,
-              0 0 30px #ee9b00;
+  /* Container adapts to image size */
+  width: auto;
+  height: auto;
 
-  border: 2px solid #ee9b00;
+  /* Capsule glow effect on the container */
+  box-shadow: 0 0 10px #001219,
+              0 0 20px #001219,
+              0 0 30px #001219;
+
+  border: 2px solid #001219;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.cert-gallery-embedded .cards li img {
+  display: block;
+  width: 200px; /* Set width to 200px */
+  height: auto; /* Height adapts to image's natural aspect ratio */
+  border-radius: 6px; /* Slightly smaller to account for container border */
+}
+
 .cert-gallery-embedded .cards li:hover {
-  box-shadow: 0 0 15px #ee9b00,
-              0 0 30px #ee9b00,
-              0 0 45px #ee9b00,
-              0 0 60px #ee9b00;
+  box-shadow: 0 0 15px #001219,
+              0 0 30px #001219,
+              0 0 45px #001219,
+              0 0 60px #001219;
   transform: scale(1.02);
 }
 
@@ -68,37 +87,56 @@
 
 .cert-gallery-embedded .actions {
   position: absolute;
-  bottom: -60px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 420px;
+  left: 400px;
+  transform: translate(-50%, 0);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
+  z-index: 200;
+  width: auto;
 }
 
+/* Match header navigation button style */
 .cert-gallery-embedded .actions button {
-  background: rgba(0, 0, 0, 0.6);
-  border: 2px solid #ee9b00;
-  color: #ee9b00;
-  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
   font-size: 1rem;
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
-  cursor: pointer;
-  border-radius: 4px;
-  box-shadow: 0 0 10px #ee9b00,
-              0 0 20px #ee9b00;
-  transition: all 0.3s ease;
+  padding: 5px 0;
+  color: #001219;
+  display: inline-flex;
+  background-image: linear-gradient(var(--orange, #ff3c00), var(--orange, #ff3c00));
+  background-size: 100% 0.5px;
+  background-repeat: no-repeat;
+  background-position: 100% 0%;
+  transition: background-size 0.7s, background-position 0.5s ease-in-out, color 0.3s;
+  animation: lineGrow 1s ease-out;
+}
+
+/* Force glitch text color to match */
+.cert-gallery-embedded .actions button [data-char]:after {
+  color: #001219 !important;
+}
+
+/* Line grow animation on load (same as header nav buttons) */
+@keyframes lineGrow {
+  from { background-size: 0% 0.5px; }
+  to { background-size: 100% 0.5px; }
 }
 
 .cert-gallery-embedded .actions button:hover {
-  background: #ee9b00;
-  color: #000;
-  box-shadow: 0 0 15px #ee9b00,
-              0 0 30px #ee9b00,
-              0 0 45px #ee9b00;
-  transform: scale(1.05);
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  color: var(--bg, #000);
+  transition: background-position 0.7s, background-size 0.5s ease-in-out, color 0.3s;
+}
+
+.cert-gallery-embedded .actions button:hover [data-char]:after {
+  color: var(--bg, #000);
 }
 
 .cert-gallery-embedded .actions button:active {

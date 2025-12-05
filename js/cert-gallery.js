@@ -8,10 +8,10 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Configuration
   const config = {
-    cardWidth: 150,
-    cardHeight: 150 * 1.414, // Certificate aspect ratio
+    cardWidth: 200,
+    cardHeight: 200 * 1.414, // Certificate aspect ratio
     rotationRange: 15, // degrees
-    spacing: 30,
+    spacing: 40, // Increased spacing for larger cards
     dragEnabled: true,
   };
 

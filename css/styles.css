@@ -1274,13 +1274,13 @@ nav {
 
 /* Specific positioning for second paragraph */
 #aboutp2 {
-  top: -500px;    /* Move up (more negative) or down (more positive) */
+  top: -400px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
 }
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 400px;    /* Move up (more negative) or down (more positive) */
+  top: 600px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
@@ -1691,7 +1691,7 @@ nav {
 
 .decoration-skills {
   height: 600px;
-  top: 900px;
+  top: 1000px;
   left: 200px;
   transform: scale(0.8);
 }
