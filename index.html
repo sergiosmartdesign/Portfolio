@@ -231,7 +231,45 @@
             </div>
 
             <!-- Certificate Gallery - Independent Layer -->
-            <div class="cert-gallery-layer">
+            <!-- SVG Filter for Electric Border Effect -->
+            <svg style="position: absolute; width: 0; height: 0;">
+                <defs>
+                    <filter id="cert-electric-border" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+                        <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+                            <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                        </feOffset>
+
+                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+                        <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+                            <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                        </feOffset>
+
+                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise3" seed="2" />
+                        <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
+                            <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                        </feOffset>
+
+                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise4" seed="2" />
+                        <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
+                            <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                        </feOffset>
+
+                        <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+                        <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+                        <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+
+                        <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+                    </filter>
+                </defs>
+            </svg>
+
+            <!-- Electric Border Container -->
+            <div class="cert-electric-container">
+                <div class="cert-electric-inner">
+                    <div class="cert-electric-border-outer">
+                        <div class="cert-electric-border-main">
+                            <div class="cert-gallery-layer">
                 <div class="cert-gallery-embedded">
                     <ul class="cards">
                         <li><img src="images/cert/certificadoplatzi1.png" alt="Certificate 1"></li>
@@ -249,6 +287,15 @@
                         <button class="next glitch-text" data-splitting>[ · N e x t · ]</button>
                     </div>
                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cert-glow-layer-1"></div>
+                    <div class="cert-glow-layer-2"></div>
+                </div>
+                <div class="cert-overlay-1"></div>
+                <div class="cert-overlay-2"></div>
+                <div class="cert-background-glow"></div>
             </div>
 
             <!-- Decorative SVG Graphics -->
