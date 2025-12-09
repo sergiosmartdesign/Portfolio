@@ -1689,6 +1689,23 @@ nav {
   transform: translateY(-100px);
 }
 
+.decoration-certs1 {
+  width: 300px;
+  height: 300px;
+  top: 1650px;
+  left: 68px;
+  transform: scale(1);
+}
+
+.decoration-vtv1 {
+  width: 330px;
+  height: 300px;
+  top: 1650px;
+  left: 250px;
+  transform: scale(1);
+  filter: brightness(0) saturate(100%) invert(5%) sepia(18%) saturate(4098%) hue-rotate(167deg) brightness(95%) contrast(101%);
+}
+
 .decoration-skills {
   height: 600px;
   top: 1000px;
@@ -1703,6 +1720,14 @@ nav {
 
 #about.glitch-active .decoration-bar2 {
   animation: slideDownFade 0.8s ease-out 0.7s forwards;
+}
+
+#about.glitch-active .decoration-certs1 {
+  animation: skillsFadeIn 1s ease-out 0.8s forwards;
+}
+
+#about.glitch-active .decoration-vtv1 {
+  animation: skillsFadeIn 1s ease-out 0.85s forwards;
 }
 
 #about.glitch-active .decoration-skills {
