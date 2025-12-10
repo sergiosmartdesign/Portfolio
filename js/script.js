@@ -530,10 +530,18 @@ class AnimationCoordinator {
   static initAnimationOptimizer() {
     const introSection = document.getElementById('intro');
     const aboutSection = document.getElementById('about');
+    const certGalleryLayer = document.querySelector('.cert-gallery-layer');
 
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '50px'
+    // Intro section observer - keeps existing behavior
+    const introObserverOptions = {
+      threshold: 0.2,
+      rootMargin: '-100px'
+    };
+
+    // About section and other elements - trigger when visible
+    const scrollTriggerOptions = {
+      threshold: 0.05,  // Trigger when 5% visible
+      rootMargin: '0px 0px -10% 0px'  // Trigger slightly before fully visible
     };
 
     // Optimize intro animations
@@ -558,51 +566,121 @@ class AnimationCoordinator {
             console.log('[Animation Optimizer] Intro animations paused');
           }
         });
-      }, observerOptions);
+      }, introObserverOptions);
 
       introObserver.observe(introSection);
     }
 
-    // Optimize about section animations
+    // Optimize about section animations - trigger only once when visible
     if (aboutSection) {
-      let glitchTriggered = false;
+      let aboutAnimationTriggered = false;
+      let userHasScrolled = false;
+
+      // Track if user has scrolled away from top
+      const scrollListener = () => {
+        if (window.scrollY > 100) {
+          userHasScrolled = true;
+          window.removeEventListener('scroll', scrollListener);
+        }
+      };
+      window.addEventListener('scroll', scrollListener);
 
       const aboutObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
+          // Only trigger animations if user has scrolled AND section is visible
+          if (entry.isIntersecting && !aboutAnimationTriggered && userHasScrolled) {
             aboutSection.classList.remove('paused-animations');
 
-            // Trigger glitch animation and DNA effects on first view
-            if (!glitchTriggered) {
-              aboutSection.classList.add('glitch-active');
+            // Add glitch-active class to trigger animations (only once)
+            aboutSection.classList.add('glitch-active');
+            aboutAnimationTriggered = true;
 
-              // Trigger DNA animations with delays
-              if (window.glitchSystem) {
-                setTimeout(() => {
-                  window.glitchSystem.initDNAGlitch();
-                }, TIMING.DNA_GLITCH_DELAY);
+            // Trigger DNA animations with delays
+            if (window.glitchSystem) {
+              setTimeout(() => {
+                window.glitchSystem.initDNAGlitch();
+              }, TIMING.DNA_GLITCH_DELAY);
 
-                setTimeout(() => {
-                  window.glitchSystem.animateDNAReveal();
-                }, TIMING.DNA_REVEAL_DELAY);
-              }
-
-              glitchTriggered = true;
-              console.log('[Animation Optimizer] About section glitch and DNA animations activated');
+              setTimeout(() => {
+                window.glitchSystem.animateDNAReveal();
+              }, TIMING.DNA_REVEAL_DELAY);
             }
 
-            console.log('[Animation Optimizer] About animations resumed');
-          } else {
+            console.log('[Animation Optimizer] About section animations activated');
+          } else if (!entry.isIntersecting && aboutAnimationTriggered) {
+            // Pause animations when scrolled away but keep glitch-active
             aboutSection.classList.add('paused-animations');
             console.log('[Animation Optimizer] About animations paused');
+          } else if (entry.isIntersecting && aboutAnimationTriggered) {
+            // Resume animations when scrolled back into view
+            aboutSection.classList.remove('paused-animations');
+            console.log('[Animation Optimizer] About animations resumed');
           }
         });
-      }, observerOptions);
+      }, scrollTriggerOptions);
 
       aboutObserver.observe(aboutSection);
     }
 
-    console.log('[Animation Optimizer] Initialized for intro and about sections');
+    // Certificate gallery layer - trigger animation when visible
+    if (certGalleryLayer) {
+      let certGalleryAnimated = false;
+      let userHasScrolledForGallery = false;
+
+      const galleryScrollListener = () => {
+        if (window.scrollY > 100) {
+          userHasScrolledForGallery = true;
+          window.removeEventListener('scroll', galleryScrollListener);
+        }
+      };
+      window.addEventListener('scroll', galleryScrollListener);
+
+      const certObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !certGalleryAnimated && userHasScrolledForGallery) {
+            certGalleryLayer.classList.add('visible');
+            certGalleryAnimated = true;
+            console.log('[Animation Optimizer] Certificate gallery animations activated');
+          }
+        });
+      }, scrollTriggerOptions);
+
+      certObserver.observe(certGalleryLayer);
+    }
+
+    // Other sections - trigger animations when visible
+    const sectionsToObserve = ['web', 'photo', 'illustration', 'experiments', 'contact'];
+    const sectionScrollStates = new Map();
+
+    sectionsToObserve.forEach(sectionId => {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        let sectionAnimated = false;
+        sectionScrollStates.set(sectionId, { scrolled: false });
+
+        const sectionScrollListener = () => {
+          if (window.scrollY > 100) {
+            sectionScrollStates.get(sectionId).scrolled = true;
+          }
+        };
+        window.addEventListener('scroll', sectionScrollListener);
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !sectionAnimated && sectionScrollStates.get(sectionId).scrolled) {
+              section.classList.add('section-visible');
+              sectionAnimated = true;
+              window.removeEventListener('scroll', sectionScrollListener);
+              console.log(`[Animation Optimizer] ${sectionId} section animations activated`);
+            }
+          });
+        }, scrollTriggerOptions);
+
+        sectionObserver.observe(section);
+      }
+    });
+
+    console.log('[Animation Optimizer] Initialized scroll-triggered animations for all sections');
   }
 }
 

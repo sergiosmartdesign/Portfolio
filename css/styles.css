@@ -1280,9 +1280,55 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 600px;    /* Move up (more negative) or down (more positive) */
+  top: 650px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
+}
+
+/* --- Paul Rand Quote --- */
+#paulrand-quote {
+  font-size: 1.7rem !important;      /* Change this to adjust quote size - Currently 2x author name size */
+  font-weight: 300 !important;
+  color: #001219;
+  line-height: 1.4 !important;
+  position: relative;
+  top: -1000px;             /* Move up (more negative) or down (more positive) */
+  left: 0px;              /* Move left (negative) or right (positive) */
+  width: 200px;           /* Change this value to make the quote wider or narrower */
+  opacity: 0;
+  transform: translateX(-100px);
+  margin-bottom: 5px !important;
+}
+
+/* Prevent quote glitch on page load */
+#paulrand-quote[data-splitting] [data-char]:after {
+  color: #001219 !important;
+  font-weight: 300 !important;
+  animation-name: none;
+}
+
+/* Enable glitch animation for quote when section is active */
+#about.glitch-active #paulrand-quote[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+}
+
+/* Paul Rand author attribution */
+#paulrand-author {
+  font-size: 0.7rem;        /* Change this to adjust author name size - Quote is 2x this size */
+  color: #001219;
+  position: relative;
+  top: -1000px;             /* Move up (more negative) or down (more positive) */
+  left: 0px;              /* Move left (negative) or right (positive) */
+  width: 200px;
+  opacity: 0;
+  transform: translateX(-100px);
+  margin-top: 0;
+  text-align: right;
 }
 
 /* Slide in animation for paragraphs when section becomes active */
@@ -1296,6 +1342,15 @@ nav {
 
 #about.glitch-active .about-left p:nth-of-type(3) {
   animation: slideInFromLeft 0.8s ease-out 1s forwards;
+}
+
+/* Slide in animation for Paul Rand quote and author */
+#about.glitch-active #paulrand-quote {
+  animation: slideInFromLeft 0.8s ease-out 1.2s forwards;
+}
+
+#about.glitch-active #paulrand-author {
+  animation: slideInFromLeft 0.8s ease-out 1.4s forwards;
 }
 
 /* First letter of first paragraph - Large with same glitch effect as h2 titles */
@@ -1372,7 +1427,15 @@ nav {
   font-size: 3.5vmin; /* Further reduced for better readability */
   font-family: 'Workbench', sans-serif;
   transform-style: preserve-3d;
+  animation: none; /* Disabled by default */
+  opacity: 0; /* Hidden until visible */
+  transition: opacity 0.6s ease-out;
+}
+
+/* Enable animation when about section is visible */
+#about.glitch-active .texts {
   animation: texts 12s infinite linear;
+  opacity: 1;
 }
 
 .texts::after {
@@ -1385,8 +1448,13 @@ nav {
 .text {
   position: absolute;
   transform-style: preserve-3d;
-  animation: text 8s calc(var(--text) * -2s) infinite linear;
+  animation: none; /* Disabled by default */
   color: hsl(calc(var(--text) * 90) 75% 75%);
+}
+
+/* Enable animation when about section is visible */
+#about.glitch-active .text {
+  animation: text 8s calc(var(--text) * -2s) infinite linear;
 }
 
 .text span {
