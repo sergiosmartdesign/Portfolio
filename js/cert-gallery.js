@@ -25,6 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const nextBtn = document.querySelector('.cert-gallery-embedded .next') || document.querySelector('.cert-gallery .next');
   const closeBtn = document.querySelector('.cert-gallery .close-btn');
 
+  // Modal elements
+  const modal = document.getElementById('certModal');
+  const modalImage = document.getElementById('certModalImage');
+  const modalCloseBtn = document.querySelector('.cert-modal-close');
+  const modalBackdrop = document.querySelector('.cert-modal-backdrop');
+
   if (!cardsContainer || cards.length === 0) {
     console.warn('Certificate gallery elements not found');
     return;
@@ -160,13 +166,51 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /**
+   * Open modal with enlarged certificate image
+   */
+  function openModal(imageSrc) {
+    if (!modal || !modalImage) return;
+
+    modalImage.src = imageSrc;
+    modal.classList.remove('hidden');
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Close modal
+   */
+  function closeModal() {
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modalImage.src = '';
+
+    // Restore body scroll
+    document.body.style.overflow = '';
+  }
+
+  /**
    * Handle card click
+   * Active card (center) = enlarge image
+   * Non-active cards = navigate to that card
    */
   function handleCardClick(e) {
+    // Prevent click during drag
+    if (isDragging) return;
+
     const card = e.currentTarget;
     const index = Array.from(cards).indexOf(card);
 
-    if (index !== currentIndex) {
+    // If clicking the active/center card, open modal to enlarge
+    if (index === currentIndex) {
+      const imgElement = card.querySelector('img');
+      if (imgElement) {
+        openModal(imgElement.src);
+      }
+    } else {
+      // If clicking a non-active card, navigate to it
       goToCard(index);
     }
   }
@@ -221,6 +265,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
+    // If modal is open, ESC closes the modal
+    if (modal && !modal.classList.contains('hidden')) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+      return;
+    }
+
+    // Otherwise, handle gallery navigation
     if (gallery.classList.contains('hidden')) return;
 
     if (e.key === 'ArrowLeft') {
@@ -231,6 +284,16 @@ document.addEventListener('DOMContentLoaded', function() {
       closeGallery();
     }
   });
+
+  // Modal close button event
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', closeModal);
+  }
+
+  // Modal backdrop click to close
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', closeModal);
+  }
 
   // Initialize
   updateCards();
@@ -243,5 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
     open: openGallery,
     close: closeGallery,
     getCurrentIndex: () => currentIndex,
+    openModal: openModal,
+    closeModal: closeModal,
   };
 });

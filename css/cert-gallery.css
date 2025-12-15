@@ -354,3 +354,157 @@
   }
 }
 
+/* ============================================================================
+   CERTIFICATE MODAL/LIGHTBOX
+   Click-to-enlarge functionality with 1200px max height
+   ============================================================================ */
+
+.cert-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.cert-modal:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Semi-transparent backdrop */
+.cert-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+/* Modal content container */
+.cert-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: modalZoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The enlarged certificate image */
+.cert-modal-content img {
+  max-width: 100%;
+  max-height: 1200px;
+  height: auto;
+  width: auto;
+  border-radius: 8px;
+
+  /* Cyberpunk glow effect matching gallery style */
+  box-shadow: 0 0 20px #001219,
+              0 0 40px #001219,
+              0 0 60px #001219,
+              0 0 80px #001219;
+
+  border: 3px solid #001219;
+
+  /* Smooth transition */
+  transition: all 0.3s ease;
+}
+
+/* Close button */
+.cert-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  color: #ee9b00;
+  padding: 8px 16px;
+  z-index: 10002;
+
+  /* Text glow effect */
+  text-shadow: 0 0 10px #ee9b00,
+               0 0 20px #ee9b00,
+               0 0 30px #ee9b00;
+
+  transition: all 0.3s ease;
+}
+
+.cert-modal-close:hover {
+  color: #ee9b00;
+  text-shadow: 0 0 15px #ee9b00,
+               0 0 30px #ee9b00,
+               0 0 45px #ee9b00,
+               0 0 60px #ee9b00;
+  transform: scale(1.1);
+}
+
+.cert-modal-close [data-char]:after {
+  color: #ee9b00;
+}
+
+.cert-modal-close:hover [data-char]:after {
+  color: #ee9b00;
+}
+
+/* Active card cursor indicator */
+.cert-gallery-embedded .cards li.active {
+  cursor: pointer;
+}
+
+.cert-gallery-embedded .cards li:not(.active) {
+  cursor: grab;
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+  .cert-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .cert-modal-content img {
+    max-height: 90vh;
+  }
+
+  .cert-modal-close {
+    top: 5px;
+    right: 5px;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-height: 1300px) {
+  .cert-modal-content img {
+    max-height: 85vh;
+  }
+}
+
