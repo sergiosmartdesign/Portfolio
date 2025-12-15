@@ -1859,6 +1859,36 @@ nav {
 /* --- Web Section --- */
 #web {
   background-color: var(--bg-web);
+  perspective: 700px;
+}
+
+/* Glowing Grid - Bottom of Web Section */
+#web .grid {
+  background:
+    linear-gradient(transparent 65%, rgba(0, 18, 25, 0.4) 75%, #001219 80%, rgba(0, 18, 25, 0.4) 85%, transparent 95%),
+    linear-gradient(90deg, transparent 65%, rgba(0, 18, 25, 0.4) 75%, #001219 80%, rgba(0, 18, 25, 0.4) 85%, transparent 95%);
+  background-size: 30px 30px;
+  width: 200vw;
+  height: 300vh;
+  position: absolute;
+  bottom: -120vh;
+  transform: rotateX(-100deg);
+  -webkit-mask-image: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0) 80%);
+  mask-image: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0) 80%);
+}
+
+/* Horizontal Lines - Top of Web Section */
+#web .lines {
+  position: fixed;
+  top: 200px;
+  width: 100vw;
+  height: 4em;
+  background: linear-gradient(rgba(148, 210, 189, 0.2) 20%, #94d2bd 40%, #94d2bd 60%, rgba(148, 210, 189, 0.2) 80%);
+  background-size: 1px 0.5em;
+  box-shadow: 0 0 1em rgba(148, 210, 189, 0.4);
+  transform: translateY(0);
+  left: 0;
+  z-index: var(--z-layer-2);
 }
 
 /* --- Photo Section --- */
