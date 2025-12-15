@@ -321,6 +321,17 @@ body {
   }
 }
 
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ============================================================================
    HEADER & NAVIGATION
    ============================================================================ */
@@ -1133,9 +1144,9 @@ nav {
   pointer-events: none;
 }
 
-/* Animate line when about section becomes active */
-#about.glitch-active .about-right::before {
-  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 1.2s forwards;
+/* Animate line when right column becomes visible in viewport */
+#about .about-right.element-visible::before {
+  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 0s forwards;
 }
 
 /* --- About Typography --- */
@@ -1157,6 +1168,8 @@ nav {
 /* Specific color for aboutp4 paragraph */
 #about #aboutp4 {
   color: #ffffff !important;
+  opacity: 0;
+  transform: translateX(100px);
 }
 
 /* --- About Title (Left Column) --- */
@@ -1169,8 +1182,8 @@ nav {
   animation-name: none;
 }
 
-/* Enable glitch animation when section is in view */
-#about.glitch-active h2.glitch-text[data-splitting] [data-char]:after {
+/* Enable glitch animation when element is visible in viewport */
+#about h2.glitch-text[data-splitting].element-visible [data-char]:after {
   animation-name: glitch-switch;
 }
 
@@ -1181,8 +1194,8 @@ nav {
   animation-name: none;
 }
 
-/* Enable glitch animation for abouttitle when section is active */
-#about.glitch-active #abouttitle[data-splitting] [data-char]:after {
+/* Enable glitch animation for abouttitle when element is visible in viewport */
+#about #abouttitle[data-splitting].element-visible [data-char]:after {
   animation-name: glitch-switch;
   animation-duration: var(--transition-fast);
   animation-delay: var(--transition-slow);
@@ -1238,20 +1251,20 @@ nav {
   transform: translateY(-100px);
 }
 
-/* Slide down animation when section becomes active */
-#about.glitch-active #abouttitle .title-line-1 {
+/* Slide down animation when title becomes visible in viewport */
+#about #abouttitle.element-visible .title-line-1 {
   animation: slideDownFade 0.8s ease-out 0s forwards;
 }
 
-#about.glitch-active #abouttitle .title-line-2 {
+#about #abouttitle.element-visible .title-line-2 {
   animation: slideDownFade 0.8s ease-out 0.15s forwards;
 }
 
-#about.glitch-active #abouttitle .title-line-3 {
+#about #abouttitle.element-visible .title-line-3 {
   animation: slideDownFade 0.8s ease-out 0.3s forwards;
 }
 
-#about.glitch-active #abouttitle .title-line-4 {
+#about #abouttitle.element-visible .title-line-4 {
   animation: slideDownFade 0.8s ease-out 0.45s forwards;
 }
 
@@ -1307,8 +1320,8 @@ nav {
   animation-name: none;
 }
 
-/* Enable glitch animation for quote when section is active */
-#about.glitch-active #paulrand-quote[data-splitting] [data-char]:after {
+/* Enable glitch animation for quote when element is visible in viewport */
+#about #paulrand-quote[data-splitting].element-visible [data-char]:after {
   animation-name: glitch-switch;
   animation-duration: var(--transition-fast);
   animation-delay: var(--transition-slow);
@@ -1322,35 +1335,45 @@ nav {
   font-size: 0.7rem;        /* Change this to adjust author name size - Quote is 2x this size */
   color: #001219;
   position: relative;
-  top: -1000px;             /* Move up (more negative) or down (more positive) */
+  top: -1050px;             /* Move up (more negative) or down (more positive) */
   left: 0px;              /* Move left (negative) or right (positive) */
-  width: 200px;
+  width: 500px;
   opacity: 0;
   transform: translateX(-100px);
   margin-top: 0;
   text-align: right;
 }
 
-/* Slide in animation for paragraphs when section becomes active */
-#about.glitch-active .about-left p:nth-of-type(1) {
-  animation: slideInFromLeft 0.8s ease-out 0.6s forwards;
+/* Slide in animation for paragraphs when element becomes visible in viewport */
+#about .about-left p:nth-of-type(1).element-visible {
+  animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-#about.glitch-active .about-left p:nth-of-type(2) {
-  animation: slideInFromLeft 0.8s ease-out 0.8s forwards;
+#about .about-left p:nth-of-type(2).element-visible {
+  animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-#about.glitch-active .about-left p:nth-of-type(3) {
-  animation: slideInFromLeft 0.8s ease-out 1s forwards;
+#about .about-left p:nth-of-type(3).element-visible {
+  animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-/* Slide in animation for Paul Rand quote and author */
-#about.glitch-active #paulrand-quote {
-  animation: slideInFromLeft 0.8s ease-out 1.2s forwards;
+/* Slide in animation for Paul Rand quote when element becomes visible in viewport */
+#about #paulrand-quote.element-visible {
+  animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-#about.glitch-active #paulrand-author {
-  animation: slideInFromLeft 0.8s ease-out 1.4s forwards;
+#about #paulrand-author.element-visible {
+  animation: slideInFromLeft 0.8s ease-out 0.2s forwards;
+}
+
+/* Slide in animation for DNA title when element becomes visible in viewport */
+#about #dnatitle.element-visible {
+  animation: slideInFromRight 0.8s ease-out 0s forwards;
+}
+
+/* Slide in animation for aboutp4 paragraph when element becomes visible in viewport */
+#about #aboutp4.element-visible {
+  animation: slideInFromRight 0.8s ease-out 0s forwards;
 }
 
 /* First letter of first paragraph - Large with same glitch effect as h2 titles */
@@ -1383,6 +1406,8 @@ nav {
   font-weight: 700;
   line-height: 1.3;
   flex: 1;
+  opacity: 0;
+  transform: translateX(100px);
 }
 
 /* --- DNA Capsule Container --- */
@@ -1432,8 +1457,8 @@ nav {
   transition: opacity 0.6s ease-out;
 }
 
-/* Enable animation when about section is visible */
-#about.glitch-active .texts {
+/* Enable animation when DNA capsule SVG is visible in viewport */
+#about .dna-capsule-svg.element-visible ~ .scene .texts {
   animation: texts 12s infinite linear;
   opacity: 1;
 }
@@ -1452,8 +1477,8 @@ nav {
   color: hsl(calc(var(--text) * 90) 75% 75%);
 }
 
-/* Enable animation when about section is visible */
-#about.glitch-active .text {
+/* Enable animation when DNA capsule SVG is visible in viewport */
+#about .dna-capsule-svg.element-visible ~ .scene .text {
   animation: text 8s calc(var(--text) * -2s) infinite linear;
 }
 
@@ -1475,7 +1500,7 @@ nav {
 
 /* Specific color overrides for DNA text */
 .text[style*="--text: 0"] {
-  color: var(--orange-brown);
+  color: #94d2bd;
 }
 
 .text[style*="--text: 2"] {
@@ -1507,7 +1532,7 @@ nav {
 }
 
 /* Scale animation - grows horizontally first, then vertically */
-#about.glitch-active .dna-capsule-svg {
+#about .dna-capsule-svg.element-visible {
   animation: capsuleGrow 1.5s ease-out 0s forwards;
 }
 
@@ -1542,94 +1567,94 @@ nav {
   opacity: 0;
 }
 
-/* Sequential animations when about section becomes active */
+/* Sequential animations when DNA capsule SVG becomes visible in viewport */
 /* 1. Main outline appears first */
-#about.glitch-active .capsule-outline {
+#about .dna-capsule-svg.element-visible .capsule-outline {
   animation: fadeIn 0.6s ease-out 0s forwards;
 }
 
 /* 2. Top bars appear */
-#about.glitch-active .capsule-bar-top-1 {
+#about .dna-capsule-svg.element-visible .capsule-bar-top-1 {
   animation: fadeIn 0.3s ease-out 0.3s forwards;
 }
 
-#about.glitch-active .capsule-bar-top-2 {
+#about .dna-capsule-svg.element-visible .capsule-bar-top-2 {
   animation: fadeIn 0.3s ease-out 0.4s forwards;
 }
 
 /* 3. Accent polygons appear */
-#about.glitch-active .capsule-accent-left {
+#about .dna-capsule-svg.element-visible .capsule-accent-left {
   animation: fadeIn 0.3s ease-out 0.5s forwards;
 }
 
-#about.glitch-active .capsule-accent-right {
+#about .dna-capsule-svg.element-visible .capsule-accent-right {
   animation: fadeIn 0.3s ease-out 0.6s forwards;
 }
 
 /* 4. Corner accent */
-#about.glitch-active .capsule-corner-accent {
+#about .dna-capsule-svg.element-visible .capsule-corner-accent {
   animation: fadeIn 0.2s ease-out 0.7s forwards;
 }
 
 /* 5. Vertical lines */
-#about.glitch-active .capsule-line-left {
+#about .dna-capsule-svg.element-visible .capsule-line-left {
   animation: fadeIn 0.3s ease-out 0.8s forwards;
 }
 
-#about.glitch-active .capsule-line-left-dashed {
+#about .dna-capsule-svg.element-visible .capsule-line-left-dashed {
   animation: fadeIn 0.4s ease-out 0.9s forwards;
 }
 
 /* 6. Indicator lines */
-#about.glitch-active .capsule-line-indicator-1 {
+#about .dna-capsule-svg.element-visible .capsule-line-indicator-1 {
   animation: fadeIn 0.2s ease-out 1.0s forwards;
 }
 
-#about.glitch-active .capsule-line-indicator-2 {
+#about .dna-capsule-svg.element-visible .capsule-line-indicator-2 {
   animation: fadeIn 0.2s ease-out 1.1s forwards;
 }
 
-#about.glitch-active .capsule-line-indicator-3 {
+#about .dna-capsule-svg.element-visible .capsule-line-indicator-3 {
   animation: fadeIn 0.2s ease-out 1.2s forwards;
 }
 
 /* 7. Right side lines */
-#about.glitch-active .capsule-lines-right {
+#about .dna-capsule-svg.element-visible .capsule-lines-right {
   animation: fadeIn 0.3s ease-out 1.3s forwards;
 }
 
 /* 8. Binary text data */
-#about.glitch-active .capsule-text {
+#about .dna-capsule-svg.element-visible .capsule-text {
   animation: fadeIn 0.5s ease-out 1.4s forwards;
 }
 
 /* 9. Diagonal bars at bottom - animate one by one */
-#about.glitch-active .capsule-diagonals rect:nth-child(1) {
+#about .dna-capsule-svg.element-visible .capsule-diagonals rect:nth-child(1) {
   animation: fadeIn 0.15s ease-out 1.6s forwards;
 }
 
-#about.glitch-active .capsule-diagonals rect:nth-child(2) {
+#about .dna-capsule-svg.element-visible .capsule-diagonals rect:nth-child(2) {
   animation: fadeIn 0.15s ease-out 1.7s forwards;
 }
 
-#about.glitch-active .capsule-diagonals rect:nth-child(3) {
+#about .dna-capsule-svg.element-visible .capsule-diagonals rect:nth-child(3) {
   animation: fadeIn 0.15s ease-out 1.8s forwards;
 }
 
-#about.glitch-active .capsule-diagonals rect:nth-child(4) {
+#about .dna-capsule-svg.element-visible .capsule-diagonals rect:nth-child(4) {
   animation: fadeIn 0.15s ease-out 1.9s forwards;
 }
 
-#about.glitch-active .capsule-diagonals rect:nth-child(5) {
+#about .dna-capsule-svg.element-visible .capsule-diagonals rect:nth-child(5) {
   animation: fadeIn 0.15s ease-out 2.0s forwards;
 }
 
-#about.glitch-active .capsule-diagonals rect:nth-child(6) {
+#about .dna-capsule-svg.element-visible .capsule-diagonals rect:nth-child(6) {
   animation: fadeIn 0.15s ease-out 2.1s forwards;
 }
 
 /* 10. Bottom clip border appears last */
-#about.glitch-active .capsule-clip-border {
+#about .dna-capsule-svg.element-visible .capsule-clip-border {
   animation: fadeIn 0.3s ease-out 2.2s forwards;
 }
 
@@ -1647,11 +1672,11 @@ nav {
   animation-fill-mode: forwards;
 }
 
-/* Animate ID1 SVG when section becomes active - Multi-stage animation */
-#about.glitch-active #id1svg {
-  animation: slideDownFade 0.4s ease-out 0.3s forwards,
-             id1Pulse 0.4s ease-in-out 0.3s,
-             id1Shimmer 1.5s ease-in-out 0.3s infinite;
+/* Animate ID1 SVG when element becomes visible in viewport - Multi-stage animation */
+#about #id1svg.element-visible {
+  animation: slideDownFade 0.4s ease-out 0s forwards,
+             id1Pulse 0.4s ease-in-out 0s,
+             id1Shimmer 1.5s ease-in-out 0s infinite;
 }
 
 /* ID1 SVG pulse animation - subtle scale pulse after entrance */
@@ -1688,40 +1713,40 @@ nav {
   transform: translateY(-100px);
 }
 
-/* Animate elements when about section becomes active */
+/* Animate elements when ID1 SVG becomes visible in viewport */
 /* 1. Border appears first */
-#about.glitch-active #id1svg .id1-border {
-  animation: slideDownFade 0.4s ease-out 0.3s forwards;
+#about #id1svg.element-visible .id1-border {
+  animation: slideDownFade 0.4s ease-out 0s forwards;
 }
 
 /* 2. Rectangles/bars appear */
-#about.glitch-active #id1svg .id1-rect {
-  animation: slideDownFade 0.3s ease-out calc(0.35s + var(--rect-index) * 0.05s) forwards;
+#about #id1svg.element-visible .id1-rect {
+  animation: slideDownFade 0.3s ease-out calc(0.05s + var(--rect-index) * 0.05s) forwards;
 }
 
 /* 3. Hexagons appear one by one */
-#about.glitch-active #id1svg .id1-hexagon {
-  animation: slideDownFade 0.4s ease-out calc(0.4s + var(--hex-index) * 0.08s) forwards;
+#about #id1svg.element-visible .id1-hexagon {
+  animation: slideDownFade 0.4s ease-out calc(0.1s + var(--hex-index) * 0.08s) forwards;
 }
 
 /* 4. Circles appear */
-#about.glitch-active #id1svg .id1-circle {
-  animation: slideDownFade 0.3s ease-out calc(0.5s + var(--circle-index) * 0.05s) forwards;
+#about #id1svg.element-visible .id1-circle {
+  animation: slideDownFade 0.3s ease-out calc(0.2s + var(--circle-index) * 0.05s) forwards;
 }
 
 /* 5. Side circles appear sequentially */
-#about.glitch-active #id1svg .id1-side-circle {
-  animation: slideDownFade 0.3s ease-out calc(0.6s + var(--side-circle-index) * 0.08s) forwards;
+#about #id1svg.element-visible .id1-side-circle {
+  animation: slideDownFade 0.3s ease-out calc(0.3s + var(--side-circle-index) * 0.08s) forwards;
 }
 
 /* 6. Stars appear */
-#about.glitch-active #id1svg .id1-star {
-  animation: slideDownFade 0.2s ease-out calc(0.7s + var(--star-index) * 0.05s) forwards;
+#about #id1svg.element-visible .id1-star {
+  animation: slideDownFade 0.2s ease-out calc(0.4s + var(--star-index) * 0.05s) forwards;
 }
 
 /* 7. Face appears last */
-#about.glitch-active #id1svg .id1-face {
-  animation: slideDownFade 0.4s ease-out 0.8s forwards;
+#about #id1svg.element-visible .id1-face {
+  animation: slideDownFade 0.4s ease-out 0.5s forwards;
 }
 
 /* --- SVG Decorations --- */
@@ -1781,25 +1806,25 @@ nav {
   transform: scale(0.8);
 }
 
-/* Animate decorations when about section becomes active */
-#about.glitch-active .decoration-bar1 {
-  animation: slideInFromLeft 0.8s ease-out 0.5s forwards;
+/* Animate decorations when element becomes visible in viewport */
+#about .decoration-bar1.element-visible {
+  animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-#about.glitch-active .decoration-bar2 {
-  animation: slideDownFade 0.8s ease-out 0.7s forwards;
+#about .decoration-bar2.element-visible {
+  animation: slideDownFade 0.8s ease-out 0s forwards;
 }
 
-#about.glitch-active .decoration-certs1 {
-  animation: skillsFadeIn 1s ease-out 0.8s forwards;
+#about .decoration-certs1.element-visible {
+  animation: skillsFadeIn 1s ease-out 0s forwards;
 }
 
-#about.glitch-active .decoration-vtv1 {
-  animation: skillsFadeIn 1s ease-out 0.85s forwards;
+#about .decoration-vtv1.element-visible {
+  animation: skillsFadeIn 1s ease-out 0s forwards;
 }
 
-#about.glitch-active .decoration-skills {
-  animation: skillsFadeIn 1s ease-out 0.9s forwards;
+#about .decoration-skills.element-visible {
+  animation: skillsFadeIn 1s ease-out 0s forwards;
 }
 
 /* Skills decoration fade and scale animation */

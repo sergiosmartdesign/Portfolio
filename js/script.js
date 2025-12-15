@@ -648,6 +648,98 @@ class AnimationCoordinator {
       certObserver.observe(certGalleryLayer);
     }
 
+    // Individual element observers for about section - animate when in viewport
+    const elementObserverOptions = {
+      threshold: 0.3,  // Trigger when 30% of element is visible
+      rootMargin: '0px 0px -20% 0px'  // Trigger when element is 20% into viewport
+    };
+
+    // Helper function to create element observer
+    const createElementObserver = (elementId, logMessage) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        let elementAnimated = false;
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !elementAnimated) {
+              element.classList.add('element-visible');
+              elementAnimated = true;
+              console.log(`[Animation Optimizer] ${logMessage}`);
+            }
+          });
+        }, elementObserverOptions);
+        observer.observe(element);
+      }
+    };
+
+    // Helper function to create class-based observer (for multiple elements with same class)
+    const createClassObserver = (className, logMessage) => {
+      const elements = document.querySelectorAll(className);
+      elements.forEach((element, index) => {
+        let elementAnimated = false;
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !elementAnimated) {
+              element.classList.add('element-visible');
+              elementAnimated = true;
+              console.log(`[Animation Optimizer] ${logMessage} ${index + 1}`);
+            }
+          });
+        }, elementObserverOptions);
+        observer.observe(element);
+      });
+    };
+
+    // Left column observers
+    createElementObserver('abouttitle', 'About title animation triggered');
+    createClassObserver('#about .about-left p', 'Left paragraph animation triggered -');
+    createElementObserver('paulrand-quote', 'Paul Rand quote animation triggered');
+    createElementObserver('paulrand-author', 'Paul Rand author animation triggered');
+    // Note: ID1 SVG observer is set up after SVG conversion in setupID1Observer()
+
+    // Right column observers
+    createElementObserver('dnatitle', 'DNA title animation triggered');
+    createElementObserver('aboutp4', 'aboutp4 paragraph animation triggered');
+
+    // DNA capsule SVG observer
+    const dnaCapsuleSvg = document.getElementById('dnacapsule1');
+    if (dnaCapsuleSvg) {
+      let capsuleAnimated = false;
+      const capsuleObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !capsuleAnimated) {
+            dnaCapsuleSvg.classList.add('element-visible');
+            capsuleAnimated = true;
+            console.log('[Animation Optimizer] DNA capsule SVG animation triggered');
+          }
+        });
+      }, elementObserverOptions);
+      capsuleObserver.observe(dnaCapsuleSvg);
+    }
+
+    // About right column observer (for ::before line)
+    const aboutRight = document.querySelector('.about-right');
+    if (aboutRight) {
+      let rightAnimated = false;
+      const rightObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !rightAnimated) {
+            aboutRight.classList.add('element-visible');
+            rightAnimated = true;
+            console.log('[Animation Optimizer] About right column line animation triggered');
+          }
+        });
+      }, elementObserverOptions);
+      rightObserver.observe(aboutRight);
+    }
+
+    // SVG Decorations observers
+    createClassObserver('.decoration-bar1', 'Decoration bar1 animation triggered -');
+    createClassObserver('.decoration-bar2', 'Decoration bar2 animation triggered -');
+    createClassObserver('.decoration-certs1', 'Decoration certs1 animation triggered -');
+    createClassObserver('.decoration-vtv1', 'Decoration vtv1 animation triggered -');
+    createClassObserver('.decoration-skills', 'Decoration skills animation triggered -');
+
     // Other sections - trigger animations when visible
     const sectionsToObserve = ['web', 'photo', 'illustration', 'experiments', 'contact'];
     const sectionScrollStates = new Map();
@@ -780,8 +872,38 @@ function convertID1SvgToInline() {
       imgElement.parentNode.replaceChild(svgElement, imgElement);
 
       console.log('[ID1 SVG] Converted to inline SVG with animation classes');
+
+      // Set up observer for ID1 SVG AFTER conversion completes
+      setupID1Observer();
     })
     .catch(error => console.error('[ID1 SVG] Error loading SVG:', error));
+}
+
+/**
+ * Sets up viewport observer for ID1 SVG (called after SVG conversion)
+ */
+function setupID1Observer() {
+  const id1svg = document.getElementById('id1svg');
+  if (id1svg) {
+    let id1Animated = false;
+    const elementObserverOptions = {
+      threshold: 0.3,
+      rootMargin: '0px 0px -20% 0px'
+    };
+
+    const id1Observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !id1Animated) {
+          id1svg.classList.add('element-visible');
+          id1Animated = true;
+          console.log('[Animation Optimizer] ID1 SVG animation triggered');
+        }
+      });
+    }, elementObserverOptions);
+
+    id1Observer.observe(id1svg);
+    console.log('[Animation Optimizer] ID1 SVG observer set up after conversion');
+  }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
