@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap');
 
 /* ============================================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)
@@ -1880,7 +1881,7 @@ nav {
 /* Horizontal Lines - Top of Web Section */
 #web .lines {
   position: fixed;
-  top: 200px;
+  top: 175px;
   width: 100vw;
   height: 4em;
   background: linear-gradient(rgba(148, 210, 189, 0.2) 20%, #94d2bd 40%, #94d2bd 60%, rgba(148, 210, 189, 0.2) 80%);
@@ -1894,7 +1895,7 @@ nav {
 /* Web Section Title - Retro Synthwave Style */
 #web .web-title {
   position: fixed;
-  top: 200px;
+  top: 100px;
   left: 50%;
   transform: translateX(-50%) skew(-15deg);
   font-family: 'Funnel Display', sans-serif;
@@ -1944,11 +1945,11 @@ nav {
 /* Web Section Subtitle */
 #web .web-subtitle {
   position: fixed;
-  top: calc(200px + 8rem);
+  top: 200px;
   left: 50%;
-  transform: translateX(-50%) rotate(-7deg);
-  font-family: 'Funnel Display', sans-serif;
-  font-size: clamp(2.5rem, 5.5vw, 5.5rem);
+  transform: translateX(-50%) rotate(-2deg);
+  font-family: 'Playwrite DK Loopet', cursive;
+  font-size: clamp(1.4rem, 3.5vw, 3.5rem);
   font-weight: 300;
   margin: 0;
   color: white;
