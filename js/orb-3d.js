@@ -5,8 +5,11 @@
 
 class Orb3D {
   constructor() {
+    // Detect Safari for performance optimizations
+    const isSafari = window.BrowserDetect ? window.BrowserDetect.isSafariBased() : false;
+
     this.config = {
-      total: 300,
+      total: isSafari ? 150 : 300,  // Reduced particle count on Safari
       orbSize: 100,
       particleSize: 2,
       animationTime: 14,

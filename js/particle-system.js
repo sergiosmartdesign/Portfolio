@@ -6,11 +6,14 @@
 
 class ParticleSystem {
   constructor() {
-    // Configuration constants
+    // Detect Safari for performance optimizations
+    const isSafari = window.BrowserDetect ? window.BrowserDetect.isSafariBased() : false;
+
+    // Configuration constants (optimized for Safari)
     this.config = {
       lifespan: 1000,
       popPerBirth: 1,
-      maxPop: 150,
+      maxPop: isSafari ? 100 : 150,  // Reduced particle count on Safari
       birthFreq: 2,
       gridSize: 8,
       gridRadius: 500,
@@ -19,7 +22,8 @@ class ParticleSystem {
       viscosity: 0.4,
       zoom: 1.6,
       hue: 180,  // Cyan for cyberpunk theme
-      saturation: 95
+      saturation: 95,
+      targetFPS: isSafari ? 30 : 60  // Throttle to 30fps on Safari
     };
 
     // Animation state
@@ -28,6 +32,11 @@ class ParticleSystem {
     this.drawnInLastFrame = 0;
     this.deathCount = 0;
     this.isRunning = true;
+    this.lastFrameTime = 0;
+    this.frameInterval = 1000 / this.config.targetFPS;
+
+    // Color cache for performance
+    this.colorCache = new Map();
 
     // DOM elements (cached)
     this.canvas = null;
@@ -331,14 +340,32 @@ class ParticleSystem {
   }
 
   /**
+   * Get cached color string for particle
+   */
+  getColor(particle) {
+    const h = Math.floor(particle.hue + this.stepCount / 30);
+    const s = particle.sat;
+    const l = particle.lum;
+    const cacheKey = `${h}-${s}-${l}`;
+
+    if (!this.colorCache.has(cacheKey)) {
+      this.colorCache.set(cacheKey, `hsla(${h}, ${s}%, ${l}%, 1)`);
+      // Limit cache size
+      if (this.colorCache.size > 100) {
+        const firstKey = this.colorCache.keys().next().value;
+        this.colorCache.delete(firstKey);
+      }
+    }
+
+    return this.colorCache.get(cacheKey);
+  }
+
+  /**
    * Draw individual particle with trail and attractor
    */
   drawParticle(particle) {
-    // Calculate color with hue rotation
-    const h = particle.hue + this.stepCount / 30;
-    const s = particle.sat;
-    const l = particle.lum;
-    const color = `hsla(${h}, ${s}%, ${l}%, 1)`;
+    // Get cached color
+    const color = this.getColor(particle);
 
     // Transform coordinates
     const last = this.dataToCanvasXY(particle.xLast, particle.yLast);
@@ -400,16 +427,22 @@ class ParticleSystem {
   }
 
   /**
-   * Start the animation loop
+   * Start the animation loop with FPS throttling
    */
   startAnimationLoop() {
-    const frame = () => {
-      if (this.isRunning) {
-        this.evolve();
-      }
+    const frame = (currentTime) => {
       requestAnimationFrame(frame);
+
+      if (!this.isRunning) return;
+
+      // Throttle frame rate for performance (especially on Safari)
+      const elapsed = currentTime - this.lastFrameTime;
+      if (elapsed < this.frameInterval) return;
+
+      this.lastFrameTime = currentTime - (elapsed % this.frameInterval);
+      this.evolve();
     };
-    frame();
+    requestAnimationFrame(frame);
   }
 
   /**

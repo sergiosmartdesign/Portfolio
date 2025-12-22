@@ -41,6 +41,9 @@ Utils.simplex = new SimplexNoise('warm-waves');
 
 class AboutWaves {
   constructor() {
+    // Detect Safari for performance optimizations
+    const isSafari = window.BrowserDetect ? window.BrowserDetect.isSafariBased() : false;
+
     this.config = {
       bgColor: '#1a0000',
       colorSchema: [
@@ -53,7 +56,9 @@ class AboutWaves {
       waveAmplitudeMultiplier: 5,
       noiseZoom: 0.025,
       angleIncrement: 0.0005,
-      progressIncrement: 0.0008
+      progressIncrement: 0.0008,
+      segmentBaseSize: isSafari ? 15 : 10,  // Larger segments = fewer calculations on Safari
+      useShadowCanvas: !isSafari  // Disable double buffering on Safari
     };
 
     // Canvas elements (cached)
@@ -64,8 +69,15 @@ class AboutWaves {
     }
 
     this.ctx = this.canvas.getContext('2d');
-    this.shadowCanvas = document.createElement('canvas');
-    this.shadowCtx = this.shadowCanvas.getContext('2d');
+
+    // Conditionally use shadow canvas (disabled on Safari for performance)
+    if (this.config.useShadowCanvas) {
+      this.shadowCanvas = document.createElement('canvas');
+      this.shadowCtx = this.shadowCanvas.getContext('2d');
+    } else {
+      this.shadowCanvas = this.canvas;
+      this.shadowCtx = this.ctx;
+    }
 
     // Animation state
     this.timestamp = 0;
@@ -105,8 +117,15 @@ class AboutWaves {
    * Setup canvas dimensions and layers
    */
   setupCanvas() {
-    this.canvas.width = this.shadowCanvas.width = this.wWidth = window.innerWidth;
-    this.canvas.height = this.shadowCanvas.height = this.wHeight = window.innerHeight;
+    this.canvas.width = this.wWidth = window.innerWidth;
+    this.canvas.height = this.wHeight = window.innerHeight;
+
+    // Set shadow canvas size if using separate canvas
+    if (this.config.useShadowCanvas && this.shadowCanvas !== this.canvas) {
+      this.shadowCanvas.width = this.wWidth;
+      this.shadowCanvas.height = this.wHeight;
+    }
+
     this.wCenterX = this.wWidth / 2;
     this.wCenterY = this.wHeight / 2;
     this.wHypot = Math.hypot(this.wWidth, this.wHeight);
@@ -228,8 +247,7 @@ class AboutWaves {
   drawLayer(ctx, layer) {
     if (layer.opacity <= 0) return;
 
-    const { waveAmplitudeMultiplier, noiseZoom } = this.config;
-    const segmentBaseSize = 10;
+    const { waveAmplitudeMultiplier, noiseZoom, segmentBaseSize } = this.config;
     const segmentCount = Math.round(this.wHypot / segmentBaseSize);
     const segmentSize = this.wHypot / segmentCount;
     const waveAmplitude = segmentSize * waveAmplitudeMultiplier;
@@ -328,9 +346,11 @@ class AboutWaves {
       this.draw(this.shadowCtx);
     }
 
-    // Copy from shadow canvas to main canvas (double buffering)
-    this.ctx.clearRect(0, 0, this.wWidth, this.wHeight);
-    this.ctx.drawImage(this.shadowCanvas, 0, 0);
+    // Copy from shadow canvas to main canvas only if using double buffering
+    if (this.config.useShadowCanvas && this.shadowCanvas !== this.canvas) {
+      this.ctx.clearRect(0, 0, this.wWidth, this.wHeight);
+      this.ctx.drawImage(this.shadowCanvas, 0, 0);
+    }
 
     this.animationFrame = window.requestAnimationFrame(this.update.bind(this));
   }

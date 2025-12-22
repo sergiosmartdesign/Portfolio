@@ -125,13 +125,23 @@ class GlitchSystem {
       }, index * 50);
     });
 
-    // Occasional random glitches
-    setInterval(() => {
+    // Occasional random glitches (stored for cleanup)
+    this.dnaGlitchInterval = setInterval(() => {
       const randomSpan = dnaSpans[Math.floor(Math.random() * dnaSpans.length)];
       if (Math.random() > 0.95) {
         glitchSpan(randomSpan, 60);
       }
     }, 500);
+  }
+
+  /**
+   * Cleanup DNA glitch interval
+   */
+  cleanupDNAGlitch() {
+    if (this.dnaGlitchInterval) {
+      clearInterval(this.dnaGlitchInterval);
+      this.dnaGlitchInterval = null;
+    }
   }
 
   /**
@@ -345,13 +355,23 @@ class SquareGridManager {
 
     if (!this.wrapper || !this.contactSection) return;
 
+    // Detect Safari for performance optimizations
+    const isSafari = window.BrowserDetect ? window.BrowserDetect.isSafariBased() : false;
+
     this.config = {
       squareSize: 40,
       gap: 24,
-      columns: 10,
+      columns: isSafari ? 6 : 10,  // Reduced columns on Safari
       columnDelay: 0.3,
       squareDelay: 0.05
     };
+
+    // Cache for mousemove optimization
+    this.squarePositions = [];
+    this.mouseX = 0;
+    this.mouseY = 0;
+    this.rafId = null;
+    this.isMouseMoveActive = false;
 
     this.init();
   }
@@ -423,25 +443,67 @@ class SquareGridManager {
   }
 
   /**
-   * Setup mousemove effect for squares
+   * Cache square positions for performance
+   */
+  cacheSquarePositions() {
+    const squares = this.wrapper.querySelectorAll('.item');
+    this.squarePositions = Array.from(squares).map(square => {
+      const rect = square.getBoundingClientRect();
+      return {
+        element: square,
+        x: rect.left + rect.width / 2 + window.scrollX,
+        y: rect.top + rect.height / 2 + window.scrollY
+      };
+    });
+  }
+
+  /**
+   * Update square rotations (called via RAF)
+   */
+  updateSquareRotations() {
+    if (!this.isMouseMoveActive) return;
+
+    this.squarePositions.forEach(({ element, x, y }) => {
+      const diffX = this.mouseX - x;
+      const diffY = this.mouseY - y;
+      const angle = Math.atan2(diffY, diffX) * 180 / Math.PI;
+      element.style.transform = `rotate(${angle}deg)`;
+    });
+
+    this.rafId = requestAnimationFrame(() => this.updateSquareRotations());
+  }
+
+  /**
+   * Setup mousemove effect for squares (RAF-throttled)
    */
   setupMouseMove() {
+    // Update mouse position on move
     document.addEventListener('mousemove', (e) => {
-      const squares = this.wrapper.querySelectorAll('.item');
-      const mouseX = e.pageX;
-      const mouseY = e.pageY;
+      this.mouseX = e.pageX;
+      this.mouseY = e.pageY;
 
-      squares.forEach(square => {
-        const rect = square.getBoundingClientRect();
-        const sqrX = rect.left + rect.width / 2 + window.scrollX;
-        const sqrY = rect.top + rect.height / 2 + window.scrollY;
+      // Start RAF loop if not already running
+      if (!this.isMouseMoveActive) {
+        this.isMouseMoveActive = true;
+        this.cacheSquarePositions();
+        this.updateSquareRotations();
+      }
+    });
 
-        const diffX = mouseX - sqrX;
-        const diffY = mouseY - sqrY;
-        const angle = Math.atan2(diffY, diffX) * 180 / Math.PI;
+    // Stop RAF loop when mouse leaves
+    document.addEventListener('mouseleave', () => {
+      this.isMouseMoveActive = false;
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    });
 
-        square.style.transform = `rotate(${angle}deg)`;
-      });
+    // Recache positions on window resize
+    window.addEventListener('resize', () => {
+      if (this.isMouseMoveActive) {
+        this.cacheSquarePositions();
+      }
     });
   }
 
