@@ -1007,6 +1007,22 @@ nav {
   box-shadow: var(--glow-cyan);
 }
 
+/* Social media SVG icons */
+.social-media-icons .social-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  transition: filter var(--transition-slow);
+}
+
+.social-media-icons .instagram:hover .social-icon,
+.social-media-icons .linkedin:hover .social-icon {
+  filter: drop-shadow(0 0 5px var(--cyan)) drop-shadow(0 0 10px var(--cyan)) drop-shadow(0 0 20px var(--cyan));
+}
+
 /* ============================================================================
    ABOUT SECTION
    ============================================================================ */
