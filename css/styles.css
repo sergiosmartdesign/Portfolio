@@ -1310,19 +1310,154 @@ nav {
   animation-iteration-count: calc(var(--char-index) * 0.55);
 }
 
-/* Paul Rand author attribution */
-#paulrand-author {
-  font-size: 0.7rem;        /* Change this to adjust author name size - Quote is 2x this size */
-  color: #001219;
-  position: relative;
-  top: -1050px;             /* Move up (more negative) or down (more positive) */
-  left: 0px;              /* Move left (negative) or right (positive) */
-  width: 500px;
-  opacity: 0;
-  transform: translateX(-100px);
-  margin-top: 0;
-  text-align: right;
+/* Paul Rand quote */
+@layer base, stick;
+
+@layer base {
+  :root {
+    --font-size-min: 14;
+    --font-size-max: 20;
+    --font-ratio-min: 1.1;
+    --font-ratio-max: 1.33;
+    --font-width-min: 375;
+    --font-width-max: 1500;
+  }
+
+  html {
+    color-scheme: light dark;
+    scrollbar-color: var(--accent) #0000;
+  }
+
+  *,
+  *:after,
+  *:before {
+    box-sizing: border-box;
+  }
+
+  body {
+    place-items: center;
+    background: light-dark(white, black);
+    font-family: 'SF Pro Text', 'SF Pro Icons', 'AOS Icons',
+      'Helvetica Neue', Helvetica, Arial, sans-serif, system-ui;
+    margin: 0;
+  }
+
+  :where(.fluid) {
+    --fluid-min: calc(
+      var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
+    );
+    --fluid-max: calc(
+      var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
+    );
+    --fluid-preferred: calc(
+      (var(--fluid-max) - var(--fluid-min)) /
+        (var(--font-width-max) - var(--font-width-min))
+    );
+    --fluid-type: clamp(
+      (var(--fluid-min) / 16) * 1rem,
+      ((var(--fluid-min) / 16) * 1rem) -
+        (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+        (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+      (var(--fluid-max) / 16) * 1rem
+    );
+    font-size: var(--fluid-type);
+  }
 }
+
+@layer stick {
+  :root {
+    --start: 50vh;
+    --space: 50vh;
+    --hue: 280;
+    --accent: light-dark(hsl(var(--hue) 100% 50%), hsl(var(--hue) 90% 75%));
+  }
+
+  .paul-rands-quote {
+    --font-level: 4;
+    --font-size-min: 24;
+    position: sticky;
+    top: calc((var(--count) - 1) * -1lh);
+    line-height: 1.2;
+    display: flex;
+    align-items: flex-start;
+    width: fit-content;
+    margin-bottom: var(--space);
+  }
+
+  .paul-rands-quote blockquote {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: calc(var(--start) - 0.5lh);
+  }
+
+  .paul-rands-quote blockquote h1 {
+    position: sticky;
+    top: calc(var(--start) - 0.5lh);
+    font-size: inherit;
+    margin: 0;
+    display: inline-block;
+    height: fit-content;
+    font-weight: 600;
+  }
+
+  .paul-rands-quote ul {
+    font-weight: 600;
+    padding-inline: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+
+  .paul-rands-quote li {
+    background: linear-gradient(
+      180deg,
+      transparent 0 calc(var(--start) - 0.5lh),
+      var(--accent) calc(var(--start) - 0.55lh) calc(var(--start) + 0.55lh),
+      transparent calc(var(--start) + 0.5lh)
+    );
+    background-attachment: fixed;
+    color: #0000;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .paul-rands-quote .ending {
+    --font-level: 2;
+    position: fixed;
+    top: calc(var(--start) + 1.5lh);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    margin: 0;
+    font-weight: 600;
+    text-align: center;
+    color: var(--accent);
+    z-index: 10;
+  }
+
+  .paul-rands-quote .ending i {
+    display: block;
+    margin-top: 0.5lh;
+    font-style: italic;
+    color: canvasText;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .paul-rands-quote .ending {
+      animation: fade-in forwards linear;
+      animation-timeline: scroll();
+      animation-range: 0% 100%;
+    }
+
+    @keyframes fade-in {
+      0%, 60% { opacity: 0; }
+      75%, 100% { opacity: 1; }
+    }
+  }
+}
+
+
 
 /* Slide in animation for paragraphs when element becomes visible in viewport */
 #about .about-left p:nth-of-type(1).element-visible {

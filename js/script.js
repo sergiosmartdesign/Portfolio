@@ -750,3 +750,11 @@ window.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('beforeunload', () => {
   window.scrollTo(0, 0);
 });
+
+
+// Paul Rand quote
+const root = document.documentElement.style
+
+root.setProperty('--hue', 0)
+root.setProperty('--start', '50vh')
+root.setProperty('--space', '50vh')
