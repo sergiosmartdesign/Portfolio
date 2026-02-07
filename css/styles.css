@@ -1026,14 +1026,20 @@ nav {
 /* ============================================================================
    ABOUT SECTION
    ============================================================================ */
-#about {
+.about-pin-wrapper {
   position: relative;
+  /* height set by JS = section height + scroll distance for animation */
+}
+
+#about {
+  position: sticky;
+  top: var(--header-height, 60px);
   z-index: var(--z-layer-10);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: clip;
   background: var(--black);
   padding: var(--spacing-3xl) var(--spacing-2xl) 660px var(--spacing-2xl);
 }
@@ -1093,7 +1099,7 @@ nav {
   gap: var(--spacing-md);
 }
 
-.about-left p {
+.about-left > p {
   width: 550px;
   text-align: inherit;
 }
@@ -1139,7 +1145,7 @@ nav {
   line-height: 1.2;
 }
 
-#about p {
+#about p:not(.ending) {
   font-size: 1.1rem;
   line-height: 1.8;
   color: #001219;
@@ -1249,7 +1255,7 @@ nav {
 }
 
 /* --- About Paragraphs (Left Column) --- */
-.about-left p {
+.about-left > p {
   color: #001219;
   position: relative;
   top: -100px;   /* Moves paragraphs 150px up */
@@ -1310,165 +1316,73 @@ nav {
   animation-iteration-count: calc(var(--char-index) * 0.55);
 }
 
-/* Paul Rand quote */
-@layer base, stick;
-
-@layer base {
-  :root {
-    --font-size-min: 14;
-    --font-size-max: 20;
-    --font-ratio-min: 1.1;
-    --font-ratio-max: 1.33;
-    --font-width-min: 375;
-    --font-width-max: 1500;
-  }
-
-  html {
-    color-scheme: light dark;
-    scrollbar-color: var(--accent) #0000;
-  }
-
-  *,
-  *:after,
-  *:before {
-    box-sizing: border-box;
-  }
-
-  body {
-    place-items: center;
-    background: light-dark(white, black);
-    font-family: 'SF Pro Text', 'SF Pro Icons', 'AOS Icons',
-      'Helvetica Neue', Helvetica, Arial, sans-serif, system-ui;
-    margin: 0;
-  }
-
-  :where(.fluid) {
-    --fluid-min: calc(
-      var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
-    );
-    --fluid-max: calc(
-      var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
-    );
-    --fluid-preferred: calc(
-      (var(--fluid-max) - var(--fluid-min)) /
-        (var(--font-width-max) - var(--font-width-min))
-    );
-    --fluid-type: clamp(
-      (var(--fluid-min) / 16) * 1rem,
-      ((var(--fluid-min) / 16) * 1rem) -
-        (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
-        (var(--fluid-preferred) * var(--variable-unit, 100vi)),
-      (var(--fluid-max) / 16) * 1rem
-    );
-    font-size: var(--fluid-type);
-  }
+/* --- Paul Rand Quote --- */
+.paul-rands-quote {
+  position: absolute;
+  top: 537px;
+  left: 160px;
+  font-size: clamp(1.5rem, 2.5vw + 1rem, 3rem);
+  line-height: 1.2;
+  width: fit-content;
+  z-index: 1000;
 }
 
-@layer stick {
-  :root {
-    --start: 50vh;
-    --space: 50vh;
-    --hue: 280;
-    --accent: light-dark(hsl(var(--hue) 100% 50%), hsl(var(--hue) 90% 75%));
-  }
+.paul-rands-quote blockquote {
+  display: flex;
+  align-items: baseline;
+  margin: 0;
+}
 
-  .paul-rands-quote {
-    --font-level: 4;
-    --font-size-min: 24;
-    position: sticky;
-    top: calc((var(--count) - 1) * -1lh);
-    line-height: 1.2;
-    display: flex;
-    align-items: flex-start;
-    width: fit-content;
-    margin-bottom: var(--space);
-  }
+.paul-rands-quote blockquote h1 {
+  font-size: inherit;
+  margin: 0;
+  display: inline-block;
+  font-weight: 600;
+  color: #001219;
+  white-space: nowrap;
+}
 
-  .paul-rands-quote blockquote {
-    display: flex;
-    width: 100%;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: calc(var(--start) - 0.5lh);
-  }
+.paul-rands-quote ul {
+  font-weight: 600;
+  padding-inline: 0;
+  margin: 0;
+  list-style-type: none;
+  height: 1.2em;
+  overflow: hidden;
+}
 
-  .paul-rands-quote blockquote h1 {
-    position: sticky;
-    top: calc(var(--start) - 0.5lh);
-    font-size: inherit;
-    margin: 0;
-    display: inline-block;
-    height: fit-content;
-    font-weight: 600;
-  }
+.paul-rands-quote li {
+  height: 1.2em;
+  white-space: nowrap;
+  color: #ee9b00;
+  will-change: transform;
+}
 
-  .paul-rands-quote ul {
-    font-weight: 600;
-    padding-inline: 0;
-    margin: 0;
-    list-style-type: none;
-  }
+.paul-rands-quote .ending {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.5rem);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
 
-  .paul-rands-quote li {
-    background: linear-gradient(
-      180deg,
-      transparent 0 calc(var(--start) - 0.5lh),
-      var(--accent) calc(var(--start) - 0.55lh) calc(var(--start) + 0.55lh),
-      transparent calc(var(--start) + 0.5lh)
-    );
-    background-attachment: fixed;
-    color: #0000;
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-
-  .paul-rands-quote .ending {
-    --font-level: 2;
-    position: fixed;
-    top: calc(var(--start) + 1.5lh);
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    margin: 0;
-    font-weight: 600;
-    text-align: center;
-    color: var(--accent);
-    z-index: 10;
-  }
-
-  .paul-rands-quote .ending i {
-    display: block;
-    margin-top: 0.5lh;
-    font-style: italic;
-    color: canvasText;
-  }
-
-  @supports (animation-timeline: scroll()) {
-    .paul-rands-quote .ending {
-      animation: fade-in forwards linear;
-      animation-timeline: scroll();
-      animation-range: 0% 100%;
-    }
-
-    @keyframes fade-in {
-      0%, 60% { opacity: 0; }
-      75%, 100% { opacity: 1; }
-    }
-  }
+.paul-rands-quote .ending.visible {
+  opacity: 1;
+  color: #001219;
 }
 
 
 
 /* Slide in animation for paragraphs when element becomes visible in viewport */
-#about .about-left p:nth-of-type(1).element-visible {
+#about .about-left > p:nth-of-type(1).element-visible {
   animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-#about .about-left p:nth-of-type(2).element-visible {
+#about .about-left > p:nth-of-type(2).element-visible {
   animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
-#about .about-left p:nth-of-type(3).element-visible {
+#about .about-left > p:nth-of-type(3).element-visible {
   animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 

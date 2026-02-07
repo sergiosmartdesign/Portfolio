@@ -752,9 +752,66 @@ window.addEventListener('beforeunload', () => {
 });
 
 
-// Paul Rand quote
-const root = document.documentElement.style
+// ============================================================================
+// ABOUT SECTION PIN + PAUL RAND QUOTE REVEAL
+// ============================================================================
 
-root.setProperty('--hue', 0)
-root.setProperty('--start', '50vh')
-root.setProperty('--space', '50vh')
+(function initAboutPin() {
+  const wrapper = document.querySelector('.about-pin-wrapper');
+  const about = document.getElementById('about');
+  const header = document.querySelector('header');
+  if (!wrapper || !about || !header) return;
+
+  const quoteItems = document.querySelectorAll('.paul-rands-quote li');
+  const ending = document.querySelector('.paul-rands-quote .ending');
+  const EXTRA_SCROLL = 800; // pixels of scroll dedicated to the reveal animation
+
+  function measure() {
+    const headerHeight = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+    wrapper.style.height = about.offsetHeight + EXTRA_SCROLL + 'px';
+  }
+
+  // Measure on load and resize
+  measure();
+  window.addEventListener('resize', measure);
+
+  // Build threshold array: one step per item + ending
+  const totalSteps = quoteItems.length + 1; // +1 for the ending
+
+  // Items use the first 75% of scroll; ending fades in during the last 25%
+  var itemRange = 0.75;
+  var numItems = quoteItems.length; // 3
+
+  function onScroll() {
+    var wrapperTop = wrapper.offsetTop;
+    var scrollY = window.scrollY || window.pageYOffset;
+
+    // How far past the pin point we've scrolled (0–1)
+    var pinProgress = Math.max(0, Math.min(1, (scrollY - wrapperTop) / EXTRA_SCROLL));
+
+    // Map item progress: offset goes from -1 (all hidden below) to numItems-1 (last item stays visible)
+    // Each item gets equal time in the visible window
+    var clampedProgress = Math.min(pinProgress, itemRange);
+    var offset = (clampedProgress / itemRange) * (numItems + 1) - 1;
+    offset = Math.min(offset, numItems - 1); // cap so last item never scrolls out
+
+    // translateY in em: at offset -1 items are below the window, at 0 item-0 is centered, etc.
+    var translateY = -offset * 1.2;
+    quoteItems.forEach(function(li) {
+      li.style.transform = 'translateY(' + translateY + 'em)';
+    });
+
+    // Ending fades in during the last 25%
+    if (ending) {
+      if (pinProgress >= itemRange) {
+        ending.classList.add('visible');
+      } else {
+        ending.classList.remove('visible');
+      }
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll(); // initial check
+})();
