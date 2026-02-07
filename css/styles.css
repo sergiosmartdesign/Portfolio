@@ -1110,7 +1110,7 @@ nav {
   flex-direction: column;
   gap: var(--spacing-md);
   padding: 40px;
-  margin-top: 1000px;
+  margin-top: 750px;
   margin-left: -30px;
 }
 
@@ -1279,7 +1279,7 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 650px;    /* Move up (more negative) or down (more positive) */
+  top: 300px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
@@ -1813,19 +1813,27 @@ nav {
 }
 
 .decoration-certs1 {
-  width: 300px;
-  height: 300px;
-  top: 1650px;
-  left: 68px;
-  transform: scale(1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  z-index: 1;
+  object-fit: contain;
+  object-position: left top;
+  pointer-events: none;
+  opacity: 0;
 }
 
 .decoration-vtv1 {
-  width: 330px;
-  height: 300px;
-  top: 1650px;
-  left: 250px;
-  transform: scale(1);
+  position: absolute;
+  top: 50px;
+  left: 35px;
+  width: 420px;
+  height: 350px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
   filter: brightness(0) saturate(100%) invert(5%) sepia(18%) saturate(4098%) hue-rotate(167deg) brightness(95%) contrast(101%);
 }
 
