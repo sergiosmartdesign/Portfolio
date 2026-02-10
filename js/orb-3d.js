@@ -144,7 +144,6 @@ class Orb3D {
   pause() {
     if (this.orbWrap) {
       this.orbWrap.style.animationPlayState = 'paused';
-      console.log('[3D Orb] Paused');
     }
   }
 
@@ -154,7 +153,6 @@ class Orb3D {
   resume() {
     if (this.orbWrap) {
       this.orbWrap.style.animationPlayState = 'running';
-      console.log('[3D Orb] Resumed');
     }
   }
 }

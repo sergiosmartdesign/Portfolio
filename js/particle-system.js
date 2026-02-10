@@ -450,7 +450,6 @@ class ParticleSystem {
    */
   pause() {
     this.isRunning = false;
-    console.log('[Particle System] Paused');
   }
 
   /**
@@ -458,7 +457,6 @@ class ParticleSystem {
    */
   resume() {
     this.isRunning = true;
-    console.log('[Particle System] Resumed');
   }
 }
 

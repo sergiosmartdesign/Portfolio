@@ -392,16 +392,12 @@ class AnimationCoordinator {
             if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
             if (window.Orb3D?.resume) window.Orb3D.resume();
             if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
-
-            console.log('[Animation Optimizer] Intro animations resumed');
           } else {
             introSection.classList.add('paused-animations');
 
             if (window.ParticleSystem?.pause) window.ParticleSystem.pause();
             if (window.Orb3D?.pause) window.Orb3D.pause();
             if (window.BarcodeAnimation?.stop) window.BarcodeAnimation.stop();
-
-            console.log('[Animation Optimizer] Intro animations paused');
           }
         });
       }, introObserverOptions);
@@ -409,19 +405,19 @@ class AnimationCoordinator {
       introObserver.observe(introSection);
     }
 
+    // Shared scroll guard: prevents animations from triggering on initial page load
+    let userHasScrolled = false;
+    const scrollGuardListener = () => {
+      if (window.scrollY > 100) {
+        userHasScrolled = true;
+        window.removeEventListener('scroll', scrollGuardListener);
+      }
+    };
+    window.addEventListener('scroll', scrollGuardListener);
+
     // Optimize about section animations - trigger only once when visible
     if (aboutSection) {
       let aboutAnimationTriggered = false;
-      let userHasScrolled = false;
-
-      // Track if user has scrolled away from top
-      const scrollListener = () => {
-        if (window.scrollY > 100) {
-          userHasScrolled = true;
-          window.removeEventListener('scroll', scrollListener);
-        }
-      };
-      window.addEventListener('scroll', scrollListener);
 
       const aboutObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -443,16 +439,12 @@ class AnimationCoordinator {
                 window.glitchSystem.animateDNAReveal();
               }, TIMING.DNA_REVEAL_DELAY);
             }
-
-            console.log('[Animation Optimizer] About section animations activated');
           } else if (!entry.isIntersecting && aboutAnimationTriggered) {
             // Pause animations when scrolled away but keep glitch-active
             aboutSection.classList.add('paused-animations');
-            console.log('[Animation Optimizer] About animations paused');
           } else if (entry.isIntersecting && aboutAnimationTriggered) {
             // Resume animations when scrolled back into view
             aboutSection.classList.remove('paused-animations');
-            console.log('[Animation Optimizer] About animations resumed');
           }
         });
       }, scrollTriggerOptions);
@@ -463,22 +455,12 @@ class AnimationCoordinator {
     // Certificate gallery layer - trigger animation when visible
     if (certGalleryLayer) {
       let certGalleryAnimated = false;
-      let userHasScrolledForGallery = false;
-
-      const galleryScrollListener = () => {
-        if (window.scrollY > 100) {
-          userHasScrolledForGallery = true;
-          window.removeEventListener('scroll', galleryScrollListener);
-        }
-      };
-      window.addEventListener('scroll', galleryScrollListener);
 
       const certObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting && !certGalleryAnimated && userHasScrolledForGallery) {
+          if (entry.isIntersecting && !certGalleryAnimated && userHasScrolled) {
             certGalleryLayer.classList.add('visible');
             certGalleryAnimated = true;
-            console.log('[Animation Optimizer] Certificate gallery animations activated');
           }
         });
       }, scrollTriggerOptions);
@@ -493,7 +475,7 @@ class AnimationCoordinator {
     };
 
     // Helper function to create element observer
-    const createElementObserver = (elementId, logMessage) => {
+    const createElementObserver = (elementId) => {
       const element = document.getElementById(elementId);
       if (element) {
         let elementAnimated = false;
@@ -502,7 +484,6 @@ class AnimationCoordinator {
             if (entry.isIntersecting && !elementAnimated) {
               element.classList.add('element-visible');
               elementAnimated = true;
-              console.log(`[Animation Optimizer] ${logMessage}`);
             }
           });
         }, elementObserverOptions);
@@ -511,16 +492,15 @@ class AnimationCoordinator {
     };
 
     // Helper function to create class-based observer (for multiple elements with same class)
-    const createClassObserver = (className, logMessage) => {
+    const createClassObserver = (className) => {
       const elements = document.querySelectorAll(className);
-      elements.forEach((element, index) => {
+      elements.forEach((element) => {
         let elementAnimated = false;
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting && !elementAnimated) {
               element.classList.add('element-visible');
               elementAnimated = true;
-              console.log(`[Animation Optimizer] ${logMessage} ${index + 1}`);
             }
           });
         }, elementObserverOptions);
@@ -529,15 +509,15 @@ class AnimationCoordinator {
     };
 
     // Left column observers
-    createElementObserver('abouttitle', 'About title animation triggered');
-    createClassObserver('#about .about-left p', 'Left paragraph animation triggered -');
-    createElementObserver('paulrand-quote', 'Paul Rand quote animation triggered');
-    createElementObserver('paulrand-author', 'Paul Rand author animation triggered');
+    createElementObserver('abouttitle');
+    createClassObserver('#about .about-left p');
+    createElementObserver('paulrand-quote');
+    createElementObserver('paulrand-author');
     // Note: ID1 SVG observer is set up after SVG conversion in setupID1Observer()
 
     // Right column observers
-    createElementObserver('dnatitle', 'DNA title animation triggered');
-    createElementObserver('aboutp4', 'aboutp4 paragraph animation triggered');
+    createElementObserver('dnatitle');
+    createElementObserver('aboutp4');
 
     // DNA capsule SVG observer
     const dnaCapsuleSvg = document.getElementById('dnacapsule1');
@@ -548,7 +528,6 @@ class AnimationCoordinator {
           if (entry.isIntersecting && !capsuleAnimated) {
             dnaCapsuleSvg.classList.add('element-visible');
             capsuleAnimated = true;
-            console.log('[Animation Optimizer] DNA capsule SVG animation triggered');
           }
         });
       }, elementObserverOptions);
@@ -564,7 +543,6 @@ class AnimationCoordinator {
           if (entry.isIntersecting && !rightAnimated) {
             aboutRight.classList.add('element-visible');
             rightAnimated = true;
-            console.log('[Animation Optimizer] About right column line animation triggered');
           }
         });
       }, elementObserverOptions);
@@ -572,13 +550,11 @@ class AnimationCoordinator {
     }
 
     // SVG Decorations observers
-    createClassObserver('.decoration-bar1', 'Decoration bar1 animation triggered -');
-    createClassObserver('.decoration-bar2', 'Decoration bar2 animation triggered -');
-    createClassObserver('.decoration-certs1', 'Decoration certs1 animation triggered -');
-    createClassObserver('.decoration-vtv1', 'Decoration vtv1 animation triggered -');
-    createClassObserver('.decoration-skills', 'Decoration skills animation triggered -');
-
-    console.log('[Animation Optimizer] Initialized scroll-triggered animations for all sections');
+    createClassObserver('.decoration-bar1');
+    createClassObserver('.decoration-bar2');
+    createClassObserver('.decoration-certs1');
+    createClassObserver('.decoration-vtv1');
+    createClassObserver('.decoration-skills');
   }
 }
 
@@ -677,8 +653,6 @@ function convertID1SvgToInline() {
       // Replace img with inline SVG
       imgElement.parentNode.replaceChild(svgElement, imgElement);
 
-      console.log('[ID1 SVG] Converted to inline SVG with animation classes');
-
       // Set up observer for ID1 SVG AFTER conversion completes
       setupID1Observer();
     })
@@ -702,13 +676,11 @@ function setupID1Observer() {
         if (entry.isIntersecting && !id1Animated) {
           id1svg.classList.add('element-visible');
           id1Animated = true;
-          console.log('[Animation Optimizer] ID1 SVG animation triggered');
         }
       });
     }, elementObserverOptions);
 
     id1Observer.observe(id1svg);
-    console.log('[Animation Optimizer] ID1 SVG observer set up after conversion');
   }
 }
 

@@ -25,10 +25,3 @@ const BrowserDetect = {
 
 // Make globally available
 window.BrowserDetect = BrowserDetect;
-
-// Log detection results
-console.log('[Browser Detect]', {
-  Safari: BrowserDetect.isSafari,
-  iOS: BrowserDetect.isIOS,
-  Tier: BrowserDetect.getPerformanceTier()
-});

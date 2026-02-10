@@ -129,12 +129,6 @@
   color: #e9d8a6 !important;
 }
 
-/* Line grow animation on load (same as header nav buttons) */
-@keyframes lineGrow {
-  from { background-size: 0% 0.5px; }
-  to { background-size: 100% 0.5px; }
-}
-
 .cert-gallery-embedded .actions button:hover {
   background-size: 100% 100%;
   background-position: 0% 100%;
