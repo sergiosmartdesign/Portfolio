@@ -1041,7 +1041,7 @@ nav {
   justify-content: center;
   overflow: clip;
   background: var(--black);
-  padding: var(--spacing-3xl) var(--spacing-2xl) 660px var(--spacing-2xl);
+  padding: var(--spacing-3xl) var(--spacing-2xl) 100px var(--spacing-2xl);
 }
 
 /* Layer 2: About section - Background image */
@@ -1340,6 +1340,23 @@ nav {
   font-weight: 600;
   color: #001219;
   white-space: nowrap;
+}
+
+/* Prevent quote glitch on page load */
+.paul-rands-quote h1[data-splitting] [data-char]:after {
+  color: #001219 !important;
+  font-weight: 600;
+  animation-name: none;
+}
+
+/* Enable glitch when about section is visible */
+#about .paul-rands-quote h1[data-splitting].element-visible [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
 }
 
 .paul-rands-quote ul {

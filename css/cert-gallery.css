@@ -114,7 +114,7 @@
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
   padding: 5px 0;
-  color: #001219;
+  color: #e9d8a6;
   display: inline-flex;
   background-image: linear-gradient(var(--orange, #ff3c00), var(--orange, #ff3c00));
   background-size: 100% 0.5px;
@@ -126,7 +126,7 @@
 
 /* Force glitch text color to match */
 .cert-gallery-embedded .actions button [data-char]:after {
-  color: #001219 !important;
+  color: #e9d8a6 !important;
 }
 
 /* Line grow animation on load (same as header nav buttons) */
