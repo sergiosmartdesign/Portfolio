@@ -299,6 +299,18 @@ class NavigationManager {
             return;
           }
 
+          if (sectionId === 'photo') {
+            e.preventDefault();
+            const photoSpacer = document.querySelector('.photo-scroll-spacer');
+            if (photoSpacer) {
+              // Scroll so the spacer top aligns with viewport top (fully revealed)
+              const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({ top: spacerTop, behavior: 'smooth' });
+            }
+            this.setActiveButton('photo');
+            return;
+          }
+
           setTimeout(() => {
             this.setActiveButton(sectionId);
           }, TIMING.NAV_SCROLL_DELAY);
@@ -549,6 +561,31 @@ class AnimationCoordinator {
       rightObserver.observe(aboutRight);
     }
 
+    // Photo section scroll-linked reveal (top-to-bottom wipe)
+    const photoSection = document.querySelector('#photo');
+    const photoSpacer = document.querySelector('.photo-scroll-spacer');
+    if (photoSection && photoSpacer) {
+      const updatePhotoReveal = () => {
+        const spacerRect = photoSpacer.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // Animation starts when spacer top enters viewport bottom,
+        // ends when spacer top reaches viewport top
+        const progress = 1 - (spacerRect.top / viewportHeight);
+        const clamped = Math.max(0, Math.min(1, progress));
+
+        // Hide photo section entirely until animation is about to start
+        photoSection.style.visibility = clamped > 0 ? 'visible' : 'hidden';
+
+        // clip-path: inset(0 0 <remaining%> 0) — reveals from top to bottom
+        const clipBottom = (1 - clamped) * 100;
+        photoSection.style.clipPath = `inset(0 0 ${clipBottom}% 0)`;
+      };
+
+      window.addEventListener('scroll', updatePhotoReveal, { passive: true });
+      updatePhotoReveal();
+    }
+
     // SVG Decorations observers
     createClassObserver('.decoration-bar1');
     createClassObserver('.decoration-bar2');
@@ -684,6 +721,11 @@ function setupID1Observer() {
   }
 }
 
+// Disable browser scroll restoration
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   // Always scroll to top on page load
   window.scrollTo(0, 0);
@@ -716,6 +758,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // DNA effects will be initialized when about section becomes visible
   // (handled in AnimationCoordinator.initAnimationOptimizer)
+});
+
+// Scroll to top on full page load (overrides browser scroll restoration)
+window.addEventListener('load', () => {
+  window.scrollTo(0, 0);
 });
 
 // Scroll to top before page unload

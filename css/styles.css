@@ -1028,6 +1028,7 @@ nav {
    ============================================================================ */
 .about-pin-wrapper {
   position: relative;
+  z-index: var(--z-layer-10);
   /* height set by JS = section height + scroll distance for animation */
 }
 
@@ -1894,6 +1895,27 @@ nav {
   z-index: var(--z-layer-10);
   min-height: 100vh;
   background: var(--black);
+}
+
+/* ============================================================================
+   PHOTO SECTION
+   ============================================================================ */
+#photo {
+  background: #001219;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: var(--z-layer-15);
+  visibility: hidden;
+  clip-path: inset(0 0 100% 0);
+}
+
+.photo-scroll-spacer {
+  position: relative;
+  height: 100vh;
+  z-index: var(--z-layer-1);
 }
 
 /* ============================================================================
