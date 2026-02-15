@@ -561,10 +561,75 @@ class AnimationCoordinator {
       rightObserver.observe(aboutRight);
     }
 
-    // Photo section scroll-linked reveal (top-to-bottom wipe)
+    // Photo section scroll-linked reveal (top-to-bottom wipe) + static line
     const photoSection = document.querySelector('#photo');
     const photoSpacer = document.querySelector('.photo-scroll-spacer');
-    if (photoSection && photoSpacer) {
+    const staticLineCanvas = document.querySelector('.photo-static-line');
+
+    if (photoSection && photoSpacer && staticLineCanvas) {
+      const ctx = staticLineCanvas.getContext('2d');
+      let staticAnimationId = null;
+      let scrollTimeout = null;
+
+      // Size canvas to full width
+      const resizeCanvas = () => {
+        staticLineCanvas.width = window.innerWidth;
+        staticLineCanvas.height = 4;
+      };
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Draw electric static line
+      const drawStaticLine = () => {
+        const w = staticLineCanvas.width;
+        const h = staticLineCanvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#0ef';
+        ctx.shadowColor = '#0ef';
+        ctx.shadowBlur = 6;
+        ctx.lineWidth = 1.5;
+
+        ctx.moveTo(0, h / 2);
+        for (let x = 0; x < w; x += 3) {
+          const jitter = (Math.random() - 0.5) * h * 2;
+          ctx.lineTo(x, h / 2 + jitter);
+        }
+        ctx.stroke();
+
+        // Add bright white flicker segments
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = 3;
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 3) {
+          if (Math.random() > 0.7) {
+            const jitter = (Math.random() - 0.5) * h;
+            ctx.lineTo(x, h / 2 + jitter);
+          } else {
+            ctx.moveTo(x, h / 2);
+          }
+        }
+        ctx.stroke();
+
+        staticAnimationId = requestAnimationFrame(drawStaticLine);
+      };
+
+      const showStaticLine = () => {
+        staticLineCanvas.classList.add('active');
+        if (!staticAnimationId) drawStaticLine();
+      };
+
+      const hideStaticLine = () => {
+        staticLineCanvas.classList.remove('active');
+        if (staticAnimationId) {
+          cancelAnimationFrame(staticAnimationId);
+          staticAnimationId = null;
+        }
+      };
+
       const updatePhotoReveal = () => {
         const spacerRect = photoSpacer.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
@@ -580,6 +645,21 @@ class AnimationCoordinator {
         // clip-path: inset(0 0 <remaining%> 0) — reveals from top to bottom
         const clipBottom = (1 - clamped) * 100;
         photoSection.style.clipPath = `inset(0 0 ${clipBottom}% 0)`;
+
+        // Position static line at the reveal edge
+        const revealEdgeY = clamped * viewportHeight;
+        staticLineCanvas.style.top = `${revealEdgeY - 2}px`;
+
+        // Show static line only while scrolling and photo is visible
+        if (clamped > 0 && clamped < 1) {
+          showStaticLine();
+        } else {
+          hideStaticLine();
+        }
+
+        // Hide static line when scrolling stops
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(hideStaticLine, 150);
       };
 
       window.addEventListener('scroll', updatePhotoReveal, { passive: true });
