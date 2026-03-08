@@ -695,6 +695,91 @@ class AnimationCoordinator {
       updatePhotoReveal();
     }
 
+    // About section bottom static line
+    const aboutBottomCanvas = document.querySelector('.about-bottom-static-line');
+    if (aboutBottomCanvas) {
+      const aboutCtx = aboutBottomCanvas.getContext('2d');
+      let aboutStaticAnimId = null;
+      let aboutScrollTimeout = null;
+
+      const resizeAboutCanvas = () => {
+        aboutBottomCanvas.width = window.innerWidth;
+        aboutBottomCanvas.height = 4;
+      };
+      resizeAboutCanvas();
+      window.addEventListener('resize', resizeAboutCanvas);
+
+      const drawAboutStaticLine = () => {
+        const w = aboutBottomCanvas.width;
+        const h = aboutBottomCanvas.height;
+        aboutCtx.clearRect(0, 0, w, h);
+
+        aboutCtx.beginPath();
+        aboutCtx.strokeStyle = '#0ef';
+        aboutCtx.shadowColor = '#0ef';
+        aboutCtx.shadowBlur = 6;
+        aboutCtx.lineWidth = 1.5;
+        aboutCtx.moveTo(0, h / 2);
+        for (let x = 0; x < w; x += 3) {
+          const jitter = (Math.random() - 0.5) * h * 2;
+          aboutCtx.lineTo(x, h / 2 + jitter);
+        }
+        aboutCtx.stroke();
+
+        aboutCtx.beginPath();
+        aboutCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        aboutCtx.shadowColor = '#fff';
+        aboutCtx.shadowBlur = 3;
+        aboutCtx.lineWidth = 1;
+        for (let x = 0; x < w; x += 3) {
+          if (Math.random() > 0.7) {
+            const jitter = (Math.random() - 0.5) * h;
+            aboutCtx.lineTo(x, h / 2 + jitter);
+          } else {
+            aboutCtx.moveTo(x, h / 2);
+          }
+        }
+        aboutCtx.stroke();
+
+        aboutStaticAnimId = requestAnimationFrame(drawAboutStaticLine);
+      };
+
+      const aboutSec = document.getElementById('about');
+
+      const showAboutLine = () => {
+        aboutBottomCanvas.classList.add('active');
+        if (!aboutStaticAnimId) drawAboutStaticLine();
+      };
+
+      const hideAboutLine = () => {
+        aboutBottomCanvas.classList.remove('active');
+        if (aboutStaticAnimId) {
+          cancelAnimationFrame(aboutStaticAnimId);
+          aboutStaticAnimId = null;
+        }
+      };
+
+      const updateAboutLine = () => {
+        if (!aboutSec) return;
+        const bottom = aboutSec.getBoundingClientRect().bottom;
+        const inViewport = bottom > 4 && bottom < window.innerHeight - 4;
+
+        if (inViewport) {
+          aboutBottomCanvas.style.top = `${bottom - 2}px`;
+          showAboutLine();
+        } else {
+          hideAboutLine();
+          return;
+        }
+
+        clearTimeout(aboutScrollTimeout);
+        aboutScrollTimeout = setTimeout(hideAboutLine, 150);
+      };
+
+      window.addEventListener('scroll', updateAboutLine, { passive: true });
+      updateAboutLine();
+    }
+
     // SVG Decorations observers
     createClassObserver('.decoration-bar1');
     createClassObserver('.decoration-bar2');

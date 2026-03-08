@@ -2023,6 +2023,22 @@ nav {
   opacity: 1;
 }
 
+.about-bottom-static-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  z-index: var(--z-layer-15);
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+  pointer-events: none;
+}
+
+.about-bottom-static-line.active {
+  opacity: 1;
+}
+
 .photo-scroll-spacer {
   position: relative;
   height: 100vh;
