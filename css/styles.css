@@ -339,6 +339,31 @@ body {
   }
 }
 
+@keyframes slideOutToLeft {
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-100px); }
+}
+
+@keyframes slideOutToRight {
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(100px); }
+}
+
+@keyframes slideUpFade {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-100px); }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+@keyframes eraseLineVertical {
+  0% { opacity: 1; scale: 1 1; }
+  100% { opacity: 0; scale: 1 0; }
+}
+
 /* ============================================================================
    HEADER & NAVIGATION
    ============================================================================ */
@@ -1136,6 +1161,10 @@ nav {
   animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 0s forwards;
 }
 
+#about .about-right.element-exit::before {
+  animation: eraseLineVertical 0.5s ease-in 0s forwards;
+}
+
 /* --- About Typography --- */
 #about h2 {
   font-size: 5rem;
@@ -1253,6 +1282,22 @@ nav {
 
 #about #abouttitle.element-visible .title-line-4 {
   animation: slideDownFade 0.8s ease-out 0.45s forwards;
+}
+
+#about #abouttitle.element-exit .title-line-1 {
+  animation: slideUpFade 0.5s ease-in 0s forwards;
+}
+
+#about #abouttitle.element-exit .title-line-2 {
+  animation: slideUpFade 0.5s ease-in 0.05s forwards;
+}
+
+#about #abouttitle.element-exit .title-line-3 {
+  animation: slideUpFade 0.5s ease-in 0.1s forwards;
+}
+
+#about #abouttitle.element-exit .title-line-4 {
+  animation: slideUpFade 0.5s ease-in 0.15s forwards;
 }
 
 /* --- About Paragraphs (Left Column) --- */
@@ -1404,6 +1449,12 @@ nav {
   animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
+#about .about-left > p:nth-of-type(1).element-exit,
+#about .about-left > p:nth-of-type(2).element-exit,
+#about .about-left > p:nth-of-type(3).element-exit {
+  animation: slideOutToLeft 0.5s ease-in 0s forwards;
+}
+
 /* Slide in animation for Paul Rand quote when element becomes visible in viewport */
 #about #paulrand-quote.element-visible {
   animation: slideInFromLeft 0.8s ease-out 0s forwards;
@@ -1413,14 +1464,30 @@ nav {
   animation: slideInFromLeft 0.8s ease-out 0.2s forwards;
 }
 
+#about #paulrand-quote.element-exit {
+  animation: slideOutToLeft 0.5s ease-in 0s forwards;
+}
+
+#about #paulrand-author.element-exit {
+  animation: slideOutToLeft 0.5s ease-in 0.1s forwards;
+}
+
 /* Slide in animation for DNA title when element becomes visible in viewport */
 #about #dnatitle.element-visible {
   animation: slideInFromRight 0.8s ease-out 0s forwards;
 }
 
+#about #dnatitle.element-exit {
+  animation: slideOutToRight 0.5s ease-in 0s forwards;
+}
+
 /* Slide in animation for aboutp4 paragraph when element becomes visible in viewport */
 #about #aboutp4.element-visible {
   animation: slideInFromRight 0.8s ease-out 0s forwards;
+}
+
+#about #aboutp4.element-exit {
+  animation: slideOutToRight 0.5s ease-in 0s forwards;
 }
 
 /* First letter of first paragraph - Large with same glitch effect as h2 titles */
@@ -1572,6 +1639,10 @@ nav {
   animation: capsuleGrow 1.5s ease-out 0s forwards;
 }
 
+#about .dna-capsule-svg.element-exit {
+  animation: fadeOut 0.5s ease-in 0s forwards;
+}
+
 @keyframes capsuleGrow {
   0% {
     transform: scaleX(0) scaleY(0.025); /* Start: 0 width, ~10px height (10/400 = 0.025) */
@@ -1709,6 +1780,10 @@ nav {
 }
 
 /* Animate ID1 SVG when element becomes visible in viewport - Multi-stage animation */
+#about #id1svg.element-exit {
+  animation: slideUpFade 0.4s ease-in 0s forwards;
+}
+
 #about #id1svg.element-visible {
   animation: slideDownFade 0.4s ease-out 0s forwards,
              id1Pulse 0.4s ease-in-out 0s,
@@ -1855,20 +1930,40 @@ nav {
   animation: slideInFromLeft 0.8s ease-out 0s forwards;
 }
 
+#about .decoration-bar1.element-exit {
+  animation: slideOutToLeft 0.5s ease-in 0s forwards;
+}
+
 #about .decoration-bar2.element-visible {
   animation: slideDownFade 0.8s ease-out 0s forwards;
+}
+
+#about .decoration-bar2.element-exit {
+  animation: slideUpFade 0.5s ease-in 0s forwards;
 }
 
 #about .decoration-certs1.element-visible {
   animation: skillsFadeIn 1s ease-out 0s forwards;
 }
 
+#about .decoration-certs1.element-exit {
+  animation: fadeOut 0.5s ease-in 0s forwards;
+}
+
 #about .decoration-vtv1.element-visible {
   animation: skillsFadeIn 1s ease-out 0s forwards;
 }
 
+#about .decoration-vtv1.element-exit {
+  animation: fadeOut 0.5s ease-in 0s forwards;
+}
+
 #about .decoration-skills.element-visible {
   animation: skillsFadeIn 1s ease-out 0s forwards;
+}
+
+#about .decoration-skills.element-exit {
+  animation: fadeOut 0.5s ease-in 0s forwards;
 }
 
 /* Skills decoration fade and scale animation */

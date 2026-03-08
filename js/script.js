@@ -503,12 +503,16 @@ class AnimationCoordinator {
     const createElementObserver = (elementId) => {
       const element = document.getElementById(elementId);
       if (element) {
-        let elementAnimated = false;
+        let hasEntered = false;
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
-            if (entry.isIntersecting && !elementAnimated) {
+            if (entry.isIntersecting) {
+              hasEntered = true;
+              element.classList.remove('element-exit');
               element.classList.add('element-visible');
-              elementAnimated = true;
+            } else if (hasEntered) {
+              element.classList.remove('element-visible');
+              element.classList.add('element-exit');
             }
           });
         }, elementObserverOptions);
@@ -520,12 +524,16 @@ class AnimationCoordinator {
     const createClassObserver = (className) => {
       const elements = document.querySelectorAll(className);
       elements.forEach((element) => {
-        let elementAnimated = false;
+        let hasEntered = false;
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
-            if (entry.isIntersecting && !elementAnimated) {
+            if (entry.isIntersecting) {
+              hasEntered = true;
+              element.classList.remove('element-exit');
               element.classList.add('element-visible');
-              elementAnimated = true;
+            } else if (hasEntered) {
+              element.classList.remove('element-visible');
+              element.classList.add('element-exit');
             }
           });
         }, elementObserverOptions);
@@ -547,12 +555,16 @@ class AnimationCoordinator {
     // DNA capsule SVG observer
     const dnaCapsuleSvg = document.getElementById('dnacapsule1');
     if (dnaCapsuleSvg) {
-      let capsuleAnimated = false;
+      let capsuleEntered = false;
       const capsuleObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting && !capsuleAnimated) {
+          if (entry.isIntersecting) {
+            capsuleEntered = true;
+            dnaCapsuleSvg.classList.remove('element-exit');
             dnaCapsuleSvg.classList.add('element-visible');
-            capsuleAnimated = true;
+          } else if (capsuleEntered) {
+            dnaCapsuleSvg.classList.remove('element-visible');
+            dnaCapsuleSvg.classList.add('element-exit');
           }
         });
       }, elementObserverOptions);
@@ -562,12 +574,16 @@ class AnimationCoordinator {
     // About right column observer (for ::before line)
     const aboutRight = document.querySelector('.about-right');
     if (aboutRight) {
-      let rightAnimated = false;
+      let rightEntered = false;
       const rightObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting && !rightAnimated) {
+          if (entry.isIntersecting) {
+            rightEntered = true;
+            aboutRight.classList.remove('element-exit');
             aboutRight.classList.add('element-visible');
-            rightAnimated = true;
+          } else if (rightEntered) {
+            aboutRight.classList.remove('element-visible');
+            aboutRight.classList.add('element-exit');
           }
         });
       }, elementObserverOptions);
@@ -795,7 +811,7 @@ function convertID1SvgToInline() {
 function setupID1Observer() {
   const id1svg = document.getElementById('id1svg');
   if (id1svg) {
-    let id1Animated = false;
+    let id1Entered = false;
     const elementObserverOptions = {
       threshold: 0.3,
       rootMargin: '0px 0px -20% 0px'
@@ -803,9 +819,13 @@ function setupID1Observer() {
 
     const id1Observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && !id1Animated) {
+        if (entry.isIntersecting) {
+          id1Entered = true;
+          id1svg.classList.remove('element-exit');
           id1svg.classList.add('element-visible');
-          id1Animated = true;
+        } else if (id1Entered) {
+          id1svg.classList.remove('element-visible');
+          id1svg.classList.add('element-exit');
         }
       });
     }, elementObserverOptions);
