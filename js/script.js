@@ -780,6 +780,57 @@ class AnimationCoordinator {
       updateAboutLine();
     }
 
+    // ── Overlap collision star ───────────────────────────────────────────────
+    const collisionStar = document.getElementById('line-collision-star');
+    const photoLineEl   = document.querySelector('.photo-static-line');
+    const aboutLineEl   = document.querySelector('.about-bottom-static-line');
+
+    if (collisionStar) {
+      let animating  = false;
+      let overlapping = false;
+
+      const checkLineOverlap = () => {
+        const aboutEl  = document.getElementById('about');
+        const spacerEl = document.querySelector('.photo-scroll-spacer');
+        if (!aboutEl || !spacerEl) return;
+
+        const aboutBottom = aboutEl.getBoundingClientRect().bottom;
+        const vh = window.innerHeight;
+
+        if (aboutBottom <= 4 || aboutBottom >= vh - 4) { overlapping = false; return; }
+
+        const spacerTop  = spacerEl.getBoundingClientRect().top;
+        const progress   = 1 - (spacerTop / vh);
+        const clamped    = Math.max(0, Math.min(1, progress));
+        if (clamped <= 0 || clamped >= 1) { overlapping = false; return; }
+
+        const revealEdgeY   = clamped * vh;
+        const inOverlapZone = Math.abs(aboutBottom - revealEdgeY) < 8;
+
+        if (inOverlapZone && !overlapping && !animating) {
+          overlapping = true;
+          animating   = true;
+
+          collisionStar.style.top = ((aboutBottom + revealEdgeY) / 2) + 'px';
+
+          // Restart animation cleanly (remove → reflow → add)
+          collisionStar.classList.remove('firing');
+          void collisionStar.offsetWidth;
+          collisionStar.classList.add('firing');
+
+          setTimeout(() => {
+            collisionStar.classList.remove('firing');
+            animating = false;
+          }, 800);
+
+        } else if (!inOverlapZone) {
+          overlapping = false;
+        }
+      };
+
+      window.addEventListener('scroll', checkLineOverlap, { passive: true });
+    }
+
     // SVG Decorations observers
     createClassObserver('.decoration-bar1');
     createClassObserver('.decoration-bar2');

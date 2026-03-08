@@ -2045,6 +2045,53 @@ nav {
   z-index: var(--z-layer-1);
 }
 
+/* ── Overlap Collision Star ─────────────────────────────────────────────── */
+#line-collision-star {
+  position: fixed;
+  left: 50%;
+  height: 320px;
+  transform: translateX(-50%) translateY(-50%);
+  display: none;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+#line-collision-star.firing {
+  display: flex;
+}
+
+#line-collision-star span {
+  display: block;
+  width: 2px;
+  background: #ee9b00;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: center;
+  animation: starFlash 0.7s ease-out forwards;
+}
+
+#line-collision-star span:nth-child(1) { height: 140px; animation-delay: 0.02s; }
+#line-collision-star span:nth-child(2) { height: 240px; animation-delay: 0.01s; }
+#line-collision-star span:nth-child(3) { height: 320px; animation-delay: 0s;    }
+#line-collision-star span:nth-child(4) { height: 220px; animation-delay: 0.03s; }
+#line-collision-star span:nth-child(5) { height: 160px; animation-delay: 0.04s; }
+
+@keyframes starFlash {
+  0%   { opacity: 0; transform: scaleY(0);    box-shadow: none; }
+  8%   { opacity: 1; transform: scaleY(1);    box-shadow: 0 0 8px #ee9b00, 0 0 25px #ee9b00, 0 0 50px #ee9b00; }
+  18%  { opacity: 0; transform: scaleY(0.9); }
+  28%  { opacity: 1; transform: scaleY(1);    box-shadow: 0 0 6px #ee9b00, 0 0 18px #ee9b00; }
+  38%  { opacity: 0; transform: scaleY(0.8); }
+  52%  { opacity: 1; transform: scaleY(0.87); box-shadow: 0 0 10px #ee9b00, 0 0 30px #ee9b00, 0 0 60px #ee9b00; }
+  62%  { opacity: 0; transform: scaleY(0.7); }
+  72%  { opacity: 0.8; transform: scaleY(0.6); box-shadow: 0 0 4px #ee9b00, 0 0 12px #ee9b00; }
+  82%  { opacity: 0; transform: scaleY(0.4); }
+  90%  { opacity: 0.3; transform: scaleY(0.2); }
+  100% { opacity: 0; transform: scaleY(0); }
+}
+
 /* ============================================================================
    RESPONSIVE MEDIA QUERIES
    ============================================================================ */
