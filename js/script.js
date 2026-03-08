@@ -273,9 +273,10 @@ class NavigationManager {
 
     this.observer = new IntersectionObserver(observerCallback, observerOptions);
 
-    // Observe all sections except intro
+    // Observe all sections except intro and photo (#photo is position:fixed,
+    // so IntersectionObserver always fires for it at page load — tracked via scroll instead)
     this.sections.forEach(section => {
-      if (section.id && section.id !== 'intro') {
+      if (section.id && section.id !== 'intro' && section.id !== 'photo') {
         this.observer.observe(section);
       }
     });
@@ -349,6 +350,18 @@ class NavigationManager {
           if (scrollPosition < introHeight * 0.7) {
             this.navButtons.forEach(btn => btn.classList.remove('active'));
             this.updateHeaderBackground('intro');
+            return;
+          }
+        }
+
+        // Photo section: #photo is position:fixed so IntersectionObserver can't track it.
+        // Use the spacer's viewport position to determine if we're in the photo reveal zone.
+        const photoSpacer = document.querySelector('.photo-scroll-spacer');
+        if (photoSpacer) {
+          const spacerRect = photoSpacer.getBoundingClientRect();
+          const progress = 1 - (spacerRect.top / window.innerHeight);
+          if (progress > 0 && progress <= 1) {
+            this.setActiveButton('photo');
           }
         }
       }, TIMING.NAV_DEBOUNCE);
