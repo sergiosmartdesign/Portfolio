@@ -14,15 +14,16 @@
   // ── CONFIGURATION ───────────────────────────────────────────────────────────
   const CONFIG = {
     // Text rendered in the scene
-    text:             'Photography.',
+    text:             '[ · p h o t o g r a p h y · ]',
     fontFamily:       '"Funnel Display", sans-serif',
     fontWeight:       900,
+    letterSpacing:    '0',
 
     // Scroll-driven font size animation:
     // starts large when the section first enters the viewport,
     // shrinks to small when the section is fully revealed.
-    fontSizeVwStart:  18,   // font size (% of section width) at scroll progress 0
-    fontSizeVwEnd:    8,    // font size (% of section width) at scroll progress 1
+    fontSizeVwStart:  12.6, // font size (% of section width) at scroll progress 0
+    fontSizeVwEnd:    5.6,  // font size (% of section width) at scroll progress 1
 
     // Section background colour — keep in sync with CSS #001219
     bgColor:          [0, 18, 25],   // [R, G, B] 0–255
@@ -58,6 +59,7 @@
       uniform float     u_lightRadius;
       uniform float     u_rainbow;
       uniform float     u_dither;
+      uniform vec3      u_textColor;
 
       float h2(vec2 p) { return fract(sin(dot(p, vec2(489.,589.)))*492.)*2.-1.; }
       float h3(vec3 p) { return fract(sin(dot(p, vec3(489.,589.,58.)))*492.)*2.-1.; }
@@ -74,7 +76,7 @@
       void main() {
         vec2 uv = gl_FragCoord.xy / u_res;
 
-        if (samp(uv).r > 0.5) { gl_FragColor = vec4(1.0); return; }
+        if (samp(uv).r > 0.5) { gl_FragColor = vec4(u_textColor, 1.0); return; }
 
         float ar = u_res.x / u_res.y;
         vec2 p   = (uv * 2. - 1.) * vec2(ar, 1.);
@@ -174,6 +176,7 @@
       lr:    gl.getUniformLocation(prog, 'u_lightRadius'),
       rb:    gl.getUniformLocation(prog, 'u_rainbow'),
       dt:    gl.getUniformLocation(prog, 'u_dither'),
+      tc:    gl.getUniformLocation(prog, 'u_textColor'),
     };
 
     gl.uniform1f(U.lp, CONFIG.lightPower);
@@ -181,6 +184,7 @@
     gl.uniform1f(U.rb, CONFIG.rainbowIntensity);
     gl.uniform1f(U.dt, CONFIG.ditherAmount);
     gl.uniform1i(U.tex, 0);
+    gl.uniform3f(U.tc, 1.0, 1.0, 1.0); // start white
 
     const [br, bg, bb] = CONFIG.bgColor;
     gl.clearColor(br / 255, bg / 255, bb / 255, 1);
@@ -193,13 +197,15 @@
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
     // ── State ────────────────────────────────────────────────────────────────
-    let mouse          = { x: 0, y: 0 };
+    let mouse           = { x: 0, y: 0 };
     let sw = 0, sh = 0, cw = 0, ch = 0;
     // DPR capped at 1: quarter the pixels vs 2x Retina — biggest single perf win
-    const DPR          = Math.min(window.devicePixelRatio || 1, 1);
-    let scrollProgress = 0;
-    let rawProgress    = 0;    // unclamped, used to gate the RAF
-    let texInitialized = false; // tracks whether texImage2D has been called
+    const DPR           = Math.min(window.devicePixelRatio || 1, 1);
+    let scrollProgress  = 0;   // phase 1: font size (0→1)
+    let scrollProgress2 = 0;   // phase 2: text Y position (0→1)
+    let rawProgress     = 0;   // unclamped, used to gate the RAF
+    let texInitialized  = false; // tracks whether texImage2D has been called
+    const nav           = document.querySelector('header');
 
     // Dirty flags — GPU draw only runs when something actually changed
     let needsResize  = true;
@@ -222,10 +228,15 @@
     const updateScroll = () => {
       const spacerTop = photoSpacer.getBoundingClientRect().top;
       rawProgress = 1 - (spacerTop / window.innerHeight);
-      const newProgress = Math.max(0, Math.min(1, rawProgress));
 
-      if (Math.abs(newProgress - scrollProgress) > 0.005) {
-        scrollProgress = newProgress;
+      const newProgress  = Math.max(0, Math.min(1, rawProgress));
+      // Phase 2: rawProgress 1→2 mapped to 0→1
+      const newProgress2 = Math.max(0, Math.min(1, rawProgress - 1));
+
+      if (Math.abs(newProgress - scrollProgress) > 0.005 ||
+          Math.abs(newProgress2 - scrollProgress2) > 0.005) {
+        scrollProgress  = newProgress;
+        scrollProgress2 = newProgress2;
         needsTex  = true;
         needsDraw = true;
         scheduleFrame();
@@ -282,17 +293,27 @@
 
     // ── Text mask draw + GPU upload ──────────────────────────────────────────
     function drawTextMask() {
-      const fontSizeVw = CONFIG.fontSizeVwStart +
+      // Phase 1: shrink from start → end size
+      const fontSizeVwP1 = CONFIG.fontSizeVwStart +
         (CONFIG.fontSizeVwEnd - CONFIG.fontSizeVwStart) * scrollProgress;
+      // Phase 2: continue shrinking from end size → 35% of end size (half of previous 70%)
+      const fontSizeVw = fontSizeVwP1 +
+        (CONFIG.fontSizeVwEnd * 0.35 - CONFIG.fontSizeVwEnd) * scrollProgress2;
       const fontSize = Math.round(fontSizeVw / 100 * sw * DPR);
+
+      // Phase 2: move text from center toward (navBottom + 10px)
+      const navBottomPx = nav ? nav.offsetHeight + 10 : 70;
+      const targetY     = navBottomPx * DPR + fontSize / 2; // baseline-middle offset
+      const textY       = ch / 2 + (targetY - ch / 2) * scrollProgress2;
 
       tc.fillStyle = '#000';
       tc.fillRect(0, 0, cw, ch);
-      tc.fillStyle = '#fff';
-      tc.font = `${CONFIG.fontWeight} ${fontSize}px ${CONFIG.fontFamily}`;
+      tc.fillStyle    = '#fff'; // mask always white — color handled by shader uniform
+      tc.font         = `${CONFIG.fontWeight} ${fontSize}px ${CONFIG.fontFamily}`;
+      tc.letterSpacing = CONFIG.letterSpacing;
       tc.textAlign    = 'center';
       tc.textBaseline = 'middle';
-      tc.fillText(CONFIG.text, cw / 2, ch / 2);
+      tc.fillText(CONFIG.text, cw / 2, textY);
 
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -317,8 +338,15 @@
       if (needsTex)    drawTextMask();
 
       if (needsDraw) {
+        // Lerp text color white → bg color driven by phase-2 progress
+        const [br, bg, bb] = CONFIG.bgColor;
+        const tr = 1.0 + (br / 255 - 1.0) * scrollProgress2;
+        const tg = 1.0 + (bg / 255 - 1.0) * scrollProgress2;
+        const tb = 1.0 + (bb / 255 - 1.0) * scrollProgress2;
+
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform2f(U.mouse, mouse.x, mouse.y);
+        gl.uniform3f(U.tc, tr, tg, tb);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         needsDraw = false;
       }

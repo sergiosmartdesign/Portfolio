@@ -2041,7 +2041,7 @@ nav {
 
 .photo-scroll-spacer {
   position: relative;
-  height: 100vh;
+  height: 200vh;
   z-index: var(--z-layer-1);
 }
 
