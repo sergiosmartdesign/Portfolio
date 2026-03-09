@@ -16,8 +16,32 @@ const TIMING = {
   DNA_LETTER_DELAY: 100,
   DNA_START_DELAY: 200, // Start after dnacapsule1.svg animation completes
   NAV_SCROLL_DELAY: 100,
-  NAV_DEBOUNCE: 50
+  NAV_DEBOUNCE: 50,
+  NAV_SCROLL_DURATION: 1600 // ms — slow enough to see entry animations
 };
+
+/**
+ * Custom smooth scroll to a Y position with a configurable duration.
+ * Uses an ease-in-out cubic curve.
+ */
+function smoothScrollTo(targetY, duration = TIMING.NAV_SCROLL_DURATION) {
+  const startY = window.scrollY;
+  const distance = targetY - startY;
+  const startTime = performance.now();
+
+  function ease(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    window.scrollTo(0, startY + distance * ease(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
 
 // ============================================================================
 // GLITCH SYSTEM - Manages all glitch effects
@@ -295,7 +319,7 @@ class NavigationManager {
 
           if (sectionId === 'intro') {
             e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            smoothScrollTo(0);
             this.setActiveButton('intro');
             return;
           }
@@ -304,9 +328,9 @@ class NavigationManager {
             e.preventDefault();
             const photoSpacer = document.querySelector('.photo-scroll-spacer');
             if (photoSpacer) {
-              // Scroll so the spacer top aligns with viewport top (fully revealed)
+              // rawProgress=2: text at top, smallest size (spacerTop + one full viewport height)
               const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({ top: spacerTop, behavior: 'smooth' });
+              smoothScrollTo(spacerTop + window.innerHeight);
             }
             this.setActiveButton('photo');
             return;
@@ -326,7 +350,7 @@ class NavigationManager {
         const href = logo.getAttribute('href');
         if (href === '#intro') {
           e.preventDefault();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          smoothScrollTo(0);
           this.setActiveButton('intro');
         }
       });
