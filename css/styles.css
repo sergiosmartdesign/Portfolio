@@ -2093,6 +2093,181 @@ nav {
 }
 
 /* ============================================================================
+   PHOTO SECTION — PORTFOLIO OVERLAY
+   ============================================================================ */
+
+/* Background image shown on item hover — between WebGL canvas (z:0) and overlay (z:2) */
+.photo-bg-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52vw;
+  height: 68vh;
+  transform: translate(-50%, -50%) scale(1);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Content overlay — title + list, above everything */
+.photo-portfolio-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 80px var(--spacing-xl) var(--spacing-xl);
+  opacity: 0;
+  pointer-events: none;
+  overflow-y: auto;
+}
+
+/* Section heading */
+.photo-portfolio-title {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.8vw, 1.6rem);
+  color: rgba(250, 225, 250, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 var(--spacing-md) 0;
+  padding: 0;
+  line-height: 1;
+}
+
+/* List container */
+.photo-project-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: photo-project-counter 0;
+}
+
+/* Each row */
+.photo-project-item {
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 40px 1fr 2fr 1fr 1fr 80px;
+  column-gap: 2rem;
+  padding: 9px 0;
+  align-items: center;
+  border-bottom: 1px solid rgba(200, 255, 200, 0.08);
+  opacity: 0;
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.photo-project-item:first-child {
+  border-top: 1px solid rgba(200, 255, 200, 0.08);
+}
+
+/* CSS counter — the 01–20 numbers */
+.photo-project-item::before {
+  content: counter(photo-project-counter, decimal-leading-zero);
+  counter-increment: photo-project-counter;
+  font-family: 'Funnel Display', monospace;
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(250, 225, 250, 0.45);
+  letter-spacing: 0.05em;
+  justify-self: start;
+  position: relative;
+  z-index: 10;
+  transition: opacity 0.1s ease;
+  line-height: 1;
+}
+
+.photo-project-item.counter-hidden::before {
+  opacity: 0.05;
+}
+
+/* Active row highlight — dim all, brighten hovered */
+.photo-project-list.has-active .photo-project-item {
+  opacity: 0.25;
+}
+
+.photo-project-list.has-active .photo-project-item.active {
+  opacity: 1;
+}
+
+/* Column text */
+.photo-project-data {
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(250, 225, 250, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+  padding: 2px;
+  position: relative;
+  z-index: 1;
+  transition: color 0.15s ease;
+}
+
+.photo-artist { justify-self: start; }
+.photo-album  { justify-self: start; }
+.photo-category { justify-self: start; }
+.photo-label  { justify-self: start; }
+.photo-year   { justify-self: end; text-align: right; }
+
+/* Yellow highlight sweep on hover */
+.photo-project-data::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% - 2px);
+  background: rgba(255, 223, 0, 0.92);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+  z-index: -1;
+}
+
+.photo-project-item:hover .photo-project-data::after {
+  transform: scaleX(1);
+}
+
+.photo-project-item:hover .photo-project-data {
+  color: rgb(10, 10, 10);
+}
+
+/* Responsive — hide some columns on narrower screens */
+@media (max-width: 1200px) {
+  .photo-project-item {
+    grid-template-columns: 32px 1fr 1.5fr 0.8fr 0.8fr 60px;
+    column-gap: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .photo-portfolio-overlay {
+    padding: 70px var(--spacing-md) var(--spacing-md);
+  }
+
+  .photo-project-item {
+    grid-template-columns: 28px 1fr 1fr;
+    column-gap: 0.8rem;
+  }
+
+  .photo-project-data:not(.photo-artist):not(.photo-album) {
+    display: none;
+  }
+}
+
+/* ============================================================================
    RESPONSIVE MEDIA QUERIES
    ============================================================================ */
 
