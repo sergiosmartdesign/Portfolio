@@ -9,6 +9,11 @@
 (function () {
   'use strict';
 
+  // Row 0 reveals at scrollProgress2 = REVEAL_START
+  // Row 19 reveals at scrollProgress2 = REVEAL_END
+  const REVEAL_START = 0.05;
+  const REVEAL_END   = 0.85;
+
   class PhotoPortfolioManager {
     constructor() {
       this.overlay      = document.querySelector('.photo-portfolio-overlay');
@@ -24,10 +29,19 @@
       this.debounceTimeout    = null;
       this.idleAnimation      = null;
       this.idleTimer          = null;
-      this.hasAnimatedIn      = false;
       this.scrollProgress2    = 0;
 
-      // Cache original text content for ScrambleText restore
+      // Scroll-driven reveal state
+      this.revealedItems   = new Set(); // indices of currently visible rows
+      this.allRevealedOnce = false;     // idle timer guard — fires once per full reveal
+
+      // Pre-compute the scroll threshold for each row
+      const total = this.projectItems.length;
+      this.thresholds = Array.from({ length: total }, (_, i) =>
+        REVEAL_START + (i / (total - 1)) * (REVEAL_END - REVEAL_START)
+      );
+
+      // Cache original text for ScrambleText restore
       this.projectItems.forEach(item => {
         const els = item.querySelectorAll('.hover-text');
         this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
@@ -56,21 +70,68 @@
 
     // ── Scroll-driven visibility ─────────────────────────────────────────────
     updateScroll() {
-      const spacerTop     = this.photoSpacer.getBoundingClientRect().top;
-      const rawProgress   = 1 - (spacerTop / window.innerHeight);
-      const newProgress2  = Math.max(0, Math.min(1, rawProgress - 1));
+      const spacerTop    = this.photoSpacer.getBoundingClientRect().top;
+      const rawProgress  = 1 - (spacerTop / window.innerHeight);
+      const newProgress2 = Math.max(0, Math.min(1, rawProgress - 1));
 
-      if (Math.abs(newProgress2 - this.scrollProgress2) < 0.005) return;
+      if (Math.abs(newProgress2 - this.scrollProgress2) < 0.003) return;
 
       this.scrollProgress2 = newProgress2;
+
+      // Overlay container fades with phase 2
       this.overlay.style.opacity       = newProgress2;
       this.overlay.style.pointerEvents = newProgress2 > 0 ? 'auto' : 'none';
 
-      // Trigger entrance once when the overlay first becomes visible
-      if (newProgress2 > 0 && !this.hasAnimatedIn) {
-        this.hasAnimatedIn = true;
-        this.animateEntrance();
+      this.updateRowReveal(newProgress2);
+    }
+
+    // ── Per-row scroll-scrub reveal ──────────────────────────────────────────
+    updateRowReveal(progress) {
+      let allRevealed = true;
+
+      this.projectItems.forEach((item, i) => {
+        const threshold  = this.thresholds[i];
+        const shouldShow = progress >= threshold;
+        const isShown    = this.revealedItems.has(i);
+
+        if (shouldShow && !isShown) {
+          // Threshold crossed scrolling DOWN → glitch flash the row in
+          this.revealedItems.add(i);
+          this.glitchFlashRow(item);
+
+        } else if (!shouldShow && isShown) {
+          // Threshold crossed scrolling UP → instant hide, no animation
+          this.revealedItems.delete(i);
+          gsap.killTweensOf(item);
+          gsap.set(item, { opacity: 0 });
+        }
+
+        if (!shouldShow) allRevealed = false;
+      });
+
+      // Once all rows are visible, arm the idle timer (once per full reveal)
+      if (allRevealed && !this.allRevealedOnce) {
+        this.allRevealedOnce = true;
+        this.startIdleTimer();
       }
+
+      // Reset guard so idle timer can re-trigger on the next full reveal
+      if (!allRevealed) this.allRevealedOnce = false;
+    }
+
+    // ── Glitch flash on reveal — mirrors the electric static-line aesthetic ──
+    glitchFlashRow(item) {
+      gsap.killTweensOf(item);
+      gsap.set(item, { opacity: 0 });
+      gsap.to(item, {
+        keyframes: [
+          { opacity: 1,    duration: 0.04, ease: 'none' },
+          { opacity: 0.15, duration: 0.03, ease: 'none' },
+          { opacity: 0.9,  duration: 0.04, ease: 'none' },
+          { opacity: 0.35, duration: 0.02, ease: 'none' },
+          { opacity: 1,    duration: 0.05, ease: 'none' },
+        ]
+      });
     }
 
     // ── Preload images ───────────────────────────────────────────────────────
@@ -84,25 +145,10 @@
       });
     }
 
-    // ── Staggered entrance animation ─────────────────────────────────────────
-    animateEntrance() {
-      gsap.fromTo(
-        this.projectItems,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          stagger: 0.06,
-          duration: 0.35,
-          ease: 'power2.out',
-          onComplete: () => this.startIdleTimer()
-        }
-      );
-    }
-
     // ── Row hover interactions ───────────────────────────────────────────────
     addEventListeners(item, index) {
-      const textEls      = item.querySelectorAll('.hover-text');
-      const imageUrl     = item.dataset.image;
+      const textEls       = item.querySelectorAll('.hover-text');
+      const imageUrl      = item.dataset.image;
       const originalTexts = this.originalTexts.get(item);
 
       item.addEventListener('mouseenter', () => {
@@ -165,10 +211,10 @@
 
     // ── Background image ─────────────────────────────────────────────────────
     showBackgroundImage(imageUrl) {
-      this.bgImage.style.transition       = 'none';
-      this.bgImage.style.transform        = 'translate(-50%, -50%) scale(1.12)';
-      this.bgImage.style.backgroundImage  = `url(${imageUrl})`;
-      this.bgImage.style.opacity          = '1';
+      this.bgImage.style.transition      = 'none';
+      this.bgImage.style.transform       = 'translate(-50%, -50%) scale(1.12)';
+      this.bgImage.style.backgroundImage = `url(${imageUrl})`;
+      this.bgImage.style.opacity         = '1';
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           this.bgImage.style.transition = 'opacity 0.6s ease, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -205,9 +251,9 @@
         [...this.projectItems].map(item => item.querySelector('.' + cls))
       );
 
-      const rowDelay       = 0.05;
-      const colStartDelay  = 0.25;
-      const hideShowGap    = this.projectItems.length * rowDelay * 0.5;
+      const rowDelay      = 0.05;
+      const colStartDelay = 0.25;
+      const hideShowGap   = this.projectItems.length * rowDelay * 0.5;
 
       // Counter number pulse
       this.projectItems.forEach((item, rowIdx) => {
