@@ -2041,7 +2041,7 @@ nav {
 
 .photo-scroll-spacer {
   position: relative;
-  height: 200vh;
+  height: 300vh;
   z-index: var(--z-layer-1);
 }
 
@@ -2133,7 +2133,7 @@ nav {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
   font-size: clamp(1rem, 1.8vw, 1.6rem);
-  color: rgba(250, 225, 250, 0.5);
+  color: rgba(10, 147, 150, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.15em;
   margin: 0 0 var(--spacing-md) 0;
@@ -2172,10 +2172,10 @@ nav {
 .photo-project-item::before {
   content: counter(photo-project-counter, decimal-leading-zero);
   counter-increment: photo-project-counter;
-  font-family: 'Funnel Display', monospace;
-  font-size: 11px;
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 12px;
   font-weight: 300;
-  color: rgba(250, 225, 250, 0.45);
+  color: rgba(0, 18, 25, 0.45);
   letter-spacing: 0.05em;
   justify-self: start;
   position: relative;
@@ -2200,11 +2200,11 @@ nav {
 /* Column text */
 .photo-project-data {
   font-family: 'Funnel Display', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(250, 225, 250, 0.9);
+  color: #001219;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

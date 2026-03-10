@@ -17,7 +17,8 @@ const TIMING = {
   DNA_START_DELAY: 200, // Start after dnacapsule1.svg animation completes
   NAV_SCROLL_DELAY: 100,
   NAV_DEBOUNCE: 50,
-  NAV_SCROLL_DURATION: 1600 // ms — slow enough to see entry animations
+  NAV_SCROLL_DURATION: 1600,       // ms — default nav scroll speed
+  PHOTO_SCROLL_DURATION: 2800      // ms — slower to let all 3 phases play visibly
 };
 
 /**
@@ -328,9 +329,9 @@ class NavigationManager {
             e.preventDefault();
             const photoSpacer = document.querySelector('.photo-scroll-spacer');
             if (photoSpacer) {
-              // rawProgress=2: text at top, smallest size (spacerTop + one full viewport height)
+              // rawProgress=3: all list items revealed (spacerTop + two full viewport heights)
               const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
-              smoothScrollTo(spacerTop + window.innerHeight);
+              smoothScrollTo(spacerTop + window.innerHeight * 2, TIMING.PHOTO_SCROLL_DURATION);
             }
             this.setActiveButton('photo');
             return;

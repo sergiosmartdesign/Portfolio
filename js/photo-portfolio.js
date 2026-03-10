@@ -30,10 +30,12 @@
       this.idleAnimation      = null;
       this.idleTimer          = null;
       this.scrollProgress2    = 0;
+      this.scrollProgress3    = 0;
 
       // Scroll-driven reveal state
-      this.revealedItems   = new Set(); // indices of currently visible rows
-      this.allRevealedOnce = false;     // idle timer guard — fires once per full reveal
+      this.revealedItems        = new Set(); // indices of currently visible rows
+      this.allRevealedOnce      = false;     // idle timer guard — fires once per full reveal
+      this.interactionsEnabled  = false;     // hover image only active when all rows visible
 
       // Pre-compute the scroll threshold for each row
       const total = this.projectItems.length;
@@ -73,16 +75,22 @@
       const spacerTop    = this.photoSpacer.getBoundingClientRect().top;
       const rawProgress  = 1 - (spacerTop / window.innerHeight);
       const newProgress2 = Math.max(0, Math.min(1, rawProgress - 1));
+      // Phase 3: starts only after text has reached top (rawProgress 2→3)
+      const newProgress3 = Math.max(0, Math.min(1, rawProgress - 2));
 
-      if (Math.abs(newProgress2 - this.scrollProgress2) < 0.003) return;
+      const p2Changed = Math.abs(newProgress2 - this.scrollProgress2) >= 0.003;
+      const p3Changed = Math.abs(newProgress3 - this.scrollProgress3) >= 0.003;
+      if (!p2Changed && !p3Changed) return;
 
       this.scrollProgress2 = newProgress2;
+      this.scrollProgress3 = newProgress3;
 
-      // Overlay container fades with phase 2
+      // Overlay fades in with phase 2 (text moving to top)
       this.overlay.style.opacity       = newProgress2;
       this.overlay.style.pointerEvents = newProgress2 > 0 ? 'auto' : 'none';
 
-      this.updateRowReveal(newProgress2);
+      // Rows reveal only in phase 3 (after text has settled at top)
+      this.updateRowReveal(newProgress3);
     }
 
     // ── Per-row scroll-scrub reveal ──────────────────────────────────────────
@@ -109,14 +117,23 @@
         if (!shouldShow) allRevealed = false;
       });
 
-      // Once all rows are visible, arm the idle timer (once per full reveal)
+      // Enable hover interactions and arm idle timer once all rows are visible
       if (allRevealed && !this.allRevealedOnce) {
-        this.allRevealedOnce = true;
+        this.allRevealedOnce     = true;
+        this.interactionsEnabled = true;
         this.startIdleTimer();
       }
 
-      // Reset guard so idle timer can re-trigger on the next full reveal
-      if (!allRevealed) this.allRevealedOnce = false;
+      // Disable interactions and reset guard when rows are hidden again
+      if (!allRevealed) {
+        this.interactionsEnabled = false;
+        this.allRevealedOnce     = false;
+        // Clean up any active hover state
+        if (this.currentActiveIndex !== -1) {
+          this.clearActiveStates();
+          this.hideBackgroundImage();
+        }
+      }
     }
 
     // ── Glitch flash on reveal — mirrors the electric static-line aesthetic ──
@@ -152,6 +169,7 @@
       const originalTexts = this.originalTexts.get(item);
 
       item.addEventListener('mouseenter', () => {
+        if (!this.interactionsEnabled) return;
         this.stopIdleAnimation();
         this.stopIdleTimer();
         if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
