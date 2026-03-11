@@ -231,7 +231,7 @@
     showBackgroundImage(imageUrl) {
       this.bgImage.style.transition      = 'none';
       this.bgImage.style.transform       = 'translate(-50%, -50%) scale(1.12)';
-      this.bgImage.style.backgroundImage = `url(${imageUrl})`;
+      this.bgImage.style.backgroundImage = `url("${imageUrl}")`;
       this.bgImage.style.opacity         = '1';
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -265,7 +265,7 @@
 
       this.idleAnimation = gsap.timeline({ repeat: -1, repeatDelay: 2 });
 
-      const columns = ['photo-artist', 'photo-album', 'photo-category', 'photo-label', 'photo-year'].map(cls =>
+      const columns = ['photo-title', 'photo-location', 'photo-camera', 'photo-lens', 'photo-year'].map(cls =>
         [...this.projectItems].map(item => item.querySelector('.' + cls))
       );
 
