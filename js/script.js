@@ -331,7 +331,12 @@ class NavigationManager {
             if (photoSpacer) {
               // rawProgress=3: all list items revealed (spacerTop + two full viewport heights)
               const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
-              smoothScrollTo(spacerTop + window.innerHeight * 2, TIMING.PHOTO_SCROLL_DURATION);
+              const targetY = spacerTop + window.innerHeight * 2;
+              // If coming from above the photo zone, jump there instantly to skip the about section
+              if (window.scrollY < spacerTop) {
+                window.scrollTo(0, spacerTop);
+              }
+              smoothScrollTo(targetY, TIMING.PHOTO_SCROLL_DURATION);
             }
             this.setActiveButton('photo');
             return;

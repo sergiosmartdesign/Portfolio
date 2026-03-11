@@ -37,8 +37,13 @@
       this.allRevealedOnce      = false;     // idle timer guard — fires once per full reveal
       this.interactionsEnabled  = false;     // hover image only active when all rows visible
 
-      // Pre-compute the scroll threshold for each row
-      const total = this.projectItems.length;
+      // All revealable elements in DOM order: title, section headers, project items
+      this.allItems = [...document.querySelectorAll(
+        '.photo-portfolio-title, .photo-section-header, .photo-project-item'
+      )];
+
+      // Pre-compute the scroll threshold for each revealable element
+      const total = this.allItems.length;
       this.thresholds = Array.from({ length: total }, (_, i) =>
         REVEAL_START + (i / (total - 1)) * (REVEAL_END - REVEAL_START)
       );
@@ -50,6 +55,12 @@
       });
 
       gsap.registerPlugin(ScrambleTextPlugin);
+
+      // Start title and section headers hidden — revealed via glitch flash in phase 3
+      const titleEl = document.querySelector('.photo-portfolio-title');
+      const sectionHeaders = document.querySelectorAll('.photo-section-header');
+      if (titleEl) gsap.set(titleEl, { opacity: 0 });
+      sectionHeaders.forEach(h => gsap.set(h, { opacity: 0 }));
     }
 
     init() {
@@ -97,7 +108,7 @@
     updateRowReveal(progress) {
       let allRevealed = true;
 
-      this.projectItems.forEach((item, i) => {
+      this.allItems.forEach((item, i) => {
         const threshold  = this.thresholds[i];
         const shouldShow = progress >= threshold;
         const isShown    = this.revealedItems.has(i);
