@@ -207,6 +207,16 @@
     let texInitialized  = false; // tracks whether texImage2D has been called
     const nav           = document.querySelector('header');
 
+    // Cached layout values — computed once, refreshed on resize.
+    // Avoids forced-reflow getBoundingClientRect() / offsetHeight reads
+    // inside the high-frequency scroll and mousemove handlers.
+    let winH         = window.innerHeight;
+    let spacerDocTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
+    let navHeight    = nav ? nav.offsetHeight + 10 : 70;
+    // #photo is position:fixed top:0 left:0, so section offsets are always 0
+    let sectionLeft  = 0;
+    let sectionTop   = 0;
+
     // Dirty flags — GPU draw only runs when something actually changed
     let needsResize  = true;
     let needsTex     = true;
@@ -226,8 +236,9 @@
     // #photo is position:fixed — IntersectionObserver always fires for it, so
     // we gate activity with rawProgress instead.
     const updateScroll = () => {
-      const spacerTop = photoSpacer.getBoundingClientRect().top;
-      rawProgress = 1 - (spacerTop / window.innerHeight);
+      // Use cached spacerDocTop + current scrollY — no reflow.
+      const spacerTop = spacerDocTop - window.scrollY;
+      rawProgress = 1 - (spacerTop / winH);
 
       const newProgress  = Math.max(0, Math.min(1, rawProgress));
       // Phase 2: rawProgress 1→2 mapped to 0→1
@@ -251,9 +262,9 @@
     // ── Mouse tracking ───────────────────────────────────────────────────────
     window.addEventListener('mousemove', e => {
       if (rawProgress <= 0) return;           // section not active, skip
-      const rect = section.getBoundingClientRect();
-      const nx = (e.clientX - rect.left) * DPR;
-      const ny = ch - (e.clientY - rect.top) * DPR;
+      // Use cached offsets — no getBoundingClientRect() on every mousemove.
+      const nx = (e.clientX - sectionLeft) * DPR;
+      const ny = ch - (e.clientY - sectionTop) * DPR;
       if (nx !== mouse.x || ny !== mouse.y) {
         mouse.x = nx;
         mouse.y = ny;
@@ -264,8 +275,13 @@
 
     // ── Resize ───────────────────────────────────────────────────────────────
     window.addEventListener('resize', () => {
-      needsResize = true;
-      needsDraw   = true;
+      // Update cached values immediately so the scroll handler stays correct
+      // even before the next RAF resize() call runs.
+      winH         = window.innerHeight;
+      spacerDocTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
+      navHeight    = nav ? nav.offsetHeight + 10 : 70;
+      needsResize  = true;
+      needsDraw    = true;
       scheduleFrame();
     });
 
@@ -302,7 +318,7 @@
       const fontSize = Math.round(fontSizeVw / 100 * sw * DPR);
 
       // Phase 2: move text from center toward (navBottom + 10px)
-      const navBottomPx = nav ? nav.offsetHeight + 10 : 70;
+      const navBottomPx = navHeight; // cached — avoids offsetHeight reflow per frame
       const targetY     = navBottomPx * DPR + fontSize / 2; // baseline-middle offset
       const textY       = ch / 2 + (targetY - ch / 2) * scrollProgress2;
 

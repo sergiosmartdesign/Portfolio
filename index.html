@@ -3,17 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portfolio profesional - Sergio Ayala">
+
+    <!-- ═══ PRIMARY SEO ══════════════════════════════════════════════════════ -->
+    <!-- TODO: replace every instance of "https://sergioayala.design" with your actual live URL -->
+    <title>Sergio Ayala | Senior Art Director, Photographer &amp; UX/UI Designer</title>
+    <meta name="description" content="Senior Art Director, Photographer and UX/UI Designer based in Bogotá, Colombia. Freelance services worldwide — brand identity, web design, UX/UI, photography, and illustration.">
     <meta name="author" content="Sergio Ayala">
-    <title>Sergio Ayala | Creative Design</title>
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sergioayala.design/">
+
+    <!-- ═══ OPEN GRAPH (social sharing previews) ═════════════════════════════ -->
+    <!-- TODO: create a 1200×630 px image at images/og-image.jpg for social previews -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sergioayala.design/">
+    <meta property="og:title" content="Sergio Ayala | Senior Art Director, Photographer &amp; UX/UI Designer">
+    <meta property="og:description" content="Senior Art Director, Photographer and UX/UI Designer based in Bogotá, Colombia. Available for freelance projects worldwide.">
+    <meta property="og:image" content="https://sergioayala.design/images/og-image.jpg">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="es_CO">
+    <meta property="og:site_name" content="Sergio Ayala — Creative Portfolio">
+
+    <!-- ═══ TWITTER / X CARD ═════════════════════════════════════════════════ -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sergio Ayala | Senior Art Director, Photographer &amp; UX/UI Designer">
+    <meta name="twitter:description" content="Senior Art Director, Photographer and UX/UI Designer based in Bogotá, Colombia. Available for freelance projects worldwide.">
+    <meta name="twitter:image" content="https://sergioayala.design/images/og-image.jpg">
+
+    <!-- ═══ STRUCTURED DATA — JSON-LD ════════════════════════════════════════ -->
+    <!-- Person + ProfessionalService + WebSite entities for Google & AI search -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://sergioayala.design/#person",
+          "name": "Sergio Ayala",
+          "jobTitle": "Senior Art Director, Photographer & UX/UI Designer",
+          "description": "Senior Art Director, Photographer and UX/UI Designer based in Bogotá, Colombia. Specialising in brand identity, web design, UX/UI, photography, and illustration.",
+          "url": "https://sergioayala.design/",
+          "image": "https://sergioayala.design/images/og-image.jpg",
+          "sameAs": [
+            "https://www.instagram.com/sersh01/",
+            "https://www.linkedin.com/in/sergio-ayala-ai"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Bogotá",
+            "addressCountry": "CO"
+          },
+          "knowsLanguage": ["en", "es"],
+          "knowsAbout": [
+            "Art Direction",
+            "Photography",
+            "UX Design",
+            "UI Design",
+            "Brand Identity",
+            "Web Design",
+            "Illustration",
+            "Visual Design",
+            "Creative Direction",
+            "Branding"
+          ]
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": "https://sergioayala.design/#service",
+          "name": "Sergio Ayala — Freelance Creative Services",
+          "description": "Freelance art direction, photography, UX/UI design, brand identity, web design, and illustration services available worldwide.",
+          "provider": { "@id": "https://sergioayala.design/#person" },
+          "areaServed": "Worldwide",
+          "url": "https://sergioayala.design/",
+          "serviceType": [
+            "Art Direction",
+            "Photography",
+            "UX/UI Design",
+            "Brand Identity",
+            "Web Design",
+            "Illustration"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://sergioayala.design/#website",
+          "name": "Sergio Ayala — Creative Portfolio",
+          "url": "https://sergioayala.design/",
+          "author": { "@id": "https://sergioayala.design/#person" },
+          "inLanguage": ["en", "es"]
+        }
+      ]
+    }
+    </script>
 
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/cert-gallery.css">
+    <link rel="stylesheet" href="css/scroll-hint.css">
 </head>
 <body>
     <header>
-        <nav>
-            <a href="#intro" class="logo glitch-text" data-i18n="name" data-splitting>· S e r g i o  A y a l a ·</a>
+        <nav aria-label="Main navigation">
+            <a href="#intro" class="logo glitch-text" data-i18n="name" data-splitting aria-label="Sergio Ayala">· S e r g i o  A y a l a ·</a>
                     
             <div class="main-nav">
                 <a href="#about" class="nav-btn glitch-text" data-splitting>[ · a b o u t · ]</a>
@@ -32,10 +121,11 @@
     </header>
 
     <main>
-        <section id="intro">
-            <h1 id="main-title" class="glitch-text reveal--0" data-splitting>· S e r g i o  A y a l a | C r e a t i v e D e s i g n ·</h1>
+        <section id="intro" aria-label="Introduction">
+            <!-- aria-label gives crawlers the clean text; data-splitting handles the visual spaced effect -->
+            <h1 id="main-title" class="glitch-text reveal--0" data-splitting aria-label="Sergio Ayala | Creative Design">· S e r g i o  A y a l a | C r e a t i v e D e s i g n ·</h1>
 
-            <h2 class="glitch-text subtitle-glitch" data-splitting>[ · O p e n   T o   W o r k · ]</h2>
+            <h2 class="glitch-text subtitle-glitch" data-splitting aria-label="Open To Work">[ · O p e n   T o   W o r k · ]</h2>
 
             <!-- Cyberpunk panel - slides in after 2 seconds -->
             <div class="cyber-panel" id="introCyberPanel">
@@ -53,9 +143,9 @@
             </div>
 
             <!-- Social Media Icons -->
-            <ul class="social-media-icons">
+            <ul class="social-media-icons" aria-label="Social media profiles">
                 <li>
-                    <a class="instagram" href="https://www.instagram.com/sersh01/" target="_blank" rel="noopener noreferrer">
+                    <a class="instagram" href="https://www.instagram.com/sersh01/" target="_blank" rel="noopener noreferrer" aria-label="Sergio Ayala on Instagram">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -66,7 +156,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="linkedin" href="https://www.linkedin.com/in/sergio-ayala-ai" target="_blank" rel="noopener noreferrer">
+                    <a class="linkedin" href="https://www.linkedin.com/in/sergio-ayala-ai" target="_blank" rel="noopener noreferrer" aria-label="Sergio Ayala on LinkedIn">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -83,7 +173,7 @@
          </section>
 
         <div class="about-pin-wrapper">
-        <section id="about">
+        <section id="about" aria-label="About Sergio Ayala">
             <div class="about-container">
                 <!-- Left Column -->
                 <div class="about-left">
@@ -94,7 +184,7 @@
                         <span class="title-line-4">Ayala</span>
                     </h2>
 
-                    <img id="id1svg" src="images/id1.svg" alt="ID1">
+                    <img id="id1svg" src="images/id1.svg" alt="Sergio Ayala — Art Director profile badge">
 
                     <p id="aboutp1" data-i18n="about.p1">Senior Art Director & Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.</p>
 
@@ -268,19 +358,19 @@
 
                     <!-- Certificate Gallery -->
                     <div class="cert-gallery-layer">
-                        <img class="decoration-certs1" src="images/certs1.svg" alt="Certificates decoration">
-                        <img class="decoration-vtv1" src="images/vtv1.svg" alt="VTV decoration">
+                        <img class="decoration-certs1" src="images/certs1.svg" alt="" role="presentation">
+                        <img class="decoration-vtv1" src="images/vtv1.svg" alt="" role="presentation">
                         <div class="cert-gallery-embedded">
-                            <ul class="cards">
-                                <li><img src="images/cert/certificadoplatzi1.png" alt="Certificate 1"></li>
-                                <li><img src="images/cert/certificadoplatzi2.png" alt="Certificate 2"></li>
-                                <li><img src="images/cert/certificadoplatzi3.png" alt="Certificate 3"></li>
-                                <li><img src="images/cert/certificadoplatzi4.png" alt="Certificate 4"></li>
-                                <li><img src="images/cert/certificadoplatzi5.png" alt="Certificate 5"></li>
-                                <li><img src="images/cert/certificadoplatzi6.png" alt="Certificate 6"></li>
-                                <li><img src="images/cert/certificadoyoast1.png" alt="Certificate 7"></li>
-                                <li><img src="images/cert/certificadoyoast2.png" alt="Certificate 8"></li>
-                                <li><img src="images/cert/certificadoyoast3.png" alt="Certificate 9"></li>
+                            <ul class="cards" aria-label="Professional certificates">
+                                <li><img src="images/cert/certificadoplatzi1.png" alt="Platzi Professional Certificate 1 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoplatzi2.png" alt="Platzi Professional Certificate 2 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoplatzi3.png" alt="Platzi Professional Certificate 3 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoplatzi4.png" alt="Platzi Professional Certificate 4 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoplatzi5.png" alt="Platzi Professional Certificate 5 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoplatzi6.png" alt="Platzi Professional Certificate 6 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoyoast1.png" alt="Yoast SEO Professional Certificate 1 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoyoast2.png" alt="Yoast SEO Professional Certificate 2 — Sergio Ayala"></li>
+                                <li><img src="images/cert/certificadoyoast3.png" alt="Yoast SEO Professional Certificate 3 — Sergio Ayala"></li>
                             </ul>
                             <div class="actions">
                                 <button class="prev glitch-text" data-splitting>[ · P r e v · ]</button>
@@ -293,14 +383,14 @@
 
             <!-- Decorative SVG Graphics -->
             <div class="svg-decorations">
-                <img class="decoration-bar1" src="images/bar1.svg" alt="Decorative bar 1">
-                <img class="decoration-bar2" src="images/bar2.svg" alt="Decorative bar 2">
-                <img class="decoration-skills" src="images/skills.svg" alt="Skills decoration">
+                <img class="decoration-bar1" src="images/bar1.svg" alt="" role="presentation">
+                <img class="decoration-bar2" src="images/bar2.svg" alt="" role="presentation">
+                <img class="decoration-skills" src="images/skills.svg" alt="Design and technology skills overview">
             </div>
 
             <div class="paul-rands-quote">
                 <blockquote>
-                    <h1 class="glitch-text" data-splitting><span>" D e s i g n &nbsp;</span></h1>
+                    <h3 class="glitch-text" data-splitting aria-label='"Design'><span>" D e s i g n &nbsp;</span></h3>
                     <ul>
                         <li>can be art.</li>
                         <li>can be aesthetics.</li>
@@ -328,7 +418,7 @@
         </section>
         </div>
 
-        <section id="photo">
+        <section id="photo" aria-label="Photography Portfolio">
             <canvas class="photo-static-line"></canvas>
 
             <!-- Background hover image — between WebGL canvas (z:0) and overlay (z:2) -->
@@ -336,7 +426,7 @@
 
             <!-- Portfolio overlay — sits above the WebGL background -->
             <div class="photo-portfolio-overlay">
-                <h2 class="photo-portfolio-title">[ · p o r t f o l i o · ]</h2>
+                <h2 class="photo-portfolio-title" aria-label="Photography Portfolio">[ · p o r t f o l i o · ]</h2>
                 <ul class="photo-project-list" role="list">
 
                     <!-- ── landscapes ──────────────────────────────────────── -->
@@ -543,22 +633,45 @@
         </section>
         <div class="photo-scroll-spacer"></div>
 
-        <section id="web">
-
+        <section id="web" aria-label="Web Design Portfolio">
         </section>
 
-        <section id="illustration">
-
+        <section id="illustration" aria-label="Illustration Portfolio">
         </section>
 
-        <section id="experiments">
-
+        <section id="experiments" aria-label="Creative Experiments">
         </section>
 
-        <section id="contact">
-
+        <section id="contact" aria-label="Contact Sergio Ayala">
         </section>
     </main>
+
+    <!-- ── Scroll hint — cyberpunk idle prompt shown in the about section ─── -->
+    <div id="scroll-hint" aria-hidden="true">
+        <div class="sc-panel">
+            <div class="sc-corner sc-corner--tl"></div>
+            <div class="sc-corner sc-corner--tr"></div>
+            <div class="sc-corner sc-corner--bl"></div>
+            <div class="sc-corner sc-corner--br"></div>
+
+            <p class="sc-label">[ · sys · msg · ]</p>
+
+            <svg class="sc-icon" viewBox="0 0 36 62" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+                <!-- Mouse body -->
+                <rect x="8" y="1" width="20" height="34" rx="10" stroke="currentColor" stroke-width="1.5"/>
+                <!-- Centre divider -->
+                <line x1="18" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+                <!-- Scroll wheel -->
+                <rect class="sc-wheel" x="15.5" y="7" width="5" height="9" rx="2.5" fill="currentColor"/>
+                <!-- Chevron 1 -->
+                <polyline class="sc-chevron-1" points="11,42 18,50 25,42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Chevron 2 -->
+                <polyline class="sc-chevron-2" points="11,51 18,59 25,51" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+            <p class="sc-text">[ · s c r o l l · ]</p>
+        </div>
+    </div>
 
     <div id="line-collision-star">
       <span></span>
@@ -569,7 +682,7 @@
     </div>
     
     <footer>
-        <p data-i18n="footer.rights">© 2026 Todos los derechos reservados</p>
+        <p data-i18n="footer.rights">© 2026 All rights reserved — Sergio Ayala, Senior Art Director &amp; Photographer, Bogotá, Colombia</p>
     </footer>
     
     <!-- Browser detection for performance optimizations -->
@@ -591,5 +704,6 @@
     <script src="js/lib/gsap.min.js"></script>
     <script src="js/lib/ScrambleTextPlugin.min.js"></script>
     <script src="js/photo-portfolio.js"></script>
+    <script src="js/scroll-hint.js"></script>
 </body>
 </html>

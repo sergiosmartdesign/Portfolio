@@ -64,6 +64,15 @@
     }
 
     init() {
+      // Cache layout values — refreshed on resize, never read inside scroll handler.
+      this.winH         = window.innerHeight;
+      this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+
+      window.addEventListener('resize', () => {
+        this.winH         = window.innerHeight;
+        this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+      }, { passive: true });
+
       this.preloadImages();
 
       this.projectItems.forEach((item, index) => {
@@ -83,8 +92,9 @@
 
     // ── Scroll-driven visibility ─────────────────────────────────────────────
     updateScroll() {
-      const spacerTop    = this.photoSpacer.getBoundingClientRect().top;
-      const rawProgress  = 1 - (spacerTop / window.innerHeight);
+      // Use cached values — no getBoundingClientRect() or window.innerHeight on every scroll.
+      const spacerTop   = this.spacerDocTop - window.scrollY;
+      const rawProgress = 1 - (spacerTop / this.winH);
       const newProgress2 = Math.max(0, Math.min(1, rawProgress - 1));
       // Phase 3: starts only after text has reached top (rawProgress 2→3)
       const newProgress3 = Math.max(0, Math.min(1, rawProgress - 2));

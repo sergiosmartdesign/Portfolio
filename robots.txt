@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: replace with your actual live domain
+Sitemap: https://sergioayala.design/sitemap.xml

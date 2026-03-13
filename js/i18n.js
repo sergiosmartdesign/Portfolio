@@ -29,7 +29,7 @@
     },
 
     es: {
-      'footer.rights': '© 2026 Todos los derechos reservados',
+      'footer.rights': '© 2026 Todos los derechos reservados — Sergio Ayala, Director de Arte Senior &amp; Fotógrafo, Bogotá, Colombia',
 
       'about.p1': 'Director de Arte Senior y Fotógrafo. Basado en Bogotá, Colombia. Abordo los proyectos con una visión global, conversando con el cliente para entender su marca y su ADN, enfocándome en la mejor manera de implementar una idea para el proyecto, y cómo traducirla a través de diversos medios: desde arquitectura web y diseño de experiencia de usuario, hasta fotografía, ilustración y branding integral.',
 

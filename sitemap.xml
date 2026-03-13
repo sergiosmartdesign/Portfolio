@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    TODO: replace "https://sergioayala.design" with your actual live URL.
+    Single-page portfolio — one URL covers all sections.
+    Update <lastmod> whenever you publish significant content changes.
+  -->
+  <url>
+    <loc>https://sergioayala.design/</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

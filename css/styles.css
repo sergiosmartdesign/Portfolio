@@ -1379,24 +1379,24 @@ nav {
   margin: 0;
 }
 
-.paul-rands-quote blockquote h1 {
+.paul-rands-quote blockquote h3 {
   font-size: inherit;
   margin: 0;
   display: inline-block;
-  font-weight: 600;
-  color: #001219;
+  font-weight: 900;
+  color: #000;
   white-space: nowrap;
 }
 
 /* Prevent quote glitch on page load */
-.paul-rands-quote h1[data-splitting] [data-char]:after {
-  color: #001219 !important;
-  font-weight: 600;
+.paul-rands-quote h3[data-splitting] [data-char]:after {
+  color: #000 !important;
+  font-weight: 900;
   animation-name: none;
 }
 
 /* Enable glitch when about section is visible */
-#about .paul-rands-quote h1[data-splitting].element-visible [data-char]:after {
+#about .paul-rands-quote h3[data-splitting].element-visible [data-char]:after {
   animation-name: glitch-switch;
   animation-duration: var(--transition-fast);
   animation-delay: var(--transition-slow);
