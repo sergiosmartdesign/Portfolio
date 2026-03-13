@@ -2101,8 +2101,8 @@ nav {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 52vw;
-  height: 68vh;
+  width: 78vw;
+  height: 95vh;
   transform: translate(-50%, -50%) scale(1);
   background-size: contain;
   background-position: center;
