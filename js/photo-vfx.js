@@ -12,6 +12,10 @@
   'use strict';
 
   // ── CONFIGURATION ───────────────────────────────────────────────────────────
+  // Adaptive sample count: fewer samples on lower-end GPUs (Safari/iOS)
+  const _tier    = window.BrowserDetect ? window.BrowserDetect.getPerformanceTier() : 'high';
+  const _samples = _tier === 'low' ? 8 : _tier === 'medium' ? 12 : 16;
+
   const CONFIG = {
     // Text rendered in the scene
     text:             '[ · p h o t o g r a p h y · ]',
@@ -28,8 +32,8 @@
     // Section background colour — keep in sync with CSS #001219
     bgColor:          [0, 18, 25],   // [R, G, B] 0–255
 
-    // Ray-march quality: higher = smoother shadows but slower (16–128 recommended)
-    samples:          32,
+    // Ray-march quality: adaptive — high=16, medium=12, low=8
+    samples:          _samples,
 
     // Light behaviour
     lightPower:       0.2,
@@ -141,7 +145,7 @@
     await document.fonts.ready;
 
     const textCanvas = document.createElement('canvas');
-    const tc = textCanvas.getContext('2d');
+    const tc = textCanvas.getContext('2d', { willReadFrequently: true });
 
     const glCanvas = document.createElement('canvas');
     Object.assign(glCanvas.style, {
@@ -197,7 +201,8 @@
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
     // ── State ────────────────────────────────────────────────────────────────
-    let mouse           = { x: 0, y: 0 };
+    let mouse           = { x: 0, y: 0 };  // lerped position sent to shader
+    let targetMouse     = { x: 0, y: 0 };  // raw position from mousemove events
     let sw = 0, sh = 0, cw = 0, ch = 0;
     // DPR capped at 1: quarter the pixels vs 2x Retina — biggest single perf win
     const DPR           = Math.min(window.devicePixelRatio || 1, 1);
@@ -265,10 +270,9 @@
       // Use cached offsets — no getBoundingClientRect() on every mousemove.
       const nx = (e.clientX - sectionLeft) * DPR;
       const ny = ch - (e.clientY - sectionTop) * DPR;
-      if (nx !== mouse.x || ny !== mouse.y) {
-        mouse.x = nx;
-        mouse.y = ny;
-        needsDraw = true;
+      if (nx !== targetMouse.x || ny !== targetMouse.y) {
+        targetMouse.x = nx;
+        targetMouse.y = ny;
         scheduleFrame();
       }
     });
@@ -299,8 +303,10 @@
       gl.viewport(0, 0, cw, ch);
       gl.uniform2f(U.res, cw, ch);
 
-      mouse.x = cw / 2;
-      mouse.y = ch / 2;
+      mouse.x       = cw / 2;
+      mouse.y       = ch / 2;
+      targetMouse.x = cw / 2;
+      targetMouse.y = ch / 2;
 
       texInitialized = false; // canvas dimensions changed — force texImage2D
       needsTex       = true;
@@ -352,6 +358,15 @@
 
       if (needsResize) resize();
       if (needsTex)    drawTextMask();
+
+      // Lerp mouse toward target — smooths light movement, self-throttles redraws
+      const dx = targetMouse.x - mouse.x;
+      const dy = targetMouse.y - mouse.y;
+      if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+        mouse.x += dx * 0.12;
+        mouse.y += dy * 0.12;
+        needsDraw = true;
+      }
 
       if (needsDraw) {
         // Lerp text color white → bg color driven by phase-2 progress

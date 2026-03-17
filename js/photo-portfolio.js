@@ -84,7 +84,10 @@
         this.clearActiveStates();
         this.hideBackgroundImage();
         this.startIdleTimer();
+        this.updateScrollFade();
       });
+
+      this.projectList.addEventListener('scroll', () => this.updateScrollFade(), { passive: true });
 
       window.addEventListener('scroll', () => this.updateScroll(), { passive: true });
       this.updateScroll();
@@ -196,6 +199,7 @@
         if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
         if (this.currentActiveIndex === index) return;
 
+        this.clearScrollFade();
         this.updateActiveStates(index);
 
         textEls.forEach((el, i) => {
@@ -246,6 +250,22 @@
         });
       });
       this.startIdleTimer();
+    }
+
+    // ── Scroll fade — items near the top of the list dissolve before the subtitle ──
+    updateScrollFade() {
+      const scrollTop = this.projectList.scrollTop;
+      const fadeZone  = 40; // matches one header height
+      this.projectItems.forEach(item => {
+        const top = item.offsetTop - scrollTop;
+        item.style.opacity = top < fadeZone
+          ? String(Math.max(0, top / fadeZone))
+          : '';
+      });
+    }
+
+    clearScrollFade() {
+      this.projectItems.forEach(item => { item.style.opacity = ''; });
     }
 
     // ── Background image ─────────────────────────────────────────────────────

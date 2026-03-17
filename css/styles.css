@@ -391,7 +391,7 @@ header {
 header.section-intro { background: var(--header-bg-intro); }
 header.section-about { background: var(--header-bg-about); }
 header.section-web { background: var(--header-bg-web); }
-header.section-photo { background: var(--header-bg-photo); }
+header.section-photo { background: transparent; }
 header.section-illustration { background: var(--header-bg-illustration); }
 header.section-experiments { background: var(--header-bg-experiments); }
 header.section-contact { background: var(--header-bg-contact); }
@@ -2125,7 +2125,7 @@ nav {
   padding: 80px var(--spacing-xl) var(--spacing-xl);
   opacity: 0;
   pointer-events: none;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 /* Section heading */
@@ -2141,12 +2141,28 @@ nav {
   line-height: 1;
 }
 
-/* List container */
+/* Container — bounds the scrollable list */
+.photo-list-container {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* List container — scroll context for sticky section headers */
 .photo-project-list {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
   counter-reset: photo-project-counter 0;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.photo-project-list::-webkit-scrollbar {
+  display: none;
 }
 
 /* Each row */
@@ -2168,18 +2184,22 @@ nav {
   border-top: 1px solid rgba(200, 255, 200, 0.08);
 }
 
-/* Section subtitle headers */
+/* Section subtitle headers — sticky, stack at top as list scrolls */
 .photo-section-header {
   counter-reset: photo-project-counter 0;
   list-style: none;
   width: 100%;
-  padding: var(--spacing-md) 0 var(--spacing-xs);
+  height: 40px;
+  display: flex;
+  align-items: center;
   pointer-events: none;
+  position: sticky;
 }
 
-.photo-section-header:first-child {
-  padding-top: 0;
-}
+.photo-section-header[data-stack="0"] { top: 0px;   z-index: 17; }
+.photo-section-header[data-stack="1"] { top: 40px;  z-index: 16; }
+.photo-section-header[data-stack="2"] { top: 80px;  z-index: 15; }
+.photo-section-header[data-stack="3"] { top: 120px; z-index: 14; }
 
 .photo-section-title {
   font-family: 'Funnel Display', sans-serif;
