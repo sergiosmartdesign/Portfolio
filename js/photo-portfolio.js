@@ -9,11 +9,6 @@
 (function () {
   'use strict';
 
-  // Row 0 reveals at scrollProgress2 = REVEAL_START
-  // Row 19 reveals at scrollProgress2 = REVEAL_END
-  const REVEAL_START = 0.05;
-  const REVEAL_END   = 0.85;
-
   class PhotoPortfolioManager {
     constructor() {
       this.overlay      = document.querySelector('.photo-portfolio-overlay');
@@ -41,12 +36,6 @@
       this.allItems = [...document.querySelectorAll(
         '.photo-portfolio-title, .photo-section-header, .photo-project-item'
       )];
-
-      // Pre-compute the scroll threshold for each revealable element
-      const total = this.allItems.length;
-      this.thresholds = Array.from({ length: total }, (_, i) =>
-        REVEAL_START + (i / (total - 1)) * (REVEAL_END - REVEAL_START)
-      );
 
       // Cache original text for ScrambleText restore
       this.projectItems.forEach(item => {
@@ -109,50 +98,36 @@
       this.scrollProgress2 = newProgress2;
       this.scrollProgress3 = newProgress3;
 
-      // Overlay fades in with phase 2 (text moving to top)
-      this.overlay.style.opacity       = newProgress2;
-      this.overlay.style.pointerEvents = newProgress2 > 0 ? 'auto' : 'none';
+      // Overlay appears only once text has reached the top (phase 3 start)
+      this.overlay.style.opacity       = newProgress3;
+      this.overlay.style.pointerEvents = newProgress3 > 0 ? 'auto' : 'none';
 
       // Rows reveal only in phase 3 (after text has settled at top)
       this.updateRowReveal(newProgress3);
     }
 
-    // ── Per-row scroll-scrub reveal ──────────────────────────────────────────
+    // ── Row reveal — line-by-line glitch flash when overlay first activates ──
     updateRowReveal(progress) {
-      let allRevealed = true;
+      const shouldBeVisible = progress > 0;
 
-      this.allItems.forEach((item, i) => {
-        const threshold  = this.thresholds[i];
-        const shouldShow = progress >= threshold;
-        const isShown    = this.revealedItems.has(i);
-
-        if (shouldShow && !isShown) {
-          // Threshold crossed scrolling DOWN → glitch flash the row in
-          this.revealedItems.add(i);
-          this.glitchFlashRow(item);
-
-        } else if (!shouldShow && isShown) {
-          // Threshold crossed scrolling UP → instant hide, no animation
-          this.revealedItems.delete(i);
-          gsap.killTweensOf(item);
-          gsap.set(item, { opacity: 0 });
-        }
-
-        if (!shouldShow) allRevealed = false;
-      });
-
-      // Enable hover interactions and arm idle timer once all rows are visible
-      if (allRevealed && !this.allRevealedOnce) {
+      if (shouldBeVisible && !this.allRevealedOnce) {
+        // First activation: stagger all rows in with glitch flash
         this.allRevealedOnce     = true;
         this.interactionsEnabled = true;
+        this.allItems.forEach((_, i) => this.revealedItems.add(i));
+        this.animateReveal();
         this.startIdleTimer();
       }
 
-      // Disable interactions and reset guard when rows are hidden again
-      if (!allRevealed) {
-        this.interactionsEnabled = false;
+      if (!shouldBeVisible && this.allRevealedOnce) {
+        // Scrolled back out — hide everything and reset for next activation
         this.allRevealedOnce     = false;
-        // Clean up any active hover state
+        this.interactionsEnabled = false;
+        this.revealedItems.clear();
+        this.allItems.forEach(item => {
+          gsap.killTweensOf(item);
+          gsap.set(item, { opacity: 0 });
+        });
         if (this.currentActiveIndex !== -1) {
           this.clearActiveStates();
           this.hideBackgroundImage();
@@ -160,18 +135,21 @@
       }
     }
 
-    // ── Glitch flash on reveal — mirrors the electric static-line aesthetic ──
-    glitchFlashRow(item) {
-      gsap.killTweensOf(item);
-      gsap.set(item, { opacity: 0 });
-      gsap.to(item, {
-        keyframes: [
-          { opacity: 1,    duration: 0.04, ease: 'none' },
-          { opacity: 0.15, duration: 0.03, ease: 'none' },
-          { opacity: 0.9,  duration: 0.04, ease: 'none' },
-          { opacity: 0.35, duration: 0.02, ease: 'none' },
-          { opacity: 1,    duration: 0.05, ease: 'none' },
-        ]
+    // ── Staggered glitch flash across all rows ────────────────────────────────
+    animateReveal() {
+      this.allItems.forEach((item, i) => {
+        gsap.killTweensOf(item);
+        gsap.set(item, { opacity: 0 });
+        gsap.to(item, {
+          delay: i * 0.04,
+          keyframes: [
+            { opacity: 1,    duration: 0.04, ease: 'none' },
+            { opacity: 0.15, duration: 0.03, ease: 'none' },
+            { opacity: 0.9,  duration: 0.04, ease: 'none' },
+            { opacity: 0.35, duration: 0.02, ease: 'none' },
+            { opacity: 1,    duration: 0.05, ease: 'none' },
+          ]
+        });
       });
     }
 
