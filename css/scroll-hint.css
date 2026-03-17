@@ -28,72 +28,17 @@
 
 /* ── Panel ────────────────────────────────────────────────────────────────── */
 .sc-panel {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 32px 48px 28px;
-  overflow: hidden;
-
-  background-color: rgba(0, 18, 25, 0.92);
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(0, 18, 25, 0.04) 3px,
-    rgba(0, 18, 25, 0.04) 4px
-  );
-  border: 1px solid rgba(148, 210, 189, 0.28);
-  box-shadow:
-    0 0 20px rgba(0, 18, 25, 0.4),
-    0 0 60px rgba(0, 18, 25, 0.2),
-    inset 0 0 40px rgba(0, 18, 25, 0.1);
-
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-
-  /* Entrance: scale up from slightly smaller */
-  transform: scale(0.88);
-  transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#scroll-hint.visible .sc-panel {
-  transform: scale(1);
-}
-
-/* ── Scan line sweeping down the panel ───────────────────────────────────── */
+/* ── Corners and scan line hidden ────────────────────────────────────────── */
+.sc-corner,
 .sc-panel::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: rgba(238, 155, 0, 0.6);
-  box-shadow: 0 0 8px rgba(238, 155, 0, 0.9), 0 0 18px rgba(238, 155, 0, 0.4);
-  animation: sc-scan-line 3.5s linear infinite;
-  pointer-events: none;
+  display: none;
 }
-
-@keyframes sc-scan-line {
-  0%   { top: -2px;   opacity: 0; }
-  4%   { opacity: 1; }
-  96%  { opacity: 1; }
-  100% { top: 100%;  opacity: 0; }
-}
-
-/* ── Corner brackets ─────────────────────────────────────────────────────── */
-.sc-corner {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-}
-
-.sc-corner--tl { top: -1px;    left: -1px;   border-top:    2px solid #ee9b00; border-left:  2px solid #ee9b00; }
-.sc-corner--tr { top: -1px;    right: -1px;  border-top:    2px solid #ee9b00; border-right: 2px solid #ee9b00; }
-.sc-corner--bl { bottom: -1px; left: -1px;   border-bottom: 2px solid #ee9b00; border-left:  2px solid #ee9b00; }
-.sc-corner--br { bottom: -1px; right: -1px;  border-bottom: 2px solid #ee9b00; border-right: 2px solid #ee9b00; }
 
 /* ── SVG scroll icon ─────────────────────────────────────────────────────── */
 .sc-icon {
@@ -134,7 +79,7 @@
 /* ── Scroll text (bottom) ────────────────────────────────────────────────── */
 .sc-text {
   font-family: 'Funnel Display', monospace;
-  font-size: 0.62rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.28em;
   color: #ee9b00;

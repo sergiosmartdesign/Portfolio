@@ -39,6 +39,39 @@
   // Quote elements — queried on DOMContentLoaded
   let quoteItems = [];
   let ending     = null;
+  let scrollText = null;
+
+  // Typewriter frames for [ · s c r o l l · ]
+  const SCROLL_FRAMES = [
+    '[ ]',
+    '[ · · ]',
+    '[ · s · ]',
+    '[ · s c · ]',
+    '[ · s c r · ]',
+    '[ · s c r o · ]',
+    '[ · s c r o l · ]',
+    '[ · s c r o l l · ]',
+  ];
+  const FRAME_INTERVAL = 110; // ms between each frame
+  let typewriterTimer  = null;
+
+  // ── Typewriter ──────────────────────────────────────────────────────────────
+
+  function typewriter() {
+    if (!scrollText) return;
+    clearTimeout(typewriterTimer);
+    let frame = 0;
+    scrollText.textContent = SCROLL_FRAMES[0];
+
+    function next() {
+      frame++;
+      if (frame < SCROLL_FRAMES.length) {
+        scrollText.textContent = SCROLL_FRAMES[frame];
+        typewriterTimer = setTimeout(next, FRAME_INTERVAL);
+      }
+    }
+    typewriterTimer = setTimeout(next, FRAME_INTERVAL);
+  }
 
   // ── Visibility ──────────────────────────────────────────────────────────────
 
@@ -47,6 +80,7 @@
     isVisible = true;
     hint.removeAttribute('aria-hidden');
     hint.classList.add('visible');
+    typewriter();
 
     clearTimeout(autoHideTimer);
     autoHideTimer = setTimeout(() => {
@@ -59,6 +93,7 @@
     if (!isVisible) return;
     isVisible = false;
     clearTimeout(autoHideTimer);
+    clearTimeout(typewriterTimer);
     hint.setAttribute('aria-hidden', 'true');
     hint.classList.remove('visible');
   }
@@ -192,6 +227,7 @@
 
     quoteItems = Array.from(document.querySelectorAll('.paul-rands-quote li'));
     ending     = document.querySelector('.paul-rands-quote .ending');
+    scrollText = document.querySelector('.sc-text');
 
     ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'].forEach(evt => {
       window.addEventListener(evt, onActivity, { passive: true });
@@ -199,6 +235,16 @@
 
     const about = document.getElementById('about');
     if (!about) return;
+
+    // bfcache: browser restores page from memory on reload/back-nav — reset intro
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) {
+        introPlayed  = false;
+        introRunning = false;
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        if (aboutActive) runIntro();
+      }
+    });
 
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -208,7 +254,11 @@
           hide();
           clearTimeout(idleTimer);
           if (introRunning) abortIntro();
-          primed = false;
+          primed       = false;
+          introPlayed  = false;
+          // Reset quote to hidden state so intro plays fresh on next visit
+          if (ending) ending.classList.remove('visible');
+          quoteItems.forEach(li => { li.style.transform = ''; });
         } else if (!introPlayed) {
           runIntro();
         }
