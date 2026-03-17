@@ -28,9 +28,15 @@
       this.scrollProgress3    = 0;
 
       // Scroll-driven reveal state
-      this.revealedItems        = new Set(); // indices of currently visible rows
-      this.allRevealedOnce      = false;     // idle timer guard — fires once per full reveal
-      this.interactionsEnabled  = false;     // hover image only active when all rows visible
+      this.revealedCount       = 0;     // how many allItems have been revealed so far
+      this.interactionsEnabled = false; // hover active only when section fully fills viewport
+
+      // Photo scroll hint — idle-timer system (mirrors scroll-hint.js)
+      this.photoScrollHint        = document.getElementById('photo-scroll-hint');
+      this.photoHintActive        = false; // true while list is filling but not yet complete
+      this.photoHintVisible       = false;
+      this.photoHintIdleTimer     = null;
+      this.photoHintAutoHideTimer = null;
 
       // All revealable elements in DOM order: title, section headers, project items
       this.allItems = [...document.querySelectorAll(
@@ -45,11 +51,8 @@
 
       gsap.registerPlugin(ScrambleTextPlugin);
 
-      // Start title and section headers hidden — revealed via glitch flash in phase 3
-      const titleEl = document.querySelector('.photo-portfolio-title');
-      const sectionHeaders = document.querySelectorAll('.photo-section-header');
-      if (titleEl) gsap.set(titleEl, { opacity: 0 });
-      sectionHeaders.forEach(h => gsap.set(h, { opacity: 0 }));
+      // Start all revealable elements hidden
+      this.allItems.forEach(item => gsap.set(item, { opacity: 0 }));
     }
 
     init() {
@@ -79,6 +82,12 @@
       this.projectList.addEventListener('scroll', () => this.updateScrollFade(), { passive: true });
 
       window.addEventListener('scroll', () => this.updateScroll(), { passive: true });
+
+      // Activity listeners for the photo scroll hint idle timer
+      ['scroll', 'mousemove', 'touchstart', 'touchmove'].forEach(evt => {
+        window.addEventListener(evt, () => this._onPhotoHintActivity(), { passive: true });
+      });
+
       this.updateScroll();
     }
 
@@ -98,58 +107,113 @@
       this.scrollProgress2 = newProgress2;
       this.scrollProgress3 = newProgress3;
 
-      // Overlay appears only once text has reached the top (phase 3 start)
-      this.overlay.style.opacity       = newProgress3;
-      this.overlay.style.pointerEvents = newProgress3 > 0 ? 'auto' : 'none';
-
       // Rows reveal only in phase 3 (after text has settled at top)
       this.updateRowReveal(newProgress3);
     }
 
-    // ── Row reveal — line-by-line glitch flash when overlay first activates ──
+    // ── Row reveal — scroll-driven line-by-line glitch flash ─────────────────
     updateRowReveal(progress) {
-      const shouldBeVisible = progress > 0;
+      const total = this.allItems.length;
 
-      if (shouldBeVisible && !this.allRevealedOnce) {
-        // First activation: stagger all rows in with glitch flash
-        this.allRevealedOnce     = true;
-        this.interactionsEnabled = true;
-        this.allItems.forEach((_, i) => this.revealedItems.add(i));
-        this.animateReveal();
-        this.startIdleTimer();
+      // Full reset when scrolled out of phase 3
+      if (progress <= 0) {
+        if (this.revealedCount > 0) {
+          this.overlay.style.opacity       = '0';
+          this.overlay.style.pointerEvents = 'none';
+          this.allItems.forEach(item => {
+            gsap.killTweensOf(item);
+            gsap.set(item, { opacity: 0 });
+          });
+          this.revealedCount       = 0;
+          this.interactionsEnabled = false;
+          this.stopIdleAnimation();
+          this.stopIdleTimer();
+          if (this.currentActiveIndex !== -1) {
+            this.clearActiveStates();
+            this.hideBackgroundImage();
+          }
+          this.photoHintActive = false;
+          this._hidePhotoHint();
+        }
+        return;
       }
 
-      if (!shouldBeVisible && this.allRevealedOnce) {
-        // Scrolled back out — hide everything and reset for next activation
-        this.allRevealedOnce     = false;
-        this.interactionsEnabled = false;
-        this.revealedItems.clear();
-        this.allItems.forEach(item => {
-          gsap.killTweensOf(item);
-          gsap.set(item, { opacity: 0 });
-        });
-        if (this.currentActiveIndex !== -1) {
-          this.clearActiveStates();
-          this.hideBackgroundImage();
+      // How many items should be visible at this scroll position
+      const targetCount = Math.ceil(progress * total);
+
+      if (targetCount > this.revealedCount) {
+        // Snap overlay on first item and arm the hint idle timer
+        if (this.revealedCount === 0) {
+          this.overlay.style.opacity       = '1';
+          this.overlay.style.pointerEvents = 'auto';
+          this.photoHintActive = true;
+          this._schedulePhotoHint();
+        }
+        // Reveal each newly crossed item with a glitch flash,
+        // staggered within the incoming batch
+        for (let i = this.revealedCount; i < targetCount; i++) {
+          this._revealItem(i, i - this.revealedCount);
+        }
+        this.revealedCount = targetCount;
+
+        // Enable hover interactions only once all items are visible
+        if (this.revealedCount >= total && !this.interactionsEnabled) {
+          this.interactionsEnabled = true;
+          this.photoHintActive = false;
+          this._hidePhotoHint();
+          this.startIdleTimer();
         }
       }
     }
 
-    // ── Staggered glitch flash across all rows ────────────────────────────────
-    animateReveal() {
-      this.allItems.forEach((item, i) => {
-        gsap.killTweensOf(item);
-        gsap.set(item, { opacity: 0 });
-        gsap.to(item, {
-          delay: i * 0.04,
-          keyframes: [
-            { opacity: 1,    duration: 0.04, ease: 'none' },
-            { opacity: 0.15, duration: 0.03, ease: 'none' },
-            { opacity: 0.9,  duration: 0.04, ease: 'none' },
-            { opacity: 0.35, duration: 0.02, ease: 'none' },
-            { opacity: 1,    duration: 0.05, ease: 'none' },
-          ]
-        });
+    // ── Photo scroll hint — idle-timer system ────────────────────────────────
+    _schedulePhotoHint() {
+      clearTimeout(this.photoHintIdleTimer);
+      if (this.photoHintActive) {
+        this.photoHintIdleTimer = setTimeout(() => this._showPhotoHint(), 5000);
+      }
+    }
+
+    _showPhotoHint() {
+      if (!this.photoHintActive || this.photoHintVisible || !this.photoScrollHint) return;
+      this.photoHintVisible = true;
+      this.photoScrollHint.removeAttribute('aria-hidden');
+      this.photoScrollHint.classList.add('visible');
+      clearTimeout(this.photoHintAutoHideTimer);
+      this.photoHintAutoHideTimer = setTimeout(() => {
+        this._hidePhotoHint();
+        this._schedulePhotoHint();
+      }, 3000);
+    }
+
+    _hidePhotoHint() {
+      if (!this.photoHintVisible || !this.photoScrollHint) return;
+      this.photoHintVisible = false;
+      clearTimeout(this.photoHintAutoHideTimer);
+      this.photoScrollHint.setAttribute('aria-hidden', 'true');
+      this.photoScrollHint.classList.remove('visible');
+    }
+
+    _onPhotoHintActivity() {
+      if (!this.photoHintActive) return;
+      if (this.photoHintVisible) this._hidePhotoHint();
+      this._schedulePhotoHint();
+    }
+
+    // ── Single-item glitch flash ──────────────────────────────────────────────
+    _revealItem(i, batchIndex) {
+      const item = this.allItems[i];
+      gsap.killTweensOf(item);
+      gsap.set(item, { opacity: 0 });
+      gsap.to(item, {
+        delay: batchIndex * 0.04,
+        keyframes: [
+          { opacity: 1,    duration: 0.04, ease: 'none' },
+          { opacity: 0.15, duration: 0.03, ease: 'none' },
+          { opacity: 0.9,  duration: 0.04, ease: 'none' },
+          { opacity: 0.35, duration: 0.02, ease: 'none' },
+          { opacity: 1,    duration: 0.05, ease: 'none' },
+        ]
       });
     }
 

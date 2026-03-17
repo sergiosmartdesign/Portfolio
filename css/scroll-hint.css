@@ -93,3 +93,36 @@
   0%, 100% { opacity: 1;   }
   50%      { opacity: 0.55; }
 }
+
+/* ── Photo section scroll hint — same layout, crimson palette ─────────────── */
+#photo-scroll-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 979;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2.5rem;
+  pointer-events: none;
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity    0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#photo-scroll-hint.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+#photo-scroll-hint .sc-icon {
+  color: #9b2226;
+  filter: drop-shadow(0 0 6px rgba(155, 34, 38, 0.85));
+}
+
+#photo-scroll-hint .sc-text {
+  color: #9b2226;
+  text-shadow: 0 0 12px rgba(155, 34, 38, 0.9), 0 0 24px rgba(155, 34, 38, 0.4);
+}
