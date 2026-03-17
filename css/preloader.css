@@ -1,0 +1,93 @@
+/* ═══ PRELOADER — 3-D spinning ring loader ═══════════════════════════════════
+   No external dependencies. All 3-D via CSS transforms; text + % via JS.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+body.preloading {
+  overflow: hidden;
+}
+
+/* ── Overlay ─────────────────────────────────────────────────────────────── */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 40em;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+#preloader.exit {
+  opacity: 0;
+  transform: scale(1.06);
+  pointer-events: none;
+}
+
+/* ── Wrapper ─────────────────────────────────────────────────────────────── */
+.preloader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 17rem;
+  height: 17rem;
+  animation: pl-tiltSpin 8s linear infinite;
+  transform-style: preserve-3d;
+}
+
+/* ── Ring ────────────────────────────────────────────────────────────────── */
+.preloader__ring {
+  transform-style: preserve-3d;
+  animation: pl-spin 4s linear infinite;
+  font-size: 2rem;
+  position: relative;
+  height: 3rem;
+  width: 1.5rem;
+}
+
+.preloader__ring:nth-child(even) {
+  animation-direction: reverse;
+}
+
+/* ── Sector ──────────────────────────────────────────────────────────────── */
+.preloader__sector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff, 0 0 20px #00ffff;
+  /* per-sector rotateY + translateZ set by JS */
+}
+
+/* empty sector → thin horizontal line */
+.preloader__sector:empty::before {
+  content: '';
+  align-self: stretch;
+  width: 100%;
+  background: linear-gradient(
+    transparent 44%,
+    rgba(0, 255, 255, 0.18) 44% 56%,
+    transparent 56%
+  );
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes pl-tiltSpin {
+  from { transform: rotateY(0)     rotateX(30deg); }
+  to   { transform: rotateY(1turn) rotateX(30deg); }
+}
+
+@keyframes pl-spin {
+  from { transform: rotateY(0); }
+  to   { transform: rotateY(1turn); }
+}
