@@ -6,6 +6,12 @@ body.preloading {
   overflow: hidden;
 }
 
+/* Freeze all CSS animations inside #intro until the preloader exits */
+body.preloading #intro,
+body.preloading #intro * {
+  animation-play-state: paused !important;
+}
+
 /* ── Overlay ─────────────────────────────────────────────────────────────── */
 #preloader {
   position: fixed;
@@ -66,6 +72,7 @@ body.preloading {
   font-size: 1.1rem;
   color: #00ffff;
   text-shadow: 0 0 8px #00ffff, 0 0 20px #00ffff;
+  backface-visibility: hidden;
   /* per-sector rotateY + translateZ set by JS */
 }
 

@@ -408,13 +408,13 @@ class AnimationCoordinator {
   /**
    * Initialize cyberpunk panel animation
    */
-  static initCyberPanel() {
+  static initCyberPanel(delay = TIMING.CYBER_PANEL_DELAY) {
     const panel = document.getElementById('introCyberPanel');
     if (!panel) return;
 
     setTimeout(() => {
       panel.classList.add('active');
-    }, TIMING.CYBER_PANEL_DELAY);
+    }, delay);
   }
 
   /**
@@ -444,9 +444,12 @@ class AnimationCoordinator {
           if (entry.isIntersecting) {
             introSection.classList.remove('paused-animations');
 
-            if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
-            if (window.Orb3D?.resume) window.Orb3D.resume();
-            if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
+            // Don't start JS animations while preloader is still showing
+            if (!document.body.classList.contains('preloading')) {
+              if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
+              if (window.Orb3D?.resume) window.Orb3D.resume();
+              if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
+            }
           } else {
             introSection.classList.add('paused-animations');
 
@@ -1028,8 +1031,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Set initial header background for intro section
   navigationManager.updateHeaderBackground('intro');
 
-  // Initialize animations
-  AnimationCoordinator.initCyberPanel();
+  // Initialize scroll-based animation optimizer
   AnimationCoordinator.initAnimationOptimizer();
 
   // Store glitchSystem globally for DNA animation trigger
@@ -1037,6 +1039,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // DNA effects will be initialized when about section becomes visible
   // (handled in AnimationCoordinator.initAnimationOptimizer)
+
+  // When preloader starts fading: activate the cyber panel sidebar immediately
+  // (sidebar uses CSS transition, not animation — unaffected by animation-play-state freeze)
+  window.addEventListener('preloaderExiting', () => {
+    AnimationCoordinator.initCyberPanel(800);
+  }, { once: true });
+
+  // After preloader is fully gone: start intro JS canvas animations from scratch
+  window.addEventListener('preloaderDone', () => {
+    if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
+    if (window.Orb3D?.resume) window.Orb3D.resume();
+    if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
+  }, { once: true });
 });
 
 // Scroll to top on full page load (overrides browser scroll restoration)

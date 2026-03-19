@@ -96,10 +96,12 @@
     if (count >= 100) {
       clearInterval(counterIv);
       setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('preloaderExiting'));
         overlay.classList.add('exit');
         overlay.addEventListener('transitionend', () => {
           overlay.remove();
           document.body.classList.remove('preloading');
+          window.dispatchEvent(new CustomEvent('preloaderDone'));
         }, { once: true });
       }, 400);
     }
