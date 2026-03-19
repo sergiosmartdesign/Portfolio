@@ -163,6 +163,25 @@
           this._hidePhotoHint();
           this.startIdleTimer();
         }
+      } else if (targetCount < this.revealedCount) {
+        // Scrolling backward: hide items from the last revealed back to targetCount
+        const wasFullyRevealed = (this.revealedCount >= total);
+
+        for (let i = this.revealedCount - 1; i >= targetCount; i--) {
+          this._hideItem(i, this.revealedCount - 1 - i);
+        }
+        this.revealedCount = targetCount;
+
+        // Disable interactions if we were fully revealed and now are not
+        if (wasFullyRevealed && this.interactionsEnabled) {
+          this.interactionsEnabled = false;
+          this.stopIdleAnimation();
+          if (this.currentActiveIndex !== -1) {
+            this.clearActiveStates();
+            this.hideBackgroundImage();
+          }
+          this.stopIdleTimer();
+        }
       }
     }
 
@@ -213,6 +232,21 @@
           { opacity: 0.9,  duration: 0.04, ease: 'none' },
           { opacity: 0.35, duration: 0.02, ease: 'none' },
           { opacity: 1,    duration: 0.05, ease: 'none' },
+        ]
+      });
+    }
+
+    // ── Single-item glitch hide (reverse of _revealItem) ─────────────────────
+    _hideItem(i, batchIndex) {
+      const item = this.allItems[i];
+      gsap.killTweensOf(item);
+      gsap.to(item, {
+        delay: batchIndex * 0.04,
+        keyframes: [
+          { opacity: 0.35, duration: 0.02, ease: 'none' },
+          { opacity: 0.9,  duration: 0.04, ease: 'none' },
+          { opacity: 0.15, duration: 0.03, ease: 'none' },
+          { opacity: 0,    duration: 0.04, ease: 'none' },
         ]
       });
     }
