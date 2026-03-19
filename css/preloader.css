@@ -6,10 +6,22 @@ body.preloading {
   overflow: hidden;
 }
 
-/* Freeze all CSS animations inside #intro until the preloader exits */
-body.preloading #intro,
-body.preloading #intro * {
+/* Freeze all CSS animations inside #intro until the preloader exits,
+   but leave the orb alone so it animates through the entire loading sequence */
+body.preloading #intro *:not(.orb-wrap):not(.orb-particle) {
   animation-play-state: paused !important;
+}
+
+/* While preloader-visible: raise #intro's stacking context above the preloader
+   so the orb (inside #intro) renders on top of the loading overlay.
+   #intro has background:transparent so the preloader rings/text show through.
+   All other #intro children are hidden so only the orb is visible. */
+body.preloader-visible #intro {
+  z-index: 10001;
+}
+
+body.preloader-visible #intro > *:not(.orb-wrap) {
+  visibility: hidden;
 }
 
 /* ── Overlay ─────────────────────────────────────────────────────────────── */
@@ -64,7 +76,7 @@ body.preloading #intro * {
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-family: 'Courier New', Courier, monospace;
@@ -72,7 +84,6 @@ body.preloading #intro * {
   font-size: 1.1rem;
   color: #00ffff;
   text-shadow: 0 0 8px #00ffff, 0 0 20px #00ffff;
-  backface-visibility: hidden;
   /* per-sector rotateY + translateZ set by JS */
 }
 

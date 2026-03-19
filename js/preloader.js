@@ -1,12 +1,11 @@
 /**
  * Preloader — 3-D dual-ring loader
  *
- * Top ring:    text reveal  →  [ · l o a d i n g · ]
- * Bottom ring: live % counter  →  [ · 0% · ] … [ · 100% · ]
+ * Top ring:    text reveal  →  [ · l o a d i n g · ]  (sectors 0–10)
+ * Bottom ring: live % counter  →  [ · 0% · ]  (sectors 0–4)
  *
- * Load tracking uses PerformanceObserver (resource entries, buffered).
- * Dismisses only after BOTH the page load event AND the full text
- * animation have completed (~2.6 s minimum display time).
+ * Characters live on consecutive sectors so the text appears naturally
+ * as each sector rotates to face the viewer — no flat overlay needed.
  */
 (function () {
   'use strict';
@@ -45,37 +44,41 @@
 
   document.body.prepend(overlay);
   document.body.classList.add('preloading');
+  document.body.classList.add('preloader-visible');
 
   /* ── Top ring: text reveal ─────────────────────────────────────────────── */
   //  Final layout  →  [ · l o a d i n g · ]
-  //  Sector index  →  0   2  4  6  8  10 12 14 16  18  20
+  //  11 chars centered at sector 0 (front): start offset = 30 - 5 = 25
+  //  Sector index  → 25 26  27 28 29  0  1  2  3   4   5
 
   // Phase 1 — brackets only (immediate)
-  topSectors[0].textContent  = '[';
-  topSectors[20].textContent = ']';
+  topSectors[25].textContent = '[';
+  topSectors[5].textContent  = ']';
 
   // Phase 2 — flanking dots
   setTimeout(() => {
-    topSectors[2].textContent  = '·';
-    topSectors[18].textContent = '·';
+    topSectors[26].textContent = '·';
+    topSectors[4].textContent  = '·';
   }, 600);
 
-  // Phase 3 — letters one by one
+  // Phase 3 — letters one by one (l o a d · d i n g), center 'd' at sector 0
   [
-    [4, 'l'], [6, 'o'], [8, 'a'], [10, 'd'],
-    [12, 'i'], [14, 'n'], [16, 'g'],
+    [29, 'a'], [28, 'o'], [27, 'l'],   // left side, outward
+    [0,  'd'],                          // center
+    [1,  'i'], [2,  'n'], [3,  'g'],   // right side, outward
   ].forEach(([idx, ch], i) => {
     setTimeout(() => { topSectors[idx].textContent = ch; }, 1200 + i * 160);
   });
 
   /* ── Bottom ring: percentage counter ──────────────────────────────────── */
-  //  Layout   →  [ · 0% · ]
-  //  Sectors  →  0   2  5   8   10
+  //  5 chars centered at sector 0 (front): start offset = 30 - 2 = 28
+  //  Layout   →  [ ·  0%  · ]
+  //  Sectors  → 28 29   0  1  2
 
-  botSectors[0].textContent  = '[';
-  botSectors[2].textContent  = '·';
-  botSectors[8].textContent  = '·';
-  botSectors[10].textContent = ']';
+  botSectors[28].textContent = '[';
+  botSectors[29].textContent = '·';
+  botSectors[1].textContent  = '·';
+  botSectors[2].textContent  = ']';
 
   /* ── Counter: increments by exactly 1 per tick ────────────────────────── */
   //  26 ms × 100 steps = 2 600 ms — covers the full text-reveal animation.
@@ -83,19 +86,21 @@
   let count    = 0;
   let loadDone = false;
 
-  botSectors[5].textContent = '0%';
+  botSectors[0].textContent = '0%';
 
   const counterIv = setInterval(() => {
     const ceiling = loadDone ? 100 : 94;
 
     if (count < ceiling) {
       count++;
-      botSectors[5].textContent = count + '%';
+      botSectors[0].textContent = count + '%';
     }
 
     if (count >= 100) {
       clearInterval(counterIv);
       setTimeout(() => {
+        // Drop #intro back below the preloader so the fade is visible
+        document.body.classList.remove('preloader-visible');
         window.dispatchEvent(new CustomEvent('preloaderExiting'));
         overlay.classList.add('exit');
         overlay.addEventListener('transitionend', () => {

@@ -444,10 +444,10 @@ class AnimationCoordinator {
           if (entry.isIntersecting) {
             introSection.classList.remove('paused-animations');
 
-            // Don't start JS animations while preloader is still showing
+            // Don't start JS canvas animations while preloader is still showing
+            // (Orb3D is excluded — its CSS animations run freely during preloading)
             if (!document.body.classList.contains('preloading')) {
               if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
-              if (window.Orb3D?.resume) window.Orb3D.resume();
               if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
             }
           } else {
@@ -1047,9 +1047,9 @@ window.addEventListener('DOMContentLoaded', () => {
   }, { once: true });
 
   // After preloader is fully gone: start intro JS canvas animations from scratch
+  // (Orb3D is excluded — it has been running since page load, visible above the preloader)
   window.addEventListener('preloaderDone', () => {
     if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
-    if (window.Orb3D?.resume) window.Orb3D.resume();
     if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
   }, { once: true });
 });

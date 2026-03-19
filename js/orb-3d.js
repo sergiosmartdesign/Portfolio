@@ -14,7 +14,7 @@ class Orb3D {
       particleSize: 2,
       animationTime: 14,
       baseHue: 180,
-      baseDelay: 4,
+      baseDelay: 0,
       delayIncrement: 0.01,
       hueShift: 40
     };
