@@ -37,6 +37,7 @@
       this.photoHintVisible       = false;
       this.photoHintIdleTimer     = null;
       this.photoHintAutoHideTimer = null;
+      this.mouseOverOverlay       = false; // true while cursor is inside the photo overlay
 
       // All revealable elements in DOM order: title, section headers, project items
       this.allItems = [...document.querySelectorAll(
@@ -79,7 +80,16 @@
         this.updateScrollFade();
       });
 
-      this.projectList.addEventListener('scroll', () => this.updateScrollFade(), { passive: true });
+      this.projectList.addEventListener('scroll', () => {
+        this.updateScrollFade();
+        // Inner-list scroll = user browsing already-visible items → show hint soon
+        if (this.photoHintActive && !this.photoHintVisible) this._schedulePhotoHint();
+      }, { passive: true });
+
+      // Track whether the cursor is inside the photo overlay so the hint
+      // fires with a shorter delay while the user is hovering over the section
+      this.overlay.addEventListener('mouseenter', () => { this.mouseOverOverlay = true; });
+      this.overlay.addEventListener('mouseleave', () => { this.mouseOverOverlay = false; });
 
       window.addEventListener('scroll', () => this.updateScroll(), { passive: true });
 
@@ -132,7 +142,8 @@
             this.clearActiveStates();
             this.hideBackgroundImage();
           }
-          this.photoHintActive = false;
+          this.photoHintActive  = false;
+          this.mouseOverOverlay = false;
           this._hidePhotoHint();
         }
         return;
@@ -189,7 +200,9 @@
     _schedulePhotoHint() {
       clearTimeout(this.photoHintIdleTimer);
       if (this.photoHintActive) {
-        this.photoHintIdleTimer = setTimeout(() => this._showPhotoHint(), 3000);
+        // Shorter delay when the cursor is already over the photo section
+        const delay = this.mouseOverOverlay ? 800 : 3000;
+        this.photoHintIdleTimer = setTimeout(() => this._showPhotoHint(), delay);
       }
     }
 

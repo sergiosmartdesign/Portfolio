@@ -1,17 +1,21 @@
 /**
- * Preloader — 3-D dual-ring loader
- *
- * Top ring:    text reveal  →  [ · l o a d i n g · ]  (sectors 0–10)
- * Bottom ring: live % counter  →  [ · 0% · ]  (sectors 0–4)
- *
- * Characters live on consecutive sectors so the text appears naturally
- * as each sector rotates to face the viewer — no flat overlay needed.
+ * Preloader — equalizer bar animation + glitch text overlay
+ * No external dependencies.
  */
 (function () {
   'use strict';
 
-  const SECTORS = 30;
-  const RADIUS  = '7rem';
+  const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+
+  // Palette colors arranged symmetrically: cool teal outside → warm red/maroon centre
+  const BAR_COLORS = [
+    '#005F73', '#0A9396', '#94D2BD', '#E9D8A6', '#EE9B00',
+    '#CA6702', '#BB3E03', '#AE2012', '#9B2226',
+    '#AE2012', '#BB3E03', '#CA6702', '#EE9B00', '#E9D8A6', '#94D2BD'
+  ];
+
+  // Stagger: 0 s at the centre bar (index 7), ±0.2 s per step toward edges
+  const DELAYS = [1.4, 1.2, 1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4];
 
   /* ── Build DOM ─────────────────────────────────────────────────────────── */
   const overlay = document.createElement('div');
@@ -19,88 +23,121 @@
   overlay.setAttribute('aria-hidden', 'true');
   overlay.setAttribute('role', 'presentation');
 
-  const wrap = document.createElement('div');
-  wrap.className = 'preloader';
+  const stage = document.createElement('div');
+  stage.className = 'preloader-stage';
 
-  const topSectors = [];
-  const botSectors = [];
+  /* ── Bars ──────────────────────────────────────────────────────────────── */
+  const barsEl = document.createElement('div');
+  barsEl.className = 'preloader-bars';
 
-  function buildRing(store) {
-    const ring = document.createElement('div');
-    ring.className = 'preloader__ring';
-    for (let s = 0; s < SECTORS; s++) {
-      const sector = document.createElement('span');
-      sector.className = 'preloader__sector';
-      sector.style.transform = `rotateY(${(360 / SECTORS) * s}deg) translateZ(${RADIUS})`;
-      ring.appendChild(sector);
-      store.push(sector);
+  BAR_COLORS.forEach((color, i) => {
+    const bar = document.createElement('span');
+    bar.style.background = color;
+    bar.style.animationDelay = DELAYS[i] + 's';
+    barsEl.appendChild(bar);
+  });
+
+  /* ── Text overlay ──────────────────────────────────────────────────────── */
+  const textEl = document.createElement('div');
+  textEl.className = 'preloader-text';
+
+  const labelEl = document.createElement('div');
+  labelEl.className = 'preloader-label';
+
+  // Build "[ · l o a d i n g · ]" as individual glitch char spans
+  const LABEL = '[ · l o a d i n g · ]';
+  LABEL.split('').forEach((char, i) => {
+    if (char === ' ') {
+      labelEl.appendChild(document.createTextNode('\u00a0'));
+      return;
     }
-    return ring;
-  }
+    labelEl.appendChild(makeGlitchSpan(char, i));
+  });
 
-  wrap.appendChild(buildRing(topSectors));
-  wrap.appendChild(buildRing(botSectors));
-  overlay.appendChild(wrap);
+  const pctEl = document.createElement('div');
+  pctEl.className = 'preloader-pct';
+
+  textEl.appendChild(labelEl);
+  textEl.appendChild(pctEl);
+  stage.appendChild(barsEl);
+  stage.appendChild(textEl);
+  overlay.appendChild(stage);
 
   document.body.prepend(overlay);
   document.body.classList.add('preloading');
-  document.body.classList.add('preloader-visible');
 
-  /* ── Top ring: text reveal ─────────────────────────────────────────────── */
-  //  Final layout  →  [ · l o a d i n g · ]
-  //  11 chars centered at sector 0 (front): start offset = 30 - 5 = 25
-  //  Sector index  → 25 26  27 28 29  0  1  2  3   4   5
+  /* ── Helpers ────────────────────────────────────────────────────────────── */
+  function makeGlitchSpan(char, charIndex) {
+    const span = document.createElement('span');
+    span.setAttribute('data-char', char);
+    // --char-0 is the real character so it shows after animation settles
+    span.style.setProperty('--char-0', '"' + char + '"');
+    for (let g = 1; g < 10; g++) {
+      const rc = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+      span.style.setProperty('--char-' + g, '"' + rc + '"');
+    }
+    // stagger delay: label chars fan out, pct chars use index 0–2
+    span.style.setProperty('--pl-delay', (charIndex * 0.08) + 's');
+    return span;
+  }
 
-  // Phase 1 — brackets only (immediate)
-  topSectors[25].textContent = '[';
-  topSectors[5].textContent  = ']';
+  // Build full token list for "[ · X Y % · ]" format
+  function buildTokens(n) {
+    const digits = (n + '%').split('');
+    const inner  = [];
+    digits.forEach((c, i) => { if (i > 0) inner.push(' '); inner.push(c); });
+    return ['[', ' ', '·', ' '].concat(inner).concat([' ', '·', ' ', ']']);
+  }
 
-  // Phase 2 — flanking dots
-  setTimeout(() => {
-    topSectors[26].textContent = '·';
-    topSectors[4].textContent  = '·';
-  }, 600);
+  /* ── Percentage counter ─────────────────────────────────────────────────── */
+  let count      = 0;
+  let loadDone   = false;
+  let pctRefs    = []; // { val, el } for every non-space token in pctEl
 
-  // Phase 3 — letters one by one (l o a d · d i n g), center 'd' at sector 0
-  [
-    [29, 'a'], [28, 'o'], [27, 'l'],   // left side, outward
-    [0,  'd'],                          // center
-    [1,  'i'], [2,  'n'], [3,  'g'],   // right side, outward
-  ].forEach(([idx, ch], i) => {
-    setTimeout(() => { topSectors[idx].textContent = ch; }, 1200 + i * 160);
-  });
+  function buildPct(tokens) {
+    pctEl.innerHTML = '';
+    pctRefs = [];
+    tokens.forEach(token => {
+      if (token === ' ') {
+        pctEl.appendChild(document.createTextNode('\u00a0'));
+      } else {
+        const span = makeGlitchSpan(token, pctRefs.length);
+        pctEl.appendChild(span);
+        pctRefs.push({ val: token, el: span });
+      }
+    });
+  }
 
-  /* ── Bottom ring: percentage counter ──────────────────────────────────── */
-  //  5 chars centered at sector 0 (front): start offset = 30 - 2 = 28
-  //  Layout   →  [ ·  0%  · ]
-  //  Sectors  → 28 29   0  1  2
+  function renderPct(n) {
+    const tokens   = buildTokens(n);
+    const nonSpace = tokens.filter(t => t !== ' ');
 
-  botSectors[28].textContent = '[';
-  botSectors[29].textContent = '·';
-  botSectors[1].textContent  = '·';
-  botSectors[2].textContent  = ']';
+    // Full rebuild when digit count changes (1→2→3 digits)
+    if (nonSpace.length !== pctRefs.length) {
+      buildPct(tokens);
+      return;
+    }
 
-  /* ── Counter: increments by exactly 1 per tick ────────────────────────── */
-  //  26 ms × 100 steps = 2 600 ms — covers the full text-reveal animation.
-  //  Ceiling is 94 until window.load fires; then it runs to 100 and exits.
-  let count    = 0;
-  let loadDone = false;
+    // Smart update: only replace spans whose value changed
+    nonSpace.forEach((token, i) => {
+      if (token === pctRefs[i].val) return;
+      const newSpan = makeGlitchSpan(token, i);
+      pctRefs[i].el.replaceWith(newSpan);
+      pctRefs[i] = { val: token, el: newSpan };
+    });
+  }
 
-  botSectors[0].textContent = '0%';
+  renderPct(0);
 
   const counterIv = setInterval(() => {
     const ceiling = loadDone ? 100 : 94;
-
     if (count < ceiling) {
       count++;
-      botSectors[0].textContent = count + '%';
+      renderPct(count);
     }
-
     if (count >= 100) {
       clearInterval(counterIv);
       setTimeout(() => {
-        // Drop #intro back below the preloader so the fade is visible
-        document.body.classList.remove('preloader-visible');
         window.dispatchEvent(new CustomEvent('preloaderExiting'));
         overlay.classList.add('exit');
         overlay.addEventListener('transitionend', () => {
@@ -112,9 +149,7 @@
     }
   }, 26);
 
-  /* ── Gate 100 % on real window.load ────────────────────────────────────── */
   function onLoad() { loadDone = true; }
-
   if (document.readyState === 'complete') {
     onLoad();
   } else {

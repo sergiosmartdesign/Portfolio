@@ -1,27 +1,14 @@
-/* ═══ PRELOADER — 3-D spinning ring loader ═══════════════════════════════════
-   No external dependencies. All 3-D via CSS transforms; text + % via JS.
+/* ═══ PRELOADER — Equalizer bars + glitch text ════════════════════════════════
+   No external dependencies.
    ══════════════════════════════════════════════════════════════════════════ */
 
 body.preloading {
   overflow: hidden;
 }
 
-/* Freeze all CSS animations inside #intro until the preloader exits,
-   but leave the orb alone so it animates through the entire loading sequence */
-body.preloading #intro *:not(.orb-wrap):not(.orb-particle) {
+/* Pause all intro animations while loading */
+body.preloading #intro * {
   animation-play-state: paused !important;
-}
-
-/* While preloader-visible: raise #intro's stacking context above the preloader
-   so the orb (inside #intro) renders on top of the loading overlay.
-   #intro has background:transparent so the preloader rings/text show through.
-   All other #intro children are hidden so only the orb is visible. */
-body.preloader-visible #intro {
-  z-index: 10001;
-}
-
-body.preloader-visible #intro > *:not(.orb-wrap) {
-  visibility: hidden;
 }
 
 /* ── Overlay ─────────────────────────────────────────────────────────────── */
@@ -29,83 +16,135 @@ body.preloader-visible #intro > *:not(.orb-wrap) {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #000;
+  background: #001219;
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 40em;
-  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transition: opacity 0.8s ease-in-out;
 }
 
 #preloader.exit {
   opacity: 0;
-  transform: scale(1.06);
   pointer-events: none;
 }
 
-/* ── Wrapper ─────────────────────────────────────────────────────────────── */
-.preloader {
+/* ── Stage: bars + overlay share the same bounding box ───────────────────── */
+.preloader-stage {
+  position: relative;
+  width: 260px;
+  height: 130px;
+}
+
+/* ── Bars ────────────────────────────────────────────────────────────────── */
+.preloader-bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+}
+
+.preloader-bars span {
+  display: block;
+  width: 10px;
+  height: 8%;
+  border-radius: 99px;
+  flex-shrink: 0;
+  animation: pl-load 2.5s linear infinite;
+}
+
+/* ── Text overlay ────────────────────────────────────────────────────────── */
+.preloader-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  width: 17rem;
-  height: 17rem;
-  animation: pl-tiltSpin 8s linear infinite;
-  transform-style: preserve-3d;
+  gap: 5px;
+  white-space: nowrap;
 }
 
-/* ── Ring ────────────────────────────────────────────────────────────────── */
-.preloader__ring {
-  transform-style: preserve-3d;
-  animation: pl-spin 4s linear infinite reverse;
-  font-size: 2rem;
-  position: relative;
-  height: 3rem;
-  width: 1.5rem;
-}
-
-.preloader__ring:nth-child(even) {
-  animation-direction: normal;
-}
-
-/* ── Sector ──────────────────────────────────────────────────────────────── */
-.preloader__sector {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.preloader-label,
+.preloader-pct {
   font-family: 'Courier New', Courier, monospace;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #00ffff;
-  text-shadow: 0 0 8px #00ffff, 0 0 20px #00ffff;
-  /* per-sector rotateY + translateZ set by JS */
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
 }
 
-/* empty sector → thin horizontal line */
-.preloader__sector:empty::before {
-  content: '';
-  align-self: stretch;
-  width: 100%;
-  background: linear-gradient(
-    transparent 44%,
-    rgba(0, 255, 255, 0.18) 44% 56%,
-    transparent 56%
-  );
+/* Color + shadow for the \u00a0 space text-nodes between glitch spans */
+.preloader-label { color: #94D2BD; text-shadow: 0 0 12px rgba(0,18,25,0.9), 0 2px 8px rgba(0,0,0,0.85); }
+.preloader-pct   { color: #EE9B00; text-shadow: 0 0 12px rgba(0,18,25,0.9), 0 2px 8px rgba(0,0,0,0.85); }
+
+/* ── Glitch chars ────────────────────────────────────────────────────────── */
+/* Each span has data-char=actual, --char-0=actual, --char-1..9=random glitch */
+
+.preloader-label [data-char],
+.preloader-pct [data-char] {
+  color: transparent;
+  position: relative;
+  display: inline-block;
 }
 
-/* ── Animations ──────────────────────────────────────────────────────────── */
-@keyframes pl-tiltSpin {
-  from { transform: rotateY(0)     rotateX(30deg); }
-  to   { transform: rotateY(1turn) rotateX(30deg); }
+/* Loading label: teal, slow infinite glitch — mostly real char, brief flashes */
+.preloader-label [data-char]::after {
+  content: var(--char-0);
+  color: #94D2BD;
+  position: absolute;
+  left: 0;
+  top: 0;
+  text-shadow: 0 0 12px rgba(0, 18, 25, 0.9), 0 2px 8px rgba(0, 0, 0, 0.85);
+  animation-name: pl-glitch;
+  animation-duration: 2.4s;
+  animation-timing-function: steps(1);
+  animation-delay: var(--pl-delay, 0s);
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
 }
 
-@keyframes pl-spin {
-  from { transform: rotateY(0); }
-  to   { transform: rotateY(1turn); }
+/* Percentage: amber, brief glitch per digit change then settles on real char */
+.preloader-pct [data-char]::after {
+  content: var(--char-0);
+  color: #EE9B00;
+  position: absolute;
+  left: 0;
+  top: 0;
+  text-shadow: 0 0 12px rgba(0, 18, 25, 0.9), 0 2px 8px rgba(0, 0, 0, 0.85);
+  animation-name: glitch-switch;
+  animation-duration: 0.2s;
+  animation-timing-function: steps(1);
+  animation-delay: var(--pl-delay, 0s);
+  animation-iteration-count: 3;
+  animation-fill-mode: both;
+}
+
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+
+/*
+ * pl-glitch: mostly shows var(--char-0) = real character (81% of the cycle),
+ * then rapid flashes of random chars around t=80–92%, staggered per character.
+ */
+@keyframes pl-glitch {
+  0%, 80%  { content: var(--char-0); }
+  81%      { content: var(--char-1); }
+  82%      { content: var(--char-2); }
+  83%      { content: var(--char-3); }
+  84%      { content: var(--char-1); }
+  85%, 89% { content: var(--char-0); }
+  90%      { content: var(--char-4); }
+  91%      { content: var(--char-0); }
+  92%      { content: var(--char-5); }
+  93%, 100%{ content: var(--char-0); }
+}
+
+/* Bar equalizer: grows from bottom, brightens at peak */
+@keyframes pl-load {
+  0%   { height: 8%;   opacity: 0.3; }
+  50%  { height: 100%; opacity: 1;   }
+  100% { height: 8%;   opacity: 0.3; }
 }
