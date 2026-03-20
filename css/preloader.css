@@ -6,8 +6,19 @@ body.preloading {
   overflow: hidden;
 }
 
-/* Pause all intro animations while loading */
-body.preloading #intro * {
+/* Pause all intro + header animations while loading.
+   Must include ::before/::after explicitly — the * selector does NOT
+   match pseudo-elements, so glitch animations on [data-char]::after
+   would otherwise run (and finish) behind the preloader overlay. */
+body.preloading #intro,
+body.preloading #intro::before,
+body.preloading #intro::after,
+body.preloading #intro *,
+body.preloading #intro *::before,
+body.preloading #intro *::after,
+body.preloading header,
+body.preloading header *,
+body.preloading header *::after {
   animation-play-state: paused !important;
 }
 

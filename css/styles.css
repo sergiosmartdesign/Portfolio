@@ -457,6 +457,7 @@ nav {
   background-position: 100% 0%;
   transition: background-size 0.7s, background-position var(--transition-slow) var(--easing-ease-in-out), color var(--transition-base);
   animation: lineGrow var(--transition-slowest) var(--easing-ease-out);
+  animation-fill-mode: backwards;
 }
 
 @keyframes lineGrow {

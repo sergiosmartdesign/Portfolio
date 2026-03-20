@@ -138,11 +138,14 @@
     if (count >= 100) {
       clearInterval(counterIv);
       setTimeout(() => {
+        // Unpause intro + header animations NOW, while the overlay is still fading.
+        // animation-fill-mode:backwards means chars immediately show glitch characters
+        // during their 0.5s delay — the glitch is visible through the fading overlay.
+        document.body.classList.remove('preloading');
         window.dispatchEvent(new CustomEvent('preloaderExiting'));
         overlay.classList.add('exit');
         overlay.addEventListener('transitionend', () => {
           overlay.remove();
-          document.body.classList.remove('preloading');
           window.dispatchEvent(new CustomEvent('preloaderDone'));
         }, { once: true });
       }, 400);
