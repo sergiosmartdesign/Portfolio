@@ -209,6 +209,9 @@
     if (introPlayed || !quoteItems.length) return;
     introRunning = true;
 
+    // Ensure ending is hidden before the animation starts
+    if (ending) ending.classList.remove('visible');
+
     // Start with all items hidden below (offset -1)
     applyOffset(-1);
 
@@ -236,12 +239,32 @@
     const about = document.getElementById('about');
     if (!about) return;
 
+    // Nav button click: reset the intro so it replays from scratch.
+    // Without this, if the user is already on the about section and clicks the
+    // nav button again, the section never leaves view → the IntersectionObserver
+    // reset never fires → ending stays visible from the previous play-through.
+    const aboutNavBtn = document.querySelector('a[href="#about"].nav-btn');
+    if (aboutNavBtn) {
+      aboutNavBtn.addEventListener('click', () => {
+        introPlayed  = false;
+        introRunning = false;
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        clearTimeout(idleTimer);
+        if (ending) ending.classList.remove('visible');
+        quoteItems.forEach(li => { li.style.transform = ''; });
+        // If section is already active (no IntersectionObserver re-fire coming), start now
+        if (aboutActive) setTimeout(runIntro, 50);
+      });
+    }
+
     // bfcache: browser restores page from memory on reload/back-nav — reset intro
     window.addEventListener('pageshow', (e) => {
       if (e.persisted) {
         introPlayed  = false;
         introRunning = false;
         if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        if (ending) ending.classList.remove('visible');
+        quoteItems.forEach(li => { li.style.transform = ''; });
         if (aboutActive) runIntro();
       }
     });

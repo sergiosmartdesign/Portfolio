@@ -189,7 +189,7 @@
     _schedulePhotoHint() {
       clearTimeout(this.photoHintIdleTimer);
       if (this.photoHintActive) {
-        this.photoHintIdleTimer = setTimeout(() => this._showPhotoHint(), 5000);
+        this.photoHintIdleTimer = setTimeout(() => this._showPhotoHint(), 3000);
       }
     }
 

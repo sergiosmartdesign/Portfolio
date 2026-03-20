@@ -58,7 +58,7 @@ body.preloader-visible #intro > *:not(.orb-wrap) {
 /* ── Ring ────────────────────────────────────────────────────────────────── */
 .preloader__ring {
   transform-style: preserve-3d;
-  animation: pl-spin 4s linear infinite;
+  animation: pl-spin 4s linear infinite reverse;
   font-size: 2rem;
   position: relative;
   height: 3rem;
@@ -66,7 +66,7 @@ body.preloader-visible #intro > *:not(.orb-wrap) {
 }
 
 .preloader__ring:nth-child(even) {
-  animation-direction: reverse;
+  animation-direction: normal;
 }
 
 /* ── Sector ──────────────────────────────────────────────────────────────── */

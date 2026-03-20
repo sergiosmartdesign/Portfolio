@@ -126,3 +126,16 @@
   color: #9b2226;
   text-shadow: 0 0 12px rgba(155, 34, 38, 0.9), 0 0 24px rgba(155, 34, 38, 0.4);
 }
+
+#photo-scroll-hint .sc-sub-text {
+  font-family: 'Funnel Display', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #9b2226;
+  text-shadow: 0 0 10px rgba(155, 34, 38, 0.7);
+  margin: 0;
+  white-space: nowrap;
+  opacity: 0.8;
+  animation: sc-text-breathe 3.5s ease-in-out infinite;
+}
