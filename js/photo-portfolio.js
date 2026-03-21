@@ -38,6 +38,7 @@
       this.photoHintIdleTimer     = null;
       this.photoHintAutoHideTimer = null;
       this.mouseOverOverlay       = false; // true while cursor is inside the photo overlay
+      this.cursorTooltip          = null;
 
       // All revealable elements in DOM order: title, section headers, project items
       this.allItems = [...document.querySelectorAll(
@@ -89,7 +90,25 @@
       // Track whether the cursor is inside the photo overlay so the hint
       // fires with a shorter delay while the user is hovering over the section
       this.overlay.addEventListener('mouseenter', () => { this.mouseOverOverlay = true; });
-      this.overlay.addEventListener('mouseleave', () => { this.mouseOverOverlay = false; });
+      this.overlay.addEventListener('mouseleave', () => {
+        this.mouseOverOverlay = false;
+        this._hideScrollTooltip();
+      });
+
+      // Cursor-following scroll tooltip
+      const tip = document.createElement('div');
+      tip.className = 'photo-cursor-tooltip';
+      tip.setAttribute('aria-hidden', 'true');
+      tip.textContent = '[ · scroll · complete list to see the photos · ]';
+      document.body.appendChild(tip);
+      this.cursorTooltip = tip;
+
+      this.overlay.addEventListener('mousemove', (e) => {
+        if (this.cursorTooltip) {
+          this.cursorTooltip.style.left = `${e.clientX + 20}px`;
+          this.cursorTooltip.style.top  = `${e.clientY}px`;
+        }
+      });
 
       window.addEventListener('scroll', () => this.updateScroll(), { passive: true });
 
@@ -145,6 +164,7 @@
           this.photoHintActive  = false;
           this.mouseOverOverlay = false;
           this._hidePhotoHint();
+          this._hideScrollTooltip();
         }
         return;
       }
@@ -172,6 +192,7 @@
           this.interactionsEnabled = true;
           this.photoHintActive = false;
           this._hidePhotoHint();
+          this._hideScrollTooltip();
           this.startIdleTimer();
         }
       } else if (targetCount < this.revealedCount) {
@@ -282,7 +303,10 @@
       const originalTexts = this.originalTexts.get(item);
 
       item.addEventListener('mouseenter', () => {
-        if (!this.interactionsEnabled) return;
+        if (!this.interactionsEnabled) {
+          this._showScrollTooltip();
+          return;
+        }
         this.stopIdleAnimation();
         this.stopIdleTimer();
         if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
@@ -308,6 +332,7 @@
       });
 
       item.addEventListener('mouseleave', () => {
+        this._hideScrollTooltip();
         this.debounceTimeout = setTimeout(() => {
           textEls.forEach((el, i) => {
             gsap.killTweensOf(el);
@@ -421,6 +446,14 @@
           this.idleAnimation.to(el, { duration: 0.1, opacity: 1, ease: 'power2.inOut' }, colStart + hideShowGap + rowIdx * rowDelay);
         });
       });
+    }
+
+    _showScrollTooltip() {
+      if (this.cursorTooltip) this.cursorTooltip.classList.add('visible');
+    }
+
+    _hideScrollTooltip() {
+      if (this.cursorTooltip) this.cursorTooltip.classList.remove('visible');
     }
 
     stopIdleAnimation() {

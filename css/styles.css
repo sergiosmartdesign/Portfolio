@@ -2040,6 +2040,25 @@ nav {
   opacity: 1;
 }
 
+.photo-cursor-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 980;
+  font-family: 'Funnel Display', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  color: #9b2226;
+  text-shadow: 0 0 10px rgba(155, 34, 38, 0.9), 0 0 22px rgba(155, 34, 38, 0.4);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+.photo-cursor-tooltip.visible {
+  opacity: 1;
+}
+
 .photo-scroll-spacer {
   position: relative;
   height: 300vh;
