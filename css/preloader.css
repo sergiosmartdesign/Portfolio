@@ -51,7 +51,7 @@ body.preloading header *::after {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   gap: 5px;
 }
