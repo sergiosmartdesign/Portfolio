@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- ═══ FONTS ══════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;800&family=Workbench&family=Playwrite+DK+Loopet:wght@100..400&display=swap">
+
     <!-- ═══ SECURITY HEADERS (HTML-deliverable subset) ══════════════════════ -->
     <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self';">
+          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self';">
     <meta name="referrer" content="strict-origin-when-cross-origin">
 
     <!-- ═══ PRIMARY SEO ══════════════════════════════════════════════════════ -->
@@ -419,6 +424,7 @@
                 </div>
             </div>
 
+            <canvas class="about-top-static-line"></canvas>
             <canvas class="about-bottom-static-line"></canvas>
             <div class="scanlines"></div>
             <div class="vhs-static"></div>

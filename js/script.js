@@ -813,6 +813,91 @@ class AnimationCoordinator {
       updateAboutLine();
     }
 
+    // About section top static line
+    const aboutTopCanvas = document.querySelector('.about-top-static-line');
+    if (aboutTopCanvas) {
+      const aboutTopCtx = aboutTopCanvas.getContext('2d');
+      let aboutTopAnimId = null;
+      let aboutTopScrollTimeout = null;
+
+      const resizeAboutTopCanvas = () => {
+        aboutTopCanvas.width = window.innerWidth;
+        aboutTopCanvas.height = 4;
+      };
+      resizeAboutTopCanvas();
+      window.addEventListener('resize', resizeAboutTopCanvas);
+
+      const drawAboutTopLine = () => {
+        const w = aboutTopCanvas.width;
+        const h = aboutTopCanvas.height;
+        aboutTopCtx.clearRect(0, 0, w, h);
+
+        aboutTopCtx.beginPath();
+        aboutTopCtx.strokeStyle = '#0ef';
+        aboutTopCtx.shadowColor = '#0ef';
+        aboutTopCtx.shadowBlur = 6;
+        aboutTopCtx.lineWidth = 1.5;
+        aboutTopCtx.moveTo(0, h / 2);
+        for (let x = 0; x < w; x += 3) {
+          const jitter = (Math.random() - 0.5) * h * 2;
+          aboutTopCtx.lineTo(x, h / 2 + jitter);
+        }
+        aboutTopCtx.stroke();
+
+        aboutTopCtx.beginPath();
+        aboutTopCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        aboutTopCtx.shadowColor = '#fff';
+        aboutTopCtx.shadowBlur = 3;
+        aboutTopCtx.lineWidth = 1;
+        for (let x = 0; x < w; x += 3) {
+          if (Math.random() > 0.7) {
+            const jitter = (Math.random() - 0.5) * h;
+            aboutTopCtx.lineTo(x, h / 2 + jitter);
+          } else {
+            aboutTopCtx.moveTo(x, h / 2);
+          }
+        }
+        aboutTopCtx.stroke();
+
+        aboutTopAnimId = requestAnimationFrame(drawAboutTopLine);
+      };
+
+      const aboutSecTop = document.getElementById('about');
+
+      const showAboutTopLine = () => {
+        aboutTopCanvas.classList.add('active');
+        if (!aboutTopAnimId) drawAboutTopLine();
+      };
+
+      const hideAboutTopLine = () => {
+        aboutTopCanvas.classList.remove('active');
+        if (aboutTopAnimId) {
+          cancelAnimationFrame(aboutTopAnimId);
+          aboutTopAnimId = null;
+        }
+      };
+
+      const updateAboutTopLine = () => {
+        if (!aboutSecTop) return;
+        const top = aboutSecTop.getBoundingClientRect().top;
+        const inViewport = top > 4 && top < window.innerHeight - 4;
+
+        if (inViewport) {
+          aboutTopCanvas.style.top = `${top - 2}px`;
+          showAboutTopLine();
+        } else {
+          hideAboutTopLine();
+          return;
+        }
+
+        clearTimeout(aboutTopScrollTimeout);
+        aboutTopScrollTimeout = setTimeout(hideAboutTopLine, 150);
+      };
+
+      window.addEventListener('scroll', updateAboutTopLine, { passive: true });
+      updateAboutTopLine();
+    }
+
     // ── Overlap collision star ───────────────────────────────────────────────
     const collisionStar = document.getElementById('line-collision-star');
     const photoLineEl   = document.querySelector('.photo-static-line');

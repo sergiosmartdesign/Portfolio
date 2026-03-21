@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap');
 
 /* ============================================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)
@@ -2025,7 +2022,8 @@ nav {
   opacity: 1;
 }
 
-.about-bottom-static-line {
+.about-bottom-static-line,
+.about-top-static-line {
   position: fixed;
   top: 0;
   left: 0;
@@ -2037,7 +2035,8 @@ nav {
   pointer-events: none;
 }
 
-.about-bottom-static-line.active {
+.about-bottom-static-line.active,
+.about-top-static-line.active {
   opacity: 1;
 }
 
