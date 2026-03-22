@@ -22,8 +22,6 @@
       this.currentActiveIndex = -1;
       this.originalTexts      = new Map();
       this.debounceTimeout    = null;
-      this.idleAnimation      = null;
-      this.idleTimer          = null;
       this.scrollProgress2    = 0;
       this.scrollProgress3    = 0;
 
@@ -77,7 +75,6 @@
         if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
         this.clearActiveStates();
         this.hideBackgroundImage();
-        this.startIdleTimer();
         this.updateScrollFade();
       });
 
@@ -155,8 +152,6 @@
           });
           this.revealedCount       = 0;
           this.interactionsEnabled = false;
-          this.stopIdleAnimation();
-          this.stopIdleTimer();
           if (this.currentActiveIndex !== -1) {
             this.clearActiveStates();
             this.hideBackgroundImage();
@@ -193,7 +188,6 @@
           this.photoHintActive = false;
           this._hidePhotoHint();
           this._hideScrollTooltip();
-          this.startIdleTimer();
         }
       } else if (targetCount < this.revealedCount) {
         // Scrolling backward: hide items from the last revealed back to targetCount
@@ -207,12 +201,10 @@
         // Disable interactions if we were fully revealed and now are not
         if (wasFullyRevealed && this.interactionsEnabled) {
           this.interactionsEnabled = false;
-          this.stopIdleAnimation();
           if (this.currentActiveIndex !== -1) {
             this.clearActiveStates();
             this.hideBackgroundImage();
           }
-          this.stopIdleTimer();
         }
       }
     }
@@ -307,8 +299,6 @@
           this._showScrollTooltip();
           return;
         }
-        this.stopIdleAnimation();
-        this.stopIdleTimer();
         if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
         if (this.currentActiveIndex === index) return;
 
@@ -366,7 +356,6 @@
           el.textContent = originalTexts[i];
         });
       });
-      this.startIdleTimer();
     }
 
     // ── Scroll fade — items near the top of the list dissolve before the subtitle ──
@@ -407,54 +396,6 @@
       this.bgImage.style.opacity = '0';
     }
 
-    // ── Idle animation ───────────────────────────────────────────────────────
-    startIdleTimer() {
-      this.stopIdleTimer();
-      this.idleTimer = setTimeout(() => {
-        if (this.currentActiveIndex === -1) this.startIdleAnimation();
-      }, 3000);
-    }
-
-    stopIdleTimer() {
-      if (this.idleTimer) {
-        clearTimeout(this.idleTimer);
-        this.idleTimer = null;
-      }
-    }
-
-    startIdleAnimation() {
-      if (this.idleAnimation) return;
-
-      this.idleAnimation = gsap.timeline({ repeat: -1, repeatDelay: 2 });
-
-      const columns = ['photo-title', 'photo-location', 'photo-camera', 'photo-lens', 'photo-year'].map(cls =>
-        [...this.projectItems].map(item => item.querySelector('.' + cls))
-      );
-
-      const rowDelay      = 0.05;
-      const colStartDelay = 0.25;
-      const hideShowGap   = this.projectItems.length * rowDelay * 0.5;
-
-      // Counter number pulse
-      this.projectItems.forEach((item, rowIdx) => {
-        this.idleAnimation.call(() => item.classList.add('counter-hidden'),    [], rowIdx * rowDelay);
-        this.idleAnimation.call(() => item.classList.remove('counter-hidden'), [], hideShowGap + rowIdx * rowDelay);
-      });
-
-      // Column wave
-      columns.forEach((colEls, colIdx) => {
-        const colStart = (colIdx + 1) * colStartDelay;
-        colEls.forEach((el, rowIdx) => {
-          if (!el) return;
-          this.idleAnimation.to(el, { duration: 0.1, opacity: 0.05, ease: 'power2.inOut' }, colStart + rowIdx * rowDelay);
-        });
-        colEls.forEach((el, rowIdx) => {
-          if (!el) return;
-          this.idleAnimation.to(el, { duration: 0.1, opacity: 1, ease: 'power2.inOut' }, colStart + hideShowGap + rowIdx * rowDelay);
-        });
-      });
-    }
-
     _showScrollTooltip() {
       if (this.cursorTooltip) this.cursorTooltip.classList.add('visible');
     }
@@ -463,14 +404,6 @@
       if (this.cursorTooltip) this.cursorTooltip.classList.remove('visible');
     }
 
-    stopIdleAnimation() {
-      if (this.idleAnimation) {
-        this.idleAnimation.kill();
-        this.idleAnimation = null;
-        gsap.set(document.querySelectorAll('.photo-project-data'), { opacity: 1 });
-        this.projectItems.forEach(item => item.classList.remove('counter-hidden'));
-      }
-    }
   }
 
   function init() {
