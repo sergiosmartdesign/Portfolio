@@ -356,6 +356,9 @@
       this.projectList.classList.remove('has-active');
       this.projectItems.forEach(item => {
         item.classList.remove('active');
+        // Restore inline opacity so items stay visible once has-active CSS is removed.
+        // Without this, items fall back to the CSS base opacity: 0 and become invisible.
+        if (this.interactionsEnabled) item.style.opacity = '1';
         const textEls       = item.querySelectorAll('.hover-text');
         const originalTexts = this.originalTexts.get(item);
         textEls.forEach((el, i) => {
@@ -372,9 +375,13 @@
       const fadeZone  = 40; // matches one header height
       this.projectItems.forEach(item => {
         const top = item.offsetTop - scrollTop;
-        item.style.opacity = top < fadeZone
-          ? String(Math.max(0, top / fadeZone))
-          : '';
+        if (top < fadeZone) {
+          item.style.opacity = String(Math.max(0, top / fadeZone));
+        } else if (this.interactionsEnabled) {
+          // Explicitly restore to 1 — setting '' would expose CSS opacity: 0
+          // and make items invisible whenever has-active is not present.
+          item.style.opacity = '1';
+        }
       });
     }
 
