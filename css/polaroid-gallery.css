@@ -1,0 +1,94 @@
+/* ============================================================================
+   POLAROID GALLERY
+   Scroll-driven, no external libraries. 8 columns × 5 rows = 40 cards.
+   Cards fan in row-by-row using native CSS scroll-driven animations.
+
+   To add a photo:
+     Replace the empty .pgallery-img div with:
+     <div class="pgallery-img"><img src="images/photo/filename.jpg" alt="…"></div>
+
+   To add more rows:
+     Add more .pgallery-wrap blocks in multiples of 8 inside .pgallery-grid.
+   ============================================================================ */
+
+/* ── Keyframe — scale up + rotate from pivot point ──────────────────────── */
+@keyframes pgallery-slide-in {
+  from {
+    scale: 0.85;
+    rotate: calc(var(--side, 0) * (5deg * var(--amp, 1)));
+    opacity: 0;
+  }
+}
+
+/* ── Section wrapper ─────────────────────────────────────────────────────── */
+#photo-gallery {
+  background: var(--black);
+  padding-block: 20svh 30svh;
+  position: relative;
+  z-index: var(--z-layer-10);
+}
+
+/* ── 8-column grid ───────────────────────────────────────────────────────── */
+.pgallery-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: clamp(6px, 0.8vw, 12px);
+  padding-inline: clamp(16px, 4vw, 64px);
+}
+
+/* ── Scroll-driven entrance animation ────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .pgallery-wrap {
+      animation: pgallery-slide-in linear both;
+      animation-timeline: view();
+      animation-range: cover 0% contain 20%;
+    }
+  }
+}
+
+/* ── 8-column fan — outer columns swing widest, inner columns swing least ── */
+/* Each card's transform-origin pivots from a point far beyond the card edge,
+   creating a perspective fan as the row enters the viewport.               */
+.pgallery-wrap:nth-child(8n + 1) { transform-origin:  100vw 100%; --side: -1; --amp: 4; }
+.pgallery-wrap:nth-child(8n + 2) { transform-origin:   75vw 100%; --side: -1; --amp: 3; }
+.pgallery-wrap:nth-child(8n + 3) { transform-origin:   50vw 100%; --side: -1; --amp: 2; }
+.pgallery-wrap:nth-child(8n + 4) { transform-origin:   25vw 100%; --side: -1; --amp: 1; }
+.pgallery-wrap:nth-child(8n + 5) { transform-origin:  -25vw 100%; --side:  1; --amp: 1; }
+.pgallery-wrap:nth-child(8n + 6) { transform-origin:  -50vw 100%; --side:  1; --amp: 2; }
+.pgallery-wrap:nth-child(8n + 7) { transform-origin:  -75vw 100%; --side:  1; --amp: 3; }
+.pgallery-wrap:nth-child(8n)     { transform-origin: -100vw 100%; --side:  1; --amp: 4; }
+
+/* ── Polaroid card — outline only until photos are added ────────────────── */
+/* Proportions: classic Polaroid OneStep ≈ 88×107mm.
+   Equal thin border on top and sides, wider border on bottom (the white strip). */
+.pgallery-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  padding: 6% 6% 21%;
+  /* No background — pure wireframe placeholder */
+}
+
+/* ── Photo area — inner outline marking image bounds ────────────────────── */
+.pgallery-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* square image area — real polaroid photo format */
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Real photo — add <img> inside .pgallery-img when scans are ready */
+.pgallery-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Responsive — reduce columns on smaller screens ──────────────────────── */
+@media (width < 1024px) {
+  .pgallery-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (width < 600px) {
+  .pgallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
