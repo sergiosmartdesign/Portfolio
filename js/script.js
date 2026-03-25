@@ -505,16 +505,7 @@ class AnimationCoordinator {
             aboutSection.classList.add('glitch-active');
             aboutAnimationTriggered = true;
 
-            // Trigger DNA animations with delays
-            if (window.glitchSystem) {
-              setTimeout(() => {
-                window.glitchSystem.initDNAGlitch();
-              }, TIMING.DNA_GLITCH_DELAY);
-
-              setTimeout(() => {
-                window.glitchSystem.animateDNAReveal();
-              }, TIMING.DNA_REVEAL_DELAY);
-            }
+            // DNA animations fire when #dnatitle enters viewport (see dnaGroupObserver below)
           } else if (!entry.isIntersecting && aboutAnimationTriggered) {
             // Pause animations when scrolled away but keep glitch-active
             aboutSection.classList.add('paused-animations');
@@ -600,45 +591,66 @@ class AnimationCoordinator {
     // Note: ID1 SVG observer is set up after SVG conversion in setupID1Observer()
 
     // Right column observers
-    createElementObserver('dnatitle');
     createElementObserver('aboutp4');
 
-    // DNA capsule SVG observer
-    const dnaCapsuleSvg = document.getElementById('dnacapsule1');
-    if (dnaCapsuleSvg) {
-      let capsuleEntered = false;
-      const capsuleObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            capsuleEntered = true;
-            dnaCapsuleSvg.classList.remove('element-exit');
-            dnaCapsuleSvg.classList.add('element-visible');
-          } else if (capsuleEntered) {
-            dnaCapsuleSvg.classList.remove('element-visible');
-            dnaCapsuleSvg.classList.add('element-exit');
-          }
-        });
-      }, elementObserverOptions);
-      capsuleObserver.observe(dnaCapsuleSvg);
+    // dnatitle, dnacapsule1, yellow line (.about-right), and DNA animations:
+    // Entry — fires 800ms after #aboutp2 enters viewport (matching its 0.8s slideInFromLeft).
+    // Exit  — fires when #dnatitle leaves viewport.
+    const dnatitleEl = document.getElementById('dnatitle');
+    const dnaCapsule = document.getElementById('dnacapsule1');
+    const aboutRight = document.querySelector('.about-right');
+    let dnaGroupVisible = false;
+    let dnaAnimationsTriggered = false;
+
+    function enterDnaGroup() {
+      dnaGroupVisible = true;
+      [dnatitleEl, dnaCapsule, aboutRight].forEach(el => {
+        if (!el) return;
+        el.classList.remove('element-exit');
+        el.classList.add('element-visible');
+      });
+      if (window.glitchSystem && !dnaAnimationsTriggered) {
+        dnaAnimationsTriggered = true;
+        setTimeout(() => window.glitchSystem.initDNAGlitch(), TIMING.DNA_GLITCH_DELAY);
+        setTimeout(() => window.glitchSystem.animateDNAReveal(), TIMING.DNA_REVEAL_DELAY);
+      }
     }
 
-    // About right column observer (for ::before line)
-    const aboutRight = document.querySelector('.about-right');
-    if (aboutRight) {
-      let rightEntered = false;
-      const rightObserver = new IntersectionObserver((entries) => {
+    function exitDnaGroup() {
+      dnaGroupVisible = false;
+      [dnatitleEl, dnaCapsule, aboutRight].forEach(el => {
+        if (!el) return;
+        el.classList.remove('element-visible');
+        el.classList.add('element-exit');
+      });
+    }
+
+    // Entry trigger — observe #aboutp2, wait for its 0.8s animation to finish
+    const aboutp2El = document.getElementById('aboutp2');
+    if (aboutp2El) {
+      let entryTimer = null;
+      const dnaEntryObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            rightEntered = true;
-            aboutRight.classList.remove('element-exit');
-            aboutRight.classList.add('element-visible');
-          } else if (rightEntered) {
-            aboutRight.classList.remove('element-visible');
-            aboutRight.classList.add('element-exit');
+          if (entry.isIntersecting && !dnaGroupVisible) {
+            entryTimer = setTimeout(enterDnaGroup, 800);
+          } else if (!entry.isIntersecting) {
+            clearTimeout(entryTimer);
           }
         });
       }, elementObserverOptions);
-      rightObserver.observe(aboutRight);
+      dnaEntryObserver.observe(aboutp2El);
+    }
+
+    // Exit trigger — observe #dnatitle leaving viewport
+    if (dnatitleEl) {
+      const dnaExitObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting && dnaGroupVisible) {
+            exitDnaGroup();
+          }
+        });
+      }, elementObserverOptions);
+      dnaExitObserver.observe(dnatitleEl);
     }
 
     // Photo section scroll-linked reveal (top-to-bottom wipe) + static line
@@ -972,7 +984,44 @@ class AnimationCoordinator {
     createClassObserver('.decoration-bar2');
     createClassObserver('.decoration-certs1');
     createClassObserver('.decoration-vtv1');
-    createClassObserver('.decoration-skills');
+    // .decoration-skills:
+    // Entry — triggered 800ms after #aboutp2 enters viewport (matching its 0.8s animation).
+    // Exit  — triggered when the SVG itself leaves the viewport.
+    const decorationSkills = document.querySelector('.decoration-skills');
+    if (decorationSkills) {
+      let skillsShown = false;
+      let skillsTimer = null;
+
+      // Entry: observe #aboutp2 as the trigger
+      const skillsEntryObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !skillsShown) {
+            skillsTimer = setTimeout(() => {
+              skillsShown = true;
+              decorationSkills.classList.remove('element-exit');
+              decorationSkills.classList.add('element-visible');
+            }, 800);
+          } else if (!entry.isIntersecting) {
+            clearTimeout(skillsTimer);
+          }
+        });
+      }, elementObserverOptions);
+      const skillsTriggerEl = document.getElementById('aboutp2');
+      if (skillsTriggerEl) skillsEntryObserver.observe(skillsTriggerEl);
+
+      // Exit: observe the SVG itself — fires only when the element fully leaves the
+      // viewport (threshold:0, no rootMargin), so it never exits while still on screen.
+      const skillsExitObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting && skillsShown) {
+            skillsShown = false;
+            decorationSkills.classList.remove('element-visible');
+            decorationSkills.classList.add('element-exit');
+          }
+        });
+      }, { threshold: 0 });
+      skillsExitObserver.observe(decorationSkills);
+    }
   }
 }
 
@@ -1200,6 +1249,9 @@ window.addEventListener('beforeunload', () => {
   var numItems = quoteItems.length; // 3
 
   function onScroll() {
+    // Yield to scroll-hint.js while the auto-animation is playing
+    if (window._quoteIntroActive) return;
+
     var wrapperTop = wrapper.offsetTop;
     var scrollY = window.scrollY || window.pageYOffset;
 
