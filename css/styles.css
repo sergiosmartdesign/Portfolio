@@ -2098,7 +2098,8 @@ nav {
    PHOTO SECTION — PORTFOLIO OVERLAY
    ============================================================================ */
 
-/* Background image shown on item hover — between WebGL canvas (z:0) and overlay (z:2) */
+/* Background hover image — inside overlay stacking context at z:1.
+   Sits above text-block (z:0) and below accordion (z:2). */
 .photo-bg-image {
   position: absolute;
   top: 50%;
@@ -2114,7 +2115,7 @@ nav {
   pointer-events: none;
 }
 
-/* Content overlay — title + list, above everything */
+/* Content overlay — text + accordion, scroll together, z:2 */
 .photo-portfolio-overlay {
   position: absolute;
   top: 0;
@@ -2124,35 +2125,46 @@ nav {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  padding: 130px var(--spacing-xl) var(--spacing-xl);
+  padding: 180px var(--spacing-xl) var(--spacing-xl);
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
 }
 
-/* Intro paragraph */
+/* Text block wrapper — z:0 within overlay stacking context, so bg-image (z:1) covers it */
+.photo-text-block {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Intro paragraph + CTA */
 .photo-intro {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
-  color: rgba(10, 147, 150, 0.7);
+  color: #001219;
   line-height: 1.6;
   margin: 0 0 var(--spacing-md) 0;
   max-width: 70ch;
   flex-shrink: 0;
+  text-align: center;
 }
 
-/* Container — scrollable area for expanded category lists */
-.photo-list-container {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.photo-list-container::-webkit-scrollbar {
-  display: none;
+.photo-cta {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: #001219;
+  line-height: 1.5;
+  margin: 0 0 var(--spacing-md) 0;
+  max-width: 70ch;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 /* Category list — hidden by default, shown on button click */
@@ -2177,24 +2189,49 @@ nav {
   column-gap: 2rem;
   padding: 0;
   align-items: center;
-  border-bottom: 1px solid rgba(200, 255, 200, 0.08);
+  border-bottom: 1px solid rgba(10, 147, 150, 0.18);
   opacity: 0;
   position: relative;
   transition: border-color 0.3s ease;
 }
 
-/* Category navigation buttons */
-.photo-category-nav {
+/* Single scroll container — text + accordion flow as one column */
+.photo-content-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  margin: 0 0 var(--spacing-md) 0;
-  flex-shrink: 0;
 }
 
+.photo-content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Accordion — z:2 within overlay stacking context, so it sits above bg-image (z:1) */
+.photo-accordion {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each accordion item: button + collapsible list */
+.photo-accordion-item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Category button */
 .photo-category-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   background: none;
   border: none;
+  border-top: 1px solid rgba(200, 255, 200, 0.08);
   cursor: pointer;
   text-align: left;
   font-family: 'Funnel Display', sans-serif;
@@ -2203,13 +2240,35 @@ nav {
   color: rgba(187, 62, 3, 0.6);
   letter-spacing: 0.15em;
   line-height: 1;
-  padding: 0.3rem 0;
+  padding: 0.6rem 0;
   transition: color 0.2s ease;
 }
 
-.photo-category-btn:hover,
-.photo-category-btn.active {
+.photo-category-btn:hover {
   color: #ee9b00;
+}
+
+.photo-category-btn.active {
+  color: #9b2226;
+}
+
+/* [ + ] / [ - ] indicator */
+.photo-btn-indicator::before {
+  content: '[ + ]';
+  font-family: 'Funnel Display', monospace;
+  font-size: 0.75em;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.photo-category-btn:hover .photo-btn-indicator::before,
+.photo-category-btn.active .photo-btn-indicator::before {
+  opacity: 1;
+}
+
+.photo-category-btn.active .photo-btn-indicator::before {
+  content: '[ - ]';
 }
 
 /* CSS counter — the 01–20 numbers */

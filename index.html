@@ -435,20 +435,20 @@
         <section id="photo" aria-label="Photography Portfolio">
             <canvas class="photo-static-line"></canvas>
 
-            <!-- Background hover image — between WebGL canvas (z:0) and overlay (z:2) -->
-            <div class="photo-bg-image" id="photoBgImage" aria-hidden="true"></div>
-
-            <!-- Portfolio overlay — sits above the WebGL background -->
+            <!-- Portfolio overlay — text + accordion, scroll together, z:2 -->
             <div class="photo-portfolio-overlay">
-                <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. For this project I used my vibe coding knowledge so every photo in this archive carries AI-generated metadata, making the portfolio fully searchable by people, search engines, and AI systems alike. Please click a section below to see the list of photos.</p>
-                <nav class="photo-category-nav" aria-label="Photography categories">
-                    <button class="photo-category-btn" data-category="landscapes">[ · l a n d s c a p e s · ]</button>
-                    <button class="photo-category-btn" data-category="street">[ · s t r e e t &nbsp; p h o t o · ]</button>
-                    <button class="photo-category-btn" data-category="animals">[ · a n i m a l s · ]</button>
-                    <button class="photo-category-btn" data-category="travel">[ · t r a v e l · ]</button>
-                </nav>
-                <div class="photo-list-container">
-                <ul class="photo-project-list" data-category="landscapes" role="list">
+                <div class="photo-content-scroll">
+                <div class="photo-text-block">
+                    <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. Every photo in this archive carries AI-generated metadata, making the portfolio fully searchable by people, search engines, and AI systems alike.</p>
+                    <p class="photo-cta">Click a category to expand its list — then hover over any photo title to preview the image.</p>
+                </div>
+                <div class="photo-accordion">
+                    <div class="photo-accordion-item">
+                        <button class="photo-category-btn" data-category="landscapes" aria-expanded="false">
+                            <span class="photo-btn-label">[ · l a n d s c a p e s · ]</span>
+                            <span class="photo-btn-indicator" aria-hidden="true"></span>
+                        </button>
+                        <ul class="photo-project-list" data-category="landscapes" role="list">
                     <li class="photo-project-item" data-image="images/photo/Isla en Uyuni.jpg">
                         <span class="photo-project-data photo-title hover-text">Isla en Uyuni</span>
                         <span class="photo-project-data photo-location hover-text">Uyuni, Bolivia</span>
@@ -512,8 +512,14 @@
                         <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
                         <span class="photo-project-data photo-year hover-text">2026</span>
                     </li>
-                </ul>
-                <ul class="photo-project-list" data-category="street" role="list">
+                        </ul>
+                    </div>
+                    <div class="photo-accordion-item">
+                        <button class="photo-category-btn" data-category="street" aria-expanded="false">
+                            <span class="photo-btn-label">[ · s t r e e t &nbsp; p h o t o · ]</span>
+                            <span class="photo-btn-indicator" aria-hidden="true"></span>
+                        </button>
+                        <ul class="photo-project-list" data-category="street" role="list">
                     <li class="photo-project-item" data-image="images/photo/Streets of Dubrovnik.jpg">
                         <span class="photo-project-data photo-title hover-text">Streets of Dubrovnik</span>
                         <span class="photo-project-data photo-location hover-text">Dubrovnik, Croatia</span>
@@ -591,8 +597,14 @@
                         <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
                         <span class="photo-project-data photo-year hover-text">2026</span>
                     </li>
-                </ul>
-                <ul class="photo-project-list" data-category="animals" role="list">
+                        </ul>
+                    </div>
+                    <div class="photo-accordion-item">
+                        <button class="photo-category-btn" data-category="animals" aria-expanded="false">
+                            <span class="photo-btn-label">[ · a n i m a l s · ]</span>
+                            <span class="photo-btn-indicator" aria-hidden="true"></span>
+                        </button>
+                        <ul class="photo-project-list" data-category="animals" role="list">
                     <li class="photo-project-item" data-image="images/photo/Dog.jpg">
                         <span class="photo-project-data photo-title hover-text">Dog</span>
                         <span class="photo-project-data photo-location hover-text">Cota, Cundinamarca</span>
@@ -635,8 +647,14 @@
                         <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
                         <span class="photo-project-data photo-year hover-text">2023</span>
                     </li>
-                </ul>
-                <ul class="photo-project-list" data-category="travel" role="list">
+                        </ul>
+                    </div>
+                    <div class="photo-accordion-item">
+                        <button class="photo-category-btn" data-category="travel" aria-expanded="false">
+                            <span class="photo-btn-label">[ · t r a v e l · ]</span>
+                            <span class="photo-btn-indicator" aria-hidden="true"></span>
+                        </button>
+                        <ul class="photo-project-list" data-category="travel" role="list">
                     <li class="photo-project-item" data-image="images/photo/Our Lady of the Rocks.jpg">
                         <span class="photo-project-data photo-title hover-text">Our Lady of the Rocks</span>
                         <span class="photo-project-data photo-location hover-text">Perast, Montenegro</span>
@@ -841,8 +859,12 @@
                         <span class="photo-project-data photo-year hover-text">2022</span>
                     </li>
 
-                </ul>
+                        </ul>
+                    </div>
                 </div>
+                </div>
+                <!-- Background hover image — z:1 inside overlay, sits above text (z:0) but below accordion (z:2) -->
+                <div class="photo-bg-image" id="photoBgImage" aria-hidden="true"></div>
             </div>
         </section>
         <div class="photo-scroll-spacer"></div>

@@ -1,8 +1,10 @@
 /**
  * photo-portfolio.js
  * Interactive photography portfolio for the #photo section.
- * Category buttons expand/collapse their photo lists with a glitch reveal.
- * Multiple categories can be open simultaneously.
+ *
+ * Scroll phase 3 (rawProgress 2→3) drives two things:
+ *   1. Sequential reveal of intro, cta, and the 4 category buttons.
+ *   2. Category buttons expand/collapse their photo lists (accordion, multiple open).
  *
  * Dependencies: gsap.min.js + ScrambleTextPlugin.min.js (loaded before this file)
  */
@@ -21,13 +23,20 @@
       this.categoryBtns  = document.querySelectorAll('.photo-category-btn');
       this.categoryLists = document.querySelectorAll('.photo-project-list');
 
-      this.openCategories  = new Set();   // which category keys are currently open
-      this.originalTexts   = new Map();   // item → [text strings] for ScrambleText restore
-      this.scrollProgress3 = 0;
-      this.winH            = 0;
-      this.spacerDocTop    = 0;
+      this.openCategories      = new Set();
+      this.originalTexts       = new Map();
+      this.scrollProgress3     = 0;
+      this.winH                = 0;
+      this.spacerDocTop        = 0;
 
-      // Cache original text content for ScrambleText
+      // Static elements revealed by scroll: intro → cta → 4 buttons
+      // Populated in init() once DOM is confirmed ready
+      this.staticEls           = [];
+      // Scroll-progress threshold at which each element is revealed
+      this.staticThresholds    = [0.0, 0.12, 0.26, 0.40, 0.54, 0.68];
+      this.revealedStaticCount = 0;
+
+      // Cache original text for ScrambleText restore
       document.querySelectorAll('.photo-project-item').forEach(item => {
         const els = item.querySelectorAll('.hover-text');
         this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
@@ -45,6 +54,16 @@
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       }, { passive: true });
 
+      // Collect static elements in reveal order
+      this.staticEls = [
+        this.overlay.querySelector('.photo-intro'),
+        this.overlay.querySelector('.photo-cta'),
+        ...this.categoryBtns
+      ].filter(Boolean);
+
+      // Start all static elements hidden
+      this.staticEls.forEach(el => gsap.set(el, { opacity: 0 }));
+
       this.preloadImages();
       this._setupCategoryButtons();
       this._setupHoverListeners();
@@ -53,7 +72,7 @@
       this._updateScroll();
     }
 
-    // ── Scroll-driven overlay visibility ────────────────────────────────────
+    // ── Scroll-driven visibility ─────────────────────────────────────────────
     _updateScroll() {
       const spacerTop    = this.spacerDocTop - window.scrollY;
       const rawProgress  = 1 - (spacerTop / this.winH);
@@ -69,20 +88,60 @@
         this.overlay.style.opacity       = '1';
         this.overlay.style.pointerEvents = 'auto';
       } else if (!isVisible && wasVisible) {
-        this.overlay.style.opacity       = '0';
-        this.overlay.style.pointerEvents = 'none';
-        // Reset all open categories on scroll out
-        this.openCategories.clear();
-        this.categoryBtns.forEach(btn => btn.classList.remove('active'));
-        this.categoryLists.forEach(list => {
-          list.style.display = 'none';
-          list.querySelectorAll('.photo-project-item').forEach(item => {
-            gsap.killTweensOf(item);
-            gsap.set(item, { opacity: 0 });
-          });
-        });
-        this.hideBackgroundImage();
+        this._fullReset();
+        return;
       }
+
+      if (isVisible) this._updateStaticReveal(newProgress3);
+    }
+
+    // ── Sequential reveal of intro / cta / category buttons ─────────────────
+    _updateStaticReveal(progress) {
+      const targetCount = this.staticThresholds.filter(t => progress >= t).length;
+      const clamped     = Math.min(targetCount, this.staticEls.length);
+
+      if (clamped > this.revealedStaticCount) {
+        for (let i = this.revealedStaticCount; i < clamped; i++) {
+          this._revealItem(this.staticEls[i], 0);
+        }
+        this.revealedStaticCount = clamped;
+
+      } else if (clamped < this.revealedStaticCount) {
+        for (let i = this.revealedStaticCount - 1; i >= clamped; i--) {
+          const el = this.staticEls[i];
+          this._hideItem(el, 0);
+          // If it's a category button that was open, close its list immediately
+          if (i >= 2 && el.dataset && el.dataset.category) {
+            this._forceCloseCategory(el.dataset.category, el);
+          }
+        }
+        this.revealedStaticCount = clamped;
+      }
+    }
+
+    // ── Full reset when section scrolls out of view ──────────────────────────
+    _fullReset() {
+      this.overlay.style.opacity       = '0';
+      this.overlay.style.pointerEvents = 'none';
+
+      this.openCategories.clear();
+      this.categoryBtns.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+      this.categoryLists.forEach(list => {
+        list.style.display = 'none';
+        list.querySelectorAll('.photo-project-item').forEach(item => {
+          gsap.killTweensOf(item);
+          gsap.set(item, { opacity: 0 });
+        });
+      });
+      this.staticEls.forEach(el => {
+        gsap.killTweensOf(el);
+        gsap.set(el, { opacity: 0 });
+      });
+      this.revealedStaticCount = 0;
+      this.bgImage.style.opacity = '0';
     }
 
     // ── Category button click handlers ───────────────────────────────────────
@@ -90,9 +149,8 @@
       this.categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           const category = btn.dataset.category;
-          const list = this.overlay.querySelector(
-            `.photo-project-list[data-category="${category}"]`
-          );
+          const list = btn.closest('.photo-accordion-item')
+                          .querySelector('.photo-project-list');
           if (!list) return;
 
           if (this.openCategories.has(category)) {
@@ -107,6 +165,7 @@
     _openCategory(category, btn, list) {
       this.openCategories.add(category);
       btn.classList.add('active');
+      btn.setAttribute('aria-expanded', 'true');
       list.style.display = 'flex';
 
       const items = list.querySelectorAll('.photo-project-item');
@@ -119,15 +178,32 @@
     _closeCategory(category, btn, list) {
       this.openCategories.delete(category);
       btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
 
       const items     = list.querySelectorAll('.photo-project-item');
       const lastDelay = (items.length - 1) * 0.03 + 0.13;
-
       items.forEach((item, i) => this._hideItem(item, i));
 
       gsap.delayedCall(lastDelay, () => {
         if (!this.openCategories.has(category)) list.style.display = 'none';
       });
+    }
+
+    // Immediate close used when scrolling back hides the button
+    _forceCloseCategory(category, btn) {
+      if (!this.openCategories.has(category)) return;
+      this.openCategories.delete(category);
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+      const list = btn.closest('.photo-accordion-item')
+                      ?.querySelector('.photo-project-list');
+      if (list) {
+        list.querySelectorAll('.photo-project-item').forEach(item => {
+          gsap.killTweensOf(item);
+          gsap.set(item, { opacity: 0 });
+        });
+        list.style.display = 'none';
+      }
     }
 
     // ── Glitch flash animations ──────────────────────────────────────────────
@@ -181,7 +257,6 @@
         list.classList.add('has-active');
         item.classList.add('active');
 
-        // ScrambleText
         textEls.forEach((el, i) => {
           gsap.killTweensOf(el);
           gsap.to(el, {
@@ -202,7 +277,6 @@
         item.classList.remove('active');
         list.classList.remove('has-active');
 
-        // Restore inline opacity so items stay visible after has-active CSS is removed
         list.querySelectorAll('.photo-project-item').forEach(el => {
           el.style.opacity = '1';
         });
