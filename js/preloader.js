@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+  const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split(''); // keep in sync with script.js
 
   // Palette colors arranged symmetrically: cool teal outside → warm red/maroon centre
   const BAR_COLORS = [

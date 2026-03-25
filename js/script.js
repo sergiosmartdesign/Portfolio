@@ -7,7 +7,7 @@
 // CONSTANTS AND CONFIGURATION
 // ============================================================================
 
-const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split(''); // keep in sync with preloader.js
 
 const TIMING = {
   CYBER_PANEL_DELAY: 2000,
@@ -339,6 +339,7 @@ class NavigationManager {
               smoothScrollTo(targetY, TIMING.PHOTO_SCROLL_DURATION);
             }
             this.setActiveButton('photo');
+            history.pushState(null, '', '#photo');
             return;
           }
 
@@ -392,6 +393,9 @@ class NavigationManager {
           const progress = 1 - (spacerRect.top / window.innerHeight);
           if (progress > 0 && progress <= 1) {
             this.setActiveButton('photo');
+            if (location.hash !== '#photo') history.pushState(null, '', '#photo');
+          } else if (location.hash === '#photo') {
+            history.pushState(null, '', location.pathname);
           }
         }
       }, TIMING.NAV_DEBOUNCE);
@@ -399,6 +403,20 @@ class NavigationManager {
   }
 }
 
+
+// ── Handle browser back / forward for #photo ─────────────────────────────
+// All other section hashes use native anchors so the browser handles them.
+window.addEventListener('popstate', () => {
+  if (location.hash === '#photo') {
+    const photoSpacer = document.querySelector('.photo-scroll-spacer');
+    if (photoSpacer) {
+      const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, spacerTop + window.innerHeight * 2);
+    }
+  } else if (!location.hash || location.hash === '#intro') {
+    window.scrollTo(0, 0);
+  }
+});
 
 // ============================================================================
 // ANIMATION COORDINATOR - Manages intro animations

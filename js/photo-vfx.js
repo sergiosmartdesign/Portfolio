@@ -388,10 +388,16 @@
   }
 
   // ── Boot ────────────────────────────────────────────────────────────────────
+  // Wrap async init so an unhandled rejection doesn't silently break the page.
+  // On failure the section falls back to its CSS background (#001219).
+  function boot() {
+    init().catch(err => console.warn('[PhotoVFX] Init failed:', err));
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    init();
+    boot();
   }
 
 })();
