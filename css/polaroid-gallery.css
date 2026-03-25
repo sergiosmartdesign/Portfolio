@@ -26,15 +26,17 @@
   color: #001219;
   text-align: center;
   letter-spacing: 0.06em;
-  margin: 0 0 clamp(24px, 4vh, 48px);
+  margin: 0;
 }
 
 /* ── 8-column grid ───────────────────────────────────────────────────────── */
 .pgallery-grid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: clamp(6px, 0.8vw, 12px);
+  column-gap: clamp(6px, 0.8vw, 12px);
+  row-gap: 30px;
   padding-inline: clamp(16px, 4vw, 64px);
+  margin-block-start: 50px;
 }
 
 /* ── Card wrapper — GPU layer; JS drives all transforms ─────────────────── */
