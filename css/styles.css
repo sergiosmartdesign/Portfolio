@@ -2366,6 +2366,16 @@ nav {
   }
 }
 
+.pgallery-title {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: #001219;
+  text-align: center;
+  letter-spacing: 0.06em;
+  margin: clamp(48px, 8vh, 96px) 0 0;
+}
+
 /* ============================================================================
    RESPONSIVE MEDIA QUERIES
    ============================================================================ */
