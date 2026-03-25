@@ -2040,24 +2040,6 @@ nav {
   opacity: 1;
 }
 
-.photo-cursor-tooltip {
-  position: fixed;
-  pointer-events: none;
-  z-index: 980;
-  font-family: 'Funnel Display', monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  color: #9b2226;
-  text-shadow: 0 0 10px rgba(155, 34, 38, 0.9), 0 0 22px rgba(155, 34, 38, 0.4);
-  opacity: 0;
-  transition: opacity 0.12s ease;
-  white-space: nowrap;
-  transform: translateY(-50%);
-}
-
-.photo-cursor-tooltip.visible {
-  opacity: 1;
-}
 
 .photo-scroll-spacer {
   position: relative;
@@ -2142,49 +2124,46 @@ nav {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  padding: 80px var(--spacing-xl) var(--spacing-xl);
+  padding: 130px var(--spacing-xl) var(--spacing-xl);
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
 }
 
-/* Section heading */
-.photo-portfolio-title {
+/* Intro paragraph */
+.photo-intro {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
-  font-size: clamp(1rem, 1.8vw, 1.6rem);
-  color: rgba(10, 147, 150, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: rgba(10, 147, 150, 0.7);
+  line-height: 1.6;
   margin: 0 0 var(--spacing-md) 0;
-  padding: 0;
-  line-height: 1;
+  max-width: 70ch;
+  flex-shrink: 0;
 }
 
-/* Container — bounds the scrollable list */
+/* Container — scrollable area for expanded category lists */
 .photo-list-container {
   flex: 1;
   min-height: 0;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-/* List container — scroll context for sticky section headers */
+.photo-list-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Category list — hidden by default, shown on button click */
 .photo-project-list {
   position: relative;
   list-style: none;
-  margin: 0;
+  margin: 0 0 var(--spacing-sm, 1rem) 0;
   padding: 0;
   counter-reset: photo-project-counter 0;
-  height: 100%;
-  overflow-y: auto;
-  scrollbar-width: none;
-  display: flex;
-  flex-direction: column;
-}
-
-.photo-project-list::-webkit-scrollbar {
   display: none;
+  flex-direction: column;
 }
 
 /* Each row */
@@ -2204,36 +2183,33 @@ nav {
   transition: border-color 0.3s ease;
 }
 
-.photo-section-header + .photo-project-item {
-  border-top: 1px solid rgba(200, 255, 200, 0.08);
-}
-
-/* Section subtitle headers — sticky, stack at top as list scrolls */
-.photo-section-header {
-  counter-reset: photo-project-counter 0;
-  list-style: none;
-  width: 100%;
-  height: 40px;
-  flex-shrink: 0;
+/* Category navigation buttons */
+.photo-category-nav {
   display: flex;
-  align-items: center;
-  pointer-events: none;
-  position: sticky;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0 0 var(--spacing-md) 0;
+  flex-shrink: 0;
 }
 
-.photo-section-header[data-stack="0"] { top: 0px;   z-index: 17; }
-.photo-section-header[data-stack="1"] { top: 40px;  z-index: 16; }
-.photo-section-header[data-stack="2"] { top: 80px;  z-index: 15; }
-.photo-section-header[data-stack="3"] { top: 120px; z-index: 14; }
-
-.photo-section-title {
+.photo-category-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
-  font-size: clamp(0.55rem, 1vw, 0.85rem);
-  color: #bb3e03;
-  text-transform: uppercase;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  color: rgba(187, 62, 3, 0.6);
   letter-spacing: 0.15em;
   line-height: 1;
+  padding: 0.3rem 0;
+  transition: color 0.2s ease;
+}
+
+.photo-category-btn:hover,
+.photo-category-btn.active {
+  color: #ee9b00;
 }
 
 /* CSS counter — the 01–20 numbers */
@@ -2318,7 +2294,7 @@ nav {
 
 @media (max-width: 768px) {
   .photo-portfolio-overlay {
-    padding: 70px var(--spacing-md) var(--spacing-md);
+    padding: 100px var(--spacing-md) var(--spacing-md);
   }
 
   .photo-project-item {

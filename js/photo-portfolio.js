@@ -1,7 +1,8 @@
 /**
  * photo-portfolio.js
- * Interactive photography portfolio list for the #photo section.
- * Sits as an overlay above the WebGL volumetric-light background.
+ * Interactive photography portfolio for the #photo section.
+ * Category buttons expand/collapse their photo lists with a glitch reveal.
+ * Multiple categories can be open simultaneously.
  *
  * Dependencies: gsap.min.js + ScrambleTextPlugin.min.js (loaded before this file)
  */
@@ -11,52 +12,31 @@
 
   class PhotoPortfolioManager {
     constructor() {
-      this.overlay      = document.querySelector('.photo-portfolio-overlay');
-      this.bgImage      = document.getElementById('photoBgImage');
-      this.projectList  = document.querySelector('.photo-project-list');
-      this.projectItems = document.querySelectorAll('.photo-project-item');
-      this.photoSpacer  = document.querySelector('.photo-scroll-spacer');
+      this.overlay     = document.querySelector('.photo-portfolio-overlay');
+      this.bgImage     = document.getElementById('photoBgImage');
+      this.photoSpacer = document.querySelector('.photo-scroll-spacer');
 
-      if (!this.overlay || !this.bgImage || !this.projectItems.length || !this.photoSpacer) return;
+      if (!this.overlay || !this.bgImage || !this.photoSpacer) return;
 
-      this.currentActiveIndex = -1;
-      this.originalTexts      = new Map();
-      this.debounceTimeout    = null;
-      this.scrollProgress2    = 0;
-      this.scrollProgress3    = 0;
+      this.categoryBtns  = document.querySelectorAll('.photo-category-btn');
+      this.categoryLists = document.querySelectorAll('.photo-project-list');
 
-      // Scroll-driven reveal state
-      this.revealedCount       = 0;     // how many allItems have been revealed so far
-      this.interactionsEnabled = false; // hover active only when section fully fills viewport
+      this.openCategories  = new Set();   // which category keys are currently open
+      this.originalTexts   = new Map();   // item → [text strings] for ScrambleText restore
+      this.scrollProgress3 = 0;
+      this.winH            = 0;
+      this.spacerDocTop    = 0;
 
-      // Photo scroll hint — idle-timer system (mirrors scroll-hint.js)
-      this.photoScrollHint        = document.getElementById('photo-scroll-hint');
-      this.photoHintActive        = false; // true while list is filling but not yet complete
-      this.photoHintVisible       = false;
-      this.photoHintIdleTimer     = null;
-      this.photoHintAutoHideTimer = null;
-      this.mouseOverOverlay       = false; // true while cursor is inside the photo overlay
-      this.cursorTooltip          = null;
-
-      // All revealable elements in DOM order: title, section headers, project items
-      this.allItems = [...document.querySelectorAll(
-        '.photo-portfolio-title, .photo-section-header, .photo-project-item'
-      )];
-
-      // Cache original text for ScrambleText restore
-      this.projectItems.forEach(item => {
+      // Cache original text content for ScrambleText
+      document.querySelectorAll('.photo-project-item').forEach(item => {
         const els = item.querySelectorAll('.hover-text');
         this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
       });
 
       gsap.registerPlugin(ScrambleTextPlugin);
-
-      // Start all revealable elements hidden
-      this.allItems.forEach(item => gsap.set(item, { opacity: 0 }));
     }
 
     init() {
-      // Cache layout values — refreshed on resize, never read inside scroll handler.
       this.winH         = window.innerHeight;
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
 
@@ -66,190 +46,93 @@
       }, { passive: true });
 
       this.preloadImages();
+      this._setupCategoryButtons();
+      this._setupHoverListeners();
 
-      this.projectItems.forEach((item, index) => {
-        this.addEventListeners(item, index);
-      });
-
-      this.projectList.addEventListener('mouseleave', () => {
-        if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
-        this.clearActiveStates();
-        this.hideBackgroundImage();
-        this.updateScrollFade();
-      });
-
-      this.projectList.addEventListener('scroll', () => {
-        this.updateScrollFade();
-        // Inner-list scroll = user browsing already-visible items → show hint soon
-        if (this.photoHintActive && !this.photoHintVisible) this._schedulePhotoHint();
-      }, { passive: true });
-
-      // Track whether the cursor is inside the photo overlay so the hint
-      // fires with a shorter delay while the user is hovering over the section
-      this.overlay.addEventListener('mouseenter', () => { this.mouseOverOverlay = true; });
-      this.overlay.addEventListener('mouseleave', () => {
-        this.mouseOverOverlay = false;
-        this._hideScrollTooltip();
-      });
-
-      // Cursor-following scroll tooltip
-      const tip = document.createElement('div');
-      tip.className = 'photo-cursor-tooltip';
-      tip.setAttribute('aria-hidden', 'true');
-      tip.textContent = '[ · scroll · complete list to see the photos · ]';
-      document.body.appendChild(tip);
-      this.cursorTooltip = tip;
-
-      this.overlay.addEventListener('mousemove', (e) => {
-        if (this.cursorTooltip) {
-          this.cursorTooltip.style.left = `${e.clientX + 20}px`;
-          this.cursorTooltip.style.top  = `${e.clientY}px`;
-        }
-      });
-
-      window.addEventListener('scroll', () => this.updateScroll(), { passive: true });
-
-      // Activity listeners for the photo scroll hint idle timer
-      ['scroll', 'mousemove', 'touchstart', 'touchmove'].forEach(evt => {
-        window.addEventListener(evt, () => this._onPhotoHintActivity(), { passive: true });
-      });
-
-      this.updateScroll();
+      window.addEventListener('scroll', () => this._updateScroll(), { passive: true });
+      this._updateScroll();
     }
 
-    // ── Scroll-driven visibility ─────────────────────────────────────────────
-    updateScroll() {
-      // Use cached values — no getBoundingClientRect() or window.innerHeight on every scroll.
-      const spacerTop   = this.spacerDocTop - window.scrollY;
-      const rawProgress = 1 - (spacerTop / this.winH);
-      const newProgress2 = Math.max(0, Math.min(1, rawProgress - 1));
-      // Phase 3: starts only after text has reached top (rawProgress 2→3)
+    // ── Scroll-driven overlay visibility ────────────────────────────────────
+    _updateScroll() {
+      const spacerTop    = this.spacerDocTop - window.scrollY;
+      const rawProgress  = 1 - (spacerTop / this.winH);
       const newProgress3 = Math.max(0, Math.min(1, rawProgress - 2));
 
-      const p2Changed = Math.abs(newProgress2 - this.scrollProgress2) >= 0.003;
-      const p3Changed = Math.abs(newProgress3 - this.scrollProgress3) >= 0.003;
-      if (!p2Changed && !p3Changed) return;
+      if (Math.abs(newProgress3 - this.scrollProgress3) < 0.003) return;
 
-      this.scrollProgress2 = newProgress2;
+      const wasVisible     = this.scrollProgress3 > 0;
       this.scrollProgress3 = newProgress3;
+      const isVisible      = newProgress3 > 0;
 
-      // Rows reveal only in phase 3 (after text has settled at top)
-      this.updateRowReveal(newProgress3);
-    }
-
-    // ── Row reveal — scroll-driven line-by-line glitch flash ─────────────────
-    updateRowReveal(progress) {
-      const total = this.allItems.length;
-
-      // Full reset when scrolled out of phase 3
-      if (progress <= 0) {
-        if (this.revealedCount > 0) {
-          this.overlay.style.opacity       = '0';
-          this.overlay.style.pointerEvents = 'none';
-          this.allItems.forEach(item => {
+      if (isVisible && !wasVisible) {
+        this.overlay.style.opacity       = '1';
+        this.overlay.style.pointerEvents = 'auto';
+      } else if (!isVisible && wasVisible) {
+        this.overlay.style.opacity       = '0';
+        this.overlay.style.pointerEvents = 'none';
+        // Reset all open categories on scroll out
+        this.openCategories.clear();
+        this.categoryBtns.forEach(btn => btn.classList.remove('active'));
+        this.categoryLists.forEach(list => {
+          list.style.display = 'none';
+          list.querySelectorAll('.photo-project-item').forEach(item => {
             gsap.killTweensOf(item);
             gsap.set(item, { opacity: 0 });
           });
-          this.revealedCount       = 0;
-          this.interactionsEnabled = false;
-          if (this.currentActiveIndex !== -1) {
-            this.clearActiveStates();
-            this.hideBackgroundImage();
+        });
+        this.hideBackgroundImage();
+      }
+    }
+
+    // ── Category button click handlers ───────────────────────────────────────
+    _setupCategoryButtons() {
+      this.categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const category = btn.dataset.category;
+          const list = this.overlay.querySelector(
+            `.photo-project-list[data-category="${category}"]`
+          );
+          if (!list) return;
+
+          if (this.openCategories.has(category)) {
+            this._closeCategory(category, btn, list);
+          } else {
+            this._openCategory(category, btn, list);
           }
-          this.photoHintActive  = false;
-          this.mouseOverOverlay = false;
-          this._hidePhotoHint();
-          this._hideScrollTooltip();
-        }
-        return;
-      }
-
-      // How many items should be visible at this scroll position
-      const targetCount = Math.ceil(progress * total);
-
-      if (targetCount > this.revealedCount) {
-        // Snap overlay on first item and arm the hint idle timer
-        if (this.revealedCount === 0) {
-          this.overlay.style.opacity       = '1';
-          this.overlay.style.pointerEvents = 'auto';
-          this.photoHintActive = true;
-          this._schedulePhotoHint();
-        }
-        // Reveal each newly crossed item with a glitch flash,
-        // staggered within the incoming batch
-        for (let i = this.revealedCount; i < targetCount; i++) {
-          this._revealItem(i, i - this.revealedCount);
-        }
-        this.revealedCount = targetCount;
-
-        // Enable hover interactions only once all items are visible
-        if (this.revealedCount >= total && !this.interactionsEnabled) {
-          this.interactionsEnabled = true;
-          this.photoHintActive = false;
-          this._hidePhotoHint();
-          this._hideScrollTooltip();
-        }
-      } else if (targetCount < this.revealedCount) {
-        // Scrolling backward: hide items from the last revealed back to targetCount
-        const wasFullyRevealed = (this.revealedCount >= total);
-
-        for (let i = this.revealedCount - 1; i >= targetCount; i--) {
-          this._hideItem(i, this.revealedCount - 1 - i);
-        }
-        this.revealedCount = targetCount;
-
-        // Disable interactions if we were fully revealed and now are not
-        if (wasFullyRevealed && this.interactionsEnabled) {
-          this.interactionsEnabled = false;
-          if (this.currentActiveIndex !== -1) {
-            this.clearActiveStates();
-            this.hideBackgroundImage();
-          }
-        }
-      }
+        });
+      });
     }
 
-    // ── Photo scroll hint — idle-timer system ────────────────────────────────
-    _schedulePhotoHint() {
-      clearTimeout(this.photoHintIdleTimer);
-      if (this.photoHintActive) {
-        // Shorter delay when the cursor is already over the photo section
-        const delay = this.mouseOverOverlay ? 800 : 3000;
-        this.photoHintIdleTimer = setTimeout(() => this._showPhotoHint(), delay);
-      }
+    _openCategory(category, btn, list) {
+      this.openCategories.add(category);
+      btn.classList.add('active');
+      list.style.display = 'flex';
+
+      const items = list.querySelectorAll('.photo-project-item');
+      items.forEach((item, i) => {
+        gsap.set(item, { opacity: 0 });
+        this._revealItem(item, i);
+      });
     }
 
-    _showPhotoHint() {
-      if (!this.photoHintActive || this.photoHintVisible || !this.photoScrollHint) return;
-      this.photoHintVisible = true;
-      this.photoScrollHint.removeAttribute('aria-hidden');
-      this.photoScrollHint.classList.add('visible');
-      clearTimeout(this.photoHintAutoHideTimer);
-      this.photoHintAutoHideTimer = setTimeout(() => {
-        this._hidePhotoHint();
-        this._schedulePhotoHint();
-      }, 3000);
+    _closeCategory(category, btn, list) {
+      this.openCategories.delete(category);
+      btn.classList.remove('active');
+
+      const items     = list.querySelectorAll('.photo-project-item');
+      const lastDelay = (items.length - 1) * 0.03 + 0.13;
+
+      items.forEach((item, i) => this._hideItem(item, i));
+
+      gsap.delayedCall(lastDelay, () => {
+        if (!this.openCategories.has(category)) list.style.display = 'none';
+      });
     }
 
-    _hidePhotoHint() {
-      if (!this.photoHintVisible || !this.photoScrollHint) return;
-      this.photoHintVisible = false;
-      clearTimeout(this.photoHintAutoHideTimer);
-      this.photoScrollHint.setAttribute('aria-hidden', 'true');
-      this.photoScrollHint.classList.remove('visible');
-    }
-
-    _onPhotoHintActivity() {
-      if (!this.photoHintActive) return;
-      if (this.photoHintVisible) this._hidePhotoHint();
-      this._schedulePhotoHint();
-    }
-
-    // ── Single-item glitch flash ──────────────────────────────────────────────
-    _revealItem(i, batchIndex) {
-      const item = this.allItems[i];
+    // ── Glitch flash animations ──────────────────────────────────────────────
+    _revealItem(item, batchIndex) {
       gsap.killTweensOf(item);
-      gsap.set(item, { opacity: 0 });
       gsap.to(item, {
         delay: batchIndex * 0.04,
         keyframes: [
@@ -262,12 +145,10 @@
       });
     }
 
-    // ── Single-item glitch hide (reverse of _revealItem) ─────────────────────
-    _hideItem(i, batchIndex) {
-      const item = this.allItems[i];
+    _hideItem(item, batchIndex) {
       gsap.killTweensOf(item);
       gsap.to(item, {
-        delay: batchIndex * 0.04,
+        delay: batchIndex * 0.03,
         keyframes: [
           { opacity: 0.35, duration: 0.02, ease: 'none' },
           { opacity: 0.9,  duration: 0.04, ease: 'none' },
@@ -277,108 +158,74 @@
       });
     }
 
-    // ── Preload images ───────────────────────────────────────────────────────
-    preloadImages() {
-      this.projectItems.forEach(item => {
-        const url = item.dataset.image;
-        if (url) {
-          const img = new Image();
-          img.src = url;
-        }
+    // ── Hover interactions ───────────────────────────────────────────────────
+    _setupHoverListeners() {
+      document.querySelectorAll('.photo-project-item').forEach(item => {
+        this._addHoverListeners(item);
       });
     }
 
-    // ── Row hover interactions ───────────────────────────────────────────────
-    addEventListeners(item, index) {
+    _addHoverListeners(item) {
+      const list          = item.closest('.photo-project-list');
       const textEls       = item.querySelectorAll('.hover-text');
-      const imageUrl      = item.dataset.image;
       const originalTexts = this.originalTexts.get(item);
+      let debounce        = null;
 
       item.addEventListener('mouseenter', () => {
-        if (!this.interactionsEnabled) {
-          this._showScrollTooltip();
-          return;
-        }
-        if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
-        if (this.currentActiveIndex === index) return;
+        if (debounce) clearTimeout(debounce);
 
-        this.clearScrollFade();
-        this.updateActiveStates(index);
+        // Clear GSAP inline opacities so CSS has-active rule takes over
+        list.querySelectorAll('.photo-project-item').forEach(el => {
+          el.style.opacity = '';
+        });
+        list.classList.add('has-active');
+        item.classList.add('active');
 
+        // ScrambleText
         textEls.forEach((el, i) => {
           gsap.killTweensOf(el);
           gsap.to(el, {
             duration: 0.8,
             scrambleText: {
-              text: originalTexts[i],
-              chars: 'qwerty1337h@ck3r',
+              text:        originalTexts[i],
+              chars:       'qwerty1337h@ck3r',
               revealDelay: 0.3,
-              speed: 0.4
+              speed:       0.4
             }
           });
         });
 
-        if (imageUrl) this.showBackgroundImage(imageUrl);
+        if (item.dataset.image) this.showBackgroundImage(item.dataset.image);
       });
 
       item.addEventListener('mouseleave', () => {
-        this._hideScrollTooltip();
-        this.debounceTimeout = setTimeout(() => {
+        item.classList.remove('active');
+        list.classList.remove('has-active');
+
+        // Restore inline opacity so items stay visible after has-active CSS is removed
+        list.querySelectorAll('.photo-project-item').forEach(el => {
+          el.style.opacity = '1';
+        });
+
+        debounce = setTimeout(() => {
           textEls.forEach((el, i) => {
             gsap.killTweensOf(el);
             el.textContent = originalTexts[i];
           });
         }, 50);
+
+        this.hideBackgroundImage();
       });
     }
 
-    // ── Active state management ──────────────────────────────────────────────
-    updateActiveStates(activeIndex) {
-      this.currentActiveIndex = activeIndex;
-      this.projectList.classList.add('has-active');
-      this.projectItems.forEach((item, i) => {
-        item.classList.toggle('active', i === activeIndex);
+    // ── Image preload + background ───────────────────────────────────────────
+    preloadImages() {
+      document.querySelectorAll('.photo-project-item').forEach(item => {
+        const url = item.dataset.image;
+        if (url) { const img = new Image(); img.src = url; }
       });
     }
 
-    clearActiveStates() {
-      this.currentActiveIndex = -1;
-      this.projectList.classList.remove('has-active');
-      this.projectItems.forEach(item => {
-        item.classList.remove('active');
-        // Restore inline opacity so items stay visible once has-active CSS is removed.
-        // Without this, items fall back to the CSS base opacity: 0 and become invisible.
-        if (this.interactionsEnabled) item.style.opacity = '1';
-        const textEls       = item.querySelectorAll('.hover-text');
-        const originalTexts = this.originalTexts.get(item);
-        textEls.forEach((el, i) => {
-          gsap.killTweensOf(el);
-          el.textContent = originalTexts[i];
-        });
-      });
-    }
-
-    // ── Scroll fade — items near the top of the list dissolve before the subtitle ──
-    updateScrollFade() {
-      const scrollTop = this.projectList.scrollTop;
-      const fadeZone  = 40; // matches one header height
-      this.projectItems.forEach(item => {
-        const top = item.offsetTop - scrollTop;
-        if (top < fadeZone) {
-          item.style.opacity = String(Math.max(0, top / fadeZone));
-        } else if (this.interactionsEnabled) {
-          // Explicitly restore to 1 — setting '' would expose CSS opacity: 0
-          // and make items invisible whenever has-active is not present.
-          item.style.opacity = '1';
-        }
-      });
-    }
-
-    clearScrollFade() {
-      this.projectItems.forEach(item => { item.style.opacity = ''; });
-    }
-
-    // ── Background image ─────────────────────────────────────────────────────
     showBackgroundImage(imageUrl) {
       this.bgImage.style.transition      = 'none';
       this.bgImage.style.transform       = 'translate(-50%, -50%) scale(1.12)';
@@ -395,15 +242,6 @@
     hideBackgroundImage() {
       this.bgImage.style.opacity = '0';
     }
-
-    _showScrollTooltip() {
-      if (this.cursorTooltip) this.cursorTooltip.classList.add('visible');
-    }
-
-    _hideScrollTooltip() {
-      if (this.cursorTooltip) this.cursorTooltip.classList.remove('visible');
-    }
-
   }
 
   function init() {

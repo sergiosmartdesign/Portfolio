@@ -199,7 +199,7 @@
 
                     <img id="id1svg" src="images/id1.svg" alt="Sergio Ayala — Art Director profile badge">
 
-                    <p id="aboutp1" data-i18n="about.p1">Senior Art Director & Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.</p>
+                    <p id="aboutp1" data-i18n="about.p1">Senior Art Director & Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and it's DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.</p>
 
                     <p id="aboutp2" data-i18n="about.p2">As a UX/UI designer. My goal is to transform a brand's vision into engaging digital and tangible experiences that are clear and authentic. I currently work as an independent freelance professional, helping my clients to tell their stories through design.</p>
 
@@ -440,14 +440,15 @@
 
             <!-- Portfolio overlay — sits above the WebGL background -->
             <div class="photo-portfolio-overlay">
-                <h2 class="photo-portfolio-title" aria-label="Photography Portfolio">[ · p o r t f o l i o · ]</h2>
+                <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. For this project I used my vibe coding knowledge so every photo in this archive carries AI-generated metadata, making the portfolio fully searchable by people, search engines, and AI systems alike. Please click a section below to see the list of photos.</p>
+                <nav class="photo-category-nav" aria-label="Photography categories">
+                    <button class="photo-category-btn" data-category="landscapes">[ · l a n d s c a p e s · ]</button>
+                    <button class="photo-category-btn" data-category="street">[ · s t r e e t &nbsp; p h o t o · ]</button>
+                    <button class="photo-category-btn" data-category="animals">[ · a n i m a l s · ]</button>
+                    <button class="photo-category-btn" data-category="travel">[ · t r a v e l · ]</button>
+                </nav>
                 <div class="photo-list-container">
-                <ul class="photo-project-list" role="list">
-
-                    <!-- ── landscapes ──────────────────────────────────────── -->
-                    <li class="photo-section-header" aria-hidden="true" data-stack="0">
-                        <span class="photo-section-title">[ · l a n d s c a p e s · ]</span>
-                    </li>
+                <ul class="photo-project-list" data-category="landscapes" role="list">
                     <li class="photo-project-item" data-image="images/photo/Isla en Uyuni.jpg">
                         <span class="photo-project-data photo-title hover-text">Isla en Uyuni</span>
                         <span class="photo-project-data photo-location hover-text">Uyuni, Bolivia</span>
@@ -511,10 +512,8 @@
                         <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
                         <span class="photo-project-data photo-year hover-text">2026</span>
                     </li>
-                    <!-- ── street photo ─────────────────────────────────────── -->
-                    <li class="photo-section-header" aria-hidden="true" data-stack="1">
-                        <span class="photo-section-title">[ · s t r e e t &nbsp; p h o t o · ]</span>
-                    </li>
+                </ul>
+                <ul class="photo-project-list" data-category="street" role="list">
                     <li class="photo-project-item" data-image="images/photo/Streets of Dubrovnik.jpg">
                         <span class="photo-project-data photo-title hover-text">Streets of Dubrovnik</span>
                         <span class="photo-project-data photo-location hover-text">Dubrovnik, Croatia</span>
@@ -592,10 +591,8 @@
                         <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
                         <span class="photo-project-data photo-year hover-text">2026</span>
                     </li>
-                    <!-- ── animals ───────────────────────────────────────────── -->
-                    <li class="photo-section-header" aria-hidden="true" data-stack="2">
-                        <span class="photo-section-title">[ · a n i m a l s · ]</span>
-                    </li>
+                </ul>
+                <ul class="photo-project-list" data-category="animals" role="list">
                     <li class="photo-project-item" data-image="images/photo/Dog.jpg">
                         <span class="photo-project-data photo-title hover-text">Dog</span>
                         <span class="photo-project-data photo-location hover-text">Cota, Cundinamarca</span>
@@ -638,10 +635,8 @@
                         <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
                         <span class="photo-project-data photo-year hover-text">2023</span>
                     </li>
-                    <!-- ── travel ───────────────────────────────────────────── -->
-                    <li class="photo-section-header" aria-hidden="true" data-stack="3">
-                        <span class="photo-section-title">[ · t r a v e l · ]</span>
-                    </li>
+                </ul>
+                <ul class="photo-project-list" data-category="travel" role="list">
                     <li class="photo-project-item" data-image="images/photo/Our Lady of the Rocks.jpg">
                         <span class="photo-project-data photo-title hover-text">Our Lady of the Rocks</span>
                         <span class="photo-project-data photo-location hover-text">Perast, Montenegro</span>
@@ -845,17 +840,6 @@
                         <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
                         <span class="photo-project-data photo-year hover-text">2022</span>
                     </li>
-                    <!-- ── long exposure ──────────────────────────────────────── -->
-                    <li class="photo-section-header" aria-hidden="true" data-stack="4">
-                        <span class="photo-section-title">[ · l o n g &nbsp; e x p o s u r e · ]</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Oporto Fire.jpg">
-                        <span class="photo-project-data photo-title hover-text">Oporto Fire</span>
-                        <span class="photo-project-data photo-location hover-text">Porto, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
 
                 </ul>
                 </div>
@@ -970,21 +954,6 @@
         </div>
     </div>
 
-    <!-- Photo section scroll hint — shown while list is filling, hidden when complete -->
-    <div id="photo-scroll-hint" aria-hidden="true">
-        <div class="sc-panel">
-            <svg class="sc-icon" viewBox="0 0 36 62" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
-                <rect x="8" y="1" width="20" height="34" rx="10" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="18" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
-                <rect class="sc-wheel" x="15.5" y="7" width="5" height="9" rx="2.5" fill="currentColor"/>
-                <polyline class="sc-chevron-1" points="11,42 18,50 25,42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <polyline class="sc-chevron-2" points="11,51 18,59 25,51" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <p class="sc-text">[ · s c r o l l · ]</p>
-            <p class="sc-sub-text">the full list:</p>
-            <p class="sc-sub-text">to see the photos.</p>
-        </div>
-    </div>
 
     <div id="line-collision-star">
       <span></span>
