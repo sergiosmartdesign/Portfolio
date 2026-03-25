@@ -1,6 +1,6 @@
 /* ============================================================================
    POLAROID GALLERY
-   Scroll-driven, no external libraries. 8 columns × 5 rows = 40 cards.
+   Scroll-driven, no external libraries. 8 columns × rows = 50 cards.
    Cards fan in row-by-row using native CSS scroll-driven animations.
 
    To add a photo:
@@ -20,12 +20,21 @@
   }
 }
 
-/* ── Section wrapper ─────────────────────────────────────────────────────── */
-#photo-gallery {
-  background: var(--black);
-  padding-block: 20svh 30svh;
-  position: relative;
-  z-index: var(--z-layer-10);
+/* ── Section wrapper — lives inside .photo-content-scroll ────────────────── */
+.pgallery-section {
+  margin-block-start: clamp(48px, 8vh, 96px);
+  padding-block-end: clamp(48px, 8vh, 96px);
+}
+
+/* ── Section subtitle ────────────────────────────────────────────────────── */
+.pgallery-title {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: #001219;
+  text-align: center;
+  letter-spacing: 0.06em;
+  margin: 0 0 clamp(24px, 4vh, 48px);
 }
 
 /* ── 8-column grid ───────────────────────────────────────────────────────── */
@@ -63,7 +72,7 @@
 /* Proportions: classic Polaroid OneStep ≈ 88×107mm.
    Equal thin border on top and sides, wider border on bottom (the white strip). */
 .pgallery-card {
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 2px;
   padding: 6% 6% 21%;
   /* No background — pure wireframe placeholder */
@@ -74,7 +83,7 @@
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1; /* square image area — real polaroid photo format */
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 /* Real photo — add <img> inside .pgallery-img when scans are ready */
