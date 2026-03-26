@@ -2332,38 +2332,123 @@ nav {
   height: auto;
 }
 
-/* ── Fuji X-T4 shutter animation (fires every 6 s) ── */
+/* ── Fuji X-T4 camera animations ── */
+
+/* Continuous: focus grip ring rotates slowly */
+@keyframes xt4FocusRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Camera body recoil on shot */
+@keyframes xt4Recoil {
+  0%, 77%, 85%, 100% { transform: translateY(0); }
+  80%                { transform: translateY(-3px); }
+  82%                { transform: translateY(1px); }
+}
+
+/* Iris closes then opens */
+@keyframes xt4Iris {
+  0%, 76%, 85%, 100% { transform: scale(1); }
+  79%                { transform: scale(0.15); }
+  82%                { transform: scale(1); }
+}
+
+/* Dark lens curtain flash */
 @keyframes xt4Shutter {
   0%, 78%, 100% { opacity: 0; }
-  80%   { opacity: 0.95; }
-  81.5% { opacity: 0.05; }
-  82.5% { opacity: 0.85; }
-  84%   { opacity: 0; }
+  80%           { opacity: 0.95; }
+  81.5%         { opacity: 0.05; }
+  82.5%         { opacity: 0.85; }
+  84%           { opacity: 0; }
 }
 
+/* Full-frame white flash */
 @keyframes xt4Flash {
   0%, 79.5%, 100% { opacity: 0; }
-  81%  { opacity: 0.18; }
-  82%  { opacity: 0; }
+  81%             { opacity: 0.18; }
+  82%             { opacity: 0; }
 }
 
+/* AF-confirm LED */
 @keyframes xt4Led {
   0%, 79%, 100% { opacity: 0; }
-  80%  { opacity: 1; }
-  85%  { opacity: 1; }
-  87%  { opacity: 0; }
+  80%           { opacity: 1; }
+  85%           { opacity: 1; }
+  87%           { opacity: 0; }
 }
 
+/* EVF brightens on shot */
 @keyframes xt4VfGlow {
-  0%, 79%, 100% { opacity: 0.12; }
-  80%  { opacity: 0.6; }
-  82%  { opacity: 0.12; }
+  0%, 77%, 100% { opacity: 0.12; }
+  80%           { opacity: 0.7; }
+  82%           { opacity: 0.12; }
 }
 
-.camera-shutter  { animation: xt4Shutter  6s infinite; }
-.camera-flash    { animation: xt4Flash    6s infinite; }
-.camera-led      { animation: xt4Led      6s infinite; }
-.camera-vf-glow  { animation: xt4VfGlow   6s infinite; }
+/* Hover: hand grips down then releases */
+@keyframes xt4HandGrip {
+  0%, 40%, 100% { transform: translateY(0); }
+  60%, 75%      { transform: translateY(9px); }
+}
+
+/* Hover: lens scan glow */
+@keyframes xt4LensGlow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.75; }
+}
+
+/* Hover: EVF focus pulse */
+@keyframes xt4FocusGlow {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.95; }
+}
+
+.camera-focus-ring-anim {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: xt4FocusRotate 12s linear infinite;
+}
+.camera-body-group { animation: xt4Recoil 7s infinite; }
+.camera-iris {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: xt4Iris 7s infinite;
+}
+.camera-shutter { animation: xt4Shutter 7s infinite; }
+.camera-flash   { animation: xt4Flash   7s infinite; }
+.camera-led     { animation: xt4Led     7s infinite; }
+.camera-vf-glow { animation: xt4VfGlow  7s infinite; }
+
+/* Hand layers: hidden by default, fade in on hover */
+.camera-hand-back,
+.camera-hand-front {
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* ── Hover: hand fades in + grips; auto-fire pauses ── */
+.photo-col-camera:hover .camera-shutter,
+.photo-col-camera:hover .camera-flash,
+.photo-col-camera:hover .camera-led,
+.photo-col-camera:hover .camera-iris {
+  animation-play-state: paused;
+}
+/* Camera + both hand layers all squeeze together */
+.photo-col-camera:hover .camera-hand-back,
+.photo-col-camera:hover .camera-hand-front,
+.photo-col-camera:hover .camera-body-group {
+  opacity: 1;
+  animation: xt4HandGrip 2.2s ease-in-out infinite;
+}
+.photo-col-camera:hover .camera-focus-ring-anim {
+  animation-duration: 2s;
+}
+.photo-col-camera:hover .camera-vf-glow {
+  animation: xt4FocusGlow 0.8s ease-in-out infinite;
+}
+.photo-col-camera:hover .camera-lens-glow {
+  animation: xt4LensGlow 1.2s ease-in-out infinite;
+}
 
 /* Category list — hidden by default, shown on button click */
 .photo-project-list {
