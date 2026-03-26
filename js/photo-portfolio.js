@@ -23,18 +23,19 @@
       this.categoryBtns  = document.querySelectorAll('.photo-category-btn');
       this.categoryLists = document.querySelectorAll('.photo-project-list');
 
-      this.openCategories      = new Set();
-      this.originalTexts       = new Map();
-      this.scrollProgress3     = 0;
-      this.winH                = 0;
-      this.spacerDocTop        = 0;
+      this.openCategories  = new Set();
+      this.originalTexts   = new Map();
+      this.scrollProgress3 = 0;
+      this.winH            = 0;
+      this.spacerDocTop    = 0;
 
-      // Static elements revealed by scroll: intro → cta → 4 buttons
+      // Chain-reveal elements: intro → cta → 4 buttons → polaroids title
       // Populated in init() once DOM is confirmed ready
-      this.staticEls           = [];
-      // Scroll-progress threshold at which each element is revealed
-      this.staticThresholds    = [0.0, 0.12, 0.26, 0.40, 0.54, 0.68];
-      this.revealedStaticCount = 0;
+      this.staticEls     = [];
+      this.chainActive   = false;
+      this.chainTimers   = [];
+      this.reverseActive = false;
+      this.reverseTimers = [];
 
       // Cache original text for ScrambleText restore
       document.querySelectorAll('.photo-project-item').forEach(item => {
@@ -54,14 +55,16 @@
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       }, { passive: true });
 
-      // Collect static elements in reveal order
+      // Collect chain elements in reveal order: intro → cta → 4 buttons → polaroids title
+      const pgalleryTitle = document.querySelector('.pgallery-title');
       this.staticEls = [
         this.overlay.querySelector('.photo-intro'),
         this.overlay.querySelector('.photo-cta'),
-        ...this.categoryBtns
+        ...this.categoryBtns,
+        pgalleryTitle
       ].filter(Boolean);
 
-      // Start all static elements hidden
+      // Start all chain elements hidden
       this.staticEls.forEach(el => gsap.set(el, { opacity: 0 }));
 
       this.preloadImages();
@@ -85,42 +88,85 @@
       const isVisible      = newProgress3 > 0;
 
       if (isVisible && !wasVisible) {
+        this._cancelReverse();
         this.overlay.style.opacity       = '1';
         this.overlay.style.pointerEvents = 'auto';
+        this._triggerChain();
       } else if (!isVisible && wasVisible) {
-        this._fullReset();
-        return;
-      }
-
-      if (isVisible) this._updateStaticReveal(newProgress3);
-    }
-
-    // ── Sequential reveal of intro / cta / category buttons ─────────────────
-    _updateStaticReveal(progress) {
-      const targetCount = this.staticThresholds.filter(t => progress >= t).length;
-      const clamped     = Math.min(targetCount, this.staticEls.length);
-
-      if (clamped > this.revealedStaticCount) {
-        for (let i = this.revealedStaticCount; i < clamped; i++) {
-          this._revealItem(this.staticEls[i], 0);
-        }
-        this.revealedStaticCount = clamped;
-
-      } else if (clamped < this.revealedStaticCount) {
-        for (let i = this.revealedStaticCount - 1; i >= clamped; i--) {
-          const el = this.staticEls[i];
-          this._hideItem(el, 0);
-          // If it's a category button that was open, close its list immediately
-          if (i >= 2 && el.dataset && el.dataset.category) {
-            this._forceCloseCategory(el.dataset.category, el);
-          }
-        }
-        this.revealedStaticCount = clamped;
+        this._cancelChain();
+        this._triggerReverseChain();
       }
     }
 
-    // ── Full reset when section scrolls out of view ──────────────────────────
+    // ── Forward chain: reveal intro → cta → buttons → title ────────────────
+    _triggerChain() {
+      if (this.chainActive) return;
+      this.chainActive = true;
+
+      this.staticEls.forEach((el, i) => {
+        const t = setTimeout(() => this._revealItem(el, 0), i * 300);
+        this.chainTimers.push(t);
+      });
+    }
+
+    _cancelChain() {
+      this.chainTimers.forEach(t => clearTimeout(t));
+      this.chainTimers = [];
+      this.chainActive = false;
+    }
+
+    // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
+    _triggerReverseChain() {
+      if (this.reverseActive) return;
+      this.reverseActive = true;
+
+      const reversed  = [...this.staticEls].reverse();
+      const lastDelay = (reversed.length - 1) * 300;
+
+      reversed.forEach((el, i) => {
+        const t = setTimeout(() => this._hideItem(el, 0), i * 300);
+        this.reverseTimers.push(t);
+      });
+
+      // After last hide animation finishes (~200ms), clean up overlay
+      const t = setTimeout(() => this._completeReset(), lastDelay + 200);
+      this.reverseTimers.push(t);
+    }
+
+    _cancelReverse() {
+      this.reverseTimers.forEach(t => clearTimeout(t));
+      this.reverseTimers = [];
+      this.reverseActive = false;
+    }
+
+    // ── Called after reverse chain completes ────────────────────────────────
+    _completeReset() {
+      this.reverseActive = false;
+      this.reverseTimers = [];
+
+      this.overlay.style.opacity       = '0';
+      this.overlay.style.pointerEvents = 'none';
+
+      this.openCategories.clear();
+      this.categoryBtns.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+      this.categoryLists.forEach(list => {
+        list.style.display = 'none';
+        list.querySelectorAll('.photo-project-item').forEach(item => {
+          gsap.killTweensOf(item);
+          gsap.set(item, { opacity: 0 });
+        });
+      });
+      this.bgImage.style.opacity = '0';
+    }
+
+    // ── Immediate hard reset (e.g. resize, bfcache) ──────────────────────────
     _fullReset() {
+      this._cancelChain();
+      this._cancelReverse();
+
       this.overlay.style.opacity       = '0';
       this.overlay.style.pointerEvents = 'none';
 
@@ -140,7 +186,6 @@
         gsap.killTweensOf(el);
         gsap.set(el, { opacity: 0 });
       });
-      this.revealedStaticCount = 0;
       this.bgImage.style.opacity = '0';
     }
 
