@@ -2318,12 +2318,52 @@ nav {
   flex-shrink: 0;
 }
 
-/* Right column: Fuji X-T4 camera */
+/* Right column: Fuji X-T4 camera + left divider (col 2 → col 3) */
 .photo-col-camera {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-top: 0.25rem;
+}
+
+/* Static dim base line — between col 2 and col 3 */
+.photo-col-camera::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * clamp(0.75rem, 1.5vw, 1.5rem));
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #0A9396 12%,
+    #0A9396 88%,
+    transparent 100%
+  );
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Animated scan highlight — offset by half cycle so the two lines don't sync */
+.photo-col-camera::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * clamp(0.75rem, 1.5vw, 1.5rem));
+  top: 0;
+  width: 1px;
+  height: 35%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #94D2BD 30%,
+    #94D2BD 70%,
+    transparent 100%
+  );
+  animation: photoLineScan 3.5s ease-in-out infinite;
+  animation-delay: -1.75s;
+  pointer-events: none;
 }
 
 .photo-camera-svg {
@@ -2662,7 +2702,9 @@ nav {
   }
 
   .photo-col-instagram::before,
-  .photo-col-instagram::after {
+  .photo-col-instagram::after,
+  .photo-col-camera::before,
+  .photo-col-camera::after {
     display: none;
   }
 

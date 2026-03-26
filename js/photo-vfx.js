@@ -40,6 +40,7 @@
     lightRadius:      0.1,
     rainbowIntensity: 2.5,
     ditherAmount:     0.01,
+    lightColor:       [0.914, 0.847, 0.651], // #E9D8A6
   };
   // ────────────────────────────────────────────────────────────────────────────
 
@@ -64,6 +65,7 @@
       uniform float     u_rainbow;
       uniform float     u_dither;
       uniform vec3      u_textColor;
+      uniform vec3      u_lightColor;
 
       float h2(vec2 p) { return fract(sin(dot(p, vec2(489.,589.)))*492.)*2.-1.; }
       float h3(vec3 p) { return fract(sin(dot(p, vec3(489.,589.,58.)))*492.)*2.-1.; }
@@ -97,7 +99,9 @@
         }
 
         float lm = length(p - mp);
-        vec4  c  = vec4(smoothstep(0., 1., pow(u_lightRadius / max(lm, 1e-5), u_lightPower)));
+        float lv = smoothstep(0., 1., pow(u_lightRadius / max(lm, 1e-5), u_lightPower));
+        vec4  c  = vec4(lv);
+        c.rgb *= u_lightColor;
         c -= acc;
         c += vec4(spectrum(cos(acc * 3.5)), 1.) * acc * u_rainbow;
         c -= h2(uv) * u_dither;
@@ -181,6 +185,7 @@
       rb:    gl.getUniformLocation(prog, 'u_rainbow'),
       dt:    gl.getUniformLocation(prog, 'u_dither'),
       tc:    gl.getUniformLocation(prog, 'u_textColor'),
+      lc:    gl.getUniformLocation(prog, 'u_lightColor'),
     };
 
     gl.uniform1f(U.lp, CONFIG.lightPower);
@@ -189,6 +194,7 @@
     gl.uniform1f(U.dt, CONFIG.ditherAmount);
     gl.uniform1i(U.tex, 0);
     gl.uniform3f(U.tc, 1.0, 1.0, 1.0); // start white
+    gl.uniform3f(U.lc, ...CONFIG.lightColor);
 
     const [br, bg, bb] = CONFIG.bgColor;
     gl.clearColor(br / 255, bg / 255, bb / 255, 1);
