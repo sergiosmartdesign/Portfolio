@@ -438,9 +438,96 @@
             <!-- Portfolio overlay — text + accordion, scroll together, z:2 -->
             <div class="photo-portfolio-overlay">
                 <div class="photo-content-scroll">
-                <div class="photo-text-block">
-                    <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. Every photo in this archive carries AI-generated metadata, making the portfolio fully searchable by people, search engines, and AI systems alike.</p>
-                    <p class="photo-cta">Click a category to expand its list — then hover over any photo title to preview the image.</p>
+                <div class="photo-top-grid">
+
+                    <!-- Left: description text -->
+                    <div class="photo-col-text">
+                        <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. Every photo in this archive carries AI-generated metadata, making the portfolio fully searchable by people, search engines, and AI systems alike.</p>
+                        <p class="photo-cta">Click a category to expand its list — then hover over any photo title to preview the image.</p>
+                    </div>
+
+                    <!-- Center: Instagram -->
+                    <aside class="photo-col-instagram" aria-label="Sergio Ayala Photography on Instagram">
+                        <span class="photo-ig-label" aria-hidden="true">[ · o n &nbsp; i n s t a g r a m · ]</span>
+                        <a href="https://www.instagram.com/sersh01/" class="photo-ig-handle" target="_blank" rel="noopener noreferrer" aria-label="Sergio Ayala on Instagram — @sersh01">@sersh01</a>
+                        <p class="photo-ig-desc">Want to see more? I post regularly on Instagram — more variety, more places, less structure. Everything that doesn't fit in a portfolio but is still worth sharing.</p>
+                        <a href="https://www.instagram.com/sersh01/" class="photo-ig-link" target="_blank" rel="noopener noreferrer" aria-label="Follow Sergio Ayala on Instagram — @sersh01">
+                            <svg class="photo-ig-icon" viewBox="0 0 448 512" aria-hidden="true"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+                            <span class="photo-ig-cta">[ · f o l l o w · ]</span>
+                        </a>
+                    </aside>
+
+                    <!-- Right: Fuji X-T4 animated camera SVG -->
+                    <div class="photo-col-camera" aria-hidden="true">
+                        <svg class="photo-camera-svg" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Body -->
+                            <rect x="6" y="42" width="208" height="108" rx="10" fill="#001219" stroke="#0A9396" stroke-width="1.5"/>
+                            <!-- EVF hump -->
+                            <rect x="12" y="14" width="80" height="32" rx="6" fill="#001219" stroke="#0A9396" stroke-width="1.5"/>
+                            <!-- Top plate right -->
+                            <rect x="92" y="26" width="112" height="18" rx="4" fill="#001219" stroke="#0A9396" stroke-width="1.2"/>
+                            <!-- Mode dial -->
+                            <circle cx="38" cy="30" r="13" fill="#001219" stroke="#0A9396" stroke-width="1.5"/>
+                            <line x1="38" y1="18" x2="38" y2="21" stroke="#EE9B00" stroke-width="1" opacity="0.6"/>
+                            <line x1="38" y1="39" x2="38" y2="42" stroke="#EE9B00" stroke-width="1" opacity="0.6"/>
+                            <line x1="26" y1="30" x2="29" y2="30" stroke="#EE9B00" stroke-width="1" opacity="0.6"/>
+                            <line x1="47" y1="30" x2="50" y2="30" stroke="#EE9B00" stroke-width="1" opacity="0.6"/>
+                            <circle cx="38" cy="30" r="3" fill="#EE9B00" opacity="0.7"/>
+                            <!-- ISO dial -->
+                            <circle cx="182" cy="32" r="11" fill="#001219" stroke="#0A9396" stroke-width="1.5"/>
+                            <line x1="182" y1="22" x2="182" y2="25" stroke="#EE9B00" stroke-width="1" opacity="0.5"/>
+                            <line x1="182" y1="39" x2="182" y2="42" stroke="#EE9B00" stroke-width="1" opacity="0.5"/>
+                            <circle cx="182" cy="32" r="3" fill="#EE9B00" opacity="0.5"/>
+                            <!-- EV compensation dial -->
+                            <rect x="96" y="27" width="62" height="17" rx="8" fill="#001219" stroke="#0A9396" stroke-width="1"/>
+                            <line x1="108" y1="31" x2="108" y2="40" stroke="#0A9396" stroke-width="0.8" opacity="0.5"/>
+                            <line x1="120" y1="29" x2="120" y2="42" stroke="#0A9396" stroke-width="0.8" opacity="0.6"/>
+                            <line x1="132" y1="31" x2="132" y2="40" stroke="#0A9396" stroke-width="0.8" opacity="0.5"/>
+                            <line x1="144" y1="29" x2="144" y2="42" stroke="#0A9396" stroke-width="0.8" opacity="0.5"/>
+                            <circle cx="127" cy="35" r="2.5" fill="#EE9B00" opacity="0.8"/>
+                            <!-- Shutter button -->
+                            <circle cx="200" cy="55" r="9" fill="#0A9396" opacity="0.6"/>
+                            <circle cx="200" cy="55" r="5" fill="#001219"/>
+                            <!-- Grip -->
+                            <rect x="168" y="44" width="36" height="104" rx="10" fill="#000C14" stroke="#0A9396" stroke-width="1" opacity="0.7"/>
+                            <!-- EVF display -->
+                            <rect x="22" y="19" width="58" height="20" rx="3" fill="#000D14"/>
+                            <rect x="24" y="21" width="54" height="16" rx="2" fill="#0A9396" opacity="0.12" class="camera-vf-glow"/>
+                            <!-- Hot shoe -->
+                            <rect x="100" y="40" width="32" height="5" rx="2" fill="#001219" stroke="#0A9396" stroke-width="0.8" opacity="0.6"/>
+                            <!-- Lens mount ring -->
+                            <circle cx="90" cy="96" r="47" fill="#000" stroke="#0A9396" stroke-width="1" opacity="0.3"/>
+                            <!-- Outer barrel -->
+                            <circle cx="90" cy="96" r="43" fill="#001219" stroke="#0A9396" stroke-width="1.5"/>
+                            <!-- Grip ring (dashed) -->
+                            <circle cx="90" cy="96" r="40" fill="none" stroke="#0A9396" stroke-width="3" stroke-dasharray="3 4" opacity="0.2"/>
+                            <!-- Focus ring -->
+                            <circle cx="90" cy="96" r="35" fill="#001219" stroke="#0A9396" stroke-width="0.8" opacity="0.5"/>
+                            <!-- Inner barrel -->
+                            <circle cx="90" cy="96" r="30" fill="#001219" stroke="#94D2BD" stroke-width="0.8"/>
+                            <!-- Glass outer -->
+                            <circle cx="90" cy="96" r="24" fill="#000A12" stroke="#EE9B00" stroke-width="1.2"/>
+                            <circle cx="90" cy="96" r="23" fill="#0A9396" opacity="0.07"/>
+                            <!-- Glass inner -->
+                            <circle cx="90" cy="96" r="16" fill="#000D18" stroke="#EE9B00" stroke-width="0.6" opacity="0.6"/>
+                            <!-- Lens centre -->
+                            <circle cx="90" cy="96" r="7" fill="#001219" stroke="#EE9B00" stroke-width="0.8"/>
+                            <circle cx="90" cy="96" r="2.5" fill="#EE9B00" opacity="0.7"/>
+                            <!-- Lens reflection -->
+                            <ellipse cx="83" cy="89" rx="7" ry="4" fill="white" opacity="0.04" transform="rotate(-25 83 89)"/>
+                            <!-- Front command dial -->
+                            <circle cx="150" cy="96" r="8" fill="#001219" stroke="#0A9396" stroke-width="1"/>
+                            <circle cx="150" cy="96" r="4" fill="#000810"/>
+                            <!-- Branding -->
+                            <text x="148" y="118" font-family="monospace" font-size="6" fill="#0A9396" opacity="0.35" letter-spacing="1">FUJI</text>
+                            <text x="140" y="128" font-family="monospace" font-size="5" fill="#0A9396" opacity="0.25" letter-spacing="0.5">X - T 4</text>
+                            <!-- ── Animation layers ── -->
+                            <circle cx="90" cy="96" r="23" fill="#000" opacity="0" class="camera-shutter"/>
+                            <rect x="6" y="42" width="208" height="108" rx="10" fill="white" opacity="0" class="camera-flash"/>
+                            <circle cx="210" cy="60" r="3" fill="#EE9B00" opacity="0" class="camera-led"/>
+                        </svg>
+                    </div>
+
                 </div>
                 <div class="photo-accordion">
                     <div class="photo-accordion-item">

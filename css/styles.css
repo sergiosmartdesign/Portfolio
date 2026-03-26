@@ -2166,15 +2166,32 @@ nav {
   overflow: hidden;
 }
 
-/* Text block wrapper — z:0 within overlay stacking context, so bg-image (z:1) covers it */
-.photo-text-block {
+/* Section label above the 3-column grid */
+.photo-section-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.6rem, 0.85vw, 0.75rem);
+  color: #0A9396;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+  margin-bottom: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* 3-column top grid — z:0 so bg-image (z:1) covers it on hover */
+.photo-top-grid {
   position: relative;
   z-index: 0;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: start;
+  flex-shrink: 0;
+}
+
+/* Left column: text block */
+.photo-col-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  flex-shrink: 0;
 }
 
 /* Intro paragraph + CTA */
@@ -2185,22 +2202,168 @@ nav {
   color: #001219;
   line-height: 1.6;
   margin: 0 0 var(--spacing-md) 0;
-  max-width: 70ch;
   flex-shrink: 0;
-  text-align: center;
 }
 
 .photo-cta {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 700;
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
-  color: #001219;
+  color: #9B2226;
   line-height: 1.5;
-  margin: 0 0 var(--spacing-md) 0;
-  max-width: 70ch;
-  text-align: center;
+  margin: 0;
   flex-shrink: 0;
 }
+
+/* Centre column: Instagram */
+.photo-col-instagram {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Static dim base line */
+.photo-col-instagram::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * clamp(0.75rem, 1.5vw, 1.5rem));
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #0A9396 12%,
+    #0A9396 88%,
+    transparent 100%
+  );
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Animated scan highlight */
+.photo-col-instagram::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * clamp(0.75rem, 1.5vw, 1.5rem));
+  top: 0;
+  width: 1px;
+  height: 35%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #94D2BD 30%,
+    #94D2BD 70%,
+    transparent 100%
+  );
+  animation: photoLineScan 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes photoLineScan {
+  0%   { top: -35%; opacity: 0; }
+  8%   { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.photo-ig-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  color: #BB3E03;
+  letter-spacing: 0.1em;
+}
+
+.photo-ig-handle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  color: #005F73;
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  display: block;
+  transition: color 0.25s ease;
+}
+
+.photo-ig-handle:hover { color: #9B2226; }
+
+.photo-ig-desc {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: #001219;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.photo-ig-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  text-decoration: none;
+  color: #0A9396;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.6rem, 0.85vw, 0.75rem);
+  letter-spacing: 0.08em;
+  margin-top: var(--spacing-xs);
+  transition: color 0.25s ease;
+}
+
+.photo-ig-link:hover { color: #AE2012; }
+
+.photo-ig-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Right column: Fuji X-T4 camera */
+.photo-col-camera {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 0.25rem;
+}
+
+.photo-camera-svg {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+}
+
+/* ── Fuji X-T4 shutter animation (fires every 6 s) ── */
+@keyframes xt4Shutter {
+  0%, 78%, 100% { opacity: 0; }
+  80%   { opacity: 0.95; }
+  81.5% { opacity: 0.05; }
+  82.5% { opacity: 0.85; }
+  84%   { opacity: 0; }
+}
+
+@keyframes xt4Flash {
+  0%, 79.5%, 100% { opacity: 0; }
+  81%  { opacity: 0.18; }
+  82%  { opacity: 0; }
+}
+
+@keyframes xt4Led {
+  0%, 79%, 100% { opacity: 0; }
+  80%  { opacity: 1; }
+  85%  { opacity: 1; }
+  87%  { opacity: 0; }
+}
+
+@keyframes xt4VfGlow {
+  0%, 79%, 100% { opacity: 0.12; }
+  80%  { opacity: 0.6; }
+  82%  { opacity: 0.12; }
+}
+
+.camera-shutter  { animation: xt4Shutter  6s infinite; }
+.camera-flash    { animation: xt4Flash    6s infinite; }
+.camera-led      { animation: xt4Led      6s infinite; }
+.camera-vf-glow  { animation: xt4VfGlow   6s infinite; }
 
 /* Category list — hidden by default, shown on button click */
 .photo-project-list {
@@ -2248,6 +2411,7 @@ nav {
 .photo-accordion {
   position: relative;
   z-index: 2;
+  margin-top: clamp(2rem, 5vh, 4rem);
   display: flex;
   flex-direction: column;
 }
@@ -2386,9 +2550,35 @@ nav {
   }
 }
 
+@media (max-width: 900px) {
+  .photo-top-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .photo-col-camera {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .photo-camera-svg {
+    max-width: 180px;
+  }
+}
+
 @media (max-width: 768px) {
   .photo-portfolio-overlay {
     padding: 100px var(--spacing-md) var(--spacing-md);
+  }
+
+  .photo-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-col-camera {
+    grid-column: auto;
+  }
+
+  .photo-col-instagram::before,
+  .photo-col-instagram::after {
+    display: none;
   }
 
   .photo-project-item {
