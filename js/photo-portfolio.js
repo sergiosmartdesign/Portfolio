@@ -23,11 +23,11 @@
       this.categoryBtns  = document.querySelectorAll('.photo-category-btn');
       this.categoryLists = document.querySelectorAll('.photo-project-list');
 
-      this.openCategories  = new Set();
-      this.originalTexts   = new Map();
-      this.scrollProgress3 = 0;
-      this.winH            = 0;
-      this.spacerDocTop    = 0;
+      this.openCategories = new Set();
+      this.originalTexts  = new Map();
+      this.inPhase3       = false;
+      this.winH           = 0;
+      this.spacerDocTop   = 0;
 
       // Chain-reveal elements: intro → cta → 4 buttons → polaroids title
       // Populated in init() once DOM is confirmed ready
@@ -76,23 +76,22 @@
     }
 
     // ── Scroll-driven visibility ─────────────────────────────────────────────
+    // Uses a plain boolean so the phase-3 boundary is never missed by a
+    // floating-point debounce. Chains fire exactly once per direction change.
     _updateScroll() {
-      const spacerTop    = this.spacerDocTop - window.scrollY;
-      const rawProgress  = 1 - (spacerTop / this.winH);
-      const newProgress3 = Math.max(0, Math.min(1, rawProgress - 2));
+      const spacerTop   = this.spacerDocTop - window.scrollY;
+      const rawProgress = 1 - (spacerTop / this.winH);
+      const nowInPhase3 = rawProgress > 2;
 
-      if (Math.abs(newProgress3 - this.scrollProgress3) < 0.003) return;
+      if (nowInPhase3 === this.inPhase3) return;
+      this.inPhase3 = nowInPhase3;
 
-      const wasVisible     = this.scrollProgress3 > 0;
-      this.scrollProgress3 = newProgress3;
-      const isVisible      = newProgress3 > 0;
-
-      if (isVisible && !wasVisible) {
+      if (nowInPhase3) {
         this._cancelReverse();
         this.overlay.style.opacity       = '1';
         this.overlay.style.pointerEvents = 'auto';
         this._triggerChain();
-      } else if (!isVisible && wasVisible) {
+      } else {
         this._cancelChain();
         this._triggerReverseChain();
       }
@@ -113,6 +112,8 @@
       this.chainTimers.forEach(t => clearTimeout(t));
       this.chainTimers = [];
       this.chainActive = false;
+      // Kill any in-flight reveal tweens so elements are in a clean state
+      this.staticEls.forEach(el => gsap.killTweensOf(el));
     }
 
     // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
@@ -124,7 +125,13 @@
       const lastDelay = (reversed.length - 1) * 300;
 
       reversed.forEach((el, i) => {
-        const t = setTimeout(() => this._hideItem(el, 0), i * 300);
+        const t = setTimeout(() => {
+          // Skip elements never revealed — running _hideItem on opacity:0
+          // would cause an unwanted flash from 0 → 0.9 → 0
+          if (gsap.getProperty(el, 'opacity') > 0) {
+            this._hideItem(el, 0);
+          }
+        }, i * 300);
         this.reverseTimers.push(t);
       });
 
@@ -137,6 +144,8 @@
       this.reverseTimers.forEach(t => clearTimeout(t));
       this.reverseTimers = [];
       this.reverseActive = false;
+      // Kill any in-flight hide tweens so elements are in a clean state
+      this.staticEls.forEach(el => gsap.killTweensOf(el));
     }
 
     // ── Called after reverse chain completes ────────────────────────────────
