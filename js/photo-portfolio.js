@@ -115,7 +115,10 @@
       this.chainTimers = [];
       this.chainActive = false;
       // Kill any in-flight reveal tweens so elements are in a clean state
-      this.staticEls.forEach(el => gsap.killTweensOf(el));
+      this.staticEls.forEach(el => {
+        gsap.killTweensOf(el);
+        el.classList.remove('photo-glitch-load');
+      });
     }
 
     // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
@@ -191,11 +194,13 @@
         list.querySelectorAll('.photo-project-item').forEach(item => {
           gsap.killTweensOf(item);
           gsap.set(item, { opacity: 0 });
+          item.classList.remove('photo-glitch-load');
         });
       });
       this.staticEls.forEach(el => {
         gsap.killTweensOf(el);
         gsap.set(el, { opacity: 0 });
+        el.classList.remove('photo-glitch-load');
       });
       this.bgImage.style.opacity = '0';
     }
@@ -275,9 +280,19 @@
           { opacity: 1,    duration: 0.05, ease: 'none' },
         ]
       });
+
+      // Layer the CSS glitch-in animation in sync with the opacity reveal
+      const glitchDelay = Math.round(batchIndex * 40);
+      setTimeout(() => {
+        item.classList.remove('photo-glitch-load');
+        void item.offsetWidth; // restart animation if class was already there
+        item.classList.add('photo-glitch-load');
+        setTimeout(() => item.classList.remove('photo-glitch-load'), 520);
+      }, glitchDelay);
     }
 
     _hideItem(item, batchIndex) {
+      item.classList.remove('photo-glitch-load');
       gsap.killTweensOf(item);
       gsap.to(item, {
         delay: batchIndex * 0.03,

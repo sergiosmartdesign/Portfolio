@@ -2749,6 +2749,33 @@ nav {
   margin: clamp(1rem, 2vh, 1.5rem) 0 0;
 }
 
+/* ── Glitch-load overlay on cascade reveal ─────────────────────────────────
+   Fires once per element when it enters the chain. Steps timing gives each
+   frame a discrete hold (CRT / signal-lock aesthetic). Heavy at the start,
+   settles into light noise by the end.
+   ───────────────────────────────────────────────────────────────────────── */
+@keyframes photo-glitch-in {
+  /* Phase 1: heavy interference (0–44%) — overlaps the opacity flicker */
+  0%   { transform: translateX(0)     skewX(0deg);    filter: brightness(4)   saturate(0); }
+  8%   { transform: translateX(-9px)  skewX(-2.2deg); filter: brightness(0.1) saturate(2); }
+  16%  { transform: translateX(7px)   skewX(1.8deg);  filter: brightness(3)   hue-rotate(110deg) saturate(3); }
+  24%  { transform: translateX(-5px)  skewX(0deg);    filter: brightness(0.3); }
+  32%  { transform: translateX(6px)   skewX(-1.2deg); filter: brightness(2.2) hue-rotate(-55deg); }
+  40%  { transform: translateX(0)     skewX(0.6deg);  filter: brightness(0.5); }
+  /* Phase 2: settling noise (44–100%) — element is visible, still twitching */
+  48%  { transform: translateX(-3px)  skewX(0deg);    filter: brightness(1.4) saturate(1.5); }
+  56%  { transform: translateX(2px)   skewX(0deg);    filter: brightness(0.8); }
+  64%  { transform: translateX(0)     skewX(-0.2deg); filter: brightness(1.15); }
+  72%  { transform: translateX(-1px)  skewX(0deg);    filter: brightness(0.92); }
+  80%  { transform: translateX(1px)   skewX(0deg);    filter: brightness(1.05); }
+  88%  { transform: translateX(0)     skewX(0deg);    filter: brightness(1); }
+  100% { transform: translateX(0)     skewX(0deg);    filter: brightness(1) saturate(1); }
+}
+
+.photo-glitch-load {
+  animation: photo-glitch-in 0.5s steps(1, end) both;
+}
+
 /* ============================================================================
    RESPONSIVE MEDIA QUERIES
    ============================================================================ */
