@@ -2838,6 +2838,8 @@ nav {
   text-align: center;
   letter-spacing: 0.06em;
   margin: clamp(1rem, 2vh, 1.5rem) 0 0;
+  position: relative;
+  z-index: 0;
 }
 
 /* ── Glitch-load overlay on cascade reveal ─────────────────────────────────
