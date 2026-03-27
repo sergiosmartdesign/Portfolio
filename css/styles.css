@@ -2058,6 +2058,23 @@ nav {
   clip-path: inset(0 0 100% 0);
 }
 
+.photo-camera-deco {
+  position: absolute;
+  bottom: -90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%) rotate(180deg);
+  width: 520px;
+  display: block;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+  transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.photo-camera-deco.visible {
+  transform: translateX(-50%) translateY(50%) rotate(180deg);
+}
+
 .photo-static-line {
   position: fixed;
   left: 0;

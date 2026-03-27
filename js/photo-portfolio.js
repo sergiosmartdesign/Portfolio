@@ -137,6 +137,13 @@
         }, 1300);
         this.chainTimers.push(t);
       }
+
+      // Slide camera up after cascade finishes
+      const camera = document.querySelector('.photo-camera-deco');
+      if (camera) {
+        const t = setTimeout(() => camera.classList.add('visible'), 1600);
+        this.chainTimers.push(t);
+      }
     }
 
     _cancelChain() {
@@ -150,6 +157,7 @@
       });
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
+      document.querySelector('.photo-camera-deco')?.classList.remove('visible');
     }
 
     // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
@@ -207,6 +215,7 @@
       this.bgImage.style.opacity = '0';
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
+      document.querySelector('.photo-camera-deco')?.classList.remove('visible');
       this._resetPolaroid();
     }
 
