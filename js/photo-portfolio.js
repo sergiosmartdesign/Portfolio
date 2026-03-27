@@ -453,13 +453,17 @@
         nameEl.classList.add('reveal');
       }
 
-      // Section label — from the accordion item's button label, stripped of brackets/dots
+      // Section label — formatted as [ · A N I M A L S · ]
       const sectionEl  = document.getElementById('polaroidSection');
       const sectionBtn = item.closest('.photo-accordion-item')?.querySelector('.photo-btn-label');
       if (sectionEl) {
-        sectionEl.textContent = sectionBtn
-          ? sectionBtn.textContent.replace(/[·\[\]]/g, '').trim().replace(/\s+/g, ' ')
-          : '';
+        if (sectionBtn) {
+          const word = sectionBtn.textContent.replace(/[·\[\]\s]/g, '').trim().toUpperCase();
+          const spaced = word.split('').join(' ');
+          sectionEl.textContent = '[ \u00b7 ' + spaced + ' \u00b7 ]';
+        } else {
+          sectionEl.textContent = '';
+        }
         sectionEl.classList.remove('reveal');
         void sectionEl.offsetWidth;
         sectionEl.classList.add('reveal');

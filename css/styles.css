@@ -2572,16 +2572,16 @@ nav {
 .photo-polaroid-section::before {
   content: '';
   position: absolute;
-  inset: -1px 0;
+  inset: -1px -3px;
   background-color: #E9D8A6;
   transform-origin: left center;
-  transform: skewX(3deg) scaleX(0);
+  transform: skewX(-3deg) scaleX(0);
   z-index: -1;
   pointer-events: none;
 }
 
 .photo-polaroid-section.reveal::before {
-  animation: photo-marker-right 0.6s ease-out 0.5s forwards;
+  animation: photo-marker-left 0.8s ease-out 0.4s forwards;
 }
 
 /* Photo name — amber marker highlight */
