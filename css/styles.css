@@ -2596,6 +2596,7 @@ nav {
   color: #9b2226;
 }
 
+
 /* [ + ] / [ - ] indicator */
 .photo-btn-indicator::before {
   content: '[ + ]';
@@ -2741,11 +2742,11 @@ nav {
 .pgallery-title {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 700;
-  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
   color: #001219;
   text-align: center;
   letter-spacing: 0.06em;
-  margin: clamp(48px, 8vh, 96px) 0 0;
+  margin: clamp(1rem, 2vh, 1.5rem) 0 0;
 }
 
 /* ============================================================================
