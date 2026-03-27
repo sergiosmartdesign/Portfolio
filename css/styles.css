@@ -2291,7 +2291,7 @@ nav {
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
   color: #9B2226;
   line-height: 1.5;
-  margin: 0;
+  margin: 110px 0 0;
   flex-shrink: 0;
 }
 
@@ -2825,7 +2825,7 @@ nav {
 .photo-accordion {
   position: relative;
   z-index: 2;
-  margin-top: clamp(2rem, 5vh, 4rem);
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
 }

@@ -47,6 +47,9 @@
         this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
       });
 
+      // Refresh cache when language switches so hover scramble uses current text
+      document.addEventListener('languagechanged', () => this._refreshOriginalTexts());
+
       gsap.registerPlugin(ScrambleTextPlugin);
     }
 
@@ -350,6 +353,13 @@
     }
 
     // ── Hover interactions ───────────────────────────────────────────────────
+    _refreshOriginalTexts() {
+      document.querySelectorAll('.photo-project-item').forEach(item => {
+        const els = item.querySelectorAll('.hover-text');
+        this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
+      });
+    }
+
     _setupHoverListeners() {
       document.querySelectorAll('.photo-project-item').forEach(item => {
         this._addHoverListeners(item);
