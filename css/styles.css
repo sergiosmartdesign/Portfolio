@@ -2222,6 +2222,52 @@ nav {
   flex-shrink: 0;
 }
 
+/* Marker-draw highlight: amber ::before grows left → right, text stays straight.
+   skewX on the pseudo-element only — opposite directions per highlight. */
+.photo-ai-highlight {
+  position: relative;
+  color: #001219;
+  padding: 0 4px;
+}
+
+.photo-ai-highlight::before {
+  content: '';
+  position: absolute;
+  inset: -1px -3px;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  z-index: -1;
+}
+
+/* First highlight (inside .photo-intro): leans left */
+.photo-intro .photo-ai-highlight::before {
+  transform: skewX(-5deg) scaleX(0);
+}
+.photo-intro .photo-ai-highlight--animate::before {
+  animation: photo-marker-left 0.8s ease-out forwards;
+}
+
+/* Second highlight (inside .photo-cta): leans right, fills full paragraph width */
+.photo-cta .photo-ai-highlight {
+  display: block;
+}
+.photo-cta .photo-ai-highlight::before {
+  transform: skewX(5deg) scaleX(0);
+}
+.photo-cta .photo-ai-highlight--animate::before {
+  animation: photo-marker-right 0.8s ease-out forwards;
+}
+
+@keyframes photo-marker-left {
+  from { transform: skewX(-5deg) scaleX(0); }
+  to   { transform: skewX(-5deg) scaleX(1); }
+}
+
+@keyframes photo-marker-right {
+  from { transform: skewX(5deg) scaleX(0); }
+  to   { transform: skewX(5deg) scaleX(1); }
+}
+
 .photo-cta {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 700;
@@ -2304,11 +2350,25 @@ nav {
   margin-top: clamp(1rem, 2vh, 1.75rem);
   letter-spacing: 0.04em;
   text-decoration: underline;
-  display: block;
+  display: inline-block;
+  position: relative;
   transition: color 0.25s ease;
 }
 
+.photo-ig-handle::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  transform: skewX(-5deg) scaleX(0);
+  transition: transform 0.5s ease-out;
+  z-index: -1;
+  pointer-events: none;
+}
+
 .photo-ig-handle:hover { color: #001219; font-weight: 700; }
+.photo-ig-handle:hover::before { transform: skewX(-5deg) scaleX(1); }
 
 .photo-ig-desc {
   font-family: 'Funnel Display', sans-serif;
@@ -2329,10 +2389,24 @@ nav {
   font-size: clamp(0.75rem, 1.2vw, 1rem);
   letter-spacing: 0.08em;
   margin-top: var(--spacing-xs);
+  position: relative;
   transition: color 0.25s ease;
 }
 
+.photo-ig-link::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  transform: skewX(5deg) scaleX(0);
+  transition: transform 0.5s ease-out;
+  z-index: -1;
+  pointer-events: none;
+}
+
 .photo-ig-link:hover { color: #001219; font-weight: 700; }
+.photo-ig-link:hover::before { transform: skewX(5deg) scaleX(1); }
 
 .photo-ig-icon {
   width: 22px;

@@ -108,6 +108,17 @@
         const t = setTimeout(() => this._revealItem(el, 0), i * 300);
         this.chainTimers.push(t);
       });
+
+      // Trigger marker-draw on each highlight after col-text has cascaded in,
+      // staggered 300 ms apart so they draw sequentially
+      document.querySelectorAll('.photo-ai-highlight').forEach((hl, i) => {
+        const t = setTimeout(() => {
+          hl.classList.remove('photo-ai-highlight--animate');
+          void hl.offsetWidth;
+          hl.classList.add('photo-ai-highlight--animate');
+        }, 700 + i * 300);
+        this.chainTimers.push(t);
+      });
     }
 
     _cancelChain() {
@@ -119,6 +130,7 @@
         gsap.killTweensOf(el);
         el.classList.remove('photo-glitch-load');
       });
+      document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
     }
 
     // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
@@ -174,6 +186,7 @@
         });
       });
       this.bgImage.style.opacity = '0';
+      document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
     }
 
     // ── Immediate hard reset (e.g. resize, bfcache) ──────────────────────────
