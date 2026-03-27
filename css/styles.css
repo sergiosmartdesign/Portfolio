@@ -2286,12 +2286,12 @@ nav {
   margin: 0;
   margin-top: clamp(1rem, 2vh, 1.75rem);
   letter-spacing: 0.04em;
-  text-decoration: none;
+  text-decoration: underline;
   display: block;
   transition: color 0.25s ease;
 }
 
-.photo-ig-handle:hover { color: #001219; }
+.photo-ig-handle:hover { color: #001219; font-weight: 700; }
 
 .photo-ig-desc {
   font-family: 'Funnel Display', sans-serif;
@@ -2315,11 +2315,11 @@ nav {
   transition: color 0.25s ease;
 }
 
-.photo-ig-link:hover { color: #001219; }
+.photo-ig-link:hover { color: #001219; font-weight: 700; }
 
 .photo-ig-icon {
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
 }
 
