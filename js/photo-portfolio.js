@@ -17,6 +17,7 @@
       this.overlay     = document.querySelector('.photo-portfolio-overlay');
       this.bgImage     = document.getElementById('photoBgImage');
       this.photoSpacer = document.querySelector('.photo-scroll-spacer');
+      this.photoSection = document.getElementById('photo');
 
       if (!this.overlay || !this.bgImage || !this.photoSpacer) return;
 
@@ -72,6 +73,7 @@
       this.preloadImages();
       this._setupCategoryButtons();
       this._setupHoverListeners();
+      this._setupTitleColorCycle();
 
       window.addEventListener('scroll', () => this._updateScroll(), { passive: true });
       this._updateScroll();
@@ -385,6 +387,7 @@
     }
 
     showBackgroundImage(imageUrl) {
+      if (this.photoSection) this.photoSection.style.zIndex = '1001';
       this.bgImage.style.transition      = 'none';
       this.bgImage.style.transform       = 'translate(-50%, -50%) scale(1.12)';
       this.bgImage.style.backgroundImage = `url("${imageUrl}")`;
@@ -399,6 +402,23 @@
 
     hideBackgroundImage() {
       this.bgImage.style.opacity = '0';
+      if (this.photoSection) this.photoSection.style.zIndex = '';
+    }
+
+    // ── Polaroids title: random colour cycle on hover ────────────────────────
+    // ── Polaroids title: pick a new random palette colour on each hover ────────
+    _setupTitleColorCycle() {
+      const title = document.querySelector('.pgallery-title');
+      if (!title) return;
+
+      const palette = [
+        '#005F73', '#0A9396', '#94D2BD', '#E9D8A6',
+        '#EE9B00', '#CA6702', '#BB3E03', '#AE2012', '#9B2226'
+      ];
+
+      title.addEventListener('mouseenter', () => {
+        title.style.color = palette[Math.floor(Math.random() * palette.length)];
+      });
     }
   }
 
