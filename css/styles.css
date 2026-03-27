@@ -2270,23 +2270,28 @@ nav {
 
 .photo-ig-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
-  color: #BB3E03;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  font-weight: 700;
+  color: #9B2226;
   letter-spacing: 0.1em;
+  transition: color 0.25s ease;
 }
+
+.photo-ig-label:hover { color: #001219; }
 
 .photo-ig-handle {
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(1rem, 1.6vw, 1.35rem);
-  color: #005F73;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  color: #BB3E03;
   margin: 0;
+  margin-top: clamp(1rem, 2vh, 1.75rem);
   letter-spacing: 0.04em;
   text-decoration: none;
   display: block;
   transition: color 0.25s ease;
 }
 
-.photo-ig-handle:hover { color: #9B2226; }
+.photo-ig-handle:hover { color: #001219; }
 
 .photo-ig-desc {
   font-family: 'Funnel Display', sans-serif;
@@ -2302,15 +2307,15 @@ nav {
   align-items: center;
   gap: 0.5em;
   text-decoration: none;
-  color: #0A9396;
+  color: #9B2226;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.6rem, 0.85vw, 0.75rem);
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
   letter-spacing: 0.08em;
   margin-top: var(--spacing-xs);
   transition: color 0.25s ease;
 }
 
-.photo-ig-link:hover { color: #AE2012; }
+.photo-ig-link:hover { color: #001219; }
 
 .photo-ig-icon {
   width: 14px;
@@ -2431,6 +2436,12 @@ nav {
   60%, 75%      { transform: translateY(9px); }
 }
 
+/* Hover: robotic thumb presses down to click shutter */
+@keyframes xt4ThumbClick {
+  0%, 55%, 85%, 100% { transform: scaleX(1); }
+  65%, 76%           { transform: scaleX(0.72); }
+}
+
 /* Hover: lens scan glow */
 @keyframes xt4LensGlow {
   0%, 100% { opacity: 0; }
@@ -2488,6 +2499,14 @@ nav {
 }
 .photo-col-camera:hover .camera-lens-glow {
   animation: xt4LensGlow 1.2s ease-in-out infinite;
+}
+/* Thumb squishes down when hand grips (synced to same 2.2s cycle) */
+.camera-thumb {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+.photo-col-camera:hover .camera-thumb {
+  animation: xt4ThumbClick 2.2s ease-in-out infinite;
 }
 
 /* Category list — hidden by default, shown on button click */
@@ -2555,13 +2574,13 @@ nav {
   width: 100%;
   background: none;
   border: none;
-  border-top: 1px solid rgba(200, 255, 200, 0.08);
+  border-top: 1px solid rgba(10, 147, 150, 0.18);
   cursor: pointer;
   text-align: left;
   font-family: 'Funnel Display', sans-serif;
   font-weight: 300;
   font-size: clamp(0.75rem, 1.2vw, 1rem);
-  color: rgba(187, 62, 3, 0.6);
+  color: #9B2226;
   letter-spacing: 0.15em;
   line-height: 1;
   padding: 0.6rem 0;
@@ -2569,7 +2588,8 @@ nav {
 }
 
 .photo-category-btn:hover {
-  color: #ee9b00;
+  color: #001219;
+  font-weight: 700;
 }
 
 .photo-category-btn.active {

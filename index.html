@@ -442,7 +442,7 @@
 
                     <!-- Left: description text -->
                     <div class="photo-col-text">
-                        <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. Every photo in this archive carries AI-generated metadata, making the portfolio fully searchable by people, search engines, and AI systems alike.</p>
+                        <p class="photo-intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <strong><em>AI-generated metadata</em></strong>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em></p>
                         <p class="photo-cta">Click a category to expand its list — then hover over any photo title to preview the image.</p>
                     </div>
 
@@ -460,14 +460,18 @@
                     <!-- Right: Fuji X-T4 animated camera SVG -->
                     <div class="photo-col-camera" aria-hidden="true">
                         <svg class="photo-camera-svg" viewBox="-45 -5 270 190" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- ── LAYER 1: Hand back — palm + arm behind the camera ── -->
+                            <!-- ── LAYER 1: Robotic hand back — forearm + palm behind camera ── -->
                             <g class="camera-hand-back">
-                                <!-- Wrist / arm -->
-                                <rect x="-32" y="116" width="50" height="80" rx="8" fill="#E9D8A6" stroke="#001219" stroke-width="2"/>
-                                <!-- Palm -->
-                                <ellipse cx="-6" cy="82" rx="34" ry="52" fill="#E9D8A6" stroke="#001219" stroke-width="2"/>
-                                <!-- Palm shadow for depth -->
-                                <ellipse cx="2" cy="92" rx="16" ry="28" fill="#CA6702" opacity="0.22"/>
+                                <!-- Forearm -->
+                                <rect x="-30" y="120" width="46" height="76" rx="8" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <!-- Wrist band -->
+                                <rect x="-32" y="115" width="50" height="6" rx="3" fill="#EE9B00" opacity="0.25"/>
+                                <!-- Palm plate -->
+                                <rect x="-38" y="36" width="42" height="80" rx="10" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <!-- Subtle edge highlight -->
+                                <rect x="-36" y="38" width="38" height="2" rx="1" fill="#EE9B00" opacity="0.15"/>
+                                <!-- Single centre rivet -->
+                                <circle cx="-17" cy="76" r="1.5" fill="#EE9B00" opacity="0.5"/>
                             </g>
                             <!-- ── LAYER 2: Camera body ── -->
                             <g class="camera-body-group">
@@ -476,52 +480,70 @@
                                 <!-- Top hump (EVF) -->
                                 <rect x="72" y="7" width="46" height="18" rx="7" fill="#001219" stroke="#0A9396" stroke-width="2"/>
                                 <!-- Shutter button -->
-                                <circle cx="188" cy="18" r="8" fill="#0A9396" opacity="0.55"/>
-                                <circle cx="188" cy="18" r="5" fill="#001219"/>
-                                <circle cx="188" cy="18" r="2" fill="#0A9396" opacity="0.5"/>
+                                <circle cx="188" cy="30" r="8" fill="#0A9396" opacity="0.55"/>
+                                <circle cx="188" cy="30" r="5" fill="#001219"/>
+                                <circle cx="188" cy="30" r="2" fill="#0A9396" opacity="0.5"/>
                                 <!-- EVF display -->
                                 <rect x="76" y="10" width="38" height="11" rx="3" fill="#000D14"/>
                                 <rect x="78" y="12" width="34" height="7" rx="2" fill="#0A9396" opacity="0.12" class="camera-vf-glow"/>
                                 <!-- Lens mount ring -->
-                                <circle cx="82" cy="83" r="44" fill="#000D14" stroke="#0A9396" stroke-width="1" opacity="0.35"/>
+                                <circle cx="65" cy="83" r="44" fill="#000D14" stroke="#0A9396" stroke-width="1" opacity="0.35"/>
                                 <!-- Outer barrel -->
-                                <circle cx="82" cy="83" r="38" fill="#001219" stroke="#0A9396" stroke-width="2.5"/>
+                                <circle cx="65" cy="83" r="38" fill="#001219" stroke="#0A9396" stroke-width="2.5"/>
                                 <!-- Focus grip ring (continuous rotation) -->
-                                <circle cx="82" cy="83" r="33" fill="none" stroke="#0A9396" stroke-width="5" stroke-dasharray="4 6" opacity="0.3" class="camera-focus-ring-anim"/>
+                                <circle cx="65" cy="83" r="33" fill="none" stroke="#0A9396" stroke-width="5" stroke-dasharray="4 6" opacity="0.3" class="camera-focus-ring-anim"/>
                                 <!-- Inner barrel -->
-                                <circle cx="82" cy="83" r="26" fill="#001219" stroke="#94D2BD" stroke-width="1.2"/>
+                                <circle cx="65" cy="83" r="26" fill="#001219" stroke="#94D2BD" stroke-width="1.2"/>
                                 <!-- Glass outer -->
-                                <circle cx="82" cy="83" r="20" fill="#000A12" stroke="#EE9B00" stroke-width="1.5"/>
-                                <circle cx="82" cy="83" r="18" fill="#0A9396" opacity="0.08"/>
+                                <circle cx="65" cy="83" r="20" fill="#000A12" stroke="#EE9B00" stroke-width="1.5"/>
+                                <circle cx="65" cy="83" r="18" fill="#0A9396" opacity="0.08"/>
                                 <!-- Iris (closes on shutter fire) -->
-                                <circle cx="82" cy="83" r="12" fill="#000D18" stroke="#EE9B00" stroke-width="1" opacity="0.7" class="camera-iris"/>
+                                <circle cx="65" cy="83" r="12" fill="#000D18" stroke="#EE9B00" stroke-width="1" opacity="0.7" class="camera-iris"/>
                                 <!-- Lens centre -->
-                                <circle cx="82" cy="83" r="4" fill="#001219" stroke="#EE9B00" stroke-width="0.8"/>
-                                <circle cx="82" cy="83" r="2" fill="#EE9B00" opacity="0.8"/>
+                                <circle cx="65" cy="83" r="4" fill="#001219" stroke="#EE9B00" stroke-width="0.8"/>
+                                <circle cx="65" cy="83" r="2" fill="#EE9B00" opacity="0.8"/>
                                 <!-- Lens reflection -->
-                                <ellipse cx="75" cy="76" rx="5" ry="3" fill="white" opacity="0.08" transform="rotate(-25 75 76)"/>
+                                <ellipse cx="58" cy="76" rx="5" ry="3" fill="white" opacity="0.08" transform="rotate(-25 75 76)"/>
                                 <!-- Sparkle (right side, like reference) -->
                                 <path d="M160,48 L162.5,40 L165,48 L173,50.5 L165,53 L162.5,61 L160,53 L152,50.5 Z" fill="white" opacity="0.5"/>
                                 <!-- Hover: lens scan ring -->
-                                <circle cx="82" cy="83" r="23" fill="none" stroke="#94D2BD" stroke-width="1.5" opacity="0" class="camera-lens-glow"/>
+                                <circle cx="65" cy="83" r="23" fill="none" stroke="#94D2BD" stroke-width="1.5" opacity="0" class="camera-lens-glow"/>
                                 <!-- ── Auto-fire animation layers ── -->
-                                <circle cx="82" cy="83" r="20" fill="#000" opacity="0" class="camera-shutter"/>
+                                <circle cx="65" cy="83" r="20" fill="#000" opacity="0" class="camera-shutter"/>
                                 <rect x="10" y="22" width="195" height="118" rx="12" fill="white" opacity="0" class="camera-flash"/>
                                 <circle cx="194" cy="26" r="4" fill="#EE9B00" opacity="0" class="camera-led"/>
                             </g>
-                            <!-- ── LAYER 3: Hand front — thumb + 3 fingers over camera face ── -->
+                            <!-- ── LAYER 3: Robotic hand front — thumb + 3 sleek capsule fingers ── -->
                             <g class="camera-hand-front">
-                                <!-- Thumb over camera top edge -->
-                                <rect x="-8" y="14" width="62" height="16" rx="8" fill="#E9D8A6" stroke="#001219" stroke-width="2"/>
-                                <!-- Finger 1 -->
-                                <rect x="-12" y="38" width="72" height="15" rx="7.5" fill="#E9D8A6" stroke="#001219" stroke-width="2"/>
-                                <ellipse cx="14" cy="45.5" rx="5.5" ry="6" fill="#CA6702" opacity="0.28"/>
-                                <!-- Finger 2 -->
-                                <rect x="-12" y="57" width="68" height="15" rx="7.5" fill="#E9D8A6" stroke="#001219" stroke-width="2"/>
-                                <ellipse cx="14" cy="64.5" rx="5.5" ry="6" fill="#CA6702" opacity="0.28"/>
-                                <!-- Finger 3 -->
-                                <rect x="-12" y="76" width="64" height="15" rx="7.5" fill="#E9D8A6" stroke="#001219" stroke-width="2"/>
-                                <ellipse cx="14" cy="83.5" rx="5.5" ry="6" fill="#CA6702" opacity="0.28"/>
+                                <!-- ── Thumb: 3 capsule segments (click animation wrapper) ── -->
+                                <g class="camera-thumb">
+                                    <rect x="-8" y="15" width="24" height="14" rx="7" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                    <circle cx="18.5" cy="22" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                    <rect x="21" y="15" width="16" height="14" rx="7" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                    <circle cx="39.5" cy="22" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                    <rect x="42" y="15" width="12" height="14" rx="7" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                </g>
+
+                                <!-- ── Finger 1 ── -->
+                                <rect x="-12" y="39" width="26" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <circle cx="16" cy="45" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                <rect x="19" y="39" width="22" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <circle cx="43" cy="45" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                <rect x="46" y="39" width="14" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+
+                                <!-- ── Finger 2 ── -->
+                                <rect x="-12" y="58" width="26" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <circle cx="16" cy="64" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                <rect x="19" y="58" width="22" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <circle cx="43" cy="64" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                <rect x="46" y="58" width="12" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+
+                                <!-- ── Finger 3 ── -->
+                                <rect x="-12" y="77" width="26" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <circle cx="16" cy="83" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                <rect x="19" y="77" width="18" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
+                                <circle cx="39" cy="83" r="2.5" fill="none" stroke="#EE9B00" stroke-width="0.8" opacity="0.65"/>
+                                <rect x="42" y="77" width="10" height="12" rx="6" fill="#161210" stroke="#EE9B00" stroke-width="1"/>
                             </g>
                         </svg>
                     </div>

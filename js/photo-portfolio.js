@@ -238,7 +238,7 @@
 
       const items     = list.querySelectorAll('.photo-project-item');
       const lastDelay = (items.length - 1) * 0.03 + 0.13;
-      items.forEach((item, i) => this._hideItem(item, i));
+      items.forEach((item, i) => this._hideItem(item, items.length - 1 - i));
 
       gsap.delayedCall(lastDelay, () => {
         if (!this.openCategories.has(category)) list.style.display = 'none';
