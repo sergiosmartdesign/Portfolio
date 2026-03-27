@@ -2414,13 +2414,45 @@ nav {
   flex-shrink: 0;
 }
 
-/* Right column: Fuji X-T4 camera + left divider (col 2 → col 3) */
+/* Right column: polaroid reveal + left divider (col 2 → col 3) */
 .photo-col-camera {
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: flex-start;
+  gap: clamp(0.5rem, 1vw, 1rem);
   padding-top: 0.25rem;
+}
+
+.photo-polaroid-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+  font-weight: 700;
+  color: #9B2226;
+  line-height: 2;
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding-top: 0.4rem;
+  white-space: nowrap;
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.photo-polaroid-hint::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  transform: skewX(-5deg) scaleX(0);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Triggered by JS class — permanent like the AI-generated metadata highlight */
+.photo-polaroid-hint.reveal { color: #001219; }
+.photo-polaroid-hint.reveal::before {
+  animation: photo-marker-left 0.8s ease-out forwards;
 }
 
 /* Static dim base line — between col 2 and col 3 */
@@ -2460,6 +2492,136 @@ nav {
   animation: photoLineScan 3.5s ease-in-out infinite;
   animation-delay: -1.75s;
   pointer-events: none;
+}
+
+/* ── Polaroid reveal ─────────────────────────────────────────────────────────
+   True Polaroid 600 proportions (3.5" × 4.25"):
+     • 5.7 % left/right margin   (0.2" of 3.5")
+     • 4.7 % top margin          (0.2" of 4.25")
+     • 22.4 % bottom caption strip (0.95" of 4.25")
+   Layer stack inside .photo-polaroid-frame (bottom → top):
+     1. .photo-polaroid-reveal  — photo + canvas scratch-off
+     2. .photo-polaroid-caption — name strip
+     3. .photo-polaroid-border  — outer glow frame (never erased)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Outer polaroid shell — dark background simulates the white border in dark mode */
+.photo-polaroid-frame {
+  position: relative;
+  width: 50%;
+  aspect-ratio: 35 / 43;
+  border-radius: 3px;
+}
+
+/* Photo scratch-off area — inset to match real polaroid margins */
+.photo-polaroid-reveal {
+  position: absolute;
+  top: 4.7%;
+  left: 5.7%;
+  right: 5.7%;
+  bottom: 22.4%;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+.photo-polaroid-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+}
+
+.photo-polaroid-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* Caption strip — the wide white bottom area of a real polaroid */
+.photo-polaroid-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22.4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 8%;
+}
+
+.photo-polaroid-section {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.4rem, 0.6vw, 0.55rem);
+  color: #001219;
+  letter-spacing: 0.08em;
+  text-align: center;
+  position: relative;
+}
+
+.photo-polaroid-section::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  transform: skewX(3deg) scaleX(0);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.photo-polaroid-section.reveal::before {
+  animation: photo-marker-right 0.6s ease-out 0.5s forwards;
+}
+
+/* Photo name — amber marker highlight */
+.photo-polaroid-name {
+  position: relative;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.5rem, 0.85vw, 0.78rem);
+  color: #001219;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 1px 4px;
+  z-index: 1;
+}
+
+.photo-polaroid-name::before {
+  content: '';
+  position: absolute;
+  inset: -1px -3px;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  transform: skewX(-3deg) scaleX(0);
+  z-index: -1;
+}
+
+.photo-polaroid-name.reveal::before {
+  animation: photo-marker-left 0.8s ease-out 0.4s forwards;
+}
+
+/* Outer glow border on the frame — always above everything */
+.photo-polaroid-border {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #EE9B00;
+  border-radius: 3px;
+  box-shadow:
+    0 0 8px  rgba(238, 155, 0, 0.55),
+    0 0 20px rgba(238, 155, 0, 0.20),
+    inset 0 0 10px rgba(238, 155, 0, 0.08);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .photo-camera-svg {

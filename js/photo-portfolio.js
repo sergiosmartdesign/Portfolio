@@ -38,6 +38,9 @@
       this.reverseActive = false;
       this.reverseTimers = [];
 
+      // Polaroid reveal state
+      this._polaroidMoveHandler = null;
+
       // Cache original text for ScrambleText restore
       document.querySelectorAll('.photo-project-item').forEach(item => {
         const els = item.querySelectorAll('.hover-text');
@@ -106,6 +109,8 @@
       if (this.chainActive) return;
       this.chainActive = true;
 
+      this._initPolaroid();
+
       this.staticEls.forEach((el, i) => {
         const t = setTimeout(() => this._revealItem(el, 0), i * 300);
         this.chainTimers.push(t);
@@ -121,6 +126,17 @@
         }, 700 + i * 300);
         this.chainTimers.push(t);
       });
+
+      // Permanently reveal the polaroid hint marker (like AI-generated metadata)
+      const hint = document.querySelector('.photo-polaroid-hint');
+      if (hint) {
+        const t = setTimeout(() => {
+          hint.classList.remove('reveal');
+          void hint.offsetWidth;
+          hint.classList.add('reveal');
+        }, 1300);
+        this.chainTimers.push(t);
+      }
     }
 
     _cancelChain() {
@@ -133,6 +149,7 @@
         el.classList.remove('photo-glitch-load');
       });
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
+      document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
     }
 
     // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
@@ -189,6 +206,8 @@
       });
       this.bgImage.style.opacity = '0';
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
+      document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
+      this._resetPolaroid();
     }
 
     // ── Immediate hard reset (e.g. resize, bfcache) ──────────────────────────
@@ -218,6 +237,7 @@
         el.classList.remove('photo-glitch-load');
       });
       this.bgImage.style.opacity = '0';
+      this._resetPolaroid();
     }
 
     // ── Category button click handlers ───────────────────────────────────────
@@ -406,6 +426,108 @@
     }
 
     // ── Polaroids title: random colour cycle on hover ────────────────────────
+    // ── Polaroid reveal: canvas scratch-off ──────────────────────────────────
+    _initPolaroid() {
+      const canvas = document.getElementById('polaroidCanvas');
+      const photo  = document.getElementById('polaroidPhoto');
+      if (!canvas || !photo) return;
+
+      // Random palette colour for the polaroid frame background
+      const palette = ['#005F73','#0A9396','#94D2BD','#E9D8A6','#EE9B00','#CA6702','#BB3E03','#AE2012','#9B2226'];
+      const frame   = document.querySelector('.photo-polaroid-frame');
+      if (frame) frame.style.background = palette[Math.floor(Math.random() * palette.length)];
+
+      // Pick a random image + title from the accordion list
+      const items = Array.from(document.querySelectorAll('.photo-project-item[data-image]'));
+      if (!items.length) return;
+      const item  = items[Math.floor(Math.random() * items.length)];
+      photo.src   = item.dataset.image;
+
+      // Populate caption with the photo title and trigger marker animation
+      const nameEl  = document.getElementById('polaroidName');
+      const titleEl = item.querySelector('.photo-title');
+      if (nameEl) {
+        nameEl.textContent = titleEl ? titleEl.textContent.trim() : '';
+        nameEl.classList.remove('reveal');
+        void nameEl.offsetWidth;
+        nameEl.classList.add('reveal');
+      }
+
+      // Section label — from the accordion item's button label, stripped of brackets/dots
+      const sectionEl  = document.getElementById('polaroidSection');
+      const sectionBtn = item.closest('.photo-accordion-item')?.querySelector('.photo-btn-label');
+      if (sectionEl) {
+        sectionEl.textContent = sectionBtn
+          ? sectionBtn.textContent.replace(/[·\[\]]/g, '').trim().replace(/\s+/g, ' ')
+          : '';
+        sectionEl.classList.remove('reveal');
+        void sectionEl.offsetWidth;
+        sectionEl.classList.add('reveal');
+      }
+
+      // Size canvas bitmap to physical pixels (HiDPI-aware)
+      const dpr  = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const cssW = rect.width;
+      const cssH = rect.height;
+      if (!cssW || !cssH) return;
+
+      canvas.width  = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      // Fill with dark background — this is what gets "scratched off"
+      ctx.fillStyle = '#001219';
+      ctx.fillRect(0, 0, cssW, cssH);
+
+      // Remove any leftover listener from a previous visit
+      if (this._polaroidMoveHandler) {
+        canvas.removeEventListener('mousemove', this._polaroidMoveHandler);
+      }
+
+      // Erase a soft circle wherever the mouse moves (permanent destination-out)
+      this._polaroidMoveHandler = (e) => {
+        const r = canvas.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        const radius = 44;
+        ctx.globalCompositeOperation = 'destination-out';
+        // Soft gradient brush — solid centre, fades at edges
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        grad.addColorStop(0,    'rgba(0,0,0,1)');
+        grad.addColorStop(0.6,  'rgba(0,0,0,0.85)');
+        grad.addColorStop(1,    'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      };
+
+      canvas.addEventListener('mousemove', this._polaroidMoveHandler, { passive: true });
+    }
+
+    _resetPolaroid() {
+      const canvas = document.getElementById('polaroidCanvas');
+      if (!canvas) return;
+      if (this._polaroidMoveHandler) {
+        canvas.removeEventListener('mousemove', this._polaroidMoveHandler);
+        this._polaroidMoveHandler = null;
+      }
+      // Resetting dimensions clears the bitmap automatically
+      canvas.width  = 0;
+      canvas.height = 0;
+      const photo  = document.getElementById('polaroidPhoto');
+      if (photo) photo.src = '';
+      const nameEl    = document.getElementById('polaroidName');
+      if (nameEl) { nameEl.textContent = ''; nameEl.classList.remove('reveal'); }
+      const sectionEl = document.getElementById('polaroidSection');
+      if (sectionEl) sectionEl.textContent = '';
+      const frame  = document.querySelector('.photo-polaroid-frame');
+      if (frame) frame.style.background = '';
+    }
+
     // ── Polaroids title: pick a new random palette colour on each hover ────────
     _setupTitleColorCycle() {
       const title = document.querySelector('.pgallery-title');
