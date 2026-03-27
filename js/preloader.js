@@ -14,9 +14,6 @@
     '#AE2012', '#BB3E03', '#CA6702', '#EE9B00', '#E9D8A6', '#94D2BD'
   ];
 
-  // Stagger: 0 s at the centre bar (index 7), ±0.2 s per step toward edges
-  const DELAYS = [1.4, 1.2, 1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4];
-
   /* ── Build DOM ─────────────────────────────────────────────────────────── */
   const overlay = document.createElement('div');
   overlay.id = 'preloader';
@@ -26,21 +23,25 @@
   const stage = document.createElement('div');
   stage.className = 'preloader-stage';
 
-  /* ── Bars ──────────────────────────────────────────────────────────────── */
+  /* ── Bars — fill full viewport width, colour palette repeats from centre ─ */
   const barsEl = document.createElement('div');
   barsEl.className = 'preloader-bars';
 
-  BAR_COLORS.forEach((color, i) => {
-    const bar = document.createElement('span');
-    bar.style.background = color;
-    bar.style.animationDelay = DELAYS[i] + 's';
+  // Bar width (7px) + gap (5px) = 12px per bar — must match CSS values
+  const nBars  = Math.ceil(window.innerWidth / 12) + 4; // +4 ensures edge coverage
+  const center = Math.floor(nBars / 2);
+
+  for (let i = 0; i < nBars; i++) {
+    const bar  = document.createElement('span');
+    const dist = Math.abs(i - center);
+    bar.style.backgroundColor = BAR_COLORS[dist % BAR_COLORS.length];
+    // 0.04s per step: cascade completes in ~2 s on full-width screen,
+    // and the phase offset creates one clean wave crest across the bars
+    bar.style.animationDelay  = (dist * 0.04) + 's';
     barsEl.appendChild(bar);
-  });
+  }
 
-  /* ── Text overlay ──────────────────────────────────────────────────────── */
-  const textEl = document.createElement('div');
-  textEl.className = 'preloader-text';
-
+  /* ── Label (above bars) ────────────────────────────────────────────────── */
   const labelEl = document.createElement('div');
   labelEl.className = 'preloader-label';
 
@@ -54,13 +55,14 @@
     labelEl.appendChild(makeGlitchSpan(char, i));
   });
 
+  /* ── Percentage (below bars) ────────────────────────────────────────────── */
   const pctEl = document.createElement('div');
   pctEl.className = 'preloader-pct';
 
-  textEl.appendChild(labelEl);
-  textEl.appendChild(pctEl);
+  // Stack: label → bars → pct
+  stage.appendChild(labelEl);
   stage.appendChild(barsEl);
-  stage.appendChild(textEl);
+  stage.appendChild(pctEl);
   overlay.appendChild(stage);
 
   document.body.prepend(overlay);

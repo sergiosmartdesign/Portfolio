@@ -39,46 +39,71 @@ body.preloading header *::after {
   pointer-events: none;
 }
 
-/* ── Stage: bars + overlay share the same bounding box ───────────────────── */
+/* ── Stage: flex column — label · bars · pct stacked vertically ──────────── */
 .preloader-stage {
   position: relative;
-  width: 260px;
-  height: 130px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 /* ── Bars ────────────────────────────────────────────────────────────────── */
 .preloader-bars {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  width: 100%;
+  height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
+  overflow: hidden;
 }
 
 .preloader-bars span {
   display: block;
-  width: 10px;
+  width: 7px;
   height: 8%;
-  border-radius: 99px;
+  border-radius: 0;
   flex-shrink: 0;
-  animation: pl-load 2.5s linear infinite;
+  position: relative;
+  /* Angular chip shape: diagonal cuts at top-left and bottom-right */
+  clip-path: polygon(
+    0 2px, 2px 0,
+    100% 0,
+    100% calc(100% - 2px), calc(100% - 2px) 100%,
+    0 100%
+  );
+  /* Scan-line texture over the bar colour (set as backgroundColor in JS) */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0)    0px,
+    rgba(0, 0, 0, 0)    2px,
+    rgba(0, 0, 0, 0.14) 2px,
+    rgba(0, 0, 0, 0.14) 3px
+  );
+  animation: pl-load 2.5s steps(1, end) infinite;
+  animation-fill-mode: backwards;
 }
 
-/* ── Text overlay ────────────────────────────────────────────────────────── */
-.preloader-text {
+/* Bright LED cap at the top of each bar */
+.preloader-bars span::before {
+  content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0)    100%
+  );
+  pointer-events: none;
 }
 
+/* ── Text labels (direct children of stage, above and below bars) ─────────── */
 .preloader-label,
 .preloader-pct {
   font-family: 'Courier New', Courier, monospace;
@@ -86,6 +111,7 @@ body.preloading header *::after {
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 /* Color + shadow for the \u00a0 space text-nodes between glitch spans */
@@ -153,9 +179,40 @@ body.preloading header *::after {
   93%, 100%{ content: var(--char-0); }
 }
 
-/* Bar equalizer: grows from bottom, brightens at peak */
+/* Bar equalizer: discrete steps + glitch dropouts at rise, peak and fall.
+   steps(1,end) makes every transition a hard jump — no interpolation.
+   0% is invisible so animation-fill-mode:backwards hides bars during their delay,
+   making them appear from centre outward as the cascade fires. */
 @keyframes pl-load {
-  0%   { height: 8%;   opacity: 0.3; }
-  50%  { height: 100%; opacity: 1;   }
-  100% { height: 8%;   opacity: 0.3; }
+  /* Hidden — held during delay by animation-fill-mode: backwards */
+  0%  { height:  0%; opacity: 0;    }
+  1%  { height:  6%; opacity: 0.25; }   /* snap in     */
+  /* — Rise — */
+  7%  { height: 32%; opacity: 0.9;  }
+  8%  { height: 22%; opacity: 0.2;  }   /* dropout     */
+  9%  { height: 42%; opacity: 1;    }   /* overshoot   */
+  19% { height: 56%; opacity: 0.85; }
+  20% { height: 44%; opacity: 0.2;  }   /* glitch dip  */
+  21% { height: 63%; opacity: 1;    }
+  31% { height: 76%; opacity: 0.9;  }
+  32% { height: 63%; opacity: 0.35; }   /* stutter     */
+  33% { height: 80%; opacity: 1;    }
+  43% { height: 92%; opacity: 0.85; }
+  44% { height: 80%; opacity: 0.45; }   /* pre-peak    */
+  /* — Peak — */
+  50% { height:100%; opacity: 1;    }
+  51% { height:100%; opacity: 0.12; }   /* white-out   */
+  52% { height: 95%; opacity: 1;    }
+  53% { height:100%; opacity: 1;    }
+  /* — Fall — */
+  62% { height: 78%; opacity: 0.85; }
+  63% { height: 88%; opacity: 0.2;  }   /* glitch up   */
+  64% { height: 70%; opacity: 1;    }
+  74% { height: 46%; opacity: 0.75; }
+  75% { height: 58%; opacity: 0.2;  }   /* stutter up  */
+  76% { height: 38%; opacity: 0.9;  }
+  86% { height: 18%; opacity: 0.5;  }
+  87% { height: 27%; opacity: 0.65; }   /* bounce      */
+  88% { height: 12%; opacity: 0.3;  }
+  100%{ height:  6%; opacity: 0.25; }
 }
