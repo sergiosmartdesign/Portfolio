@@ -497,6 +497,23 @@ nav {
   to { background-size: 100% 0.5px; }
 }
 
+/* Glitch jitter on hover — fires immediately from frame 0, plays once and resets.
+   Targeting .word (Splitting.js inline-block wrappers) keeps lineGrow on the
+   parent button completely untouched, so the underline never flickers on mouse-out. */
+@keyframes nav-btn-glitch {
+  0%        { transform: translateX(-6px) skewX(-2deg);  }
+  14%       { transform: translateX(5px)  skewX(1deg);   }
+  28%       { transform: translateX(-3px) skewX(0deg);   }
+  42%       { transform: translateX(4px)  skewX(-1deg);  }
+  56%       { transform: translateX(0px)  skewX(0.5deg); }
+  70%       { transform: translateX(-2px) skewX(0deg);   }
+  84%, 100% { transform: none;                           }
+}
+
+.main-nav .nav-btn:hover .word {
+  animation: nav-btn-glitch 0.4s steps(1, end) 1;
+}
+
 /* Staggered animation delays for navigation buttons */
 .main-nav .nav-btn:nth-child(1) { animation-delay: 0s; }
 .main-nav .nav-btn:nth-child(2) { animation-delay: 0.15s; }
