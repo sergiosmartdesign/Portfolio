@@ -3031,6 +3031,7 @@ nav {
   font-weight: 300;
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
   color: #001219;
+  --glitch-final-color: #001219;
   text-align: center;
   line-height: 1.6;
   margin: clamp(0.4rem, 0.8vh, 0.6rem) auto 0;
