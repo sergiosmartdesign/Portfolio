@@ -20,6 +20,14 @@
   // ── TRANSLATIONS ────────────────────────────────────────────────────────────
   const TRANSLATIONS = {
     en: {
+      // ── Navigation ────────────────────────────────────────────────────────
+      'nav.about':        '[ · a b o u t · ]',
+      'nav.photography':  '[ · p h o t o g r a p h y · ]',
+      'nav.web':          '[ · w e b · ]',
+      'nav.illustration': '[ · i l l u s t r a t i o n · ]',
+      'nav.experiments':  '[ · e x p e r i m e n t s · ]',
+      'nav.contact':      '[ · c o n t a c t · ]',
+
       'footer.rights': '© 2026 All rights reserved',
 
       'about.p1': 'Senior Art Director & Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.',
@@ -40,6 +48,7 @@
       'photo.ig.label':       '[ · o n \u00a0 i n s t a g r a m · ]',
       'photo.ig.desc':        'Want to see more? I post regularly on Instagram — more variety, more places, less structure. Everything that doesn\'t fit in a portfolio but is still worth sharing.',
       'photo.ig.cta':         '[ · f o l l o w · ]',
+      'photo.intro':          'Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em>',
 
       // ── Photo titles — Landscapes ──────────────────────────────────────────
       'photo.t.islaEnUyuni':      'Isla en Uyuni',
@@ -140,6 +149,14 @@
     },
 
     es: {
+      // ── Navigation ────────────────────────────────────────────────────────
+      'nav.about':        '[ · s o b r e · ]',
+      'nav.photography':  '[ · f o t o g r a f í a · ]',
+      'nav.web':          '[ · w e b · ]',
+      'nav.illustration': '[ · i l u s t r a c i ó n · ]',
+      'nav.experiments':  '[ · e x p e r i m e n t o s · ]',
+      'nav.contact':      '[ · c o n t a c t o · ]',
+
       'footer.rights': '© 2026 Todos los derechos reservados — Sergio Ayala, Director de Arte Senior &amp; Fotógrafo, Bogotá, Colombia',
 
       'about.p1': 'Director de Arte Senior y Fotógrafo. Basado en Bogotá, Colombia. Abordo los proyectos con una visión global, conversando con el cliente para entender su marca y su ADN, enfocándome en la mejor manera de implementar una idea para el proyecto, y cómo traducirla a través de diversos medios: desde arquitectura web y diseño de experiencia de usuario, hasta fotografía, ilustración y branding integral.',
@@ -160,6 +177,7 @@
       'photo.ig.label':       '[ · e n \u00a0 i n s t a g r a m · ]',
       'photo.ig.desc':        '¿Quieres ver más? Publico regularmente en Instagram — más variedad, más lugares, menos estructura. Todo lo que no cabe en un portfolio pero vale la pena compartir.',
       'photo.ig.cta':         '[ · s e g u i r · ]',
+      'photo.intro':          'La fotografía ha sido parte de mi trabajo profesional y personal durante años — desde proyectos comerciales y editoriales hasta trabajo callejero y de viaje en cuatro continentes. Es una de mis pasiones, una disciplina donde la composición se traduce en imágenes visualmente atractivas. <em>Cada foto en este archivo lleva <span class="photo-ai-highlight"><strong><em>metadatos generados por IA</em></strong></span>, haciendo que el portfolio sea completamente buscable por personas, motores de búsqueda y sistemas de IA.</em>',
 
       // ── Photo titles — Landscapes ──────────────────────────────────────────
       'photo.t.islaEnUyuni':      'Isla en Uyuni',
@@ -300,6 +318,20 @@
         const key = el.getAttribute('data-i18n');
         const value = TRANSLATIONS[lang][key];
         if (value !== undefined) el.textContent = value;
+      });
+
+      // Translate elements that need re-splitting (textContent only — script.js re-runs Splitting.js)
+      document.querySelectorAll('[data-i18n-split]').forEach(el => {
+        const key = el.getAttribute('data-i18n-split');
+        const value = TRANSLATIONS[lang][key];
+        if (value !== undefined) el.textContent = value;
+      });
+
+      // Translate elements with HTML content (data-i18n-html uses innerHTML)
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        const value = TRANSLATIONS[lang][key];
+        if (value !== undefined) el.innerHTML = value;
       });
 
       // Sync button active states

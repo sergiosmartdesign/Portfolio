@@ -53,6 +53,26 @@ class GlitchSystem {
     this.glitchChars = GLITCH_CHARS;
     this.initSplitting();
     this.initLogoGlitch();
+    document.addEventListener('languagechanged', () => this._resplitTranslated());
+  }
+
+  /**
+   * Re-split and re-apply glitch vars on elements translated by i18n
+   * Called after languagechanged event so new text gets the full glitch treatment
+   */
+  _resplitTranslated() {
+    const els = Array.from(document.querySelectorAll('[data-i18n-split]'));
+    if (!els.length) return;
+    const results = window.Splitting({ target: els, by: 'chars' });
+    results.forEach(result => {
+      result.chars.forEach(char => {
+        char.style.setProperty('--count', Math.random() * 5 + 1);
+        for (let g = 0; g < 10; g++) {
+          const randomChar = this.glitchChars[Math.floor(Math.random() * this.glitchChars.length)];
+          char.style.setProperty(`--char-${g}`, `"${randomChar}"`);
+        }
+      });
+    });
   }
 
   /**

@@ -358,6 +358,14 @@
         const els = item.querySelectorAll('.hover-text');
         this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
       });
+      // If the section is visible, re-trigger highlights on the new innerHTML span
+      if (this.inPhase3) {
+        document.querySelectorAll('.photo-ai-highlight').forEach(hl => {
+          hl.classList.remove('photo-ai-highlight--animate');
+          void hl.offsetWidth;
+          hl.classList.add('photo-ai-highlight--animate');
+        });
+      }
     }
 
     _setupHoverListeners() {
