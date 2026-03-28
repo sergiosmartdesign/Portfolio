@@ -2066,12 +2066,13 @@ nav {
   width: 520px;
   display: block;
   pointer-events: none;
-  z-index: 1;
+  z-index: 4; /* above polaroid grid (z:3) so cards pass behind the lens */
   user-select: none;
   transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.photo-camera-deco.visible {
+.photo-camera-deco.visible,
+.photo-camera-deco.polaroid-active {
   transform: translateX(-50%) translateY(50%) rotate(180deg);
 }
 
@@ -2112,7 +2113,7 @@ nav {
 
 .photo-scroll-spacer {
   position: relative;
-  height: 300vh;
+  height: 1400vh; /* 300vh existing phases + 7 rows × 150vh (ROW_PHASE=1.5) polaroid gallery */
   z-index: var(--z-layer-1);
 }
 
@@ -3046,6 +3047,68 @@ nav {
 
 .photo-glitch-load {
   animation: photo-glitch-in 0.5s steps(1, end) both;
+}
+
+/* ============================================================================
+   PHOTO SECTION — POLAROID GALLERY GRID
+   50 border-only polaroid cards animated by photo-polaroids.js.
+   Cards are position:absolute inside this container and moved exclusively
+   via transform:translate(x,y) — no top/left changes after init.
+   ============================================================================ */
+
+/* Full-section overlay, pointer-events off so accordion stays clickable
+   when the grid is visible but no card is under the cursor. */
+.photo-polaroid-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 3; /* above overlay (z:2), below camera (z:4) */
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Individual card — true Polaroid 600 proportions (35:43).
+   No photo, no canvas — just the amber border frame. */
+.polaroid-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Width set by JS (11vw). Height = aspect-ratio CSS fallback. */
+  aspect-ratio: 35 / 43;
+  border: 2px solid #EE9B00;
+  border-radius: 3px;
+  background: #001219;
+  box-shadow:
+    0 0 8px  rgba(238, 155, 0, 0.25),
+    0 0 20px rgba(238, 155, 0, 0.08),
+    inset 0 0 6px rgba(238, 155, 0, 0.05);
+  will-change: transform, opacity;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Caption strip — matches the real Polaroid 600 bottom (22.4 % of total height).
+   Uses border-top to keep it minimal with no extra markup. */
+.polaroid-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22.4%;
+  border-top: 1px solid rgba(238, 155, 0, 0.35);
+  border-radius: 0 0 2px 2px;
+  background: rgba(0, 18, 25, 0.6);
+}
+
+/* "Shutter open" moment — amber glow pulse when card is at the shutter position.
+   Toggled by JS with the .at-shutter class (localT ≈ 0.5). */
+.polaroid-card.at-shutter {
+  box-shadow:
+    0 0 20px rgba(238, 155, 0, 0.85),
+    0 0 50px rgba(238, 155, 0, 0.45),
+    0 0 90px rgba(238, 155, 0, 0.18),
+    inset 0 0 12px rgba(238, 155, 0, 0.15);
+  border-color: #F5C842;
 }
 
 /* ============================================================================
