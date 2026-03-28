@@ -379,6 +379,16 @@
         card.classList.remove('polaroid-eject-anim');
         void card.offsetWidth;
         card.classList.add('polaroid-eject-anim');
+        /* Camera recoil in sync with card ejection */
+        if (this.camera) {
+          this.camera.classList.remove('camera-eject-anim');
+          void this.camera.offsetWidth;
+          this.camera.classList.add('camera-eject-anim');
+          this.camera.addEventListener('animationend', function onEnd() {
+            this.classList.remove('camera-eject-anim');
+            this.removeEventListener('animationend', onEnd);
+          });
+        }
       }
     }
 

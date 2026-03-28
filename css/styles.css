@@ -3164,6 +3164,22 @@ nav {
   border-color: #F5C842;
 }
 
+/* Camera recoil — fires when a card ejects.  The camera is upside-down so the
+   ejection force pushes it downward.  Uses CSS `translate` to compose on top
+   of the JS-managed `transform` without conflict. */
+@keyframes camera-bump {
+  0%   { translate: 0 0; }
+  20%  { translate: 0 10px; }
+  45%  { translate: 0 4px; }
+  68%  { translate: 0 7px; }
+  88%  { translate: 0 2px; }
+  100% { translate: 0 0; }
+}
+
+.photo-camera-deco.camera-eject-anim {
+  animation: camera-bump 0.65s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+
 /* Ejection bobble — fires once when card clears the camera shutter.
    Uses the CSS `translate` property (independent from JS-managed `transform`)
    so both compose without conflict.  Fired via .polaroid-eject-anim class. */
