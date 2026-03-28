@@ -323,7 +323,7 @@
     var cardStart = this.phases[row].buildStart + col * PER_CARD;
     var localT    = (p - cardStart) / PER_CARD;
 
-    /* Not yet visible */
+    /* Not yet visible — reset ejection flag so it re-fires on forward scroll */
     if (localT < 0) {
       card.style.opacity       = '0';
       card.style.pointerEvents = '';
@@ -331,6 +331,8 @@
       card.style.transform     = 'translate(' + this.centerX + 'px,' +
         (this.winH + this.cardH + 40) + 'px)';
       card.classList.remove('at-shutter');
+      card.classList.remove('polaroid-eject-anim');
+      delete card.dataset.ejected;
       return;
     }
 
@@ -364,13 +366,20 @@
       card.classList.toggle('at-shutter', t2 < 0.12);
 
     } else {
-      /* PLACED — clickable */
+      /* PLACED — clickable; fire ejection bobble once on arrival */
       x       = finalX;
       y       = finalY;
       opacity = 1;
       card.style.pointerEvents = 'auto';
       card.style.cursor        = 'pointer';
       card.classList.remove('at-shutter');
+
+      if (!card.dataset.ejected) {
+        card.dataset.ejected = '1';
+        card.classList.remove('polaroid-eject-anim');
+        void card.offsetWidth;
+        card.classList.add('polaroid-eject-anim');
+      }
     }
 
     card.style.opacity   = opacity;
@@ -459,11 +468,13 @@
     var offY = this.winH + this.cardH + 40;
     for (var i = 0; i < this.cards.length; i++) {
       if (i === this.expandedIndex) continue; /* managed by collapse */
-      this.cards[i].style.opacity      = '0';
+      this.cards[i].style.opacity       = '0';
       this.cards[i].style.pointerEvents = '';
-      this.cards[i].style.cursor       = '';
-      this.cards[i].style.transform    = 'translate(' + this.centerX + 'px,' + offY + 'px)';
+      this.cards[i].style.cursor        = '';
+      this.cards[i].style.transform     = 'translate(' + this.centerX + 'px,' + offY + 'px)';
       this.cards[i].classList.remove('at-shutter');
+      this.cards[i].classList.remove('polaroid-eject-anim');
+      delete this.cards[i].dataset.ejected;
     }
   };
 

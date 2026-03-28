@@ -2066,14 +2066,18 @@ nav {
   width: 520px;
   display: block;
   pointer-events: none;
-  z-index: 4; /* above polaroid grid (z:3) so cards pass behind the lens */
+  z-index: 1; /* below overlay (z:2) — hover photos always in front */
   user-select: none;
   transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.photo-camera-deco.visible,
+.photo-camera-deco.visible {
+  transform: translateX(-50%) translateY(50%) rotate(180deg);
+}
+
 .photo-camera-deco.polaroid-active {
   transform: translateX(-50%) translateY(50%) rotate(180deg);
+  z-index: 4; /* above polaroid grid (z:3) only during gallery phase */
 }
 
 .photo-static-line {
@@ -3158,6 +3162,22 @@ nav {
     0 0 90px rgba(238, 155, 0, 0.18),
     inset 0 0 12px rgba(238, 155, 0, 0.15);
   border-color: #F5C842;
+}
+
+/* Ejection bobble — fires once when card clears the camera shutter.
+   Uses the CSS `translate` property (independent from JS-managed `transform`)
+   so both compose without conflict.  Fired via .polaroid-eject-anim class. */
+@keyframes polaroid-eject {
+  0%   { translate: 0 0; }
+  22%  { translate: 0 -16px; }
+  44%  { translate: 0 -5px; }
+  64%  { translate: 0 -11px; }
+  82%  { translate: 0 -3px; }
+  100% { translate: 0 0; }
+}
+
+.polaroid-card.polaroid-eject-anim {
+  animation: polaroid-eject 0.7s cubic-bezier(0.34, 1.15, 0.64, 1);
 }
 
 /* ── Polaroid card expand / collapse ──────────────────────────────────────────
