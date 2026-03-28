@@ -3022,6 +3022,27 @@ nav {
   z-index: 0;
 }
 
+.pgallery-desc {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.55rem, 0.8vw, 0.68rem);
+  color: rgba(0, 18, 25, 0.6);
+  text-align: center;
+  line-height: 1.6;
+  margin: clamp(0.4rem, 0.8vh, 0.6rem) auto 0;
+  max-width: 42ch;
+  position: relative;
+  z-index: 0;
+  white-space: normal; /* override .glitch-text pre */
+}
+
+/* Gate glitch-switch animation — runs only when chain reveals the element */
+.pgallery-desc[data-splitting] [data-char]:after {
+  animation-name: none;
+}
+.pgallery-desc[data-splitting].glitch-ready [data-char]:after {
+  animation-name: glitch-switch;
+}
+
 /* ── Glitch-load overlay on cascade reveal ─────────────────────────────────
    Fires once per element when it enters the chain. Steps timing gives each
    frame a discrete hold (CRT / signal-lock aesthetic). Heavy at the start,

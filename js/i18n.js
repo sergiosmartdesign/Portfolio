@@ -40,7 +40,8 @@
 
       // ── Photo section — UI ─────────────────────────────────────────────────
       'photo.ui.cta':         'Click a category to expand its list — then hover over any photo title to preview the image.',
-      'photo.ui.polaroids':   '[ · p o l a r o i d s · ]',
+      'photo.ui.polaroids':     '[ · p o l a r o i d s · ]',
+      'photo.ui.polaroidsDesc': 'Ten years of personal photography around the world, fifty frames selected so far. At one hundred, this archive becomes a printed book.',
       'photo.cat.landscapes': '[ · l a n d s c a p e s · ]',
       'photo.cat.street':     '[ · s t r e e t \u00a0 p h o t o · ]',
       'photo.cat.animals':    '[ · a n i m a l s · ]',
@@ -169,7 +170,8 @@
 
       // ── Photo section — UI ─────────────────────────────────────────────────
       'photo.ui.cta':         'Haz clic en una categoría para expandir su lista — luego pasa el cursor sobre cualquier título para previsualizar la imagen.',
-      'photo.ui.polaroids':   '[ · p o l a r o i d s · ]',
+      'photo.ui.polaroids':     '[ · p o l a r o i d s · ]',
+      'photo.ui.polaroidsDesc': 'Diez años de fotografía personal por el mundo, cincuenta tomas seleccionadas hasta ahora. Al llegar a cien, este archivo se convierte en un libro impreso.',
       'photo.cat.landscapes': '[ · p a i s a j e s · ]',
       'photo.cat.street':     '[ · f o t o \u00a0 u r b a n a · ]',
       'photo.cat.animals':    '[ · a n i m a l e s · ]',

@@ -62,15 +62,17 @@
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       }, { passive: true });
 
-      // Chain order: section label → left col → instagram col → camera col → 4 buttons → polaroids title
+      // Chain order: section label → left col → instagram col → camera col → 4 buttons → polaroids title → polaroids desc
       const pgalleryTitle = document.querySelector('.pgallery-title');
+      const pgalleryDesc  = document.querySelector('.pgallery-desc');
       this.staticEls = [
         this.overlay.querySelector('.photo-section-label'),
         this.overlay.querySelector('.photo-col-text'),
         this.overlay.querySelector('.photo-col-instagram'),
         this.overlay.querySelector('.photo-col-camera'),
         ...this.categoryBtns,
-        pgalleryTitle
+        pgalleryTitle,
+        pgalleryDesc
       ].filter(Boolean);
 
       // Start all chain elements hidden
@@ -157,6 +159,7 @@
       this.staticEls.forEach(el => {
         gsap.killTweensOf(el);
         el.classList.remove('photo-glitch-load');
+        el.classList.remove('glitch-ready');
       });
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
@@ -247,6 +250,7 @@
         gsap.killTweensOf(el);
         gsap.set(el, { opacity: 0 });
         el.classList.remove('photo-glitch-load');
+        el.classList.remove('glitch-ready');
       });
       this.bgImage.style.opacity = '0';
       this._resetPolaroid();
@@ -336,10 +340,20 @@
         item.classList.add('photo-glitch-load');
         setTimeout(() => item.classList.remove('photo-glitch-load'), 520);
       }, glitchDelay);
+
+      // Fire per-character glitch-switch for Splitting.js elements (e.g. pgallery-desc)
+      if (item.hasAttribute('data-splitting')) {
+        setTimeout(() => {
+          item.classList.remove('glitch-ready');
+          void item.offsetWidth;
+          item.classList.add('glitch-ready');
+        }, glitchDelay);
+      }
     }
 
     _hideItem(item, batchIndex) {
       item.classList.remove('photo-glitch-load');
+      item.classList.remove('glitch-ready');
       gsap.killTweensOf(item);
       gsap.to(item, {
         delay: batchIndex * 0.03,
