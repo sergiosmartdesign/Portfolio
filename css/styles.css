@@ -3043,6 +3043,17 @@ nav {
   animation-name: glitch-switch;
 }
 
+.pgallery-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.5rem, 0.65vw, 0.58rem);
+  color: rgba(0, 18, 25, 0.4);
+  text-align: center;
+  letter-spacing: 0.08em;
+  margin: clamp(0.5rem, 1vh, 0.75rem) auto 0;
+  position: relative;
+  z-index: 0;
+}
+
 /* ── Glitch-load overlay on cascade reveal ─────────────────────────────────
    Fires once per element when it enters the chain. Steps timing gives each
    frame a discrete hold (CRT / signal-lock aesthetic). Heavy at the start,
