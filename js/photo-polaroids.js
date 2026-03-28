@@ -20,6 +20,13 @@
  *   0.0 → 0.5  RISE   ease-out cubic, vertical: off-screen bottom → shutterY
  *   0.5 → 1.0  SETTLE ease-in-out cubic, diagonal: shutterY → (finalX, activeRowY)
  *   ≥ 1.0      PLACED tracks _rowY(row, p) — shifts up in later SCROLL phases
+ *              Placed cards are clickable → expand to fill viewport.
+ *
+ * Expand/collapse:
+ *   Clicking a placed card reparents it to #photo (escapes grid's stacking
+ *   context + overflow:hidden), scales it to 72 vh tall centered on screen.
+ *   A dark backdrop (z:8) appears behind it; an amber [X] button (z:16) closes.
+ *   ESC and backdrop-click also close.  Scroll continues during expand.
  *
  * Position anchors:
  *   activeRowY = winH × 0.60 − cardH/2   (row settles here; above camera)
@@ -72,31 +79,67 @@
     this.shutterY        = 0;
     this.activeRowY      = 0;
     this.rowHeight       = 0;
-    this.phases          = []; // phase table, one entry per row
+    this.phases          = [];
     this.lastRawProgress = -999;
     this.rafId           = null;
+
+    /* Expand state */
+    this.expandedIndex = -1;
+    this.expandedCard  = null;
+    this.backdrop      = null;
+    this.closeBtn      = null;
 
     this._build();
   }
 
   PolaroidGridManager.prototype._build = function () {
+    /* Grid container */
     var container = document.createElement('div');
     container.className = 'photo-polaroid-grid';
     container.setAttribute('aria-hidden', 'true');
     this.photoSection.appendChild(container);
     this.container = container;
 
+    /* 50 card elements */
+    var self = this;
     for (var i = 0; i < TOTAL_CARDS; i++) {
       var card = document.createElement('div');
       card.className = 'polaroid-card';
       container.appendChild(card);
       this.cards.push(card);
+
+      /* Click handler — closure captures index */
+      (function (idx) {
+        self.cards[idx].addEventListener('click', function () {
+          self._expandCard(idx);
+        });
+      })(i);
     }
 
-    this._updateDimensions(); // also calls _computePhases + _setSpacerHeight
+    /* Backdrop (appended to #photo, outside grid stacking context) */
+    var backdrop = document.createElement('div');
+    backdrop.className = 'polaroid-expand-backdrop';
+    this.photoSection.appendChild(backdrop);
+    this.backdrop = backdrop;
+    backdrop.addEventListener('click', function () { self._collapseCard(); });
+
+    /* Close button */
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'polaroid-expand-close';
+    closeBtn.setAttribute('aria-label', 'Close enlarged polaroid');
+    closeBtn.textContent = '[ \u00b7 X \u00b7 ]';
+    this.photoSection.appendChild(closeBtn);
+    this.closeBtn = closeBtn;
+    closeBtn.addEventListener('click', function () { self._collapseCard(); });
+
+    /* ESC key */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && self.expandedIndex >= 0) self._collapseCard();
+    });
+
+    this._updateDimensions();
     this._initCardPositions();
 
-    var self = this;
     window.addEventListener('resize', function () { self._onResize(); }, { passive: true });
     window.addEventListener('scroll', function () { self._onScroll(); }, { passive: true });
     this._onScroll();
@@ -108,7 +151,7 @@
     this.winH = window.innerHeight;
 
     this.cardW  = this.winW * 0.11;
-    this.cardH  = this.cardW * (43 / 35);      // true Polaroid 600 ratio
+    this.cardH  = this.cardW * (43 / 35);
     this.colGap = this.winW * 0.005;
     this.rowGap = this.winH * 0.015;
     this.rowHeight = this.cardH + this.rowGap;
@@ -121,25 +164,13 @@
     this.rowStartX = (this.winW - totalRowW) / 2;
     this.centerX   = this.winW / 2 - this.cardW / 2;
 
-    /* Row settles here: card top at 60 % from top of viewport (above camera) */
     this.activeRowY = this.winH * 0.60 - this.cardH / 2;
-
-    /* Ejection point: card top at 80 % (overlapping camera opening) */
     this.shutterY   = this.winH * 0.80 - this.cardH / 2;
 
     this._computePhases();
   };
 
   /* ── Phase table ──────────────────────────────────────────────────────────── */
-  /**
-   * phases[row] = {
-   *   scrollStart  : p-value (relative to PHASE_START) where SCROLL phase begins
-   *   scrollDur    : rawProgress units consumed by SCROLL phase
-   *   scrollDisp   : pixels the overlay moves upward during SCROLL phase
-   *   buildStart   : p-value where this row's BUILD phase begins
-   *   buildEnd     : p-value where this row's BUILD phase ends
-   * }
-   */
   PolaroidGridManager.prototype._computePhases = function () {
     this.phases = [];
     var p = 0;
@@ -149,13 +180,12 @@
         ? (TOTAL_CARDS - (TOTAL_ROWS - 1) * CARDS_PER_ROW)
         : CARDS_PER_ROW;
 
-      /* SCROLL phase displacement & duration */
       var scrollDisp = (row === 0)
-        ? this.winH - this.activeRowY   // initial clearance: push overlay up to activeRowY
-        : this.rowHeight;               // subsequent: shift settled rows up by one row
+        ? this.winH - this.activeRowY
+        : this.rowHeight;
 
-      var scrollDur  = scrollDisp / this.winH; // 1 rawProgress ≡ 1 vh ≡ 100 px (at winH px)
-      var buildDur   = cardsInRow * PER_CARD;
+      var scrollDur = scrollDisp / this.winH;
+      var buildDur  = cardsInRow * PER_CARD;
 
       this.phases.push({
         scrollStart : p,
@@ -168,21 +198,35 @@
       p += scrollDur + buildDur;
     }
 
-    /* Dynamic spacer height */
-    var totalPhaseP = p;
-    var spacerVh = (PHASE_START + totalPhaseP + 1.0) * 100;
+    var spacerVh = (PHASE_START + p + 1.0) * 100;
     this.photoSpacer.style.height = spacerVh + 'vh';
   };
 
   PolaroidGridManager.prototype._initCardPositions = function () {
     var offY = this.winH + this.cardH + 40;
     for (var i = 0; i < this.cards.length; i++) {
-      this.cards[i].style.transform = 'translate(' + this.centerX + 'px,' + offY + 'px)';
-      this.cards[i].style.opacity   = '0';
+      this.cards[i].style.transform    = 'translate(' + this.centerX + 'px,' + offY + 'px)';
+      this.cards[i].style.opacity      = '0';
+      this.cards[i].style.pointerEvents = '';
+      this.cards[i].style.cursor       = '';
     }
   };
 
   PolaroidGridManager.prototype._onResize = function () {
+    /* Close expand without animation on resize to avoid stale dimensions */
+    if (this.expandedIndex >= 0) {
+      var card = this.expandedCard;
+      card.style.transition    = '';
+      card.style.zIndex        = '';
+      card.style.pointerEvents = '';
+      card.style.cursor        = '';
+      this.container.appendChild(card);
+      this.backdrop.classList.remove('active');
+      this.closeBtn.classList.remove('active');
+      this.expandedCard  = null;
+      this.expandedIndex = -1;
+    }
+
     this._updateDimensions();
     var spacerTop   = this.photoSpacer.getBoundingClientRect().top;
     var rawProgress = 1 - (spacerTop / this.winH);
@@ -201,7 +245,7 @@
     this.rafId = requestAnimationFrame(function () { self._update(rawProgress); });
   };
 
-  /* ── Overlay offset (cumulative upward translation in px) ─────────────────── */
+  /* ── Overlay offset ───────────────────────────────────────────────────────── */
   PolaroidGridManager.prototype._overlayOffset = function (p) {
     var offset = 0;
     for (var i = 0; i < this.phases.length; i++) {
@@ -212,10 +256,9 @@
     return offset;
   };
 
-  /* ── Row Y position (activeRowY, shifts up with each subsequent SCROLL phase) */
+  /* ── Row Y position ───────────────────────────────────────────────────────── */
   PolaroidGridManager.prototype._rowY = function (row, p) {
     var y = this.activeRowY;
-    /* Each SCROLL phase k > row shifts this row up by one rowHeight */
     for (var k = row + 1; k < TOTAL_ROWS; k++) {
       var ph = this.phases[k];
       var t  = Math.max(0, Math.min(1, (p - ph.scrollStart) / ph.scrollDur));
@@ -224,7 +267,6 @@
     return y;
   };
 
-  /* Row start x is centred for the last (partial) row, normal for full rows */
   PolaroidGridManager.prototype._rowStartXForRow = function (row, cardsInRow) {
     if (cardsInRow === CARDS_PER_ROW) return this.rowStartX;
     var partialWidth = cardsInRow * this.cardW + (cardsInRow - 1) * this.colGap;
@@ -235,7 +277,6 @@
   PolaroidGridManager.prototype._update = function (rawProgress) {
     var p = rawProgress - PHASE_START;
 
-    /* Camera: stays at bottom throughout the polaroid phase */
     if (this.camera) {
       if (rawProgress >= PHASE_START) {
         this.camera.classList.add('polaroid-active');
@@ -244,7 +285,6 @@
       }
     }
 
-    /* Overlay: translate upward in sync with SCROLL phases */
     if (this.overlay) {
       if (p > 0) {
         var offset = this._overlayOffset(p);
@@ -255,7 +295,10 @@
     }
 
     if (p <= 0) {
-      if (p < -0.1) this._parkAllCards();
+      if (p < -0.1) {
+        if (this.expandedIndex >= 0) this._collapseCard();
+        this._parkAllCards();
+      }
       return;
     }
 
@@ -266,6 +309,9 @@
 
   /* ── Per-card update ──────────────────────────────────────────────────────── */
   PolaroidGridManager.prototype._updateCard = function (i, p) {
+    /* Expanded card is managed entirely by expand/collapse — skip JS updates */
+    if (i === this.expandedIndex) return;
+
     var card = this.cards[i];
     var row  = Math.floor(i / CARDS_PER_ROW);
     var col  = i % CARDS_PER_ROW;
@@ -274,14 +320,15 @@
       ? (TOTAL_CARDS - (TOTAL_ROWS - 1) * CARDS_PER_ROW)
       : CARDS_PER_ROW;
 
-    /* Card's personal window within the BUILD phase for its row */
     var cardStart = this.phases[row].buildStart + col * PER_CARD;
     var localT    = (p - cardStart) / PER_CARD;
 
-    /* Park below viewport until card's moment arrives */
+    /* Not yet visible */
     if (localT < 0) {
-      card.style.opacity   = '0';
-      card.style.transform = 'translate(' + this.centerX + 'px,' +
+      card.style.opacity       = '0';
+      card.style.pointerEvents = '';
+      card.style.cursor        = '';
+      card.style.transform     = 'translate(' + this.centerX + 'px,' +
         (this.winH + this.cardH + 40) + 'px)';
       card.classList.remove('at-shutter');
       return;
@@ -296,27 +343,33 @@
     var x, y, opacity;
 
     if (localT < 0.5) {
-      /* ── RISE: vertical, ease-out cubic, off-screen → shutterY ───────────── */
+      /* RISE */
       var t1  = easeOutCubic(localT / 0.5);
       x       = this.centerX;
       y       = (this.winH + this.cardH + 40) +
                 (this.shutterY - (this.winH + this.cardH + 40)) * t1;
       opacity = Math.min(1, t1 * 1.5);
+      card.style.pointerEvents = '';
+      card.style.cursor        = '';
       card.classList.remove('at-shutter');
 
     } else if (localT < 1) {
-      /* ── SETTLE: diagonal up-left, ease-in-out cubic ─────────────────────── */
+      /* SETTLE */
       var t2  = easeInOutCubic((localT - 0.5) / 0.5);
       x       = this.centerX + (finalX - this.centerX) * t2;
       y       = this.shutterY + (this.activeRowY - this.shutterY) * t2;
       opacity = 1;
+      card.style.pointerEvents = '';
+      card.style.cursor        = '';
       card.classList.toggle('at-shutter', t2 < 0.12);
 
     } else {
-      /* ── PLACED: tracks row's shifting y in later SCROLL phases ───────────── */
+      /* PLACED — clickable */
       x       = finalX;
       y       = finalY;
       opacity = 1;
+      card.style.pointerEvents = 'auto';
+      card.style.cursor        = 'pointer';
       card.classList.remove('at-shutter');
     }
 
@@ -324,12 +377,92 @@
     card.style.transform = 'translate(' + x + 'px,' + y + 'px)';
   };
 
-  /* ── Park all cards below viewport (fast reverse scroll) ─────────────────── */
+  /* ── Expand a placed card ─────────────────────────────────────────────────── */
+  PolaroidGridManager.prototype._expandCard = function (index) {
+    /* Guard: only expand placed cards */
+    if (this.cards[index].style.pointerEvents !== 'auto') return;
+    /* Guard: don't expand if another is already expanded */
+    if (this.expandedIndex >= 0) return;
+
+    var card = this.cards[index];
+    var self = this;
+
+    this.expandedIndex = index;
+    this.expandedCard  = card;
+
+    /* Capture current transform before reparenting */
+    var currentTransform = card.style.transform;
+
+    /* Move card to #photo root — escapes grid's z-index stacking context
+       and overflow:hidden.  Coordinate space is identical (both start 0,0). */
+    this.photoSection.appendChild(card);
+    card.style.transform    = currentTransform;
+    card.style.zIndex       = '12';
+    card.style.pointerEvents = 'none'; /* disable during flight */
+    card.style.cursor       = '';
+
+    /* Show backdrop */
+    this.backdrop.classList.add('active');
+    this.closeBtn.classList.add('active');
+
+    /* Double rAF ensures transition fires after reparent paint */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var scale = (self.winH * 0.72) / self.cardH;
+        var cx    = self.winW / 2 - self.cardW / 2;
+        var cy    = self.winH / 2 - self.cardH / 2;
+        card.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+        card.style.transform  = 'translate(' + cx + 'px,' + cy + 'px) scale(' + scale + ')';
+      });
+    });
+  };
+
+  /* ── Collapse expanded card back to grid ──────────────────────────────────── */
+  PolaroidGridManager.prototype._collapseCard = function () {
+    if (this.expandedIndex < 0) return;
+
+    var card  = this.expandedCard;
+    var index = this.expandedIndex;
+    var self  = this;
+
+    /* Compute current correct grid position */
+    var row        = Math.floor(index / CARDS_PER_ROW);
+    var col        = index % CARDS_PER_ROW;
+    var cardsInRow = (row === TOTAL_ROWS - 1)
+      ? (TOTAL_CARDS - (TOTAL_ROWS - 1) * CARDS_PER_ROW)
+      : CARDS_PER_ROW;
+    var finalX = this._rowStartXForRow(row, cardsInRow) + col * (this.cardW + this.colGap);
+    var finalY = this._rowY(row, this.lastRawProgress - PHASE_START);
+
+    /* Hide UI immediately */
+    this.backdrop.classList.remove('active');
+    this.closeBtn.classList.remove('active');
+
+    /* Animate card back to its grid slot */
+    card.style.transition = 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
+    card.style.transform  = 'translate(' + finalX + 'px,' + finalY + 'px)';
+
+    /* After animation: return card to grid, restore state */
+    setTimeout(function () {
+      card.style.transition    = '';
+      card.style.zIndex        = '';
+      card.style.pointerEvents = 'auto';
+      card.style.cursor        = 'pointer';
+      self.container.appendChild(card);
+      self.expandedCard  = null;
+      self.expandedIndex = -1;
+    }, 400);
+  };
+
+  /* ── Park all cards below viewport ───────────────────────────────────────── */
   PolaroidGridManager.prototype._parkAllCards = function () {
     var offY = this.winH + this.cardH + 40;
     for (var i = 0; i < this.cards.length; i++) {
-      this.cards[i].style.opacity   = '0';
-      this.cards[i].style.transform = 'translate(' + this.centerX + 'px,' + offY + 'px)';
+      if (i === this.expandedIndex) continue; /* managed by collapse */
+      this.cards[i].style.opacity      = '0';
+      this.cards[i].style.pointerEvents = '';
+      this.cards[i].style.cursor       = '';
+      this.cards[i].style.transform    = 'translate(' + this.centerX + 'px,' + offY + 'px)';
       this.cards[i].classList.remove('at-shutter');
     }
   };

@@ -134,6 +134,18 @@
         this.chainTimers.push(t);
       });
 
+      // Draw marker on scroll/click hint after it cascades in
+      const pgalleryHintEl = document.querySelector('.pgallery-hint');
+      if (pgalleryHintEl) {
+        const hintDelay = (this.staticEls.length - 1) * 300 + 150;
+        const t = setTimeout(() => {
+          pgalleryHintEl.classList.remove('pgallery-hint--animate');
+          void pgalleryHintEl.offsetWidth;
+          pgalleryHintEl.classList.add('pgallery-hint--animate');
+        }, hintDelay);
+        this.chainTimers.push(t);
+      }
+
       // Permanently reveal the polaroid hint marker (like AI-generated metadata)
       const hint = document.querySelector('.photo-polaroid-hint');
       if (hint) {
@@ -164,6 +176,7 @@
         el.classList.remove('glitch-ready');
       });
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
+      document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
       document.querySelector('.photo-camera-deco')?.classList.remove('visible');
     }
@@ -222,6 +235,7 @@
       });
       this.bgImage.style.opacity = '0';
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
+      document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
       document.querySelector('.photo-camera-deco')?.classList.remove('visible');
       this._resetPolaroid();

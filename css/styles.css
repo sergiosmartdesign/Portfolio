@@ -3023,9 +3023,10 @@ nav {
 }
 
 .pgallery-desc {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.55rem, 0.8vw, 0.68rem);
-  color: rgba(0, 18, 25, 0.6);
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: #001219;
   text-align: center;
   line-height: 1.6;
   margin: clamp(0.4rem, 0.8vh, 0.6rem) auto 0;
@@ -3045,13 +3046,29 @@ nav {
 
 .pgallery-hint {
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.5rem, 0.65vw, 0.58rem);
-  color: rgba(0, 18, 25, 0.4);
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  color: #001219;
   text-align: center;
-  letter-spacing: 0.08em;
-  margin: clamp(0.5rem, 1vh, 0.75rem) auto 0;
+  letter-spacing: 0.1em;
+  margin: clamp(0.6rem, 1.2vh, 1rem) auto 0;
   position: relative;
   z-index: 0;
+  display: inline-block;
+  padding: 0 4px;
+}
+
+.pgallery-hint::before {
+  content: '';
+  position: absolute;
+  inset: -1px -3px;
+  background-color: #E9D8A6;
+  transform-origin: left center;
+  transform: skewX(-5deg) scaleX(0);
+  z-index: -1;
+}
+
+.pgallery-hint--animate::before {
+  animation: photo-marker-left 0.8s ease-out forwards;
 }
 
 /* ── Glitch-load overlay on cascade reveal ─────────────────────────────────
@@ -3141,6 +3158,60 @@ nav {
     0 0 90px rgba(238, 155, 0, 0.18),
     inset 0 0 12px rgba(238, 155, 0, 0.15);
   border-color: #F5C842;
+}
+
+/* ── Polaroid card expand / collapse ──────────────────────────────────────────
+   Clicking a placed card moves it to #photo root and scales it to viewport
+   center.  A dark backdrop fades in behind; an amber [X] closes the expand.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.polaroid-expand-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 8; /* above camera (z:4), below expanded card (z:12) */
+  background: rgba(0, 18, 25, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.polaroid-expand-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.polaroid-expand-close {
+  position: absolute;
+  top: clamp(1rem, 2.5vh, 1.5rem);
+  right: clamp(1rem, 2.5vw, 2rem);
+  z-index: 16; /* above expanded card (z:12) */
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+  letter-spacing: 0.1em;
+  color: #EE9B00;
+  background: transparent;
+  border: none;
+  padding: 0.4em 0.6em;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease 0.2s, color 0.15s ease, text-shadow 0.15s ease;
+  text-shadow: 0 0 12px rgba(238, 155, 0, 0.55);
+}
+
+.polaroid-expand-close.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.polaroid-expand-close:hover {
+  color: #fff;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.75);
 }
 
 /* ============================================================================
