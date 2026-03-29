@@ -1033,6 +1033,37 @@ class AnimationCoordinator {
       updateArtDirLine();
     }
 
+    // Art Direction section — scroll-driven letter entrance
+    const artEntranceSection = document.getElementById('art-direction');
+    const artEntranceCells   = artEntranceSection
+      ? [...artEntranceSection.querySelectorAll('.art-cell')]
+      : [];
+
+    if (artEntranceSection && artEntranceCells.length) {
+      const TOTAL = artEntranceCells.length;
+
+      // Hide all cells before JS takes over
+      artEntranceCells.forEach(cell => { cell.style.clipPath = 'inset(0 100% 0 0)'; });
+
+      const updateArtEntrance = () => {
+        const rect     = artEntranceSection.getBoundingClientRect();
+        const vh       = window.innerHeight;
+        // 0 = section top at viewport bottom, 1 = section top at viewport top
+        const progress = Math.max(0, Math.min(1, (vh - rect.top) / vh));
+
+        artEntranceCells.forEach((cell, i) => {
+          const start      = i / TOTAL;
+          const end        = (i + 1) / TOTAL;
+          const local      = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+          const rightInset = ((1 - local) * 100).toFixed(2);
+          cell.style.clipPath = `inset(0 ${rightInset}% 0 0)`;
+        });
+      };
+
+      window.addEventListener('scroll', updateArtEntrance, { passive: true });
+      updateArtEntrance();
+    }
+
     // ── Overlap collision star ───────────────────────────────────────────────
     const collisionStar = document.getElementById('line-collision-star');
     const photoLineEl   = document.querySelector('.photo-static-line');
