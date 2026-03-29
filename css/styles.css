@@ -2138,6 +2138,98 @@ nav {
   line-height: 1;
   user-select: none;
   z-index: 1;
+  transition: opacity 0.1s;
+}
+
+.art-cell:hover::after {
+  opacity: 0;
+}
+
+/* ── SVG filter container ──────────────────────────────────────────────── */
+.art-glitch-filters {
+  display: none;
+}
+
+/* ── RGB glitch layers — base ──────────────────────────────────────────── */
+.glitch-r,
+.glitch-g,
+.glitch-b {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 800;
+  font-size: 80cqi;
+  line-height: 1;
+  color: #fff;
+  mix-blend-mode: lighten;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.1s;
+}
+
+.glitch-r::after,
+.glitch-g::after,
+.glitch-b::after {
+  content: attr(data-letter);
+}
+
+.glitch-r { filter: url(#artGlitchRed);   }
+.glitch-g { filter: url(#artGlitchGreen); }
+.glitch-b { filter: url(#artGlitchBlue);  }
+
+/* ── Hover state ─────────────────────────────────────────────────────────── */
+.art-cell:hover .glitch-r,
+.art-cell:hover .glitch-g,
+.art-cell:hover .glitch-b {
+  opacity: 1;
+}
+
+.art-cell:hover .glitch-r {
+  transform: translate(3px, -2px);
+  animation: glitch-clip-r 0.35s linear infinite;
+}
+.art-cell:hover .glitch-g {
+  transform: translate(-2px, 3px);
+  animation: glitch-clip-g 0.35s linear infinite;
+}
+.art-cell:hover .glitch-b {
+  transform: translate(2px, 2px);
+  animation: glitch-clip-b 0.35s linear infinite;
+}
+
+@keyframes glitch-clip-r {
+  0%   { clip-path: polygon(0 0%,   100% 0%,   100% 30%,  0 30%);  }
+  16%  { clip-path: polygon(0 52%,  100% 52%,  100% 73%,  0 73%);  }
+  33%  { clip-path: polygon(0 8%,   100% 8%,   100% 42%,  0 42%);  }
+  50%  { clip-path: polygon(0 68%,  100% 68%,  100% 92%,  0 92%);  }
+  66%  { clip-path: polygon(0 20%,  100% 20%,  100% 55%,  0 55%);  }
+  83%  { clip-path: polygon(0 75%,  100% 75%,  100% 100%, 0 100%); }
+  100% { clip-path: polygon(0 0%,   100% 0%,   100% 30%,  0 30%);  }
+}
+
+@keyframes glitch-clip-g {
+  0%   { clip-path: polygon(0 40%,  100% 40%,  100% 70%,  0 70%);  }
+  16%  { clip-path: polygon(0 5%,   100% 5%,   100% 28%,  0 28%);  }
+  33%  { clip-path: polygon(0 62%,  100% 62%,  100% 85%,  0 85%);  }
+  50%  { clip-path: polygon(0 15%,  100% 15%,  100% 45%,  0 45%);  }
+  66%  { clip-path: polygon(0 80%,  100% 80%,  100% 100%, 0 100%); }
+  83%  { clip-path: polygon(0 35%,  100% 35%,  100% 60%,  0 60%);  }
+  100% { clip-path: polygon(0 40%,  100% 40%,  100% 70%,  0 70%);  }
+}
+
+@keyframes glitch-clip-b {
+  0%   { clip-path: polygon(0 20%,  100% 20%,  100% 55%,  0 55%);  }
+  16%  { clip-path: polygon(0 70%,  100% 70%,  100% 90%,  0 90%);  }
+  33%  { clip-path: polygon(0 0%,   100% 0%,   100% 20%,  0 20%);  }
+  50%  { clip-path: polygon(0 48%,  100% 48%,  100% 78%,  0 78%);  }
+  66%  { clip-path: polygon(0 10%,  100% 10%,  100% 38%,  0 38%);  }
+  83%  { clip-path: polygon(0 62%,  100% 62%,  100% 88%,  0 88%);  }
+  100% { clip-path: polygon(0 20%,  100% 20%,  100% 55%,  0 55%);  }
 }
 
 /* ============================================================================

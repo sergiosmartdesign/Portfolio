@@ -434,26 +434,42 @@
 
         <section id="art-direction" aria-label="Art Direction Portfolio">
             <canvas class="art-direction-bottom-static-line"></canvas>
+
+            <!-- RGB channel-split SVG filters for letter glitch hover effect -->
+            <svg class="art-glitch-filters" aria-hidden="true">
+                <defs>
+                    <filter id="artGlitchRed">
+                        <feColorMatrix mode="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                    </filter>
+                    <filter id="artGlitchGreen">
+                        <feColorMatrix mode="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                    </filter>
+                    <filter id="artGlitchBlue">
+                        <feColorMatrix mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+                    </filter>
+                </defs>
+            </svg>
+
             <div class="art-direction-grid">
                 <div class="art-row">
-                    <div class="art-cell" data-letter="A"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="R"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="T"><div class="left"></div><div class="right"></div></div>
+                    <div class="art-cell" data-letter="A"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="R"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="T"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
                 </div>
                 <div class="art-row">
-                    <div class="art-cell" data-letter="D"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="I"><div class="left"></div><div class="right"></div></div>
+                    <div class="art-cell" data-letter="D"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="I"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
                 </div>
                 <div class="art-row">
-                    <div class="art-cell" data-letter="R"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="E"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="C"><div class="left"></div><div class="right"></div></div>
+                    <div class="art-cell" data-letter="R"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="E"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="C"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
                 </div>
                 <div class="art-row">
-                    <div class="art-cell" data-letter="T"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="I"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="O"><div class="left"></div><div class="right"></div></div>
-                    <div class="art-cell" data-letter="N"><div class="left"></div><div class="right"></div></div>
+                    <div class="art-cell" data-letter="T"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="I"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="O"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
+                    <div class="art-cell" data-letter="N"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
                 </div>
             </div>
         </section>

@@ -1058,6 +1058,14 @@ class AnimationCoordinator {
       // Hide all cells before JS takes over
       artEntranceCells.forEach(cell => { cell.style.clipPath = 'inset(0 100% 0 0)'; });
 
+      // Stamp each cell's letter onto its glitch child divs so CSS ::after can read it
+      artEntranceCells.forEach(cell => {
+        const letter = cell.dataset.letter;
+        cell.querySelectorAll('.glitch-r, .glitch-g, .glitch-b').forEach(el => {
+          el.dataset.letter = letter;
+        });
+      });
+
       // Timed animation — used when nav button is clicked
       window.playArtEntranceAnimation = () => {
         artEntrancePlaying = true;
