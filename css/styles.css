@@ -248,7 +248,9 @@ body {
 #about.paused-animations::before,
 #about.paused-animations::after,
 #about.paused-animations .scanlines,
-#about.paused-animations .vhs-static {
+#about.paused-animations .vhs-static,
+#art-direction.paused-animations .scanlines,
+#art-direction.paused-animations .vhs-static {
   animation-play-state: paused !important;
 }
 
@@ -528,6 +530,7 @@ nav {
 .main-nav .nav-btn:nth-child(3) { animation-delay: 0.3s; }
 .main-nav .nav-btn:nth-child(4) { animation-delay: 0.45s; }
 .main-nav .nav-btn:nth-child(5) { animation-delay: 0.6s; }
+.main-nav .nav-btn:nth-child(6) { animation-delay: 0.75s; }
 
 .nav-btn:hover {
   background-size: 100% 100%;
@@ -2056,6 +2059,31 @@ nav {
   overflow: hidden;
 }
 
+#art-direction .background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* No z-index here — prevents stacking context so children can float above the grid */
+}
+
+#art-direction .scanlines,
+#art-direction .vhs-static {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#art-direction .scanlines {
+  z-index: 6;
+}
+
+#art-direction .vhs-static {
+  z-index: 7;
+}
+
 /* ── Art Direction — conic-gradient letter grid ─────────────────────────── */
 
 @keyframes art-blink {
@@ -2068,6 +2096,8 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
+  z-index: var(--z-layer-5);
 }
 
 .art-row {

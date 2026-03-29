@@ -433,22 +433,29 @@
         </div>
 
         <section id="art-direction" aria-label="Art Direction Portfolio">
-            <canvas class="art-direction-bottom-static-line"></canvas>
 
-            <!-- RGB channel-split SVG filters for letter glitch hover effect -->
-            <svg class="art-glitch-filters" aria-hidden="true">
-                <defs>
-                    <filter id="artGlitchRed">
-                        <feColorMatrix mode="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
-                    </filter>
-                    <filter id="artGlitchGreen">
-                        <feColorMatrix mode="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
-                    </filter>
-                    <filter id="artGlitchBlue">
-                        <feColorMatrix mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
-                    </filter>
-                </defs>
-            </svg>
+            <!-- Background layer: static-line canvas, SVG filters, VHS overlay -->
+            <div class="background">
+                <canvas class="art-direction-bottom-static-line"></canvas>
+
+                <!-- RGB channel-split SVG filters for letter glitch hover effect -->
+                <svg class="art-glitch-filters" aria-hidden="true">
+                    <defs>
+                        <filter id="artGlitchRed">
+                            <feColorMatrix mode="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                        </filter>
+                        <filter id="artGlitchGreen">
+                            <feColorMatrix mode="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                        </filter>
+                        <filter id="artGlitchBlue">
+                            <feColorMatrix mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+                        </filter>
+                    </defs>
+                </svg>
+
+                <div class="scanlines"></div>
+                <div class="vhs-static"></div>
+            </div>
 
             <div class="art-direction-grid">
                 <div class="art-row">

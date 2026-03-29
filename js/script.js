@@ -282,10 +282,10 @@ class NavigationManager {
     this.header.classList.remove(
       'section-intro',
       'section-about',
-      'section-web',
+      'section-art-direction',
       'section-photo',
       'section-illustration',
-      'section-experiments',
+      'section-blog',
       'section-contact'
     );
 
@@ -419,8 +419,11 @@ class NavigationManager {
 
         // Photo section: #photo is position:fixed so IntersectionObserver can't track it.
         // Use the spacer's viewport position to determine if we're in the photo reveal zone.
+        // Guard: only activate photo if art-direction is fully scrolled out of view.
         const photoSpacer = document.querySelector('.photo-scroll-spacer');
-        if (photoSpacer) {
+        const artDirEl = document.getElementById('art-direction');
+        const artDirGone = !artDirEl || artDirEl.getBoundingClientRect().bottom <= 0;
+        if (photoSpacer && artDirGone) {
           const spacerRect = photoSpacer.getBoundingClientRect();
           const progress = 1 - (spacerRect.top / window.innerHeight);
           if (progress > 0 && progress <= 1) {
