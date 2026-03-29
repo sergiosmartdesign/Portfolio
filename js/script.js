@@ -345,6 +345,18 @@ class NavigationManager {
             return;
           }
 
+          if (sectionId === 'art-direction') {
+            e.preventDefault();
+            const artTarget = document.getElementById('art-direction');
+            if (artTarget) {
+              window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY);
+            }
+            if (window.playArtEntranceAnimation) window.playArtEntranceAnimation();
+            this.setActiveButton('art-direction');
+            history.pushState(null, '', '#art-direction');
+            return;
+          }
+
           if (sectionId === 'photo') {
             e.preventDefault();
             const photoSpacer = document.querySelector('.photo-scroll-spacer');
@@ -1041,11 +1053,35 @@ class AnimationCoordinator {
 
     if (artEntranceSection && artEntranceCells.length) {
       const TOTAL = artEntranceCells.length;
+      let artEntrancePlaying = false;
 
       // Hide all cells before JS takes over
       artEntranceCells.forEach(cell => { cell.style.clipPath = 'inset(0 100% 0 0)'; });
 
+      // Timed animation — used when nav button is clicked
+      window.playArtEntranceAnimation = () => {
+        artEntrancePlaying = true;
+        artEntranceCells.forEach(cell => {
+          cell.style.transition = 'clip-path 0.28s ease-out';
+          cell.style.clipPath   = 'inset(0 100% 0 0)';
+        });
+        artEntranceCells.forEach((cell, i) => {
+          setTimeout(() => {
+            cell.style.clipPath = 'inset(0 0% 0 0)';
+            if (i === TOTAL - 1) {
+              // Restore scroll-driven mode after animation completes
+              setTimeout(() => {
+                artEntranceCells.forEach(c => { c.style.transition = ''; });
+                artEntrancePlaying = false;
+              }, 320);
+            }
+          }, i * 120);
+        });
+      };
+
+      // Scroll-driven animation — works in both scroll directions
       const updateArtEntrance = () => {
+        if (artEntrancePlaying) return;
         const rect     = artEntranceSection.getBoundingClientRect();
         const vh       = window.innerHeight;
         // 0 = section top at viewport bottom, 1 = section top at viewport top
