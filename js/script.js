@@ -948,6 +948,91 @@ class AnimationCoordinator {
       updateAboutTopLine();
     }
 
+    // Art Direction section bottom static line
+    const artDirBottomCanvas = document.querySelector('.art-direction-bottom-static-line');
+    if (artDirBottomCanvas) {
+      const artDirCtx = artDirBottomCanvas.getContext('2d');
+      let artDirAnimId = null;
+      let artDirScrollTimeout = null;
+
+      const resizeArtDirCanvas = () => {
+        artDirBottomCanvas.width = window.innerWidth;
+        artDirBottomCanvas.height = 4;
+      };
+      resizeArtDirCanvas();
+      window.addEventListener('resize', resizeArtDirCanvas);
+
+      const drawArtDirLine = () => {
+        const w = artDirBottomCanvas.width;
+        const h = artDirBottomCanvas.height;
+        artDirCtx.clearRect(0, 0, w, h);
+
+        artDirCtx.beginPath();
+        artDirCtx.strokeStyle = '#0ef';
+        artDirCtx.shadowColor = '#0ef';
+        artDirCtx.shadowBlur = 6;
+        artDirCtx.lineWidth = 1.5;
+        artDirCtx.moveTo(0, h / 2);
+        for (let x = 0; x < w; x += 3) {
+          const jitter = (Math.random() - 0.5) * h * 2;
+          artDirCtx.lineTo(x, h / 2 + jitter);
+        }
+        artDirCtx.stroke();
+
+        artDirCtx.beginPath();
+        artDirCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        artDirCtx.shadowColor = '#fff';
+        artDirCtx.shadowBlur = 3;
+        artDirCtx.lineWidth = 1;
+        for (let x = 0; x < w; x += 3) {
+          if (Math.random() > 0.7) {
+            const jitter = (Math.random() - 0.5) * h;
+            artDirCtx.lineTo(x, h / 2 + jitter);
+          } else {
+            artDirCtx.moveTo(x, h / 2);
+          }
+        }
+        artDirCtx.stroke();
+
+        artDirAnimId = requestAnimationFrame(drawArtDirLine);
+      };
+
+      const artDirSec = document.getElementById('art-direction');
+
+      const showArtDirLine = () => {
+        artDirBottomCanvas.classList.add('active');
+        if (!artDirAnimId) drawArtDirLine();
+      };
+
+      const hideArtDirLine = () => {
+        artDirBottomCanvas.classList.remove('active');
+        if (artDirAnimId) {
+          cancelAnimationFrame(artDirAnimId);
+          artDirAnimId = null;
+        }
+      };
+
+      const updateArtDirLine = () => {
+        if (!artDirSec) return;
+        const bottom = artDirSec.getBoundingClientRect().bottom;
+        const inViewport = bottom > 4 && bottom < window.innerHeight - 4;
+
+        if (inViewport) {
+          artDirBottomCanvas.style.top = `${bottom - 2}px`;
+          showArtDirLine();
+        } else {
+          hideArtDirLine();
+          return;
+        }
+
+        clearTimeout(artDirScrollTimeout);
+        artDirScrollTimeout = setTimeout(hideArtDirLine, 150);
+      };
+
+      window.addEventListener('scroll', updateArtDirLine, { passive: true });
+      updateArtDirLine();
+    }
+
     // ── Overlap collision star ───────────────────────────────────────────────
     const collisionStar = document.getElementById('line-collision-star');
     const photoLineEl   = document.querySelector('.photo-static-line');

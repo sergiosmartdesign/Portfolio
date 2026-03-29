@@ -23,9 +23,9 @@
       // ── Navigation ────────────────────────────────────────────────────────
       'nav.about':        '[ · a b o u t · ]',
       'nav.photography':  '[ · p h o t o g r a p h y · ]',
-      'nav.web':          '[ · w e b · ]',
+      'nav.art-direction': '[ · a r t · d i r e c t i o n · ]',
       'nav.illustration': '[ · i l l u s t r a t i o n · ]',
-      'nav.experiments':  '[ · e x p e r i m e n t s · ]',
+      'nav.blog':         '[ · b l o g · ]',
       'nav.contact':      '[ · c o n t a c t · ]',
 
       'footer.rights': '© 2026 All rights reserved',
@@ -154,9 +154,9 @@
       // ── Navigation ────────────────────────────────────────────────────────
       'nav.about':        '[ · s o b r e · ]',
       'nav.photography':  '[ · f o t o g r a f í a · ]',
-      'nav.web':          '[ · w e b · ]',
+      'nav.art-direction': '[ · d i r e c c i ó n · d e · a r t e · ]',
       'nav.illustration': '[ · i l u s t r a c i ó n · ]',
-      'nav.experiments':  '[ · e x p e r i m e n t o s · ]',
+      'nav.blog':         '[ · b l o g · ]',
       'nav.contact':      '[ · c o n t a c t o · ]',
 
       'footer.rights': '© 2026 Todos los derechos reservados — Sergio Ayala, Director de Arte Senior &amp; Fotógrafo, Bogotá, Colombia',

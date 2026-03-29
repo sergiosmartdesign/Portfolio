@@ -1,4 +1,11 @@
 
+/* ─── Houdini property for art-direction conic blink animation ─────────────── */
+@property --p {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: true;
+}
+
 /* ============================================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)
    Centralized values for colors, spacing, shadows, and transitions
@@ -60,6 +67,7 @@
   --spacing-xl: 40px;
   --spacing-2xl: 60px;
   --spacing-3xl: 100px;
+  --nav-height: 74px;
 
   /* ===== SHADOWS & GLOWS ===== */
   --glow-sm: 0 0 10px;
@@ -2032,15 +2040,104 @@ nav {
 /* ============================================================================
    CONTENT SECTIONS (Web, Photo, Illustration, Experiments, Contact)
    ============================================================================ */
-#web,
+#art-direction,
 #photo,
 #illustration,
 #contact,
-#experiments {
+#blog {
   position: relative;
   z-index: var(--z-layer-10);
   min-height: 100vh;
   background: var(--black);
+}
+
+#art-direction {
+  background: #001219;
+  overflow: hidden;
+}
+
+/* ── Art Direction — conic-gradient letter grid ─────────────────────────── */
+
+@keyframes art-blink {
+  from                        { --p: 0%;  }
+  1%, 4%, 20%                 { --p: 90%; }
+  2%, 5%, 19%, 21%, to        { --p: 0%;  }
+}
+
+.art-direction-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.art-row {
+  display: flex;
+}
+
+.art-cell {
+  --c1: color-mix(in srgb, #EE9B00, transparent var(--p));
+  --c2: color-mix(in srgb, #0A9396, transparent var(--p));
+  width: min(calc((100vh - var(--nav-height)) / 4), calc(100vw / 4));
+  height: min(calc((100vh - var(--nav-height)) / 4), calc(100vw / 4));
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  animation: art-blink 10s linear infinite;
+}
+
+/* Staggered durations + delays for organic feel */
+.art-cell:nth-child(1)  { animation-duration: 10s; animation-delay:  0.0s; }
+.art-cell:nth-child(2)  { animation-duration: 14s; animation-delay:  2.0s; }
+.art-cell:nth-child(3)  { animation-duration:  9s; animation-delay:  4.0s; }
+.art-cell:nth-child(4)  { animation-duration: 12s; animation-delay:  1.0s; }
+.art-cell:nth-child(5)  { animation-duration: 11s; animation-delay:  3.0s; }
+
+.art-row .art-cell .left {
+  transform: scaleX(-1);
+  background:
+    conic-gradient(from 270deg at 50% 75%, transparent, #444, black),
+    conic-gradient(from 270deg at 50% 25%, black, #444, transparent),
+    conic-gradient(from 314.3deg at 50% 75%,
+      var(--c1), transparent 75%,
+      var(--c2) 75%,
+      color-mix(in srgb, #94D2BD, transparent var(--p))
+    ),
+    conic-gradient(var(--c1), var(--c1));
+  background-repeat: no-repeat;
+  background-position: 0, 0, 0, 0.2vmin 0;
+}
+
+.art-row .art-cell .right {
+  background:
+    conic-gradient(from 270deg at 50% 75%, transparent, #444, black),
+    conic-gradient(from 270deg at 0% 75%, transparent, rgba(0, 0, 0, 0.3)),
+    conic-gradient(from 225deg at 50% 25%,
+      color-mix(in srgb, #CA6702, transparent var(--p)),
+      color-mix(in srgb, #EE9B00, transparent var(--p)) 12.5%,
+      #0d0d0d 12.5%, black 50%, transparent
+    ),
+    var(--c2);
+}
+
+.art-cell::after {
+  content: attr(data-letter);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 800;
+  font-size: 80cqi;
+  color: rgba(148, 210, 189, 0.45);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  line-height: 1;
+  user-select: none;
+  z-index: 1;
 }
 
 /* ============================================================================
@@ -2097,7 +2194,8 @@ nav {
 }
 
 .about-bottom-static-line,
-.about-top-static-line {
+.about-top-static-line,
+.art-direction-bottom-static-line {
   position: fixed;
   top: 0;
   left: 0;
@@ -2110,7 +2208,8 @@ nav {
 }
 
 .about-bottom-static-line.active,
-.about-top-static-line.active {
+.about-top-static-line.active,
+.art-direction-bottom-static-line.active {
   opacity: 1;
 }
 

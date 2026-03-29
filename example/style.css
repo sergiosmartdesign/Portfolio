@@ -1,0 +1,133 @@
+@property --p {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: true;
+}
+.xyz {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100vw;
+  height: 33vw;
+}
+
+a.labs-follow-me {
+  position: absolute;
+  bottom: 1rem;
+  top: unset;
+  left: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+}
+
+@-webkit-keyframes blink {
+  from {
+    --p: 0%;
+  }
+  1%, 4%, 20% {
+    --p: 90%;
+  }
+  2%, 5%, 19%, 21%, to {
+    --p: 0%;
+  }
+}
+
+@keyframes blink {
+  from {
+    --p: 0%;
+  }
+  1%, 4%, 20% {
+    --p: 90%;
+  }
+  2%, 5%, 19%, 21%, to {
+    --p: 0%;
+  }
+}
+.x {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.x .left {
+  --c: #f672ca;
+  transform: scaleX(-1);
+  background: conic-gradient(from 315deg at 50% 75%, transparent, #444, black), conic-gradient(from 225deg at 50% 25%, black, #444, transparent), conic-gradient(color-mix(in srgb, #f672ca, transparent var(--p)), color-mix(in srgb, #f672ca, transparent var(--p))), black;
+  background-repeat: no-repeat;
+  background-position: 0, 0, 0.1vmin 0;
+  -webkit-animation: blink 10s linear infinite;
+          animation: blink 10s linear infinite;
+}
+.x .right {
+  background: conic-gradient(from 315deg at 50% 75%, transparent, #444, black), conic-gradient(from 225deg at 50% 25%, black, #444, transparent), #6eccee;
+}
+
+.y {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.y .left {
+  transform: scaleX(-1);
+  background: conic-gradient(from 0deg at 0% 75%, transparent, #444, black), conic-gradient(from 225deg at 50% 25%, black, #444, transparent), conic-gradient(#f672ca, #f672ca);
+  background-repeat: no-repeat;
+  background-position: 0, 0, 0.1vmin 0;
+}
+.y .right {
+  background: conic-gradient(from 0deg at 0% 75%, transparent, #444, black), conic-gradient(from 225deg at 50% 25%, black, #444, transparent), color-mix(in srgb, #6eccee, transparent var(--p));
+  -webkit-animation: blink 14s 2s linear infinite;
+          animation: blink 14s 2s linear infinite;
+}
+
+.z {
+  --c1: color-mix(in srgb, #f672ca, transparent var(--p));
+  --c2: color-mix(in srgb, #6eccee, transparent var(--p));
+  display: grid;
+  -webkit-animation: blink 9s 5s linear infinite;
+          animation: blink 9s 5s linear infinite;
+  grid-template-columns: 1fr 1fr;
+  transform: translateX(-1px);
+}
+.z .left {
+  transform: scaleX(-1) translateX(-1px);
+  background: conic-gradient(from 270deg at 50% 75%, transparent, #444, black), conic-gradient(from 270deg at 50% 25%, black, #444, transparent), conic-gradient(from 314.3deg at 50% 75%, var(--c1), transparent 75%, var(--c2) 75%, color-mix(in srgb, #94e3ff, transparent var(--p))), conic-gradient(var(--c1), var(--c1));
+  background-repeat: no-repeat;
+  background-position: 0, 0, 0, 0.2vmin 0;
+}
+.z .right {
+  background: conic-gradient(from 270deg at 50% 75%, transparent, #444, black), conic-gradient(from 270deg at 0% 75%, transparent, rgba(0, 0, 0, 0.3)), conic-gradient(from 225deg at 50% 25%, color-mix(in srgb, #dd72b9, transparent var(--p)), color-mix(in srgb, #ee7ec9, transparent var(--p)) 12.5%, #0d0d0d 12.5%, black 50%, transparent), var(--c2);
+  position: relative;
+}
+@supports (container-type: size) {
+  .z {
+    position: relative;
+    container-type: size;
+  }
+  .z:after {
+    content: "";
+    position: absolute;
+    transform: translate(50cqw, 21.5%) rotate(45deg);
+    width: 0.2vmin;
+    height: 70cqh;
+    background: black;
+    border-radius: 1vmin;
+  }
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  place-items: center;
+  background: black;
+  overflow: hidden;
+  background: conic-gradient(from 135deg at 50% 50%, transparent, black, transparent, #333, transparent, transparent, transparent, transparent), #222;
+  position: relative;
+  color: #f672ca;
+}
+body:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url(https://assets.codepen.io/907471/noise.svg);
+  mix-blend-mode: overlay;
+  filter: invert(1);
+  pointer-events: none;
+}
