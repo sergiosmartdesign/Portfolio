@@ -239,7 +239,6 @@ class NavigationManager {
    */
   init() {
     this.buildSectionMap();
-    this.setupIntersectionObserver();
     this.setupClickHandlers();
     this.setupScrollHandler();
   }
@@ -296,35 +295,59 @@ class NavigationManager {
   }
 
   /**
-   * Setup Intersection Observer for section detection
+   * Determine which section owns the viewport right now and set it active.
+   * Called on every scroll (debounced) and once at init.
+   *
+   * Strategy: the "active" section is the last one in DOM order whose top edge
+   * is at or above 35% of the viewport AND whose bottom is still on screen.
+   * This means the section has entered the upper third of the screen — the user
+   * is clearly inside it. "Last in DOM order" means the section furthest down
+   * the page wins when two sections overlap (e.g. sticky #about while
+   * art-direction is just entering from below).
+   *
+   * #photo is position:fixed so its DOM rect is always 0 — handled separately
+   * via the scroll spacer. #intro has its own clear-all logic.
    */
-  setupIntersectionObserver() {
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px 0px -60% 0px',
-      threshold: 0
-    };
+  detectActiveSection() {
+    const scrollY = window.scrollY;
+    const vh    = window.innerHeight;
 
-    const observerCallback = (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id;
-          if (sectionId !== 'intro') {
-            this.setActiveButton(sectionId);
-          }
-        }
-      });
-    };
+    // ── Intro zone: no nav button active ─────────────────────────────────────
+    const introEl = document.getElementById('intro');
+    if (introEl && scrollY < introEl.offsetHeight * 0.7) {
+      this.navButtons.forEach(btn => btn.classList.remove('active'));
+      this.updateHeaderBackground('intro');
+      return;
+    }
 
-    this.observer = new IntersectionObserver(observerCallback, observerOptions);
+    // ── Normal sections: find the lowest section whose top ≤ 35 % of viewport ─
+    const triggerY = vh * 0.35;
+    let activeId = null;
 
-    // Observe all sections except intro and photo (#photo is position:fixed,
-    // so IntersectionObserver always fires for it at page load — tracked via scroll instead)
     this.sections.forEach(section => {
-      if (section.id && section.id !== 'intro' && section.id !== 'photo') {
-        this.observer.observe(section);
+      if (!section.id || section.id === 'intro' || section.id === 'photo') return;
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= triggerY && rect.bottom > 0) {
+        activeId = section.id; // keep overwriting — last (lowest) match wins
       }
     });
+
+    if (activeId) {
+      this.setActiveButton(activeId);
+      return;
+    }
+
+    // ── Photo zone fallback: no normal section matched the trigger line ───────
+    // #photo is position:fixed; use the scroll spacer to measure progress.
+    const photoSpacer = document.querySelector('.photo-scroll-spacer');
+    if (photoSpacer) {
+      const progress = 1 - photoSpacer.getBoundingClientRect().top / vh;
+      if (progress > 0 && progress <= 1) {
+        this.setActiveButton('photo');
+        if (location.hash !== '#photo') history.pushState(null, '', '#photo');
+        return;
+      }
+    }
   }
 
   /**
@@ -397,44 +420,17 @@ class NavigationManager {
   }
 
   /**
-   * Setup scroll handler for intro section
+   * Drive nav-active state purely from scroll position.
+   * Replaces the old IntersectionObserver approach, which had dead zones due to
+   * transition-only firing and sticky #about confusing the intersection math.
    */
   setupScrollHandler() {
     window.addEventListener('scroll', () => {
       clearTimeout(this.scrollTimeout);
-      this.scrollTimeout = setTimeout(() => {
-        const scrollPosition = window.scrollY || window.pageYOffset;
-        const introSection = document.getElementById('intro');
-
-        if (introSection) {
-          const introHeight = introSection.offsetHeight;
-
-          // Clear active buttons and set intro header when in intro section
-          if (scrollPosition < introHeight * 0.7) {
-            this.navButtons.forEach(btn => btn.classList.remove('active'));
-            this.updateHeaderBackground('intro');
-            return;
-          }
-        }
-
-        // Photo section: #photo is position:fixed so IntersectionObserver can't track it.
-        // Use the spacer's viewport position to determine if we're in the photo reveal zone.
-        // Guard: only activate photo if art-direction is fully scrolled out of view.
-        const photoSpacer = document.querySelector('.photo-scroll-spacer');
-        const artDirEl = document.getElementById('art-direction');
-        const artDirGone = !artDirEl || artDirEl.getBoundingClientRect().bottom <= 0;
-        if (photoSpacer && artDirGone) {
-          const spacerRect = photoSpacer.getBoundingClientRect();
-          const progress = 1 - (spacerRect.top / window.innerHeight);
-          if (progress > 0 && progress <= 1) {
-            this.setActiveButton('photo');
-            if (location.hash !== '#photo') history.pushState(null, '', '#photo');
-          } else if (location.hash === '#photo') {
-            history.pushState(null, '', location.pathname);
-          }
-        }
-      }, TIMING.NAV_DEBOUNCE);
+      this.scrollTimeout = setTimeout(() => this.detectActiveSection(), TIMING.NAV_DEBOUNCE);
     });
+    // Seed the correct state on page load (e.g. deep-linked URL)
+    setTimeout(() => this.detectActiveSection(), 100);
   }
 }
 
