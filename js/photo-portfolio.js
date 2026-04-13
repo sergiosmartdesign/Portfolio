@@ -802,6 +802,23 @@
 
         if (!matchingItem) return;
 
+        // Clear the scratch canvas to fully expose the photo
+        const canvas = document.getElementById('polaroidCanvas');
+        if (canvas && canvas.width && canvas.height) {
+          const ctx = canvas.getContext('2d');
+          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Re-trigger the caption reveal so name + section are prominently visible
+        const nameEl    = document.getElementById('polaroidName');
+        const sectionEl = document.getElementById('polaroidSection');
+        [nameEl, sectionEl].forEach(el => {
+          if (!el) return;
+          el.classList.remove('reveal');
+          void el.offsetWidth;   // force reflow so the animation restarts
+          el.classList.add('reveal');
+        });
+
         const accordionItem = matchingItem.closest('.photo-accordion-item');
         const btn  = accordionItem?.querySelector('.photo-category-btn');
         const list = accordionItem?.querySelector('.photo-project-list');

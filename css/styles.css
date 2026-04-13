@@ -2494,46 +2494,41 @@ nav {
   z-index: -1;
 }
 
-/* First highlight (inside .photo-intro): background-size sweep on the element
-   itself so it works across multiple wrapped lines; no z-index dependency. */
+/* First highlight (inside .photo-intro): background-size transition on the element
+   itself — works across multiple wrapped lines, no z-index dependency, and reliably
+   restarts when the JS toggle pattern (remove → offsetWidth → add) is used. */
 .photo-intro .photo-ai-highlight {
   background-image: linear-gradient(#E9D8A6, #E9D8A6);
   background-repeat: no-repeat;
   background-position: left center;
   background-size: 0% 88%;
+  transition: background-size 0.8s ease-out;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
-/* Suppress the shared ::before — not needed for the inline intro highlight */
+/* Suppress the shared ::before */
 .photo-intro .photo-ai-highlight::before {
   display: none;
 }
 .photo-intro .photo-ai-highlight--animate {
-  animation: photo-marker-intro 0.8s ease-out forwards;
-}
-@keyframes photo-marker-intro {
-  from { background-size: 0% 88%; }
-  to   { background-size: 100% 88%; }
+  background-size: 100% 88%;
 }
 
-/* Second highlight (inside .photo-cta): full-width block sweep */
+/* Second highlight (inside .photo-cta): same transition approach, block-level */
 .photo-cta .photo-ai-highlight {
   display: block;
   background-image: linear-gradient(#E9D8A6, #E9D8A6);
   background-repeat: no-repeat;
   background-position: left center;
   background-size: 0% 88%;
+  transition: background-size 0.8s ease-out;
 }
 /* Suppress the shared ::before */
 .photo-cta .photo-ai-highlight::before {
   display: none;
 }
 .photo-cta .photo-ai-highlight--animate {
-  animation: photo-marker-cta 0.8s ease-out forwards;
-}
-@keyframes photo-marker-cta {
-  from { background-size: 0% 88%; }
-  to   { background-size: 100% 88%; }
+  background-size: 100% 88%;
 }
 
 /* Used by about/other section marker highlights */
