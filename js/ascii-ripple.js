@@ -60,10 +60,10 @@
     let lockedW   = null;               // width lock (released in stop)
 
     const cfg = Object.assign({
-      dur:            800,
+      dur:            450,   // ms — shorter so waves expire before they stack heavily
       chars:          DEFAULT_CHARS,
       preserveSpaces: true,
-      spread:         1,
+      maxRadius:      22,    // chars — max spread from cursor (~3–4 words each side)
     }, opts);
 
     // ── Cursor tracking ──────────────────────────────────────────────────────
@@ -94,11 +94,12 @@
       let resultChar = origChars[charIdx];
 
       for (const w of waves) {
-        const age     = t - w.startTime;
-        const prog    = Math.min(age / cfg.dur, 1);
-        const dist    = Math.abs(charIdx - w.startPos);
-        const maxDist = Math.max(w.startPos, origChars.length - w.startPos - 1);
-        const rad     = (prog * (maxDist + WAVE_BUF)) / cfg.spread;
+        const age  = t - w.startTime;
+        const prog = Math.min(age / cfg.dur, 1);
+        const dist = Math.abs(charIdx - w.startPos);
+        // Fixed-radius wave: expands from 0 → maxRadius over `dur` ms.
+        // Does NOT scale to paragraph length, so only surrounding words glitch.
+        const rad  = prog * cfg.maxRadius;
 
         if (dist <= rad) {
           shouldAnim = true;
@@ -269,7 +270,7 @@
     PARA_SELECTORS.forEach(function (sel) {
       var el = document.querySelector(sel);
       if (!el) return;
-      var inst = createASCIIShift(el, { dur: 800, spread: 1 });
+      var inst = createASCIIShift(el, { dur: 450, maxRadius: 22 });
       instances.set(el, inst);
     });
 
