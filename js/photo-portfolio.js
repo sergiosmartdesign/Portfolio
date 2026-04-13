@@ -39,6 +39,9 @@
       this.reverseActive = false;
       this.reverseTimers = [];
 
+      // Intro animation guard — hover is disabled while the sequential intro plays
+      this.introAnimating = false;
+
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
@@ -84,6 +87,7 @@
       this.preloadImages();
       this._setupCategoryButtons();
       this._setupHoverListeners();
+      this._setupPolaroidClick();
       this._setupTitleColorCycle();
 
       window.addEventListener('scroll', () => this._updateScroll(), { passive: true });
@@ -105,6 +109,8 @@
         this._cancelReverse();
         this.overlay.style.opacity       = '1';
         this.overlay.style.pointerEvents = 'auto';
+        // Tell the nav to mark photo as active immediately (no scroll-debounce lag)
+        document.dispatchEvent(new CustomEvent('photoPhase3Active'));
         this._triggerChain();
       } else {
         this._cancelChain();
@@ -116,6 +122,7 @@
     _triggerChain() {
       if (this.chainActive) return;
       this.chainActive = true;
+      this.introAnimating = true;
       this._initPolaroid();
 
       const categoryBtnArray = Array.from(this.categoryBtns);
@@ -244,6 +251,10 @@
       });
       cursor = tailStart + tailEls.length * TAIL_STEP;
 
+      // Lift the hover guard once the full intro sequence has settled
+      const tIntroEnd = setTimeout(() => { this.introAnimating = false; }, cursor + 150);
+      this.chainTimers.push(tIntroEnd);
+
       // 5. Secondary effects
 
       // Marker-draw on col-text highlights (fires 700 ms after chain start — col-text is
@@ -291,6 +302,7 @@
       this.chainTimers.forEach(t => clearTimeout(t));
       this.chainTimers = [];
       this.chainActive = false;
+      this.introAnimating = false;
 
       // Kill tweens and reset transforms on all chain elements
       this.staticEls.forEach(el => {
@@ -590,6 +602,7 @@
       let debounce        = null;
 
       item.addEventListener('mouseenter', () => {
+        if (this.introAnimating) return;  // hover disabled during intro animation
         if (debounce) clearTimeout(debounce);
 
         // Clear GSAP inline opacities so CSS has-active rule takes over
@@ -766,6 +779,96 @@
       if (sectionEl) sectionEl.textContent = '';
       const frame  = document.querySelector('.photo-polaroid-frame');
       if (frame) frame.style.background = '';
+    }
+
+    // ── Polaroid reveal photo: click to open matching item ──────────────────
+    _setupPolaroidClick() {
+      const polaroidReveal = document.querySelector('.photo-polaroid-reveal');
+      if (!polaroidReveal) return;
+      polaroidReveal.style.cursor = 'pointer';
+      polaroidReveal.addEventListener('click', () => {
+        if (this.introAnimating) return;
+        const photoEl = document.getElementById('polaroidPhoto');
+        if (!photoEl || !photoEl.src) return;
+
+        const normalize = (src) => {
+          try { return new URL(src, location.href).pathname; } catch { return src; }
+        };
+        const polaroidPath = normalize(photoEl.src);
+
+        const matchingItem = Array.from(
+          document.querySelectorAll('.photo-project-item[data-image]')
+        ).find(item => normalize(item.dataset.image) === polaroidPath);
+
+        if (!matchingItem) return;
+
+        const accordionItem = matchingItem.closest('.photo-accordion-item');
+        const btn  = accordionItem?.querySelector('.photo-category-btn');
+        const list = accordionItem?.querySelector('.photo-project-list');
+        const cat  = btn?.dataset.category;
+        if (!cat || !list || !btn) return;
+
+        const activate = () => this._activatePolaroidItem(matchingItem);
+
+        if (!this.openCategories.has(cat)) {
+          this._openCategory(cat, btn, list);
+          const n = list.querySelectorAll('.photo-project-item').length;
+          setTimeout(activate, n * 40 + 200);
+        } else {
+          activate();
+        }
+      });
+    }
+
+    _activatePolaroidItem(item) {
+      const list = item.closest('.photo-project-list');
+      if (!list) return;
+
+      const textEls       = item.querySelectorAll('.hover-text');
+      const originalTexts = this.originalTexts.get(item);
+
+      // Clear any previously active item in the same list
+      list.querySelectorAll('.photo-project-item').forEach(el => {
+        el.classList.remove('active');
+        el.style.opacity = '';
+      });
+      list.classList.add('has-active');
+      item.classList.add('active');
+
+      // ScrambleText on hover-text elements
+      if (originalTexts) {
+        textEls.forEach((el, i) => {
+          gsap.killTweensOf(el);
+          gsap.to(el, {
+            duration: 0.8,
+            scrambleText: {
+              text: originalTexts[i],
+              chars: 'qwerty1337h@ck3r',
+              revealDelay: 0.3,
+              speed: 0.4,
+            },
+          });
+        });
+      }
+
+      if (item.dataset.image) this.showBackgroundImage(item.dataset.image);
+
+      // Scroll to reveal the item
+      if (this.contentScroll) {
+        requestAnimationFrame(() => {
+          const csRect   = this.contentScroll.getBoundingClientRect();
+          const itemRect = item.getBoundingClientRect();
+          const needed   = this.contentScroll.scrollTop + (itemRect.bottom + 24 - csRect.bottom);
+          if (needed > this.contentScroll.scrollTop) {
+            gsap.to(this.contentScroll, {
+              scrollTop: needed,
+              duration: 0.5,
+              ease: 'power2.out',
+              overwrite: 'auto',
+            });
+          }
+        });
+      }
     }
 
     // ── Polaroids title: pick a new random palette colour on each hover ────────

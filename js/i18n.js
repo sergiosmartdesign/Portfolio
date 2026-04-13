@@ -181,7 +181,7 @@
       'photo.ig.label':       '[ · e n \u00a0 i n s t a g r a m · ]',
       'photo.ig.desc':        '¿Quieres ver más? Publico regularmente en Instagram — más variedad, más lugares, menos estructura. Todo lo que no cabe en un portfolio pero vale la pena compartir.',
       'photo.ig.cta':         '[ · s e g u i r · ]',
-      'photo.intro':          'La fotografía ha sido parte de mi trabajo profesional y personal durante años — desde proyectos comerciales y editoriales hasta trabajo callejero y de viaje en cuatro continentes. Es una de mis pasiones, una disciplina donde la composición se traduce en imágenes visualmente atractivas. <em>Cada foto en este archivo lleva <span class="photo-ai-highlight"><strong><em>metadatos generados por IA</em></strong></span>, haciendo que el portfolio sea completamente buscable por personas, motores de búsqueda y sistemas de IA.</em>',
+      'photo.intro':          'La fotografía ha sido parte de mi trabajo profesional y personal durante años — desde proyectos comerciales y editoriales hasta trabajo callejero y de viaje en cuatro continentes. Es una de mis pasiones, una disciplina donde la composición se traduce en imágenes visualmente atractivas. <em><span class="photo-ai-highlight">Cada foto en este archivo lleva <strong><em>metadatos generados por IA</em></strong>,</span> haciendo que el portfolio sea completamente buscable por personas, motores de búsqueda y sistemas de IA.</em>',
 
       // ── Photo titles — Landscapes ──────────────────────────────────────────
       'photo.t.islaEnUyuni':      'Isla en Uyuni',

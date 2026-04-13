@@ -1361,6 +1361,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const glitchSystem = new GlitchSystem();
   const navigationManager = new NavigationManager();
 
+  // Immediately mark photo nav active when phase 3 triggers (scroll debounce
+  // may not fire fast enough since the section is position:fixed with a spacer).
+  document.addEventListener('photoPhase3Active', () => {
+    navigationManager.setActiveButton('photo');
+  });
+
   // Set initial header background for intro section
   navigationManager.updateHeaderBackground('intro');
 

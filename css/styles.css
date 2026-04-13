@@ -2477,8 +2477,8 @@ nav {
   flex-shrink: 0;
 }
 
-/* Marker-draw highlight: amber ::before grows left → right, text stays straight.
-   skewX on the pseudo-element only — opposite directions per highlight. */
+/* Marker-draw highlight: amber background sweeps left → right via background-size animation.
+   ::before defined here as a shared fallback but suppressed for .photo-intro and .photo-cta. */
 .photo-ai-highlight {
   position: relative;
   color: #001219;
@@ -2494,33 +2494,52 @@ nav {
   z-index: -1;
 }
 
-/* First highlight (inside .photo-intro): leans left */
-.photo-intro .photo-ai-highlight::before {
-  transform: skewX(-5deg) scaleX(0);
+/* First highlight (inside .photo-intro): background-size sweep on the element
+   itself so it works across multiple wrapped lines; no z-index dependency. */
+.photo-intro .photo-ai-highlight {
+  background-image: linear-gradient(#E9D8A6, #E9D8A6);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 88%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
-.photo-intro .photo-ai-highlight--animate::before {
-  animation: photo-marker-left 0.8s ease-out forwards;
+/* Suppress the shared ::before — not needed for the inline intro highlight */
+.photo-intro .photo-ai-highlight::before {
+  display: none;
+}
+.photo-intro .photo-ai-highlight--animate {
+  animation: photo-marker-intro 0.8s ease-out forwards;
+}
+@keyframes photo-marker-intro {
+  from { background-size: 0% 88%; }
+  to   { background-size: 100% 88%; }
 }
 
-/* Second highlight (inside .photo-cta): leans right, fills full paragraph width */
+/* Second highlight (inside .photo-cta): full-width block sweep */
 .photo-cta .photo-ai-highlight {
   display: block;
+  background-image: linear-gradient(#E9D8A6, #E9D8A6);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 88%;
 }
+/* Suppress the shared ::before */
 .photo-cta .photo-ai-highlight::before {
-  transform: skewX(5deg) scaleX(0);
+  display: none;
 }
-.photo-cta .photo-ai-highlight--animate::before {
-  animation: photo-marker-right 0.8s ease-out forwards;
+.photo-cta .photo-ai-highlight--animate {
+  animation: photo-marker-cta 0.8s ease-out forwards;
+}
+@keyframes photo-marker-cta {
+  from { background-size: 0% 88%; }
+  to   { background-size: 100% 88%; }
 }
 
+/* Used by about/other section marker highlights */
 @keyframes photo-marker-left {
   from { transform: skewX(-5deg) scaleX(0); }
   to   { transform: skewX(-5deg) scaleX(1); }
-}
-
-@keyframes photo-marker-right {
-  from { transform: skewX(5deg) scaleX(0); }
-  to   { transform: skewX(5deg) scaleX(1); }
 }
 
 .photo-cta {
