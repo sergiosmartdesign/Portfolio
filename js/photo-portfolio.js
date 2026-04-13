@@ -14,10 +14,11 @@
 
   class PhotoPortfolioManager {
     constructor() {
-      this.overlay     = document.querySelector('.photo-portfolio-overlay');
-      this.bgImage     = document.getElementById('photoBgImage');
-      this.photoSpacer = document.querySelector('.photo-scroll-spacer');
-      this.photoSection = document.getElementById('photo');
+      this.overlay       = document.querySelector('.photo-portfolio-overlay');
+      this.contentScroll = document.querySelector('.photo-content-scroll');
+      this.bgImage       = document.getElementById('photoBgImage');
+      this.photoSpacer   = document.querySelector('.photo-scroll-spacer');
+      this.photoSection  = document.getElementById('photo');
 
       if (!this.overlay || !this.bgImage || !this.photoSpacer) return;
 
@@ -111,20 +112,142 @@
       }
     }
 
-    // ── Forward chain: reveal intro → cta → buttons → title ────────────────
+    // ── Forward chain: intro → sequential category reveal → bounce-close → tail ──
     _triggerChain() {
       if (this.chainActive) return;
       this.chainActive = true;
-
       this._initPolaroid();
 
-      this.staticEls.forEach((el, i) => {
-        const t = setTimeout(() => this._revealItem(el, 0), i * 300);
+      const categoryBtnArray = Array.from(this.categoryBtns);
+      const btnSet = new Set(categoryBtnArray);
+
+      // Split staticEls: introEls before first btn, tailEls after last btn
+      const firstBtnIdx = this.staticEls.findIndex(el => btnSet.has(el));
+      const lastBtnIdx  = this.staticEls.reduce((acc, el, i) => (btnSet.has(el) ? i : acc), -1);
+      const introEls    = firstBtnIdx >= 0 ? this.staticEls.slice(0, firstBtnIdx) : [];
+      const tailEls     = lastBtnIdx  >= 0 ? this.staticEls.slice(lastBtnIdx + 1) : [];
+
+      const INTRO_STEP = 300;  // ms between intro elements (label → col-text → ig → camera)
+      const BTN_GAP    = 150;  // ms from button reveal to first item
+      const ITEM_STEP  =  50;  // ms between items within a category
+      const CAT_GAP    = 200;  // ms pause between categories
+      const REV_STEP   =  25;  // ms between items on close (faster)
+      const REV_GAP    =  80;  // ms between category closes
+      const TAIL_STEP  = 300;  // ms between tail elements
+
+      // 1. Reveal intro elements (section label, left col, instagram, camera col)
+      introEls.forEach((el, i) => {
+        const t = setTimeout(() => this._revealItem(el, 0), i * INTRO_STEP);
         this.chainTimers.push(t);
       });
 
-      // Trigger marker-draw on each highlight after col-text has cascaded in,
-      // staggered 300 ms apart so they draw sequentially
+      let cursor = introEls.length * INTRO_STEP + 250;
+
+      // 2. Sequential category reveal: button → items one by one
+      categoryBtnArray.forEach(btn => {
+        const accordionItem = btn.closest('.photo-accordion-item');
+        const list  = accordionItem?.querySelector('.photo-project-list');
+        const items = list ? Array.from(list.querySelectorAll('.photo-project-item')) : [];
+        const cat   = btn.dataset.category;
+
+        const btnDelay = cursor;
+        const t0 = setTimeout(() => {
+          this.openCategories.add(cat);
+          btn.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+          if (list) list.style.display = 'flex';
+          this._revealItem(btn, 0);
+
+          // After layout update, scroll the content container to keep the last item visible
+          if (items.length) {
+            requestAnimationFrame(() => {
+              const cs       = this.contentScroll;
+              const lastItem = items[items.length - 1];
+              const csRect   = cs.getBoundingClientRect();
+              const itemRect = lastItem.getBoundingClientRect();
+              const needed   = cs.scrollTop + (itemRect.bottom + 24 - csRect.bottom);
+              if (needed > cs.scrollTop) {
+                gsap.to(cs, {
+                  scrollTop: needed,
+                  duration:  (BTN_GAP + items.length * ITEM_STEP) / 1000,
+                  ease:      'power1.out',
+                  overwrite: 'auto',
+                });
+              }
+            });
+          }
+        }, btnDelay);
+        this.chainTimers.push(t0);
+
+        cursor += BTN_GAP;
+
+        items.forEach((item, idx) => {
+          const t = setTimeout(() => this._revealItem(item, 0), cursor + idx * ITEM_STEP);
+          this.chainTimers.push(t);
+        });
+
+        cursor += items.length * ITEM_STEP + CAT_GAP;
+      });
+
+      // Pre-compute total revert duration so we can animate the scroll-back in one pass
+      const totalRevertMs = categoryBtnArray.reduce((sum, btn) => {
+        const list = btn.closest('.photo-accordion-item')?.querySelector('.photo-project-list');
+        const n    = list ? list.querySelectorAll('.photo-project-item').length : 0;
+        return sum + n * REV_STEP + 60 + REV_GAP;
+      }, 0);
+
+      // Schedule scroll-back to 0 starting the moment the revert begins
+      const revertCursorStart = cursor;
+      const tRevertScroll = setTimeout(() => {
+        gsap.to(this.contentScroll, {
+          scrollTop: 0,
+          duration:  totalRevertMs / 1000,
+          ease:      'power2.inOut',
+          overwrite: 'auto',
+        });
+      }, revertCursorStart);
+      this.chainTimers.push(tRevertScroll);
+
+      // 3. Bounce-close: fold each category back in reverse order (faster)
+      [...categoryBtnArray].reverse().forEach(btn => {
+        const accordionItem = btn.closest('.photo-accordion-item');
+        const list  = accordionItem?.querySelector('.photo-project-list');
+        const items = list
+          ? Array.from(list.querySelectorAll('.photo-project-item')).reverse()
+          : [];
+        const cat = btn.dataset.category;
+
+        items.forEach((item, idx) => {
+          const t = setTimeout(() => this._bounceHideItem(item), cursor + idx * REV_STEP);
+          this.chainTimers.push(t);
+        });
+
+        const closeAt = cursor + items.length * REV_STEP + 60;
+        const tc = setTimeout(() => {
+          this.openCategories.delete(cat);
+          btn.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+          if (list) list.style.display = 'none';
+          gsap.killTweensOf(btn);
+          gsap.fromTo(btn, { y: -5 }, { y: 0, duration: 0.4, ease: 'elastic.out(1.2, 0.5)' });
+        }, closeAt);
+        this.chainTimers.push(tc);
+
+        cursor = closeAt + REV_GAP;
+      });
+
+      // 4. Tail elements: pgallery title → desc → hint
+      const tailStart = cursor;
+      tailEls.forEach((el, i) => {
+        const t = setTimeout(() => this._revealItem(el, 0), tailStart + i * TAIL_STEP);
+        this.chainTimers.push(t);
+      });
+      cursor = tailStart + tailEls.length * TAIL_STEP;
+
+      // 5. Secondary effects
+
+      // Marker-draw on col-text highlights (fires 700 ms after chain start — col-text is
+      // already visible by then since it appears at 1×INTRO_STEP = 300 ms)
       document.querySelectorAll('.photo-ai-highlight').forEach((hl, i) => {
         const t = setTimeout(() => {
           hl.classList.remove('photo-ai-highlight--animate');
@@ -134,10 +257,10 @@
         this.chainTimers.push(t);
       });
 
-      // Draw marker on scroll/click hint after it cascades in
+      // pgallery hint marker fires shortly after the hint element is visible (last tailEl)
       const pgalleryHintEl = document.querySelector('.pgallery-hint');
       if (pgalleryHintEl) {
-        const hintDelay = (this.staticEls.length - 1) * 300 + 150;
+        const hintDelay = tailStart + (tailEls.length - 1) * TAIL_STEP + 150;
         const t = setTimeout(() => {
           pgalleryHintEl.classList.remove('pgallery-hint--animate');
           void pgalleryHintEl.offsetWidth;
@@ -146,21 +269,20 @@
         this.chainTimers.push(t);
       }
 
-      // Permanently reveal the polaroid hint marker (like AI-generated metadata)
+      // Polaroid hint + camera reveal after revert finishes
       const hint = document.querySelector('.photo-polaroid-hint');
       if (hint) {
         const t = setTimeout(() => {
           hint.classList.remove('reveal');
           void hint.offsetWidth;
           hint.classList.add('reveal');
-        }, 1300);
+        }, tailStart + 200);
         this.chainTimers.push(t);
       }
 
-      // Slide camera up after cascade finishes
       const camera = document.querySelector('.photo-camera-deco');
       if (camera) {
-        const t = setTimeout(() => camera.classList.add('visible'), 1600);
+        const t = setTimeout(() => camera.classList.add('visible'), tailStart + 400);
         this.chainTimers.push(t);
       }
     }
@@ -169,22 +291,56 @@
       this.chainTimers.forEach(t => clearTimeout(t));
       this.chainTimers = [];
       this.chainActive = false;
-      // Kill any in-flight reveal tweens so elements are in a clean state
+
+      // Kill tweens and reset transforms on all chain elements
       this.staticEls.forEach(el => {
         gsap.killTweensOf(el);
+        gsap.set(el, { y: 0 });
         el.classList.remove('photo-glitch-load');
         el.classList.remove('glitch-ready');
       });
+
+      // Close any categories opened during the sequential intro
+      this.openCategories.clear();
+      this.categoryBtns.forEach(btn => {
+        gsap.killTweensOf(btn);
+        gsap.set(btn, { y: 0 });
+        btn.classList.remove('active');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+      this.categoryLists.forEach(list => {
+        list.style.display = 'none';
+        list.querySelectorAll('.photo-project-item').forEach(item => {
+          gsap.killTweensOf(item);
+          gsap.set(item, { opacity: 0, y: 0 });
+        });
+      });
+
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
       document.querySelector('.photo-camera-deco')?.classList.remove('visible');
+      // Stop any in-flight scroll animation and reset position
+      if (this.contentScroll) {
+        gsap.killTweensOf(this.contentScroll);
+        this.contentScroll.scrollTop = 0;
+      }
     }
 
     // ── Reverse chain: hide title → buttons → cta → intro ───────────────────
     _triggerReverseChain() {
       if (this.reverseActive) return;
       this.reverseActive = true;
+
+      // Scroll content back to top as elements hide
+      if (this.contentScroll) {
+        gsap.to(this.contentScroll, {
+          scrollTop: 0,
+          duration:  0.6,
+          ease:      'power2.out',
+          overwrite: 'auto',
+        });
+      }
 
       const reversed  = [...this.staticEls].reverse();
       const lastDelay = (reversed.length - 1) * 300;
@@ -209,8 +365,9 @@
       this.reverseTimers.forEach(t => clearTimeout(t));
       this.reverseTimers = [];
       this.reverseActive = false;
-      // Kill any in-flight hide tweens so elements are in a clean state
+      // Kill any in-flight hide tweens and scroll animation
       this.staticEls.forEach(el => gsap.killTweensOf(el));
+      if (this.contentScroll) gsap.killTweensOf(this.contentScroll);
     }
 
     // ── Called after reverse chain completes ────────────────────────────────
@@ -230,7 +387,7 @@
         list.style.display = 'none';
         list.querySelectorAll('.photo-project-item').forEach(item => {
           gsap.killTweensOf(item);
-          gsap.set(item, { opacity: 0 });
+          gsap.set(item, { opacity: 0, y: 0 });
         });
       });
       this.bgImage.style.opacity = '0';
@@ -238,6 +395,10 @@
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
       document.querySelector('.photo-camera-deco')?.classList.remove('visible');
+      if (this.contentScroll) {
+        gsap.killTweensOf(this.contentScroll);
+        this.contentScroll.scrollTop = 0;
+      }
       this._resetPolaroid();
     }
 
@@ -258,17 +419,21 @@
         list.style.display = 'none';
         list.querySelectorAll('.photo-project-item').forEach(item => {
           gsap.killTweensOf(item);
-          gsap.set(item, { opacity: 0 });
+          gsap.set(item, { opacity: 0, y: 0 });
           item.classList.remove('photo-glitch-load');
         });
       });
       this.staticEls.forEach(el => {
         gsap.killTweensOf(el);
-        gsap.set(el, { opacity: 0 });
+        gsap.set(el, { opacity: 0, y: 0 });
         el.classList.remove('photo-glitch-load');
         el.classList.remove('glitch-ready');
       });
       this.bgImage.style.opacity = '0';
+      if (this.contentScroll) {
+        gsap.killTweensOf(this.contentScroll);
+        this.contentScroll.scrollTop = 0;
+      }
       this._resetPolaroid();
     }
 
@@ -328,7 +493,7 @@
       if (list) {
         list.querySelectorAll('.photo-project-item').forEach(item => {
           gsap.killTweensOf(item);
-          gsap.set(item, { opacity: 0 });
+          gsap.set(item, { opacity: 0, y: 0 });
         });
         list.style.display = 'none';
       }
@@ -379,6 +544,20 @@
           { opacity: 0.15, duration: 0.03, ease: 'none' },
           { opacity: 0,    duration: 0.04, ease: 'none' },
         ]
+      });
+    }
+
+    // Used during the intro revert: faster close with a downward spring
+    _bounceHideItem(item) {
+      item.classList.remove('photo-glitch-load');
+      item.classList.remove('glitch-ready');
+      gsap.killTweensOf(item);
+      gsap.to(item, {
+        y:        10,
+        opacity:  0,
+        duration: 0.18,
+        ease:     'back.in(1.5)',
+        onComplete: () => gsap.set(item, { y: 0 }),
       });
     }
 

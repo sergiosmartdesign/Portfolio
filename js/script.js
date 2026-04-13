@@ -338,11 +338,13 @@ class NavigationManager {
     }
 
     // ── Photo zone fallback: no normal section matched the trigger line ───────
-    // #photo is position:fixed; use the scroll spacer to measure progress.
+    // #photo is position:fixed; spacer measures its depth. Active for the full
+    // spacer range (rawProgress 0 → end) — sections after the spacer are caught
+    // by the normal loop above before this fallback is reached.
     const photoSpacer = document.querySelector('.photo-scroll-spacer');
     if (photoSpacer) {
       const progress = 1 - photoSpacer.getBoundingClientRect().top / vh;
-      if (progress > 0 && progress <= 1) {
+      if (progress > 0) {
         this.setActiveButton('photo');
         if (location.hash !== '#photo') history.pushState(null, '', '#photo');
         return;
