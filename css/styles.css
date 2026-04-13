@@ -3059,10 +3059,12 @@ nav {
   display: none;
 }
 
-/* Accordion — z:2 within overlay stacking context, so it sits above bg-image (z:1) */
+/* Accordion — no z-index so it does NOT form a stacking context.
+   Children participate in the overlay's context (z:2) directly, which
+   means bg-image (z:1) can appear above all accordion rows except the
+   active one (see .photo-project-item.active below). */
 .photo-accordion {
   position: relative;
-  z-index: 2;
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -3147,6 +3149,10 @@ nav {
 
 .photo-project-list.has-active .photo-project-item.active {
   opacity: 1;
+  /* Rise above bg-image (z:1) so the yellow-highlight row stays visible.
+     Works because .photo-accordion has no z-index (no stacking context),
+     so this z-index is evaluated directly in the overlay's context. */
+  z-index: 2;
 }
 
 /* Column text */
