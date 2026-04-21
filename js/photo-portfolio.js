@@ -66,14 +66,15 @@
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       }, { passive: true });
 
-      // Chain order: section label → left col → instagram col → camera col → 4 buttons → polaroids title → polaroids desc → scroll hint
+      // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids title → polaroids desc → scroll hint
       const pgalleryTitle = document.querySelector('.pgallery-title');
       const pgalleryDesc  = document.querySelector('.pgallery-desc');
       const pgalleryHint  = document.querySelector('.pgallery-hint');
       this.staticEls = [
         this.overlay.querySelector('.photo-section-label'),
-        this.overlay.querySelector('.photo-col-text'),
+        this.overlay.querySelector('.photo-intro'),
         this.overlay.querySelector('.photo-col-instagram'),
+        this.overlay.querySelector('.photo-cta'),
         this.overlay.querySelector('.photo-col-camera'),
         ...this.categoryBtns,
         pgalleryTitle,

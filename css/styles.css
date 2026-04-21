@@ -2454,16 +2454,18 @@ nav {
   position: relative;
   z-index: 0;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: 2.4fr 1fr;
   gap: clamp(1.5rem, 3vw, 3rem);
-  align-items: start;
+  align-items: stretch;
   flex-shrink: 0;
 }
 
-/* Left column: text block */
-.photo-col-text {
+/* Left column: intro text → instagram → cta, stacked and filling the same height as the polaroid column */
+.photo-col-left {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(1.2rem, 2.5vw, 2rem);
 }
 
 /* Intro paragraph + CTA */
@@ -2543,7 +2545,7 @@ nav {
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
   color: #9B2226;
   line-height: 1.5;
-  margin: 110px 0 0;
+  margin: 0;
   flex-shrink: 0;
 }
 
@@ -2552,7 +2554,7 @@ nav {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 6px;
 }
 
 /* Static dim base line */
@@ -3225,11 +3227,12 @@ nav {
 }
 
 @media (max-width: 900px) {
+  /* Already 2-column at desktop; stack to single column at tablet */
   .photo-top-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
   .photo-col-camera {
-    grid-column: 1 / -1;
+    grid-column: auto;
     justify-content: flex-start;
   }
   .photo-camera-svg {
