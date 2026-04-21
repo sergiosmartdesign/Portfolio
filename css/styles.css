@@ -1458,7 +1458,8 @@ nav {
 }
 
 /* Enable glitch when about section is visible */
-#about .paul-rands-quote h3[data-splitting].element-visible [data-char]:after {
+#about .paul-rands-quote h3[data-splitting].element-visible [data-char]:after,
+#about .paul-rands-quote h3[data-splitting].glitch-active [data-char]:after {
   animation-name: glitch-switch;
   animation-duration: var(--transition-fast);
   animation-delay: var(--transition-slow);
@@ -1483,6 +1484,22 @@ nav {
   will-change: transform;
 }
 
+/* Gate li glitch — override .glitch-text default, only fire on .glitch-active */
+.paul-rands-quote li.glitch-text[data-splitting] [data-char]:after {
+  color: #ee9b00;
+  animation-name: none;
+  opacity: 0;
+}
+.paul-rands-quote li.glitch-text[data-splitting].glitch-active [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+  opacity: 1;
+}
+
 .paul-rands-quote .ending {
   margin: 0;
   font-weight: 600;
@@ -1491,9 +1508,30 @@ nav {
   transition: opacity 0.8s ease;
 }
 
+/* Prevent .glitch-text's white-space:pre from breaking line wrapping */
+.paul-rands-quote .ending.glitch-text {
+  white-space: normal;
+}
+
 .paul-rands-quote .ending.visible {
   opacity: 1;
   color: #001219;
+}
+
+/* Gate ending glitch — override .glitch-text default, only fire on .glitch-active */
+.paul-rands-quote .ending.glitch-text[data-splitting] [data-char]:after {
+  color: #001219;
+  animation-name: none;
+  opacity: 0;
+}
+.paul-rands-quote .ending.glitch-text[data-splitting].glitch-active [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+  opacity: 1;
 }
 
 
@@ -1550,6 +1588,23 @@ nav {
 
 #about #aboutp4.element-exit {
   animation: slideOutToRight 0.5s ease-in 0s forwards;
+}
+
+/* About section text highlights — soft teal sweep, triggered when parent slides in */
+.about-highlight {
+  background-image: linear-gradient(#94D2BD, #94D2BD);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 88%;
+  transition: background-size 0.8s ease-out 0.7s;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  color: #001219;
+  padding: 0 3px;
+}
+
+#about .element-visible .about-highlight {
+  background-size: 100% 88%;
 }
 
 /* First letter of first paragraph - Large with same glitch effect as h2 titles */

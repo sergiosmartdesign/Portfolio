@@ -24,22 +24,24 @@
 (function () {
   'use strict';
 
-  const IDLE_DELAY        = 3000;  // ms idle before showing scroll hint (normal loop)
-  const AUTO_HIDE         = 3000;  // ms hint stays visible
-  const INTRO_DELAY       = 1000;  // ms to wait after section enters before animation starts
-  const POST_INTRO_WAIT   = 3000;  // ms to wait after ending appears before showing hint
-  const STEP_ANIM         = 900;   // ms for each line's slide-in transition
-  const STEP_HOLD         = 1600;  // ms to hold each line so it can be read
-  const LOAD_GRACE_MS     = 1500;  // ignore browser scroll-restoration scroll events after load
-  const QUOTE_REPLAY_DELAY = 1000; // ms of inactivity before replaying the quote animation
+  const IDLE_DELAY          = 3000;  // ms idle before showing scroll hint (normal loop)
+  const AUTO_HIDE           = 3000;  // ms hint stays visible
+  const INTRO_DELAY         = 2000;  // ms after section enters before yellow lines start (lets "Design" glitch resolve first)
+  const POST_INTRO_WAIT     = 3000;  // ms to wait after ending appears before showing hint
+  const STEP_ANIM           = 900;   // ms for each line's slide-in transition
+  const STEP_HOLD           = 1600;  // ms to hold each line so it can be read
+  const LOAD_GRACE_MS       = 1500;  // ignore browser scroll-restoration scroll events after load
+  const QUOTE_REPLAY_DELAY  = 1000;  // ms of inactivity before replaying (activity-triggered)
+  const POST_COMPLETE_DELAY = 5000;  // ms freeze after full quote shown before auto-replay
 
   const PAGE_LOAD_TIME  = Date.now();
 
-  let hint             = null;
-  let idleTimer        = null;
-  let autoHideTimer    = null;
-  let quoteReplayTimer = null;
-  let isVisible        = false;
+  let hint              = null;
+  let idleTimer         = null;
+  let autoHideTimer     = null;
+  let quoteReplayTimer  = null;
+  let postCompleteTimer = null;
+  let isVisible         = false;
   let aboutActive      = false;
   let primed           = false;
   let introPlayed      = false;
@@ -49,7 +51,14 @@
   // Quote elements — queried on DOMContentLoaded
   let quoteItems = [];
   let ending     = null;
+  let quoteH3    = null;
   let scrollText = null;
+
+  function triggerGlitch(el) {
+    el.classList.remove('glitch-active');
+    void el.offsetWidth;
+    el.classList.add('glitch-active');
+  }
 
   // Typewriter frames for [ · s c r o l l · ]
   const SCROLL_FRAMES = [
@@ -120,6 +129,7 @@
   // After QUOTE_REPLAY_DELAY ms of inactivity, replay the quote animation
   function scheduleQuoteReplay() {
     clearTimeout(quoteReplayTimer);
+    clearTimeout(postCompleteTimer);
     if (aboutActive) {
       quoteReplayTimer = setTimeout(replayQuote, QUOTE_REPLAY_DELAY);
     }
@@ -128,8 +138,13 @@
   // Reset and re-run the quote animation regardless of introPlayed state
   function replayQuote() {
     if (!aboutActive || introRunning) return;
+    clearTimeout(postCompleteTimer);
     introPlayed = false;
-    if (ending) ending.classList.remove('visible');
+    quoteItems.forEach(li => li.classList.remove('glitch-active'));
+    if (ending) {
+      ending.classList.remove('visible');
+      ending.classList.remove('glitch-active');
+    }
     runIntro();
   }
 
@@ -199,6 +214,7 @@
     introRunning = false;
     introPlayed  = true;
     window._quoteIntroActive = false;
+    clearTimeout(postCompleteTimer);
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
     if (aboutActive) primed = true;
     scheduleShow();
@@ -217,20 +233,27 @@
       const toOffset   = stepIndex;
 
       animateStep(fromOffset, toOffset, () => {
-        // Hold so the user can read this line, then move to next
+        triggerGlitch(quoteItems[stepIndex]);
         setTimeout(() => runStep(stepIndex + 1), STEP_HOLD);
       });
 
     } else {
       // All lines shown — reveal the ending paragraph
-      if (ending) ending.classList.add('visible');
+      if (ending) {
+        ending.classList.add('visible');
+        triggerGlitch(ending);
+      }
       introRunning = false;
       introPlayed  = true;
       window._quoteIntroActive = false;
 
-      scheduleQuoteReplay(); // 1s after completion → replay
+      // 5s freeze — full quote readable; replay if no user action
+      clearTimeout(postCompleteTimer);
+      postCompleteTimer = setTimeout(() => {
+        if (aboutActive) replayQuote();
+      }, POST_COMPLETE_DELAY);
 
-      // Wait then show the scroll hint
+      // Show scroll hint after 3s
       setTimeout(() => {
         if (aboutActive) {
           primed = true;
@@ -245,8 +268,8 @@
     introRunning = true;
     window._quoteIntroActive = true;
 
-    // Ensure ending is hidden before the animation starts
     if (ending) ending.classList.remove('visible');
+    if (quoteH3) triggerGlitch(quoteH3);
 
     // Start with all items hidden below (offset -1)
     applyOffset(-1);
@@ -266,6 +289,7 @@
 
     quoteItems = Array.from(document.querySelectorAll('.paul-rands-quote li'));
     ending     = document.querySelector('.paul-rands-quote .ending');
+    quoteH3    = document.querySelector('.paul-rands-quote h3');
     scrollText = document.querySelector('.sc-text');
 
     ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'].forEach(evt => {
@@ -285,8 +309,8 @@
         if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
         clearTimeout(idleTimer);
         clearTimeout(quoteReplayTimer);
-        if (ending) ending.classList.remove('visible');
-        quoteItems.forEach(li => { li.style.transform = ''; });
+        if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+        quoteItems.forEach(li => { li.style.transform = ''; li.classList.remove('glitch-active'); });
         // If section is already active (no IntersectionObserver re-fire coming), start now
         if (aboutActive) setTimeout(runIntro, 50);
       });
@@ -300,8 +324,8 @@
         window._quoteIntroActive = false;
         if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
         clearTimeout(quoteReplayTimer);
-        if (ending) ending.classList.remove('visible');
-        quoteItems.forEach(li => { li.style.transform = ''; });
+        if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+        quoteItems.forEach(li => { li.style.transform = ''; li.classList.remove('glitch-active'); });
         if (aboutActive) runIntro();
       }
     });
@@ -318,8 +342,8 @@
           primed       = false;
           introPlayed  = false;
           // Reset quote to hidden state so intro plays fresh on next visit
-          if (ending) ending.classList.remove('visible');
-          quoteItems.forEach(li => { li.style.transform = ''; });
+          if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+          quoteItems.forEach(li => { li.style.transform = ''; li.classList.remove('glitch-active'); });
         } else if (!introPlayed) {
           runIntro();
         }

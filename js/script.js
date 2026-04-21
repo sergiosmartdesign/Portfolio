@@ -1429,6 +1429,16 @@ window.addEventListener('beforeunload', () => {
   var itemRange = 0.75;
   var numItems = quoteItems.length; // 3
 
+  var lastVisibleIndex = -1;
+  var endingShown = false;
+  var prevOffset = -1;
+
+  function triggerGlitch(el) {
+    el.classList.remove('glitch-active');
+    void el.offsetWidth;
+    el.classList.add('glitch-active');
+  }
+
   function onScroll() {
     // Yield to scroll-hint.js while the auto-animation is playing
     if (window._quoteIntroActive) return;
@@ -1445,18 +1455,47 @@ window.addEventListener('beforeunload', () => {
     var offset = (clampedProgress / itemRange) * (numItems + 1) - 1;
     offset = Math.min(offset, numItems - 1); // cap so last item never scrolls out
 
+    var scrollingDown = offset >= prevOffset;
+    prevOffset = offset;
+
     // translateY in em: at offset -1 items are below the window, at 0 item-0 is centered, etc.
     var translateY = -offset * 1.2;
     quoteItems.forEach(function(li) {
       li.style.transform = 'translateY(' + translateY + 'em)';
     });
 
+    // Scrolling back: lower lastVisibleIndex so items re-glitch on next forward pass
+    if (!scrollingDown) {
+      var backIndex = Math.floor(offset);
+      if (lastVisibleIndex > backIndex) lastVisibleIndex = backIndex;
+    }
+
+    // Fully scrolled back to start: full reset
+    if (offset < -0.5) lastVisibleIndex = -1;
+
+    // Fire glitch only when scrolling forward into a new item
+    if (scrollingDown) {
+      var currentIndex = Math.round(offset);
+      if (currentIndex >= 0 && currentIndex < numItems && currentIndex !== lastVisibleIndex) {
+        lastVisibleIndex = currentIndex;
+        triggerGlitch(quoteItems[currentIndex]);
+      }
+    }
+
     // Ending fades in during the last 25%
     if (ending) {
       if (pinProgress >= itemRange) {
-        ending.classList.add('visible');
+        if (!endingShown) {
+          endingShown = true;
+          ending.classList.add('visible');
+          triggerGlitch(ending);
+        }
       } else {
-        ending.classList.remove('visible');
+        if (endingShown) {
+          endingShown = false;
+          ending.classList.remove('visible');
+          ending.classList.remove('glitch-active');
+        }
       }
     }
   }
