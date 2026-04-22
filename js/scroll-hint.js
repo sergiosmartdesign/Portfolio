@@ -26,13 +26,11 @@
 
   const IDLE_DELAY          = 3000;  // ms idle before showing scroll hint (normal loop)
   const AUTO_HIDE           = 3000;  // ms hint stays visible
-  const INTRO_DELAY         = 2000;  // ms after section enters before yellow lines start (lets "Design" glitch resolve first)
-  const POST_INTRO_WAIT     = 3000;  // ms to wait after ending appears before showing hint
   const STEP_ANIM           = 900;   // ms for each line's slide-in transition
-  const STEP_HOLD           = 1600;  // ms to hold each line so it can be read
+  const READABLE_PAUSE      = 1000;  // ms of clean readable time after each glitch resolves
   const LOAD_GRACE_MS       = 1500;  // ignore browser scroll-restoration scroll events after load
   const QUOTE_REPLAY_DELAY  = 1000;  // ms of inactivity before replaying (activity-triggered)
-  const POST_COMPLETE_DELAY = 5000;  // ms freeze after full quote shown before auto-replay
+  const POST_COMPLETE_DELAY = 5000;  // ms freeze after ending glitch resolves before auto-replay
 
   const PAGE_LOAD_TIME  = Date.now();
 
@@ -41,6 +39,7 @@
   let autoHideTimer     = null;
   let quoteReplayTimer  = null;
   let postCompleteTimer = null;
+  let sectionLeaveTimer = null;
   let isVisible         = false;
   let aboutActive      = false;
   let primed           = false;
@@ -58,6 +57,14 @@
     el.classList.remove('glitch-active');
     void el.offsetWidth;
     el.classList.add('glitch-active');
+  }
+
+  // Returns how long (ms) the glitch animation takes to fully resolve for el.
+  // Formula: 500ms delay + (lastCharIndex × 0.55 iterations × 200ms per iteration)
+  function glitchDuration(el) {
+    const chars = el.querySelectorAll('[data-char]');
+    if (!chars.length) return 500;
+    return 500 + (chars.length - 1) * 0.55 * 200;
   }
 
   // Typewriter frames for [ · s c r o l l · ]
@@ -126,19 +133,21 @@
     }
   }
 
-  // After QUOTE_REPLAY_DELAY ms of inactivity, replay the quote animation
+  // After QUOTE_REPLAY_DELAY ms of inactivity, replay the quote animation.
+  // Does not schedule if the scroll path is actively driving the items.
   function scheduleQuoteReplay() {
     clearTimeout(quoteReplayTimer);
     clearTimeout(postCompleteTimer);
-    if (aboutActive) {
+    if (aboutActive && !window._scrollPathActive) {
       quoteReplayTimer = setTimeout(replayQuote, QUOTE_REPLAY_DELAY);
     }
   }
 
   // Reset and re-run the quote animation regardless of introPlayed state
   function replayQuote() {
-    if (!aboutActive || introRunning) return;
+    if (!aboutActive || introRunning || window._scrollPathActive) return;
     clearTimeout(postCompleteTimer);
+    clearTimeout(sectionLeaveTimer);
     introPlayed = false;
     quoteItems.forEach(li => li.classList.remove('glitch-active'));
     if (ending) {
@@ -188,6 +197,13 @@
 
     function tick(timestamp) {
       if (!introRunning) return; // aborted mid-step
+      // Scroll path took over — stop immediately without scheduling a replay
+      if (window._scrollPathActive) {
+        introRunning = false;
+        window._quoteIntroActive = false;
+        rafId = null;
+        return;
+      }
       if (!startTime) startTime = timestamp;
 
       const t       = Math.min((timestamp - startTime) / STEP_ANIM, 1);
@@ -215,30 +231,35 @@
     introPlayed  = true;
     window._quoteIntroActive = false;
     clearTimeout(postCompleteTimer);
+    clearTimeout(sectionLeaveTimer);
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
     if (aboutActive) primed = true;
     scheduleShow();
     scheduleQuoteReplay(); // 1s after abort → replay
   }
 
-  // Reveal one line at a time: animate in → hold → next line → … → ending
+  // Reveal one line at a time: slide in → glitch → wait for resolve → readable pause → next
   function runStep(stepIndex) {
     if (!introRunning) return;
 
     const numItems = quoteItems.length;
 
     if (stepIndex < numItems) {
-      // Slide the list so line stepIndex is centred
       const fromOffset = stepIndex - 1;
       const toOffset   = stepIndex;
 
       animateStep(fromOffset, toOffset, () => {
         triggerGlitch(quoteItems[stepIndex]);
-        setTimeout(() => runStep(stepIndex + 1), STEP_HOLD);
+        // Wait for this line's glitch to fully resolve, then hold for reading
+        const settleMs = glitchDuration(quoteItems[stepIndex]);
+        setTimeout(() => {
+          if (!introRunning) return;
+          setTimeout(() => runStep(stepIndex + 1), READABLE_PAUSE);
+        }, settleMs);
       });
 
     } else {
-      // All lines shown — reveal the ending paragraph
+      // All yellow lines shown and frozen — reveal the ending paragraph
       if (ending) {
         ending.classList.add('visible');
         triggerGlitch(ending);
@@ -247,19 +268,17 @@
       introPlayed  = true;
       window._quoteIntroActive = false;
 
-      // 5s freeze — full quote readable; replay if no user action
+      // Wait for ending glitch to resolve, then hold POST_COMPLETE_DELAY before replay
+      const endingMs = ending ? glitchDuration(ending) : 0;
       clearTimeout(postCompleteTimer);
       postCompleteTimer = setTimeout(() => {
         if (aboutActive) replayQuote();
-      }, POST_COMPLETE_DELAY);
+      }, endingMs + POST_COMPLETE_DELAY);
 
-      // Show scroll hint after 3s
+      // Show scroll hint shortly after ending glitch resolves
       setTimeout(() => {
-        if (aboutActive) {
-          primed = true;
-          show();
-        }
-      }, POST_INTRO_WAIT);
+        if (aboutActive) { primed = true; show(); }
+      }, endingMs + 1000);
     }
   }
 
@@ -271,14 +290,14 @@
     if (ending) ending.classList.remove('visible');
     if (quoteH3) triggerGlitch(quoteH3);
 
-    // Start with all items hidden below (offset -1)
     applyOffset(-1);
 
-    // Wait for the section to settle, then start line by line
+    // Wait for "Design" glitch to fully resolve, then hold READABLE_PAUSE before first yellow line
+    const h3Ms = quoteH3 ? glitchDuration(quoteH3) : 500;
     setTimeout(() => {
       if (!introRunning) return;
       runStep(0);
-    }, INTRO_DELAY);
+    }, h3Ms + READABLE_PAUSE);
   }
 
   // ── Init ────────────────────────────────────────────────────────────────────
@@ -338,14 +357,22 @@
           hide();
           clearTimeout(idleTimer);
           clearTimeout(quoteReplayTimer);
+          clearTimeout(postCompleteTimer);
           if (introRunning) abortIntro();
-          primed       = false;
-          introPlayed  = false;
-          // Reset quote to hidden state so intro plays fresh on next visit
-          if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
-          quoteItems.forEach(li => { li.style.transform = ''; li.classList.remove('glitch-active'); });
-        } else if (!introPlayed) {
-          runIntro();
+          primed = false;
+
+          // 5s grace: if user returns within 5s, keep frozen state.
+          // After 5s away, reset so animation replays fresh on next entry.
+          clearTimeout(sectionLeaveTimer);
+          sectionLeaveTimer = setTimeout(() => {
+            introPlayed = false;
+            if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+            quoteItems.forEach(li => { li.style.transform = ''; li.classList.remove('glitch-active'); });
+          }, 5000);
+
+        } else {
+          clearTimeout(sectionLeaveTimer); // user returned — cancel the reset
+          if (!introPlayed) runIntro();
         }
       });
     }, { threshold: 0.05 });

@@ -1380,7 +1380,7 @@ nav {
 
 /* Specific positioning for second paragraph */
 #aboutp2 {
-  top: -400px;    /* Move up (more negative) or down (more positive) */
+  top: -500px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
 }
 
@@ -2036,10 +2036,33 @@ nav {
 }
 
 .decoration-skills {
+  position: absolute;
+  opacity: 0;
   height: 600px;
   top: 1000px;
   left: 200px;
   transform: scale(0.8);
+}
+
+.decoration-skills .skills-svg {
+  position: static;
+  opacity: 1;
+  filter: none;
+  height: 100%;
+  width: auto;
+}
+
+.skills-list {
+  position: absolute;
+  top: 182px;
+  left: 56px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 18px;
+  line-height: 21px;
+  color: #0A9396;
 }
 
 /* Animate decorations when element becomes visible in viewport */

@@ -1410,7 +1410,9 @@ window.addEventListener('beforeunload', () => {
 
   const quoteItems = document.querySelectorAll('.paul-rands-quote li');
   const ending = document.querySelector('.paul-rands-quote .ending');
-  const EXTRA_SCROLL = 800; // pixels of scroll dedicated to the reveal animation
+  // 2000px total: items animate over first 600px (itemRange 0.3), leaving 1400px of
+  // sticky time after the ending appears so the full quote can be read.
+  const EXTRA_SCROLL = 2000;
 
   function measure() {
     const headerHeight = header.offsetHeight;
@@ -1422,16 +1424,20 @@ window.addEventListener('beforeunload', () => {
   measure();
   window.addEventListener('resize', measure);
 
-  // Build threshold array: one step per item + ending
-  const totalSteps = quoteItems.length + 1; // +1 for the ending
-
-  // Items use the first 75% of scroll; ending fades in during the last 25%
-  var itemRange = 0.75;
+  // Items use first 30% of scroll (= 600px); ending appears in remaining 70% (= 1400px freeze zone)
+  // Per-item scroll distance: 0.3 * 2000 / (3+1) = 150px — same as before
+  var itemRange = 0.3;
   var numItems = quoteItems.length; // 3
 
   var lastVisibleIndex = -1;
-  var endingShown = false;
-  var prevOffset = -1;
+  var endingShown      = false;
+  var prevOffset       = -1;
+  var sectionLeaveTimer = null;
+
+  // Frozen state: full quote visible, scroll only resets the inactivity countdown
+  var frozen          = false;
+  var freezeTimer     = null;  // fires when ending glitch fully resolves
+  var inactivityTimer = null;  // 5s countdown; any scroll resets it
 
   function triggerGlitch(el) {
     el.classList.remove('glitch-active');
@@ -1439,26 +1445,65 @@ window.addEventListener('beforeunload', () => {
     el.classList.add('glitch-active');
   }
 
+  function glitchDuration(el) {
+    var chars = el.querySelectorAll('[data-char]');
+    if (!chars.length) return 500;
+    return 500 + (chars.length - 1) * 0.55 * 200;
+  }
+
+  function resetInactivity() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(exitFrozen, 5000);
+  }
+
+  function enterFrozen() {
+    frozen = true;
+    resetInactivity();
+  }
+
+  function exitFrozen() {
+    frozen          = false;
+    endingShown     = false;
+    lastVisibleIndex = -1;
+    prevOffset      = -1;
+    clearTimeout(freezeTimer);
+    clearTimeout(inactivityTimer);
+    quoteItems.forEach(function(li) {
+      li.style.transform = '';
+      li.classList.remove('glitch-active');
+    });
+    if (ending) {
+      ending.classList.remove('visible');
+      ending.classList.remove('glitch-active');
+    }
+  }
+
   function onScroll() {
-    // Yield to scroll-hint.js while the auto-animation is playing
     if (window._quoteIntroActive) return;
+
+    // While frozen: just reset the 5s inactivity countdown and do nothing else
+    if (frozen) {
+      resetInactivity();
+      return;
+    }
 
     var wrapperTop = wrapper.offsetTop;
     var scrollY = window.scrollY || window.pageYOffset;
 
-    // How far past the pin point we've scrolled (0–1)
     var pinProgress = Math.max(0, Math.min(1, (scrollY - wrapperTop) / EXTRA_SCROLL));
 
-    // Map item progress: offset goes from -1 (all hidden below) to numItems-1 (last item stays visible)
-    // Each item gets equal time in the visible window
+    // Until the user has scrolled into the sticky zone, yield to the auto-play.
+    // Setting this flag also tells scroll-hint.js to pause its replay loop.
+    window._scrollPathActive = pinProgress > 0;
+    if (!window._scrollPathActive) return;
+
     var clampedProgress = Math.min(pinProgress, itemRange);
     var offset = (clampedProgress / itemRange) * (numItems + 1) - 1;
-    offset = Math.min(offset, numItems - 1); // cap so last item never scrolls out
+    offset = Math.min(offset, numItems - 1);
 
     var scrollingDown = offset >= prevOffset;
     prevOffset = offset;
 
-    // translateY in em: at offset -1 items are below the window, at 0 item-0 is centered, etc.
     var translateY = -offset * 1.2;
     quoteItems.forEach(function(li) {
       li.style.transform = 'translateY(' + translateY + 'em)';
@@ -1470,10 +1515,8 @@ window.addEventListener('beforeunload', () => {
       if (lastVisibleIndex > backIndex) lastVisibleIndex = backIndex;
     }
 
-    // Fully scrolled back to start: full reset
     if (offset < -0.5) lastVisibleIndex = -1;
 
-    // Fire glitch only when scrolling forward into a new item
     if (scrollingDown) {
       var currentIndex = Math.round(offset);
       if (currentIndex >= 0 && currentIndex < numItems && currentIndex !== lastVisibleIndex) {
@@ -1482,24 +1525,42 @@ window.addEventListener('beforeunload', () => {
       }
     }
 
-    // Ending fades in during the last 25%
     if (ending) {
       if (pinProgress >= itemRange) {
         if (!endingShown) {
           endingShown = true;
           ending.classList.add('visible');
           triggerGlitch(ending);
+          // Schedule frozen state for when ending glitch fully resolves
+          clearTimeout(freezeTimer);
+          freezeTimer = setTimeout(enterFrozen, glitchDuration(ending));
         }
-      } else {
-        if (endingShown) {
-          endingShown = false;
-          ending.classList.remove('visible');
-          ending.classList.remove('glitch-active');
-        }
+        // endingShown stays true — scroll-back can no longer remove ending
+      } else if (!endingShown) {
+        // Only cancel freeze timer if ending was never shown yet
+        clearTimeout(freezeTimer);
       }
     }
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll(); // initial check
+
+  // When the full quote is visible and the section leaves the viewport,
+  // give the user 5 seconds to come back before resetting the scroll animation state.
+  var pinObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        clearTimeout(sectionLeaveTimer);
+      } else if (endingShown || frozen) {
+        clearTimeout(sectionLeaveTimer);
+        sectionLeaveTimer = setTimeout(function() {
+          exitFrozen();
+          window._scrollPathActive = false;
+        }, 5000);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  pinObserver.observe(about);
 })();
