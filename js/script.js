@@ -1399,45 +1399,59 @@ window.addEventListener('beforeunload', () => {
 
 
 // ============================================================================
-// ABOUT SECTION PIN + PAUL RAND QUOTE REVEAL
+// ABOUT SECTION PIN
+// Keeps #about sticky while user scrolls through the extra height.
+// Owns all Paul Rand quote animation.
+//
+// Modes:
+//   AUTO-PLAY  — plays on section entry / nav click / reset.
+//                Design h3 glitches → each yellow line slides in with glitch
+//                and a readable pause → ending glitches in → static display.
+//   SCROLL     — user scrolls into the sticky zone during auto-play → abort
+//                auto-play and switch to bidirectional scroll-driven control.
+//   STATIC     — full quote frozen; 5 s inactivity → resetAnimation().
 // ============================================================================
 
 (function initAboutPin() {
-  const wrapper = document.querySelector('.about-pin-wrapper');
-  const about = document.getElementById('about');
-  const header = document.querySelector('header');
+  const wrapper        = document.querySelector('.about-pin-wrapper');
+  const about          = document.getElementById('about');
+  const header         = document.querySelector('header');
   if (!wrapper || !about || !header) return;
 
-  const quoteItems = document.querySelectorAll('.paul-rands-quote li');
-  const ending = document.querySelector('.paul-rands-quote .ending');
-  // 2000px total: items animate over first 600px (itemRange 0.3), leaving 1400px of
-  // sticky time after the ending appears so the full quote can be read.
-  const EXTRA_SCROLL = 2000;
+  const quoteItems     = Array.from(document.querySelectorAll('.paul-rands-quote li'));
+  const ending         = document.querySelector('.paul-rands-quote .ending');
+  const quoteContainer = document.querySelector('.paul-rands-quote');
+  const quoteH3        = document.querySelector('.paul-rands-quote h3');
+  const numItems       = quoteItems.length; // 3
+
+  const EXTRA_SCROLL     = 1200;
+  const ENDING_THRESHOLD = (numItems + 0.5) / (numItems + 1); // 0.875
+  const INACTIVITY_MS    = 5000;
+  const STEP_ANIM        = 900;   // ms for one yellow-line slide-in
+  const READABLE_PAUSE   = 1000;  // ms hold after glitch settles
+
+  // ── State ────────────────────────────────────────────────────────────────────
+
+  let lastIndex         = -2;   // last snapped item index (-2 = uninitialised)
+  let endingShown       = false;
+  let endingTimer       = null;
+  let staticMode        = false;
+  let inactivityTimer   = null;
+  let sectionActive     = false;
+  let sectionLeaveTimer = null;
+
+  let autoPlayRunning   = false;
+  let autoPlayRafId     = null;
+  let autoPlayTimer     = null;
+  let introStarted      = false; // prevents re-firing after user takes scroll control
+
+  // ── Shared helpers ───────────────────────────────────────────────────────────
 
   function measure() {
-    const headerHeight = header.offsetHeight;
-    document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+    const h = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-height', h + 'px');
     wrapper.style.height = about.offsetHeight + EXTRA_SCROLL + 'px';
   }
-
-  // Measure on load and resize
-  measure();
-  window.addEventListener('resize', measure);
-
-  // Items use first 30% of scroll (= 600px); ending appears in remaining 70% (= 1400px freeze zone)
-  // Per-item scroll distance: 0.3 * 2000 / (3+1) = 150px — same as before
-  var itemRange = 0.3;
-  var numItems = quoteItems.length; // 3
-
-  var lastVisibleIndex = -1;
-  var endingShown      = false;
-  var prevOffset       = -1;
-  var sectionLeaveTimer = null;
-
-  // Frozen state: full quote visible, scroll only resets the inactivity countdown
-  var frozen          = false;
-  var freezeTimer     = null;  // fires when ending glitch fully resolves
-  var inactivityTimer = null;  // 5s countdown; any scroll resets it
 
   function triggerGlitch(el) {
     el.classList.remove('glitch-active');
@@ -1446,121 +1460,228 @@ window.addEventListener('beforeunload', () => {
   }
 
   function glitchDuration(el) {
-    var chars = el.querySelectorAll('[data-char]');
+    const chars = el.querySelectorAll('[data-char]');
     if (!chars.length) return 500;
     return 500 + (chars.length - 1) * 0.55 * 200;
   }
 
-  function resetInactivity() {
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(exitFrozen, 5000);
+  function applyOffset(offset) {
+    const ty = -offset * 1.2;
+    quoteItems.forEach(li => { li.style.transform = `translateY(${ty}em)`; });
   }
 
-  function enterFrozen() {
-    frozen = true;
-    resetInactivity();
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function pinProgress() {
+    return Math.max(0, Math.min(1, (window.scrollY - wrapper.offsetTop) / EXTRA_SCROLL));
   }
 
-  function exitFrozen() {
-    frozen          = false;
-    endingShown     = false;
-    lastVisibleIndex = -1;
-    prevOffset      = -1;
-    clearTimeout(freezeTimer);
+  // ── Static mode ──────────────────────────────────────────────────────────────
+
+  function onStaticActivity() {
+    if (staticMode) startInactivityTimer();
+  }
+
+  function startInactivityTimer() {
     clearTimeout(inactivityTimer);
-    quoteItems.forEach(function(li) {
-      li.style.transform = '';
-      li.classList.remove('glitch-active');
-    });
-    if (ending) {
-      ending.classList.remove('visible');
-      ending.classList.remove('glitch-active');
+    inactivityTimer = setTimeout(() => { if (staticMode) resetAnimation(); }, INACTIVITY_MS);
+  }
+
+  function showStatic() {
+    autoPlayRunning          = false;
+    staticMode               = true;
+    window._scrollPathActive = true;
+    if (quoteContainer) quoteContainer.classList.add('static-display');
+    if (ending) ending.classList.add('visible');
+    startInactivityTimer();
+    ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'].forEach(ev =>
+      window.addEventListener(ev, onStaticActivity, { passive: true }));
+  }
+
+  // ── Reset ────────────────────────────────────────────────────────────────────
+
+  function abortAutoPlay() {
+    autoPlayRunning = false;
+    if (autoPlayRafId) { cancelAnimationFrame(autoPlayRafId); autoPlayRafId = null; }
+    clearTimeout(autoPlayTimer);
+  }
+
+  function resetAnimation() {
+    abortAutoPlay();
+    clearTimeout(inactivityTimer);
+    clearTimeout(sectionLeaveTimer);
+    clearTimeout(endingTimer);
+
+    staticMode               = false;
+    endingShown              = false;
+    lastIndex                = -2;
+    introStarted             = false;
+    window._scrollPathActive = false;
+
+    if (quoteContainer) quoteContainer.classList.remove('static-display');
+    quoteItems.forEach(li => { li.classList.remove('glitch-active'); li.style.transform = ''; });
+    if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+
+    ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'].forEach(ev =>
+      window.removeEventListener(ev, onStaticActivity));
+
+    if (sectionActive) {
+      if (quoteH3) triggerGlitch(quoteH3);
+      // Only auto-play if user is at the top of (or before) the sticky zone.
+      if (pinProgress() === 0) {
+        runIntro();
+      }
+      // Otherwise the scroll-driven path re-engages on the next scroll event.
     }
   }
 
-  function onScroll() {
-    if (window._quoteIntroActive) return;
+  // ── Auto-play sequence ───────────────────────────────────────────────────────
 
-    // While frozen: just reset the 5s inactivity countdown and do nothing else
-    if (frozen) {
-      resetInactivity();
+  function animateStep(fromOffset, toOffset, onDone) {
+    let startTime = null;
+    function tick(ts) {
+      if (!autoPlayRunning) return;
+      if (!startTime) startTime = ts;
+      const t = Math.min((ts - startTime) / STEP_ANIM, 1);
+      applyOffset(fromOffset + (toOffset - fromOffset) * easeOutCubic(t));
+      if (t < 1) {
+        autoPlayRafId = requestAnimationFrame(tick);
+      } else {
+        autoPlayRafId = null;
+        onDone();
+      }
+    }
+    autoPlayRafId = requestAnimationFrame(tick);
+  }
+
+  function runStep(stepIndex) {
+    if (!autoPlayRunning) return;
+
+    if (stepIndex < numItems) {
+      animateStep(stepIndex - 1, stepIndex, () => {
+        if (!autoPlayRunning) return;
+        triggerGlitch(quoteItems[stepIndex]);
+        lastIndex = stepIndex; // keep scroll-driven in sync
+        const settleMs = glitchDuration(quoteItems[stepIndex]);
+        autoPlayTimer = setTimeout(() => {
+          if (!autoPlayRunning) return;
+          autoPlayTimer = setTimeout(() => runStep(stepIndex + 1), READABLE_PAUSE);
+        }, settleMs);
+      });
+
+    } else {
+      // All yellow lines shown — reveal ending.
+      endingShown = true;
+      if (ending) {
+        ending.classList.add('visible');
+        triggerGlitch(ending);
+        autoPlayTimer = setTimeout(showStatic, glitchDuration(ending));
+      } else {
+        showStatic();
+      }
+    }
+  }
+
+  function runIntro() {
+    if (autoPlayRunning || staticMode) return;
+    introStarted    = true;
+    autoPlayRunning = true;
+    applyOffset(-1);
+    lastIndex = -2;
+    if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+
+    const h3Ms = quoteH3 ? glitchDuration(quoteH3) : 500;
+    autoPlayTimer = setTimeout(() => {
+      if (!autoPlayRunning) return;
+      runStep(0);
+    }, h3Ms + READABLE_PAUSE);
+  }
+
+  // ── Scroll handler ───────────────────────────────────────────────────────────
+
+  function onScroll() {
+    const pp = pinProgress();
+    window._scrollPathActive = pp > 0;
+
+    if (staticMode) return;
+
+    // Any scroll by the user kills auto-play and hands control to scroll-driven.
+    if (autoPlayRunning) abortAutoPlay();
+
+    if (pp === 0) {
+      applyOffset(-1); // items below visible slot
+      lastIndex = -2;
       return;
     }
 
-    var wrapperTop = wrapper.offsetTop;
-    var scrollY = window.scrollY || window.pageYOffset;
+    // Scroll-driven mode: map scroll progress to item offset.
+    const rawOffset     = pp * (numItems + 1) - 1;
+    const clampedOffset = Math.max(-1, Math.min(numItems - 1, rawOffset));
+    const currentIndex  = Math.round(clampedOffset); // -1, 0, 1, or 2
 
-    var pinProgress = Math.max(0, Math.min(1, (scrollY - wrapperTop) / EXTRA_SCROLL));
+    applyOffset(clampedOffset);
 
-    // Until the user has scrolled into the sticky zone, yield to the auto-play.
-    // Setting this flag also tells scroll-hint.js to pause its replay loop.
-    window._scrollPathActive = pinProgress > 0;
-    if (!window._scrollPathActive) return;
-
-    var clampedProgress = Math.min(pinProgress, itemRange);
-    var offset = (clampedProgress / itemRange) * (numItems + 1) - 1;
-    offset = Math.min(offset, numItems - 1);
-
-    var scrollingDown = offset >= prevOffset;
-    prevOffset = offset;
-
-    var translateY = -offset * 1.2;
-    quoteItems.forEach(function(li) {
-      li.style.transform = 'translateY(' + translateY + 'em)';
-    });
-
-    // Scrolling back: lower lastVisibleIndex so items re-glitch on next forward pass
-    if (!scrollingDown) {
-      var backIndex = Math.floor(offset);
-      if (lastVisibleIndex > backIndex) lastVisibleIndex = backIndex;
+    // Glitch fires on index change — forward OR backward.
+    if (currentIndex !== lastIndex && currentIndex >= 0 && currentIndex < numItems) {
+      triggerGlitch(quoteItems[currentIndex]);
     }
+    lastIndex = currentIndex;
 
-    if (offset < -0.5) lastVisibleIndex = -1;
-
-    if (scrollingDown) {
-      var currentIndex = Math.round(offset);
-      if (currentIndex >= 0 && currentIndex < numItems && currentIndex !== lastVisibleIndex) {
-        lastVisibleIndex = currentIndex;
-        triggerGlitch(quoteItems[currentIndex]);
+    // Ending: show at threshold, hide if user scrolls back before static locks.
+    if (pp >= ENDING_THRESHOLD && !endingShown) {
+      endingShown = true;
+      if (ending) {
+        ending.classList.add('visible');
+        triggerGlitch(ending);
+        endingTimer = setTimeout(showStatic, glitchDuration(ending));
+      } else {
+        showStatic();
       }
-    }
-
-    if (ending) {
-      if (pinProgress >= itemRange) {
-        if (!endingShown) {
-          endingShown = true;
-          ending.classList.add('visible');
-          triggerGlitch(ending);
-          // Schedule frozen state for when ending glitch fully resolves
-          clearTimeout(freezeTimer);
-          freezeTimer = setTimeout(enterFrozen, glitchDuration(ending));
-        }
-        // endingShown stays true — scroll-back can no longer remove ending
-      } else if (!endingShown) {
-        // Only cancel freeze timer if ending was never shown yet
-        clearTimeout(freezeTimer);
-      }
+    } else if (pp < ENDING_THRESHOLD && endingShown) {
+      clearTimeout(endingTimer);
+      endingShown = false;
+      if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
     }
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll(); // initial check
+  // ── Section observer ─────────────────────────────────────────────────────────
 
-  // When the full quote is visible and the section leaves the viewport,
-  // give the user 5 seconds to come back before resetting the scroll animation state.
-  var pinObserver = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      sectionActive = entry.isIntersecting;
+
+      if (!sectionActive) {
+        clearTimeout(inactivityTimer);
         clearTimeout(sectionLeaveTimer);
-      } else if (endingShown || frozen) {
+        if (autoPlayRunning) abortAutoPlay();
+        sectionLeaveTimer = setTimeout(resetAnimation, 5000);
+      } else {
         clearTimeout(sectionLeaveTimer);
-        sectionLeaveTimer = setTimeout(function() {
-          exitFrozen();
-          window._scrollPathActive = false;
-        }, 5000);
+        if (quoteH3) triggerGlitch(quoteH3);
+        if (!introStarted) runIntro(); // only on first entry or after reset
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.05 });
 
-  pinObserver.observe(about);
+  // ── Nav button / bfcache ─────────────────────────────────────────────────────
+
+  const aboutNavBtn = document.querySelector('a[href="#about"].nav-btn');
+  if (aboutNavBtn) {
+    aboutNavBtn.addEventListener('click', () => {
+      clearTimeout(sectionLeaveTimer);
+      resetAnimation();
+    });
+  }
+
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) resetAnimation();
+  });
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+
+  measure();
+  window.addEventListener('resize', measure);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  observer.observe(about);
+  onScroll();
 })();

@@ -42,6 +42,10 @@
       // Intro animation guard — hover is disabled while the sequential intro plays
       this.introAnimating = false;
 
+      // Electric border: count of in-flight animations (open + close + chain)
+      this.accordion    = document.querySelector('.photo-accordion');
+      this._borderCount = 0;
+
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
@@ -124,6 +128,7 @@
       if (this.chainActive) return;
       this.chainActive = true;
       this.introAnimating = true;
+      this._borderStart();
       this._initPolaroid();
 
       const categoryBtnArray = Array.from(this.categoryBtns);
@@ -253,7 +258,7 @@
       cursor = tailStart + tailEls.length * TAIL_STEP;
 
       // Lift the hover guard once the full intro sequence has settled
-      const tIntroEnd = setTimeout(() => { this.introAnimating = false; }, cursor + 150);
+      const tIntroEnd = setTimeout(() => { this.introAnimating = false; this._borderDone(); }, cursor + 150);
       this.chainTimers.push(tIntroEnd);
 
       // 5. Secondary effects
@@ -304,6 +309,8 @@
       this.chainTimers = [];
       this.chainActive = false;
       this.introAnimating = false;
+      this._borderCount = 0;
+      if (this.accordion) this.accordion.classList.remove('accordion-animating');
 
       // Kill tweens and reset transforms on all chain elements
       this.staticEls.forEach(el => {
@@ -450,6 +457,21 @@
       this._resetPolaroid();
     }
 
+    // ── Electric border helpers ──────────────────────────────────────────────
+    _borderStart() {
+      this._borderCount++;
+      if (this._borderCount === 1 && this.accordion) {
+        this.accordion.classList.add('accordion-animating');
+      }
+    }
+
+    _borderDone() {
+      this._borderCount = Math.max(0, this._borderCount - 1);
+      if (this._borderCount === 0 && this.accordion) {
+        this.accordion.classList.remove('accordion-animating');
+      }
+    }
+
     // ── Category button click handlers ───────────────────────────────────────
     _setupCategoryButtons() {
       this.categoryBtns.forEach(btn => {
@@ -469,6 +491,7 @@
     }
 
     _openCategory(category, btn, list) {
+      this._borderStart();
       this.openCategories.add(category);
       btn.classList.add('active');
       btn.setAttribute('aria-expanded', 'true');
@@ -479,9 +502,11 @@
         gsap.set(item, { opacity: 0 });
         this._revealItem(item, i);
       });
+      gsap.delayedCall(Math.max(0.1, (items.length - 1) * 0.04 + 0.33), () => this._borderDone());
     }
 
     _closeCategory(category, btn, list) {
+      this._borderStart();
       this.openCategories.delete(category);
       btn.classList.remove('active');
       btn.setAttribute('aria-expanded', 'false');
@@ -492,6 +517,7 @@
 
       gsap.delayedCall(lastDelay, () => {
         if (!this.openCategories.has(category)) list.style.display = 'none';
+        this._borderDone();
       });
     }
 

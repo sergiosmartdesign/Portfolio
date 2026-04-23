@@ -1534,7 +1534,21 @@ nav {
   opacity: 1;
 }
 
-
+/* Static display — full quote frozen, shown after animation completes or on user scroll */
+.paul-rands-quote.static-display li {
+  transform: translateY(-2.4em) !important;
+}
+.paul-rands-quote.static-display li.glitch-text[data-splitting] [data-char]:after {
+  opacity: 1;
+  animation-name: none;
+}
+.paul-rands-quote.static-display .ending {
+  opacity: 1;
+}
+.paul-rands-quote.static-display .ending.glitch-text[data-splitting] [data-char]:after {
+  opacity: 1;
+  animation-name: none;
+}
 
 /* Slide in animation for paragraphs when element becomes visible in viewport */
 #about .about-left > p:nth-of-type(1).element-visible {
@@ -2054,7 +2068,7 @@ nav {
 
 .skills-list {
   position: absolute;
-  top: 182px;
+  top: 202px;
   left: 56px;
   list-style: none;
   margin: 0;
@@ -3162,6 +3176,42 @@ nav {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
+}
+
+/* ── Electric border overlay — visible only while accordion is animating ── */
+.accordion-electric-border,
+.accordion-glow-1,
+.accordion-glow-2 {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 5;
+}
+
+.accordion-electric-border {
+  border: 2px solid #EE9B00;
+  filter: url(#accordion-electric);
+}
+
+.accordion-glow-1 {
+  border: 2px solid rgba(238, 155, 0, 0.55);
+  filter: blur(1px);
+  z-index: 4;
+}
+
+.accordion-glow-2 {
+  border: 2px solid rgba(10, 147, 150, 0.35);
+  filter: blur(5px);
+  z-index: 3;
+}
+
+.photo-accordion.accordion-animating .accordion-electric-border,
+.photo-accordion.accordion-animating .accordion-glow-1,
+.photo-accordion.accordion-animating .accordion-glow-2 {
+  opacity: 1;
 }
 
 /* Each accordion item: button + collapsible list */
