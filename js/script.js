@@ -1440,10 +1440,12 @@ window.addEventListener('beforeunload', () => {
   let sectionActive     = false;
   let sectionLeaveTimer = null;
 
-  let autoPlayRunning   = false;
-  let autoPlayRafId     = null;
-  let autoPlayTimer     = null;
-  let introStarted      = false; // prevents re-firing after user takes scroll control
+  let autoPlayRunning      = false;
+  let autoPlayRafId        = null;
+  let autoPlayTimer        = null;
+  let introStarted         = false; // prevents re-firing after user takes scroll control
+  let programmaticScroll   = false; // true while nav-triggered scroll is in flight
+  let programmaticScrollTimer = null;
 
   // ── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -1527,11 +1529,7 @@ window.addEventListener('beforeunload', () => {
 
     if (sectionActive) {
       if (quoteH3) triggerGlitch(quoteH3);
-      // Only auto-play if user is at the top of (or before) the sticky zone.
-      if (pinProgress() === 0) {
-        runIntro();
-      }
-      // Otherwise the scroll-driven path re-engages on the next scroll event.
+      runIntro(); // nav-scroll will land at pp=0; programmaticScroll guards abort
     }
   }
 
@@ -1603,8 +1601,16 @@ window.addEventListener('beforeunload', () => {
     const pp = pinProgress();
     window._scrollPathActive = pp > 0;
 
-    // Any scroll by the user kills auto-play and hands control to scroll-driven.
-    if (autoPlayRunning) abortAutoPlay();
+    // Only abort auto-play when the user manually scrolls into the sticky zone.
+    // Programmatic nav-scroll must not kill the intro it just triggered.
+    if (autoPlayRunning) {
+      if (pp > 0 && !programmaticScroll) {
+        abortAutoPlay(); // user dragged into the zone — take scroll control
+        // fall through to scroll-driven
+      } else {
+        return; // auto-play owns the DOM (nav scroll or not yet in zone)
+      }
+    }
 
     if (staticMode) {
       if (pp < ENDING_THRESHOLD) {
@@ -1681,9 +1687,21 @@ window.addEventListener('beforeunload', () => {
 
   const aboutNavBtn = document.querySelector('a[href="#about"].nav-btn');
   if (aboutNavBtn) {
-    aboutNavBtn.addEventListener('click', () => {
+    aboutNavBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // suppress default anchor jump; we control the scroll
+
+      // Mark scroll as programmatic so onScroll won't abort the intro mid-flight.
+      programmaticScroll = true;
+      clearTimeout(programmaticScrollTimer);
+      // NAV_SCROLL_DURATION is 1600 ms; add buffer for observer + first RAF tick.
+      programmaticScrollTimer = setTimeout(() => { programmaticScroll = false; }, 2200);
+
       clearTimeout(sectionLeaveTimer);
       resetAnimation();
+
+      // Scroll to the exact pp=0 position: section sticks at top, intro starts clean.
+      const targetY = Math.max(0, wrapper.offsetTop - header.offsetHeight);
+      smoothScrollTo(targetY);
     });
   }
 
