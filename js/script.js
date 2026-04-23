@@ -1603,10 +1603,24 @@ window.addEventListener('beforeunload', () => {
     const pp = pinProgress();
     window._scrollPathActive = pp > 0;
 
-    if (staticMode) return;
-
     // Any scroll by the user kills auto-play and hands control to scroll-driven.
     if (autoPlayRunning) abortAutoPlay();
+
+    if (staticMode) {
+      if (pp < ENDING_THRESHOLD) {
+        // User scrolled backward past the ending — unlock static mode.
+        staticMode  = false;
+        endingShown = false;
+        if (quoteContainer) quoteContainer.classList.remove('static-display');
+        if (ending) { ending.classList.remove('visible'); ending.classList.remove('glitch-active'); }
+        clearTimeout(inactivityTimer);
+        ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'].forEach(ev =>
+          window.removeEventListener(ev, onStaticActivity));
+        // Fall through to scroll-driven logic below.
+      } else {
+        return; // Still past the threshold — keep frozen.
+      }
+    }
 
     if (pp === 0) {
       applyOffset(-1); // items below visible slot

@@ -3178,39 +3178,27 @@ nav {
   flex-direction: column;
 }
 
-/* ── Electric border overlay — visible only while accordion is animating ── */
-.accordion-electric-border,
-.accordion-glow-1,
-.accordion-glow-2 {
+/* ── Electric border — visible only while accordion is animating ──────── */
+/* Single element: SVG displacement handles the wobble, box-shadow the glow.
+   GPU-composited and idle-zero CPU (seed cycled by JS RAF on demand only). */
+.accordion-electric-border {
   position: absolute;
   inset: 0;
   border-radius: 2px;
   pointer-events: none;
+  border: 2px solid #EE9B00;
+  box-shadow:
+    0 0 6px  rgba(238, 155, 0, 0.65),
+    0 0 18px rgba(238, 155, 0, 0.22),
+    0 0 32px rgba(10,  147, 150, 0.14);
+  filter: url(#accordion-electric);
+  will-change: filter;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
   z-index: 5;
 }
 
-.accordion-electric-border {
-  border: 2px solid #EE9B00;
-  filter: url(#accordion-electric);
-}
-
-.accordion-glow-1 {
-  border: 2px solid rgba(238, 155, 0, 0.55);
-  filter: blur(1px);
-  z-index: 4;
-}
-
-.accordion-glow-2 {
-  border: 2px solid rgba(10, 147, 150, 0.35);
-  filter: blur(5px);
-  z-index: 3;
-}
-
-.photo-accordion.accordion-animating .accordion-electric-border,
-.photo-accordion.accordion-animating .accordion-glow-1,
-.photo-accordion.accordion-animating .accordion-glow-2 {
+.photo-accordion.accordion-animating .accordion-electric-border {
   opacity: 1;
 }
 

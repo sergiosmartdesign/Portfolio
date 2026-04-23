@@ -42,9 +42,13 @@
       // Intro animation guard — hover is disabled while the sequential intro plays
       this.introAnimating = false;
 
-      // Electric border: count of in-flight animations (open + close + chain)
-      this.accordion    = document.querySelector('.photo-accordion');
-      this._borderCount = 0;
+      // Electric border: count of in-flight animations (open + close + chain).
+      // RAF only runs while _borderCount > 0 — zero CPU when idle.
+      this.accordion          = document.querySelector('.photo-accordion');
+      this._borderCount       = 0;
+      this._borderRaf         = null;
+      this._borderFrameTick   = 0;
+      this._borderTurbulence  = null; // set in init()
 
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
@@ -64,6 +68,7 @@
     init() {
       this.winH         = window.innerHeight;
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+      this._borderTurbulence = document.getElementById('accordion-electric-turbulence');
 
       window.addEventListener('resize', () => {
         this.winH         = window.innerHeight;
@@ -310,6 +315,7 @@
       this.chainActive = false;
       this.introAnimating = false;
       this._borderCount = 0;
+      if (this._borderRaf) { cancelAnimationFrame(this._borderRaf); this._borderRaf = null; }
       if (this.accordion) this.accordion.classList.remove('accordion-animating');
 
       // Kill tweens and reset transforms on all chain elements
@@ -458,10 +464,24 @@
     }
 
     // ── Electric border helpers ──────────────────────────────────────────────
+    // RAF loop: cycles turbulence seed every 2 frames (~30fps effective) to
+    // create the electric flicker. Starts only when something is animating,
+    // stops the moment count returns to zero — zero CPU at idle.
+    _borderAnimTick() {
+      if (this._borderCount <= 0) { this._borderRaf = null; return; }
+      this._borderFrameTick++;
+      if (this._borderFrameTick % 2 === 0 && this._borderTurbulence) {
+        this._borderTurbulence.setAttribute('seed', (Math.random() * 500 | 0) + 1);
+      }
+      this._borderRaf = requestAnimationFrame(() => this._borderAnimTick());
+    }
+
     _borderStart() {
       this._borderCount++;
       if (this._borderCount === 1 && this.accordion) {
         this.accordion.classList.add('accordion-animating');
+        this._borderFrameTick = 0;
+        this._borderRaf = requestAnimationFrame(() => this._borderAnimTick());
       }
     }
 
@@ -469,6 +489,7 @@
       this._borderCount = Math.max(0, this._borderCount - 1);
       if (this._borderCount === 0 && this.accordion) {
         this.accordion.classList.remove('accordion-animating');
+        // _borderAnimTick stops itself on next frame when count === 0
       }
     }
 
