@@ -559,6 +559,53 @@ nav {
   align-items: center;
 }
 
+/* ─── Sound toggle button ──────────────────────────────────────────────────── */
+.sound-btn {
+  padding: 5px 7px 5px 12px;
+  line-height: 0;
+  margin-left: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sound-icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+}
+
+/* Waves: hidden when sound is off (default) */
+.sound-icon .wave {
+  opacity: 0;
+  transition: opacity var(--transition-base) var(--easing-ease-in-out);
+}
+
+/* Mute slash: visible when sound is off */
+.sound-icon .mute-slash {
+  opacity: 1;
+  transition: opacity var(--transition-base) var(--easing-ease-in-out);
+}
+
+/* Sound ON: full orange fill, icon turns dark (mirrors nav-btn hover state) */
+.sound-btn.active {
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  color: var(--bg);
+  transition: background-position 0.7s, background-size var(--transition-slow) var(--easing-ease-in-out), color var(--transition-base);
+}
+
+.sound-btn.active .wave {
+  opacity: 1;
+}
+
+.sound-btn.active .mute-slash {
+  opacity: 0;
+}
+
 /* ============================================================================
    INTRO SECTION
    ============================================================================ */
@@ -1386,7 +1433,7 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 300px;    /* Move up (more negative) or down (more positive) */
+  top: 50px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
@@ -2068,15 +2115,29 @@ nav {
 
 .skills-list {
   position: absolute;
-  top: 202px;
+  top: 102px;
   left: 56px;
   list-style: none;
   margin: 0;
-  padding: 0;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 18px;
-  line-height: 21px;
-  color: #0A9396;
+  padding: 6px 10px;
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: #001219;
+  background-color: #EE9B00;
+}
+
+.skills-list li {
+  margin-bottom: 2px;
+}
+
+.skills-sub {
+  display: block;
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: rgba(0, 18, 25, 0.5);
+  margin-top: 1px;
 }
 
 /* Animate decorations when element becomes visible in viewport */

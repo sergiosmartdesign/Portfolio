@@ -1373,6 +1373,15 @@ window.addEventListener('DOMContentLoaded', () => {
   // DNA effects will be initialized when about section becomes visible
   // (handled in AnimationCoordinator.initAnimationOptimizer)
 
+  // Sound toggle — wires up the button; actual audio will be hooked in a future pass
+  const soundToggle = document.getElementById('sound-toggle');
+  if (soundToggle) {
+    soundToggle.addEventListener('click', () => {
+      const isActive = soundToggle.classList.toggle('active');
+      soundToggle.setAttribute('aria-pressed', String(isActive));
+    });
+  }
+
   // When preloader starts fading: activate the cyber panel sidebar immediately
   // (sidebar uses CSS transition, not animation — unaffected by animation-play-state freeze)
   window.addEventListener('preloaderExiting', () => {
