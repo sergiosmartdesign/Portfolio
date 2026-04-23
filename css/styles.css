@@ -1433,9 +1433,108 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 420px;    /* Move up (more negative) or down (more positive) */
+  top: 280px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
+}
+
+/* --- Availability Badge --- */
+#about-availability {
+  position: relative;
+  top: -60px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.82rem;
+  color: #001219;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.availability-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #52b788;
+  flex-shrink: 0;
+  animation: availabilityPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes availabilityPulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(82, 183, 136, 0.6); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 5px rgba(82, 183, 136, 0); }
+}
+
+#about-availability.element-visible {
+  animation: slideInFromLeft 0.6s ease-out 0.2s forwards;
+}
+
+#about-availability.element-exit {
+  animation: slideOutToLeft 0.4s ease-in 0s forwards;
+}
+
+/* --- Metrics Strip --- */
+#about-metrics {
+  position: relative;
+  top: -520px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  color: #001219;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.metrics-sep {
+  color: #EE9B00;
+  font-weight: 700;
+}
+
+#about-metrics.element-visible {
+  animation: slideInFromLeft 0.6s ease-out 0.1s forwards;
+}
+
+#about-metrics.element-exit {
+  animation: slideOutToLeft 0.4s ease-in 0s forwards;
+}
+
+/* --- CTA Button --- */
+#about-cta {
+  position: relative;
+  top: 430px;
+  left: 0;
+  display: inline-flex;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1rem;
+  color: #001219;
+  text-decoration: none;
+  padding: 6px 0;
+  opacity: 0;
+  transform: translateX(-30px);
+  background-image: linear-gradient(#EE9B00, #EE9B00);
+  background-size: 100% 1.5px;
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  transition: background-size 0.5s, background-position 0.4s ease-in-out, color 0.3s;
+}
+
+#about-cta:hover {
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  color: #001219;
+}
+
+#about-cta.element-visible {
+  animation: slideInFromLeft 0.6s ease-out 0.15s forwards;
+}
+
+#about-cta.element-exit {
+  animation: slideOutToLeft 0.4s ease-in 0s forwards;
 }
 
 /* --- Paul Rand Quote --- */
@@ -2058,7 +2157,7 @@ nav {
 .decoration-bar1 {
   width: 981.6px;
   height: 27.3px;
-  top: 480px;
+  top: 750px;
   left: 160px;
   transform: translateX(-100px);
 }
@@ -2100,7 +2199,7 @@ nav {
   position: absolute;
   opacity: 0;
   height: 600px;
-  top: 1000px;
+  top: 1050px;
   left: 200px;
   transform: scale(0.8);
 }

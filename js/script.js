@@ -619,6 +619,9 @@ class AnimationCoordinator {
     // Left column observers
     createElementObserver('abouttitle');
     createClassObserver('#about .about-left p');
+    createElementObserver('about-availability');
+    createElementObserver('about-metrics');
+    createElementObserver('about-cta');
     createElementObserver('paulrand-quote');
     createElementObserver('paulrand-author');
     // Note: ID1 SVG observer is set up after SVG conversion in setupID1Observer()
