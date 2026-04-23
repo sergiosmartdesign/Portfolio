@@ -2126,10 +2126,13 @@ nav {
   color: #001219;
   background-color: #EE9B00;
   border-left: 2px solid #001219;
+  clip-path: inset(0 100% 0 0);
 }
 
 .skills-list li {
   margin-bottom: 2px;
+  opacity: 0;
+  transform: translateX(-14px);
 }
 
 .skills-sub {
@@ -2192,6 +2195,67 @@ nav {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* Skills list — yellow background + items + sub-skills, both scroll directions */
+
+@keyframes skillsBgIn  { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0% 0 0); } }
+@keyframes skillsBgOut { from { clip-path: inset(0 0% 0 0); }   to { clip-path: inset(0 100% 0 0); } }
+@keyframes skillsItemIn  { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes skillsItemOut { from { opacity: 1; transform: translateX(0); }      to { opacity: 0; transform: translateX(-14px); } }
+@keyframes skillsSubIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes skillsSubOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* — ENTER — */
+#about .decoration-skills.element-visible .skills-list {
+  animation: skillsBgIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+#about .decoration-skills.element-visible .skills-list li {
+  animation: skillsItemIn 0.45s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+}
+
+/* Items stagger after background finishes (0.4s base) */
+#about .decoration-skills.element-visible .skills-list li:nth-child(1) { animation-delay: 0.40s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(2) { animation-delay: 0.52s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(3) { animation-delay: 0.64s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(4) { animation-delay: 0.76s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(5) { animation-delay: 0.88s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(6) { animation-delay: 1.00s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(7) { animation-delay: 1.12s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(8) { animation-delay: 1.24s; }
+
+/* Sub-skills fade in 0.2s after each parent item */
+#about .decoration-skills.element-visible .skills-list li:nth-child(1) .skills-sub { animation: skillsSubIn 0.4s ease forwards 0.60s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(2) .skills-sub { animation: skillsSubIn 0.4s ease forwards 0.72s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(3) .skills-sub { animation: skillsSubIn 0.4s ease forwards 0.84s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(4) .skills-sub { animation: skillsSubIn 0.4s ease forwards 0.96s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(5) .skills-sub { animation: skillsSubIn 0.4s ease forwards 1.08s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(6) .skills-sub { animation: skillsSubIn 0.4s ease forwards 1.20s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(7) .skills-sub { animation: skillsSubIn 0.4s ease forwards 1.32s; }
+#about .decoration-skills.element-visible .skills-list li:nth-child(8) .skills-sub { animation: skillsSubIn 0.4s ease forwards 1.44s; }
+
+/* — EXIT — */
+#about .decoration-skills.element-exit .skills-list {
+  animation: skillsBgOut 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+
+#about .decoration-skills.element-exit .skills-list li {
+  animation: skillsItemOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Reversed stagger on exit — last item leaves first */
+#about .decoration-skills.element-exit .skills-list li:nth-child(8) { animation-delay: 0.00s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(7) { animation-delay: 0.03s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(6) { animation-delay: 0.06s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(5) { animation-delay: 0.09s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(4) { animation-delay: 0.12s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(3) { animation-delay: 0.15s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(2) { animation-delay: 0.18s; }
+#about .decoration-skills.element-exit .skills-list li:nth-child(1) { animation-delay: 0.21s; }
+
+#about .decoration-skills.element-exit .skills-list .skills-sub {
+  animation: skillsSubOut 0.15s ease forwards;
 }
 
 /* ============================================================================
