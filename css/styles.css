@@ -1433,7 +1433,7 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 50px;    /* Move up (more negative) or down (more positive) */
+  top: 420px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
@@ -2125,6 +2125,7 @@ nav {
   line-height: 1.6;
   color: #001219;
   background-color: #EE9B00;
+  border-left: 2px solid #001219;
 }
 
 .skills-list li {
