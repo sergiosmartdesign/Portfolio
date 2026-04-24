@@ -1255,7 +1255,7 @@ nav {
   left: 0;
   top: 0;
   width: var(--border-medium);
-  height: 100%;
+  height: calc(100% + 680px);
   background: #ee9b00;
   transform-origin: top;
   scale: 1 0;
@@ -1503,38 +1503,199 @@ nav {
   animation: slideOutToLeft 0.4s ease-in 0s forwards;
 }
 
-/* --- CTA Button --- */
-#about-cta {
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SEAL CTA — "Let's Work Together"
+   Digital lacre / wax-seal aesthetic with cyberpunk glitch hover
+───────────────────────────────────────────────────────────────────────────── */
+
+.seal-cta-wrapper {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 70px 0 30px;
+}
+
+#seal-cta {
   position: relative;
-  top: 430px;
-  left: 0;
-  display: inline-flex;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 1rem;
-  color: #001219;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 220px;
   text-decoration: none;
-  padding: 6px 0;
+  cursor: pointer;
   opacity: 0;
-  transform: translateX(-30px);
-  background-image: linear-gradient(#EE9B00, #EE9B00);
-  background-size: 100% 1.5px;
-  background-repeat: no-repeat;
-  background-position: 100% 100%;
-  transition: background-size 0.5s, background-position 0.4s ease-in-out, color 0.3s;
+  transform: scale(0.75) rotate(-8deg);
+  filter: drop-shadow(0 0 6px rgba(238, 155, 0, 0.2));
+  will-change: transform, opacity, filter;
 }
 
-#about-cta:hover {
-  background-size: 100% 100%;
-  background-position: 0% 100%;
-  color: #001219;
+#seal-cta.element-visible {
+  opacity: 1;
+  animation: seal-entrance 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
 }
 
-#about-cta.element-visible {
-  animation: slideInFromLeft 0.6s ease-out 0.15s forwards;
+#seal-cta.element-exit {
+  animation: fadeOut 0.4s ease-in 0s forwards;
 }
 
-#about-cta.element-exit {
-  animation: slideOutToLeft 0.4s ease-in 0s forwards;
+.seal-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.seal-ring-group {
+  transform-origin: 100px 100px;
+  animation: seal-ring-spin 28s linear infinite;
+}
+
+.seal-ring-outer {
+  fill: none;
+  stroke: #EE9B00;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.seal-ticks line {
+  stroke: #EE9B00;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: stroke 0.2s;
+}
+
+.seal-ring-inner {
+  fill: none;
+  stroke: #CA6702;
+  stroke-width: 1;
+}
+
+.seal-body {
+  fill: #001219;
+  stroke: #005F73;
+  stroke-width: 0.5;
+}
+
+.seal-circuit {
+  stroke: #005F73;
+  stroke-width: 1;
+  stroke-linecap: round;
+  transition: stroke 0.2s;
+}
+
+.seal-circuit-dot {
+  fill: #005F73;
+  transition: fill 0.2s;
+}
+
+.seal-monogram {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  fill: #94D2BD;
+}
+
+.seal-sep {
+  stroke: #EE9B00;
+  stroke-width: 0.8;
+  stroke-dasharray: 3 2;
+  opacity: 0.6;
+}
+
+.seal-text-layer {
+  position: absolute;
+  top: 57%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  pointer-events: none;
+}
+
+.seal-label {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: #E9D8A6;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* Suppress glitch on page load; re-enable when seal scrolls into view */
+#seal-cta .seal-label[data-splitting] [data-char]:after {
+  color: #E9D8A6;
+  transition: color 0.2s;
+  animation-name: none;
+}
+
+#seal-cta.element-visible .seal-label[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+  animation-duration: var(--transition-fast);
+  animation-delay: var(--transition-slow);
+  animation-timing-function: steps(1);
+  animation-fill-mode: backwards;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+}
+
+#seal-cta:hover .seal-ring-group {
+  animation: seal-ring-spin 3.5s linear infinite;
+}
+
+#seal-cta:hover .seal-ring-outer {
+  stroke: #ff3c00;
+  filter: drop-shadow(0 0 4px #EE9B00);
+}
+
+#seal-cta:hover .seal-ticks line {
+  stroke: #ff3c00;
+}
+
+#seal-cta:hover .seal-circuit {
+  stroke: #0A9396;
+}
+
+#seal-cta:hover .seal-circuit-dot {
+  fill: #0A9396;
+}
+
+#seal-cta:hover .seal-label[data-splitting] [data-char]:after {
+  color: var(--cyan);
+}
+
+#seal-cta:hover {
+  filter: drop-shadow(0 0 14px rgba(238, 155, 0, 0.5)) drop-shadow(0 0 30px rgba(202, 103, 2, 0.25));
+}
+
+#seal-cta.seal-glitch-active {
+  animation: seal-glitch-burst 0.55s ease-out 1 forwards;
+}
+
+@keyframes seal-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes seal-entrance {
+  0%   { opacity: 0; transform: scale(0.75) rotate(-10deg); }
+  60%  { opacity: 1; transform: scale(1.06) rotate(2deg); }
+  80%  { transform: scale(0.97) rotate(-1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes seal-glitch-burst {
+  0%   { transform: translateX(0)    skewX(0deg);    filter: drop-shadow(0 0 14px rgba(238,155,0,0.5)) drop-shadow(0 0 30px rgba(202,103,2,0.25)); }
+  8%   { transform: translateX(-6px) skewX(-2.5deg); filter: drop-shadow(7px  0 0 rgba(255,60,0,0.7))  drop-shadow(-7px 0 0 rgba(0,255,255,0.7)); }
+  16%  { transform: translateX(5px)  skewX(2deg);    filter: drop-shadow(-5px 0 0 rgba(255,60,0,0.5))  drop-shadow(5px  0 0 rgba(0,255,255,0.5)); }
+  24%  { transform: translateX(-3px) skewX(-1deg);   filter: drop-shadow(0 0 8px rgba(238,155,0,0.8)); }
+  32%  { transform: translateX(4px)  skewX(1.5deg);  filter: drop-shadow(6px  0 0 rgba(255,60,0,0.7))  drop-shadow(-6px 0 0 rgba(0,255,255,0.7)); }
+  42%  { transform: translateX(-1px) skewX(0deg);    filter: drop-shadow(0 0 14px rgba(238,155,0,0.5)) drop-shadow(0 0 30px rgba(202,103,2,0.25)); }
+  100% { transform: translateX(0)    skewX(0deg);    filter: drop-shadow(0 0 14px rgba(238,155,0,0.5)) drop-shadow(0 0 30px rgba(202,103,2,0.25)); }
 }
 
 /* --- Paul Rand Quote --- */
@@ -1764,6 +1925,23 @@ nav {
 }
 
 #about .element-visible .about-highlight {
+  background-size: 100% 88%;
+}
+
+.about-cta-marker {
+  background-image: linear-gradient(#E9D8A6, #E9D8A6);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 88%;
+  transition: background-size 0.8s ease-out 0.4s;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  color: #001219;
+  padding: 0 3px;
+  text-decoration: none;
+}
+
+#aboutp4.element-visible .about-cta-marker {
   background-size: 100% 88%;
 }
 

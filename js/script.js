@@ -53,6 +53,7 @@ class GlitchSystem {
     this.glitchChars = GLITCH_CHARS;
     this.initSplitting();
     this.initLogoGlitch();
+    this.initSealGlitch();
     document.addEventListener('languagechanged', () => this._resplitTranslated());
   }
 
@@ -124,6 +125,38 @@ class GlitchSystem {
       chars.forEach((char) => {
         char.style.animation = 'none';
         void char.offsetWidth;  // Force reflow
+        char.style.animation = '';
+      });
+    });
+  }
+
+  initSealGlitch() {
+    const sealCta = document.getElementById('seal-cta');
+    if (!sealCta) return;
+
+    sealCta.addEventListener('mouseenter', function() {
+      const chars = this.querySelectorAll('.seal-label [data-char]');
+      chars.forEach((char, index) => {
+        char.style.animation = 'none';
+        void char.offsetWidth;
+        char.style.animation = `glitch-switch 0.2s steps(1) ${index * 0.04}s 6 backwards`;
+      });
+      this.classList.remove('seal-glitch-active');
+      void this.offsetWidth;
+      this.classList.add('seal-glitch-active');
+    });
+
+    sealCta.addEventListener('animationend', function(e) {
+      if (e.animationName === 'seal-glitch-burst') {
+        this.classList.remove('seal-glitch-active');
+      }
+    });
+
+    sealCta.addEventListener('mouseleave', function() {
+      const chars = this.querySelectorAll('.seal-label [data-char]');
+      chars.forEach((char) => {
+        char.style.animation = 'none';
+        void char.offsetWidth;
         char.style.animation = '';
       });
     });
@@ -621,7 +654,7 @@ class AnimationCoordinator {
     createClassObserver('#about .about-left p');
     createElementObserver('about-availability');
     createElementObserver('about-metrics');
-    createElementObserver('about-cta');
+    createElementObserver('seal-cta');
     createElementObserver('paulrand-quote');
     createElementObserver('paulrand-author');
     // Note: ID1 SVG observer is set up after SVG conversion in setupID1Observer()
@@ -677,16 +710,16 @@ class AnimationCoordinator {
       dnaEntryObserver.observe(aboutp2El);
     }
 
-    // Exit trigger — observe #dnatitle leaving viewport
-    if (dnatitleEl) {
+    // Exit trigger — observe #about itself; fires only when the full section leaves viewport.
+    if (aboutSection) {
       const dnaExitObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting && dnaGroupVisible) {
             exitDnaGroup();
           }
         });
-      }, elementObserverOptions);
-      dnaExitObserver.observe(dnatitleEl);
+      }, { threshold: 0 });
+      dnaExitObserver.observe(aboutSection);
     }
 
     // Photo section scroll-linked reveal (top-to-bottom wipe) + static line
@@ -1193,8 +1226,7 @@ class AnimationCoordinator {
       const skillsTriggerEl = document.getElementById('aboutp2');
       if (skillsTriggerEl) skillsEntryObserver.observe(skillsTriggerEl);
 
-      // Exit: observe the SVG itself — fires only when the element fully leaves the
-      // viewport (threshold:0, no rootMargin), so it never exits while still on screen.
+      // Exit: observe #about itself — fires only when the full section leaves viewport.
       const skillsExitObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting && skillsShown) {
@@ -1204,7 +1236,7 @@ class AnimationCoordinator {
           }
         });
       }, { threshold: 0 });
-      skillsExitObserver.observe(decorationSkills);
+      if (aboutSection) skillsExitObserver.observe(aboutSection);
     }
   }
 }
