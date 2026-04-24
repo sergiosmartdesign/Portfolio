@@ -49,114 +49,53 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 #ct-stars {
   position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Box-shadow star field — box-shadows injected by JS ─────────────────── */
+.ct-s1,
+.ct-s2,
+.ct-s3 {
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 35%;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
+  background: transparent;
 }
 
-/* ── Parallax depth layers ──────────────────────────────────────────────── */
-.ct-stars-layer {
-  position: absolute;
-  inset: 0;
+.ct-s1 {
+  width: 1px; height: 1px;
+  animation: ct-anim-star  50s linear infinite;
+}
+.ct-s1::after {
+  content: ""; position: absolute; top: 2000px; left: 0;
+  width: 1px; height: 1px; background: transparent;
 }
 
-.ct-stars-layer--far {
-  animation: ct-drift-far 60s ease-in-out infinite alternate;
+.ct-s2 {
+  width: 2px; height: 2px;
+  filter: blur(0.4px);
+  animation: ct-anim-star 100s linear infinite;
 }
-.ct-stars-layer--mid {
-  animation: ct-drift-mid 38s ease-in-out infinite alternate;
-}
-.ct-stars-layer--near {
-  animation: ct-drift-near 22s ease-in-out infinite alternate;
-}
-
-@keyframes ct-drift-far {
-  from { transform: translateX(-1.5vw) translateY( 0.2vh); }
-  to   { transform: translateX( 1.5vw) translateY(-0.4vh); }
-}
-@keyframes ct-drift-mid {
-  from { transform: translateX(-2.5vw) translateY( 0.5vh); }
-  to   { transform: translateX( 2.5vw) translateY(-0.8vh); }
-}
-@keyframes ct-drift-near {
-  from { transform: translateX(-4vw) translateY( 0.8vh); }
-  to   { transform: translateX( 4vw) translateY(-1.2vh); }
+.ct-s2::after {
+  content: ""; position: absolute; top: 2000px; left: 0;
+  width: 2px; height: 2px; background: transparent;
 }
 
-/* ── Individual stars ───────────────────────────────────────────────────── */
-.ct-star {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--ct-star-color);
-  transform: translate(var(--x), var(--y));
-  /* Individual twinkle speed + delay per star (set in JS) */
-  animation-name:            ct-twinkle;
-  animation-duration:        var(--dur,   3s);
-  animation-delay:           var(--delay, 0s);
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction:       alternate;
+.ct-s3 {
+  width: 3px; height: 3px;
+  filter: blur(0.8px);
+  animation: ct-anim-star 150s linear infinite;
+}
+.ct-s3::after {
+  content: ""; position: absolute; top: 2000px; left: 0;
+  width: 3px; height: 3px; background: transparent;
 }
 
-/* Size classes — JS assigns one of these to every star */
-.ct-star--s {
-  width: 0.08rem; height: 0.08rem;
-  box-shadow: 0 0 0.12rem var(--ct-sun-glow);
-}
-.ct-star--m {
-  width: 0.15rem; height: 0.15rem;
-  box-shadow: 0 0 0.28rem var(--ct-sun-glow);
-}
-.ct-star--l {
-  width: 0.26rem; height: 0.26rem;
-  box-shadow: 0 0 0.45rem var(--ct-sun-glow), 0 0 1rem rgba(202,103,2,0.22);
-}
-
-@keyframes ct-twinkle {
-  from { opacity: 1; }
-  to   { opacity: 0.06; }
-}
-
-/* ── Shooting stars ─────────────────────────────────────────────────────── */
-.ct-shoot {
-  position: absolute;
-  pointer-events: none;
-  opacity: 0;
-  animation-name:            ct-shoot-move;
-  animation-duration:        var(--dur,   8s);
-  animation-delay:           var(--delay, 0s);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-/* The streak itself */
-.ct-shoot::after {
-  content: "";
-  display: block;
-  width: 18vmin;
-  height: 0.13vmin;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--ct-accent) 35%,
-    #fff 65%,
-    transparent
-  );
-  border-radius: 1px;
-  transform: rotate(var(--angle, -22deg));
-  transform-origin: 0 50%;
-  filter: drop-shadow(0 0 2px var(--ct-accent));
-}
-
-@keyframes ct-shoot-move {
-  0%   { opacity: 0; transform: translate(0, 0); }
-  3%   { opacity: 1; }
-  13%  { opacity: 0; transform: translate(32vw, 11vw); }
-  100% { opacity: 0; transform: translate(32vw, 11vw); }
+@keyframes ct-anim-star {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-2000px); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -289,46 +228,6 @@
 @keyframes ct-sun-stripes {
   from { --ct-shift: 1; }
   to   { --ct-shift: 3.8; }
-}
-
-/* ── Shooting-star trails ─────────────────────────────────────────────────── */
-.ct-startails {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  mix-blend-mode: lighten;
-  pointer-events: none;
-}
-
-.ct-startail {
-  position: absolute;
-  height: 0.2vmin;
-  border-radius: 50%;
-  filter: drop-shadow(0 0 10px white);
-  bottom: 0;
-}
-
-.ct-startail--r {
-  left: 72%;
-  width: 14vmin;
-  background: linear-gradient(to right, var(--ct-sun-glow) 10%, var(--ct-accent) 50%, transparent 80%);
-  transform: translateY(-30vmin) rotate(-20deg);
-}
-
-.ct-startail--l {
-  left: 14%;
-  width: 16vmin;
-  background: linear-gradient(to right, var(--ct-sun-glow) 10%, var(--ct-accent) 30%, transparent 60%);
-  transform: translateY(-8vmin) rotate(-20deg);
-}
-
-.ct-startail--m {
-  left: 16%;
-  width: 13vmin;
-  background: linear-gradient(to right, var(--ct-sun-glow) 10%, var(--ct-accent) 50%, transparent 80%);
-  transform: translateY(-18vmin) rotate(-20deg);
-  opacity: 0.5;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1074,7 +973,7 @@
 @media (prefers-reduced-motion: reduce) {
   .ct-sun::after,
   .ct-ground::before,
-  #ct-stars,
+  .ct-s1, .ct-s2, .ct-s3,
   .ct-palm--lg,
   .ct-palm--sm,
   .ct-delorean,
@@ -1092,12 +991,7 @@
   .ct-palm--lg { right: -1%; }
   .ct-palm--sm { left: -1%; }
 
-  .ct-startail--l,
-  .ct-startail--m { display: none; }
-
   .ct-ground { flex: 0 0 28%; }
-
-  #ct-stars { bottom: 28%; }
 
   .ct-content { bottom: 28%; }
 
