@@ -109,6 +109,7 @@
     <link rel="stylesheet" href="css/cert-gallery.css">
     <link rel="stylesheet" href="css/scroll-hint.css">
     <link rel="stylesheet" href="css/preloader.css">
+    <link rel="stylesheet" href="css/contact.css">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -1048,7 +1049,83 @@
         </section>
 
         <section id="contact" aria-label="Contact Sergio Ayala">
-            <div class="coming-soon"><p class="coming-soon__label">[ · c o m i n g · s o o n · ]</p></div>
+
+            <!-- ── Synthwave scene ───────────────────────────────────────── -->
+            <div class="ct-scene" aria-hidden="true">
+
+                <!-- Stars (z:0, behind everything) -->
+                <div id="ct-stars"></div>
+
+                <!-- Sky: sun + startails + scanlines + mountains via ::after/::before -->
+                <div class="ct-sky">
+                    <div class="ct-startails">
+                        <div class="ct-startail ct-startail--r"></div>
+                        <div class="ct-startail ct-startail--l"></div>
+                        <div class="ct-startail ct-startail--m"></div>
+                    </div>
+                    <div class="ct-skylines"></div>
+                    <div class="ct-sun"></div>
+                </div>
+
+                <!-- Ground: perspective grid via ::before, vignette via ::after -->
+                <div class="ct-ground"></div>
+
+                <!-- Large palm — right side, sits at the horizon -->
+                <div class="ct-palm ct-palm--lg">
+                    <div class="ct-palm__crown">
+                        <div class="ct-palm__leaf ct-palm__leaf--1"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--1s"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--2"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--2s"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--3"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--3s"></div>
+                    </div>
+                    <div class="ct-palm__trunk"></div>
+                    <div class="ct-palm__trunk-base"></div>
+                </div>
+
+                <!-- Small palm — left side, scaled down -->
+                <div class="ct-palm ct-palm--sm">
+                    <div class="ct-palm__crown">
+                        <div class="ct-palm__leaf ct-palm__leaf--1"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--1s"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--2"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--2s"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--3"></div>
+                        <div class="ct-palm__leaf ct-palm__leaf--3s"></div>
+                    </div>
+                    <div class="ct-palm__trunk"></div>
+                    <div class="ct-palm__trunk-base"></div>
+                </div>
+
+                <!-- CSS scanline grain overlay -->
+                <div class="ct-grain"></div>
+
+            </div><!-- /.ct-scene -->
+
+            <!-- ── Contact content (sky layer, z:50 above scene) ─────────── -->
+            <div class="ct-content">
+                <p class="ct-section-label">[ · c o n t a c t · ]</p>
+                <h2 class="ct-name">SERGIO AYALA</h2>
+                <p class="ct-role">Senior Art Director · Photographer · UX/UI</p>
+                <p class="ct-location-text">Bogotá, Colombia — Available worldwide</p>
+                <nav class="ct-links" aria-label="Contact links">
+                    <a href="mailto:sergionook@gmail.com" class="ct-link">
+                        [ · e m a i l · ]
+                    </a>
+                    <a href="https://www.instagram.com/sersh01/" class="ct-link"
+                       target="_blank" rel="noopener noreferrer"
+                       aria-label="Sergio Ayala on Instagram">
+                        [ · i n s t a g r a m · ]
+                    </a>
+                    <a href="https://www.linkedin.com/in/sergio-ayala-ai" class="ct-link"
+                       target="_blank" rel="noopener noreferrer"
+                       aria-label="Sergio Ayala on LinkedIn">
+                        [ · l i n k e d i n · ]
+                    </a>
+                </nav>
+            </div>
+
         </section>
     </main>
 
@@ -1111,5 +1188,6 @@
     <script src="js/photo-polaroids.js"></script>
     <script src="js/scroll-hint.js"></script>
     <script src="js/ascii-ripple.js"></script>
+    <script src="js/contact.js"></script>
 </body>
 </html>

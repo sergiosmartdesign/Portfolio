@@ -1,0 +1,1020 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Contact Section — Synthwave Scene
+   Requires styles.css loaded first (reuses font stacks, z-index tokens)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Houdini property for animated sun stripe mask */
+@property --ct-shift {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+/* ── Section reset & palette ──────────────────────────────────────────────── */
+#contact {
+  background: transparent;
+  overflow: hidden;
+
+  /* Synthwave tokens — scoped to this section */
+  --ct-sky-dark:   #0a0018;
+  --ct-sky-mid:    #1e0038;
+  --ct-sun-warm:   #EE9B00;   /* bridges to site's amber/marker colour */
+  --ct-sun-pink:   #f672ca;
+  --ct-sun-glow:   #b090ff;
+  --ct-grid-line:  #fac4ff;
+  --ct-grid-glow:  #df7373;
+  --ct-accent:     #6eccee;   /* close to site's --cyan */
+  --ct-star-color: #f6c0c0;
+  --ct-mountain:   #0d0012;
+  --ct-palm-dark:  #1a0f18;
+  --ct-palm-leaf:  #18152a;
+  --ct-speed:      4s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE CONTAINER
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ct-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ct-sky-dark);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STARS  (behind everything)
+   ═══════════════════════════════════════════════════════════════════════════ */
+#ct-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 35%;          /* confined to sky area */
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  animation: ct-stars-drift 20s linear infinite;
+}
+
+.ct-star {
+  position: absolute;
+  width: 0.12rem;
+  height: 0.12rem;
+  background: var(--ct-star-color);
+  border-radius: 50%;
+  transform: translate(var(--x), var(--y));
+  box-shadow: 0 0 0.2rem var(--ct-sun-glow);
+}
+
+@keyframes ct-stars-drift {
+  from { transform: translateX(0); }
+  60%  { transform: translateX(2vmax) rotate(0.8deg); }
+  to   { transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SKY LAYER
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ct-sky {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+  background: linear-gradient(to bottom, var(--ct-sky-dark) 0%, var(--ct-sky-mid) 100%);
+  padding-bottom: 3vmin;
+  z-index: 1;
+}
+
+/* Mountain silhouette at horizon */
+.ct-sky::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5vmin;
+  left: 0;
+  right: 0;
+  height: 7vmin;
+  background: var(--ct-mountain);
+  z-index: 3;
+  clip-path: polygon(
+    0% 38%, 2.6% 40%, 5.4% 24%, 8.7% 59%, 13.6% 72%, 18.5% 22%,
+    21.7% 35%, 27.2% 8%, 34% 53%, 39.4% 81%, 49.1% 85%, 54.5% 64%,
+    60% 53%, 71.4% 80%, 73.4% 15%, 79.8% 29%, 86.5% 15%, 94.1% 36%,
+    100% 27%, 100% 100%, 0% 100%
+  );
+}
+
+/* Atmospheric depth behind mountains */
+.ct-sky::before {
+  content: "";
+  position: absolute;
+  bottom: -1vmin;
+  left: 0;
+  right: 0;
+  height: 15vmin;
+  z-index: 2;
+  background: rgba(13, 0, 18, 0.3);
+  backdrop-filter: blur(10px);
+  clip-path: polygon(
+    0% 38%, 2.6% 40%, 5.4% 24%, 8.7% 59%, 13.6% 72%, 18.5% 22%,
+    21.7% 35%, 27.2% 8%, 34% 53%, 39.4% 81%, 49.1% 85%, 54.5% 64%,
+    60% 53%, 71.2% 70%, 76.6% 24%, 81.4% 0%, 87.1% 13%, 94.2% 27%,
+    100% 32%, 100% 100%, 0% 100%
+  );
+}
+
+/* Horizontal scanline film on sky */
+.ct-skylines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.05;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--ct-sun-pink) 0,
+    var(--ct-sun-pink) 0.15vmin,
+    transparent 0.15vmin,
+    transparent 0.35vmin
+  );
+}
+
+/* ── Sun ──────────────────────────────────────────────────────────────────── */
+.ct-sun {
+  position: relative;
+  width: clamp(100px, 28vmin, 260px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  z-index: 2;
+  margin-bottom: 1vmin;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4rem var(--ct-sun-glow));
+}
+
+/* Animated stripe mask — recreates the SCSS @mixin sun-lines from the reference */
+.ct-sun::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, var(--ct-sun-warm), var(--ct-sun-pink) 60%);
+  mask: linear-gradient(to top,
+    #000  calc(1%  + 3.5% * var(--ct-shift)),
+    #0000 calc(8%  + 2.8% * var(--ct-shift)),
+    #000  calc(10% + 3.5% * var(--ct-shift)),
+    #0000 calc(16% + 2.8% * var(--ct-shift)),
+    #000  calc(19% + 3.5% * var(--ct-shift)),
+    #0000 calc(24% + 2.8% * var(--ct-shift)),
+    #000  calc(28% + 3.5% * var(--ct-shift)),
+    #0000 calc(32% + 2.8% * var(--ct-shift)),
+    #000  calc(37% + 3.5% * var(--ct-shift)),
+    #0000 calc(40% + 2.8% * var(--ct-shift)),
+    #000  calc(46% + 3.5% * var(--ct-shift)),
+    #0000 calc(48% + 2.8% * var(--ct-shift)),
+    #000  calc(55% + 3.5% * var(--ct-shift)),
+    #0000 calc(56% + 2.8% * var(--ct-shift)),
+    #000  calc(56% + 2.5% * var(--ct-shift))
+  );
+  mask-size: 100% 120%;
+  animation: ct-sun-stripes calc(var(--ct-speed) / 4) linear infinite;
+}
+
+/* Glow reflection below sun */
+.ct-sun::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    to top,
+    var(--ct-sun-warm),
+    var(--ct-sun-pink) 55%,
+    var(--ct-accent)   65%,
+    var(--ct-sun-pink) 69%
+  );
+  transform: translateY(100%) rotateX(40deg) scaleY(1.2);
+  filter: blur(18px);
+  opacity: 0.35;
+}
+
+@keyframes ct-sun-stripes {
+  from { --ct-shift: 1; }
+  to   { --ct-shift: 3.8; }
+}
+
+/* ── Shooting-star trails ─────────────────────────────────────────────────── */
+.ct-startails {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  mix-blend-mode: lighten;
+  pointer-events: none;
+}
+
+.ct-startail {
+  position: absolute;
+  height: 0.2vmin;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 10px white);
+  bottom: 0;
+}
+
+.ct-startail--r {
+  left: 72%;
+  width: 14vmin;
+  background: linear-gradient(to right, var(--ct-sun-glow) 10%, var(--ct-accent) 50%, transparent 80%);
+  transform: translateY(-30vmin) rotate(-20deg);
+}
+
+.ct-startail--l {
+  left: 14%;
+  width: 16vmin;
+  background: linear-gradient(to right, var(--ct-sun-glow) 10%, var(--ct-accent) 30%, transparent 60%);
+  transform: translateY(-8vmin) rotate(-20deg);
+}
+
+.ct-startail--m {
+  left: 16%;
+  width: 13vmin;
+  background: linear-gradient(to right, var(--ct-sun-glow) 10%, var(--ct-accent) 50%, transparent 80%);
+  transform: translateY(-18vmin) rotate(-20deg);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PALM TREES
+   Positioned in .ct-scene at the horizon (bottom: 35%)
+   flex-column: crown (height 0) → trunk → base  so the crown is at trunk-top
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ct-palm {
+  position: absolute;
+  bottom: 35%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: bottom center;
+}
+
+.ct-palm--lg {
+  right: 8%;
+  animation: ct-palm-lg 5s ease-in-out infinite;
+}
+
+.ct-palm--sm {
+  left: 4%;
+  animation: ct-palm-sm 4s ease-in-out infinite;
+}
+
+/* Zero-size crown — anchor point for leaves at the trunk top */
+.ct-palm__crown {
+  position: relative;
+  width: 0;
+  height: 0;
+  flex-shrink: 0;
+}
+
+/* Trunk */
+.ct-palm__trunk {
+  width: 4px;
+  height: 22vmin;
+  background: linear-gradient(to bottom, #3a2820, var(--ct-palm-dark));
+  border-radius: 3px 3px 1px 1px;
+}
+
+.ct-palm--sm .ct-palm__trunk {
+  width: 3px;
+  height: 12vmin;
+}
+
+/* Trunk base */
+.ct-palm__trunk-base {
+  width: 10px;
+  height: 1.5vmin;
+  background: var(--ct-palm-dark);
+  border-radius: 50% 50% 30% 30%;
+}
+
+.ct-palm--sm .ct-palm__trunk-base {
+  width: 7px;
+  height: 1vmin;
+}
+
+/* Fronds — rotate from left edge (= trunk centre) using transform-origin */
+.ct-palm__leaf {
+  position: absolute;
+  height: 1.1vmin;
+  background: var(--ct-palm-leaf);
+  border-radius: 0 80% 80% 0;
+  transform-origin: 0 50%;
+  top: -0.55vmin;   /* vertically centre on the crown anchor */
+  left: 0;
+}
+
+/* ── Large palm frond angles & sizes ── */
+.ct-palm--lg .ct-palm__leaf     { width: 11vmin; }
+
+/* leaf-1: upper-right */
+.ct-palm--lg .ct-palm__leaf--1  { transform: rotate(-65deg); width: 7vmin; }
+.ct-palm--lg .ct-palm__leaf--1s { transform: rotate(-73deg); width: 5vmin; opacity: 0.45; background: #0c0a14; }
+
+/* leaf-2: near-vertical */
+.ct-palm--lg .ct-palm__leaf--2  { transform: rotate(-100deg); }
+.ct-palm--lg .ct-palm__leaf--2s { transform: rotate(-108deg); opacity: 0.4; background: #0c0a14; }
+
+/* leaf-3: upper-left */
+.ct-palm--lg .ct-palm__leaf--3  { transform: rotate(-140deg); width: 9vmin; }
+.ct-palm--lg .ct-palm__leaf--3s { transform: rotate(-148deg); width: 7vmin; opacity: 0.35; background: #0c0a14; }
+
+/* ── Small palm frond angles & sizes ── */
+.ct-palm--sm .ct-palm__leaf     { width: 7vmin; height: 0.85vmin; top: -0.42vmin; }
+
+.ct-palm--sm .ct-palm__leaf--1  { transform: rotate(-65deg); width: 4vmin; }
+.ct-palm--sm .ct-palm__leaf--1s { transform: rotate(-73deg); width: 3vmin; opacity: 0.4; background: #0c0a14; }
+
+.ct-palm--sm .ct-palm__leaf--2  { transform: rotate(-100deg); width: 6vmin; }
+.ct-palm--sm .ct-palm__leaf--2s { transform: rotate(-108deg); opacity: 0.35; background: #0c0a14; width: 5vmin; }
+
+.ct-palm--sm .ct-palm__leaf--3  { transform: rotate(-140deg); }
+.ct-palm--sm .ct-palm__leaf--3s { transform: rotate(-148deg); opacity: 0.3; background: #0c0a14; }
+
+/* Palm sway — mirror the reference keyframe values */
+@keyframes ct-palm-lg {
+  from { transform: translate(10vmin, 0)    rotate(6deg); }
+  50%  { transform: translate(10.5vmin, 0)  rotate(9deg); }
+  to   { transform: translate(10vmin, 0)    rotate(6deg); }
+}
+
+@keyframes ct-palm-sm {
+  from { transform: translate(-8vmin, 4vmin) scale(0.5) rotate(-15deg) skewX(5deg); }
+  50%  { transform: translate(-8vmin, 4vmin) scale(0.5) rotate(-12deg) skewX(5deg); }
+  to   { transform: translate(-8vmin, 4vmin) scale(0.5) rotate(-15deg) skewX(5deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GROUND / PERSPECTIVE GRID
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ct-ground {
+  flex: 0 0 35%;
+  position: relative;
+  overflow: hidden;
+  background: var(--ct-sky-dark);
+  perspective: 14.5rem;
+  z-index: 2;
+}
+
+/* Animated grid lines */
+.ct-ground::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right,  var(--ct-grid-line) 0.06rem, transparent 0.06rem),
+    linear-gradient(to bottom, var(--ct-grid-line) 0.06rem, transparent 0.06rem);
+  background-size: 2rem 2rem;
+  transform: rotateX(53deg) scale(1.8) translateZ(43px);
+  animation: ct-grid var(--ct-speed) linear infinite;
+  border-top: 1px solid var(--ct-grid-line);
+  filter: drop-shadow(0 0 2px var(--ct-grid-glow));
+}
+
+@keyframes ct-grid {
+  from { background-position-y: -30rem; }
+  to   { background-position-y: 0%; }
+}
+
+/* Vignette — softens grid edges and hides perspective seams */
+.ct-ground::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center bottom,
+    transparent 40%,
+    rgba(10, 0, 24, 0.9) 80%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DELOREAN  (CSS rear-view car — pure CSS, no images)
+   Structure mirrors the reference pen; all names prefixed ct-del-
+   z-layout: body z:2 sits above wheels z:1, grain z:5 above both
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Wrapper — drives the floating / acceleration animation */
+.ct-delorean {
+  position: absolute;
+  bottom: 4vmin;          /* raises the chassis so wheels touch ground */
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: ct-del-drive 30s ease infinite;
+  perspective: 1000px;
+  pointer-events: none;
+}
+
+@keyframes ct-del-drive {
+  from { transform: translateY(0); }
+  9%   { transform: translateX(-2vmin); }
+  20%  { transform: translateX(0); }
+  50%  { transform: translate(-0.05vmin, 6vmin) scale(1.5); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Car root (all children are absolutely or block-positioned within) ── */
+.ct-del-car {
+  position: relative;
+  width: 42vmin;
+}
+
+/* ── Ground shadow ──────────────────────────────────────────────────────── */
+.ct-del-shadow {
+  position: absolute;
+  bottom: -4.5vmin;
+  left: 14%;
+  right: 14%;
+  height: 3vmin;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.85) 0%, transparent 70%);
+  filter: blur(8px);
+  z-index: 0;
+}
+
+/* ── Neon underglow (synthwave chassis glow) ────────────────────────────── */
+.ct-del-underglow {
+  position: absolute;
+  bottom: -1.5vmin;
+  left: 8%;
+  right: 8%;
+  height: 2.5vmin;
+  background: var(--ct-sun-glow);
+  filter: blur(14px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: ct-del-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes ct-del-glow-pulse {
+  0%, 100% { opacity: 0.6; filter: blur(14px); }
+  50%       { opacity: 0.45; filter: blur(18px); }
+}
+
+/* ── Side mirrors ───────────────────────────────────────────────────────── */
+.ct-del-mirror {
+  position: absolute;
+  top: 2.6vmin;
+  width: 2.3vmin;
+  height: 1.3vmin;
+  background: linear-gradient(160deg, #3e3e44 0%, #222226 100%);
+  border-radius: 0.3vmin 0.3vmin 0 0;
+  z-index: 3;
+}
+.ct-del-mirror--l {
+  left: -2vmin;
+  transform: perspective(200px) rotateY(22deg);
+  transform-origin: right bottom;
+}
+.ct-del-mirror--r {
+  right: -2vmin;
+  transform: perspective(200px) rotateY(-22deg);
+  transform-origin: left bottom;
+}
+/* Mirror arm */
+.ct-del-mirror--l::after,
+.ct-del-mirror--r::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 1.2vmin;
+  height: 0.6vmin;
+  background: #1e1e22;
+}
+.ct-del-mirror--l::after { right: 0; }
+.ct-del-mirror--r::after { left: 0; }
+
+/* ── Engine louver section (top of rear deck) ───────────────────────────── */
+.ct-del-louvers {
+  position: relative;
+  height: 6vmin;
+  overflow: hidden;
+  border-radius: 1.2vmin 1.2vmin 0 0;
+  z-index: 2;
+  /* Brushed steel base */
+  background: linear-gradient(
+    to right,
+    #28282c 0%, #363639 20%, #3e3e42 50%, #363639 80%, #28282c 100%
+  );
+  box-shadow:
+    inset 0 0.4vmin 0.8vmin rgba(255,255,255,0.07),
+    0 0 0 0.1vmin #3a3a3f;
+}
+
+/* Louver slats via repeating-gradient overlay */
+.ct-del-louvers::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.72) 0,
+    rgba(0,0,0,0.72) 0.4vmin,
+    transparent      0.4vmin,
+    transparent      1.05vmin
+  );
+}
+
+/* Chrome edge highlight at top of each louver */
+.ct-del-louvers::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent      0,
+    transparent      0.4vmin,
+    rgba(255,255,255,0.07) 0.4vmin,
+    rgba(255,255,255,0.07) 0.44vmin,
+    transparent      0.44vmin,
+    transparent      1.05vmin
+  );
+}
+
+/* Gull-wing door crease lines */
+.ct-del-door-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.1vmin;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.18),
+    rgba(255,255,255,0.06) 60%,
+    transparent
+  );
+  z-index: 1;
+}
+.ct-del-door-line--l { left: 31%; }
+.ct-del-door-line--r { right: 31%; }
+
+/* ── Rear window ────────────────────────────────────────────────────────── */
+.ct-del-window {
+  position: absolute;
+  top: 0.8vmin;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14vmin;
+  height: 3.2vmin;
+  background: linear-gradient(135deg, #0a1520 0%, #051018 60%, #0d1f35 100%);
+  border-radius: 0.4vmin 0.4vmin 0 0;
+  border: 0.08vmin solid #1e2830;
+  box-shadow: inset 0 0 2vmin rgba(110,204,238,0.08);
+  z-index: 1;
+}
+
+/* Window glare */
+.ct-del-window::before {
+  content: "";
+  position: absolute;
+  top: 0.25vmin;
+  left: 0.8vmin;
+  width: 38%;
+  height: 36%;
+  background: rgba(255,255,255,0.05);
+  border-radius: 0.2vmin;
+  transform: skewX(-3deg);
+}
+
+/* ── Taillight strip ────────────────────────────────────────────────────── */
+.ct-del-lights {
+  position: relative;
+  height: 2.8vmin;
+  background: linear-gradient(to bottom, #1c1c20, #181819);
+  border-top: 0.1vmin solid #2e2e33;
+  z-index: 2;
+}
+
+/* Top + bottom chrome lines on light strip */
+.ct-del-lights-frame {
+  position: absolute;
+  inset: 0;
+  border-top:    0.08vmin solid rgba(255,255,255,0.1);
+  border-bottom: 0.08vmin solid rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+/* Individual taillights */
+.ct-del-light {
+  position: absolute;
+  top: 0.35vmin;
+  bottom: 0.35vmin;
+  width: 12.5vmin;
+  border-radius: 0.15vmin;
+  animation: ct-del-light-pulse 2.5s ease-in-out infinite;
+}
+.ct-del-light--l {
+  left: 0.4vmin;
+  background: linear-gradient(to right, #7a0000 0%, #bb1100 40%, #ff3300 80%, #ff5500 100%);
+  box-shadow:
+    0 0 0.8vmin rgba(255,55,0,0.95),
+    0 0 2.5vmin rgba(255,50,0,0.5),
+    0 0 6vmin   rgba(255,30,0,0.25),
+    inset 0 0 0.5vmin rgba(255,110,0,0.3);
+}
+.ct-del-light--r {
+  right: 0.4vmin;
+  background: linear-gradient(to left, #7a0000 0%, #bb1100 40%, #ff3300 80%, #ff5500 100%);
+  box-shadow:
+    0 0 0.8vmin rgba(255,55,0,0.95),
+    0 0 2.5vmin rgba(255,50,0,0.5),
+    0 0 6vmin   rgba(255,30,0,0.25),
+    inset 0 0 0.5vmin rgba(255,110,0,0.3);
+}
+
+@keyframes ct-del-light-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.82; }
+}
+
+/* Taillight glow spread on body */
+.ct-del-light-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 130% at 16% 50%, rgba(255,50,0,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 130% at 84% 50%, rgba(255,50,0,0.13) 0%, transparent 70%);
+}
+
+/* License plate */
+.ct-del-plate {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 5.5vmin;
+  height: 1.6vmin;
+  background: #d2d2c2;
+  border-radius: 0.12vmin;
+  box-shadow: 0 0 0.3vmin rgba(0,0,0,0.7), 0 0 1.5vmin rgba(238,155,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ct-del-plate-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(4px, 0.65vmin, 8px);
+  color: #111;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+/* Taillight-to-body light reflections */
+.ct-del-light-refl {
+  position: absolute;
+  bottom: 0;
+  height: 0.9vmin;
+  width: 12vmin;
+  background: linear-gradient(to right, transparent, rgba(255,40,0,0.16), transparent);
+  filter: blur(2px);
+}
+.ct-del-light-refl--l { left: 0.4vmin; }
+.ct-del-light-refl--r { right: 0.4vmin; }
+
+/* ── Rear bumper ────────────────────────────────────────────────────────── */
+.ct-del-bumper {
+  position: relative;
+  height: 3.2vmin;
+  background: linear-gradient(
+    to bottom,
+    #242428 0%,
+    #1c1c1f 55%,
+    #151517 100%
+  );
+  border-top: 0.1vmin solid #2e2e32;
+  border-radius: 0 0 0.5vmin 0.5vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Chrome strip at bumper top */
+.ct-del-bumper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 0.1vmin;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255,255,255,0.2) 20%,
+    rgba(255,255,255,0.32) 50%,
+    rgba(255,255,255,0.2) 80%,
+    transparent
+  );
+}
+
+/* Second chrome line lower on bumper */
+.ct-del-bumper::after {
+  content: "";
+  position: absolute;
+  bottom: 0.4vmin;
+  left: 6%;
+  right: 6%;
+  height: 0.08vmin;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Paint-match chrome band */
+.ct-del-bumper-refl {
+  position: absolute;
+  top: 0.55vmin;
+  left: 10%;
+  right: 10%;
+  height: 0.08vmin;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255,255,255,0.11) 30%,
+    rgba(255,255,255,0.17) 50%,
+    rgba(255,255,255,0.11) 70%,
+    transparent
+  );
+}
+
+/* DMC logo plate */
+.ct-del-bumper-logo {
+  width: 4.5vmin;
+  height: 1.6vmin;
+  border: 0.08vmin solid rgba(255,255,255,0.12);
+  border-radius: 0.18vmin;
+  background: rgba(255,255,255,0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.ct-del-bumper-logo::after {
+  content: "DMC";
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(4px, 0.58vmin, 8px);
+  color: rgba(255,255,255,0.32);
+  letter-spacing: 0.14em;
+}
+
+/* Ventilation slots */
+.ct-del-bumper-hole {
+  position: absolute;
+  height: 0.52vmin;
+  width: 4.2vmin;
+  background: #0a0a0c;
+  border-radius: 0.12vmin;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: inset 0 0.1vmin 0.3vmin rgba(0,0,0,0.9);
+}
+.ct-del-bumper-hole--1 { left: 17%; }
+.ct-del-bumper-hole--2 { right: 17%; }
+
+/* Amber centre reflector */
+.ct-del-bumper-sticker {
+  position: absolute;
+  bottom: 0.45vmin;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.3vmin;
+  height: 0.65vmin;
+  background: rgba(238,155,0,0.55);
+  border-radius: 0.1vmin;
+  box-shadow: 0 0 0.6vmin rgba(238,155,0,0.35);
+}
+
+/* ── Wheel arches + wheels ──────────────────────────────────────────────── */
+
+/*
+  Geometry:
+  • .ct-del-car has no explicit height → sized by body content = 12vmin
+  • .ct-delorean { bottom: 4vmin } → car body bottom is 4vmin above scene bottom
+  • Wheel arches: position absolute, bottom: 0 in car → arch bottom = car body bottom
+    arch height: 5vmin → arch spans (car bottom − 5vmin) to (car bottom)
+  • Wheels: bottom: -4vmin → wheel bottom = car bottom + 4vmin = scene bottom ✓
+    wheel height: 9vmin → wheel top = scene bottom − 9vmin
+    arch covers upper 5vmin of wheel (z:2 > z:1)
+    lower 4vmin of wheel visible below body ✓
+*/
+
+.ct-del-wheel-arch {
+  position: absolute;
+  bottom: 0;
+  width: 11vmin;
+  height: 5vmin;
+  background: linear-gradient(to bottom, #111115, #0c0c0f);
+  border-radius: 50% 50% 0 0;
+  border: 0.1vmin solid #252528;
+  border-bottom: none;
+  z-index: 2;
+}
+.ct-del-wheel-arch--l { left: 0.5vmin; }
+.ct-del-wheel-arch--r { right: 0.5vmin; }
+
+.ct-del-wheel {
+  position: absolute;
+  bottom: -4vmin;   /* extends below car body to scene ground */
+  width: 9vmin;
+  height: 9vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%,
+    #383838 0%, #202020 35%, #121212 70%, #080808 100%
+  );
+  border: 0.25vmin solid #242424;
+  z-index: 1;
+}
+.ct-del-wheel--l { left: 1vmin; }
+.ct-del-wheel--r { right: 1vmin; }
+
+/* Wheel rim ring */
+.ct-del-wheel::before {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, #3a3a3a, #1c1c1c 50%, #0e0e0e);
+  border: 0.14vmin solid #2c2c2c;
+  box-shadow: inset 0 0 1.5vmin rgba(0,0,0,0.7);
+}
+
+/* Hub cap */
+.ct-del-wheel::after {
+  content: "";
+  position: absolute;
+  inset: 35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2e2e2e, #111);
+  box-shadow: inset 0 0 0.6vmin rgba(0,0,0,0.9);
+}
+
+/* ── CSS scanline grain (replaces external noise.svg) ─────────────────────── */
+.ct-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.04;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(255, 255, 255, 0.15) 2px,
+    rgba(255, 255, 255, 0.15) 3px
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONTACT CONTENT  (floats in sky area above the scene)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ct-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 35%;          /* confined to sky portion */
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vmin, 3rem);
+  pointer-events: none;
+  /* Centre darkening for text legibility */
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 48%,
+    rgba(0, 0, 0, 0.45) 0%,
+    transparent 100%
+  );
+}
+
+.ct-section-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  color: rgba(148, 210, 189, 0.5);
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+}
+
+.ct-name {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 8vmin, 5.5rem);
+  color: var(--ct-sun-warm);
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-shadow:
+    0 0 30px var(--ct-sun-glow),
+    0 0 60px rgba(238, 155, 0, 0.3);
+  margin-bottom: 0.5rem;
+}
+
+.ct-role {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+  color: var(--ct-accent);
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.ct-location-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  color: rgba(110, 204, 238, 0.55);
+  letter-spacing: 0.06em;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.ct-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vmin, 1rem);
+  justify-content: center;
+  pointer-events: all;
+}
+
+.ct-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  color: var(--ct-sun-warm);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  padding: 0.5em 1.1em;
+  border: 1px solid rgba(238, 155, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+  transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ct-link:hover,
+.ct-link:focus-visible {
+  color: #fff;
+  border-color: var(--ct-sun-warm);
+  box-shadow: 0 0 15px rgba(238, 155, 0, 0.4), inset 0 0 12px rgba(238, 155, 0, 0.08);
+  outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PERFORMANCE — pause all animations when section is off-screen
+   ═══════════════════════════════════════════════════════════════════════════ */
+#contact.ct-paused * {
+  animation-play-state: paused !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .ct-sun::after,
+  .ct-ground::before,
+  #ct-stars,
+  .ct-palm--lg,
+  .ct-palm--sm {
+    animation: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .ct-palm--lg { right: -1%; }
+  .ct-palm--sm { left: -1%; }
+
+  .ct-startail--l,
+  .ct-startail--m { display: none; }
+
+  .ct-ground { flex: 0 0 28%; }
+
+  #ct-stars { bottom: 28%; }
+
+  .ct-content { bottom: 28%; }
+
+  @keyframes ct-palm-sm {
+    from { transform: translate(-4vmin, 4vmin) scale(0.45) rotate(-15deg) skewX(5deg); }
+    50%  { transform: translate(-4vmin, 4vmin) scale(0.45) rotate(-12deg) skewX(5deg); }
+    to   { transform: translate(-4vmin, 4vmin) scale(0.45) rotate(-15deg) skewX(5deg); }
+  }
+}

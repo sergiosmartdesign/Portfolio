@@ -396,6 +396,26 @@ class NavigationManager {
         if (href && href.startsWith('#')) {
           const sectionId = href.substring(1);
 
+          // If the photo section is currently visible and we are navigating
+          // away from it, force-hide it immediately before any scroll fires.
+          // This prevents updatePhotoReveal from re-animating the clip-path
+          // wipe while the browser scrolls to the target.
+          if (sectionId !== 'photo') {
+            const _photoSpacer = document.querySelector('.photo-scroll-spacer');
+            if (_photoSpacer) {
+              const _prog = 1 - _photoSpacer.getBoundingClientRect().top / window.innerHeight;
+              if (_prog > 0) {
+                const _photoEl = document.querySelector('#photo');
+                if (_photoEl) {
+                  _photoEl.style.visibility = 'hidden';
+                  _photoEl.style.clipPath   = 'inset(0 0 100% 0)';
+                }
+                window._photoNavExit = true;
+                setTimeout(() => { window._photoNavExit = false; }, 2000);
+              }
+            }
+          }
+
           if (sectionId === 'intro') {
             e.preventDefault();
             smoothScrollTo(0);
@@ -792,6 +812,8 @@ class AnimationCoordinator {
       };
 
       const updatePhotoReveal = () => {
+        if (window._photoNavExit) return;
+
         const spacerRect = photoSpacer.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
 
