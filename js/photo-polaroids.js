@@ -108,6 +108,14 @@
       container.appendChild(card);
       this.cards.push(card);
 
+      /* Four CSS glitch layers — hover-animated via polar-gl-1/2/3/4 keyframes.
+         Must be appended before the click IIFE so nth-child indices are stable. */
+      for (var g = 0; g < 4; g++) {
+        var glDiv = document.createElement('div');
+        glDiv.className = 'polaroid-gl';
+        card.appendChild(glDiv);
+      }
+
       /* Click handler — closure captures index */
       (function (idx) {
         self.cards[idx].addEventListener('click', function () {

@@ -3910,6 +3910,7 @@ nav {
     0 0 8px  rgba(238, 155, 0, 0.25),
     0 0 20px rgba(238, 155, 0, 0.08),
     inset 0 0 6px rgba(238, 155, 0, 0.05);
+  overflow: hidden; /* clip glitch child layers at card boundary */
   will-change: transform, opacity;
   pointer-events: none;
   user-select: none;
@@ -3938,6 +3939,124 @@ nav {
     0 0 90px rgba(238, 155, 0, 0.18),
     inset 0 0 12px rgba(238, 155, 0, 0.15);
   border-color: #F5C842;
+}
+
+/* ── Polaroid card — hover CSS glitch effect ────────────────────────────────
+   Four absolutely-positioned layers appended by photo-polaroids.js.
+   Technique: each layer is clipped to a horizontal strip via clip-path and
+   translated sideways. mix-blend-mode:screen on layers 1/2/4 makes the tint
+   additive over the dark background. Inset box-shadow on layers 1/2 creates
+   a chromatic ring visible inside each shifting strip.
+   ::after caption strip always paints above child divs (pseudo-element order).
+   Effect only fires on placed cards (pointer-events:auto set by JS).     */
+
+.polaroid-gl {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 2px;
+  will-change: transform, opacity, clip-path;
+}
+
+/* Layer 1 — teal channel, shift right, chromatic ring */
+.polaroid-card:hover .polaroid-gl:nth-child(1) {
+  background: rgba(10, 147, 150, 0.32);
+  box-shadow: inset 0 0 0 2px rgba(10, 147, 150, 0.80);
+  mix-blend-mode: screen;
+  animation: polar-gl-1 2.0s linear infinite;
+}
+
+/* Layer 2 — amber channel, shift left, chromatic ring */
+.polaroid-card:hover .polaroid-gl:nth-child(2) {
+  background: rgba(238, 155, 0, 0.25);
+  box-shadow: inset 0 0 0 2px rgba(238, 155, 0, 0.75);
+  mix-blend-mode: screen;
+  animation: polar-gl-2 1.4s linear infinite;
+  animation-delay: -0.3s;
+}
+
+/* Layer 3 — pale green-teal vertical shift, very thin strips */
+.polaroid-card:hover .polaroid-gl:nth-child(3) {
+  background: rgba(148, 210, 189, 0.18);
+  animation: polar-gl-3 1.8s linear infinite;
+  animation-delay: -0.65s;
+}
+
+/* Layer 4 — bright amber impulse flash, fires twice per cycle */
+.polaroid-card:hover .polaroid-gl:nth-child(4) {
+  background: rgba(238, 155, 0, 0.60);
+  mix-blend-mode: screen;
+  animation: polar-gl-4 2.4s linear infinite;
+}
+
+@keyframes polar-gl-1 {
+  /* Teal +5px right — mix of narrow (2–4%) and medium (8–11%) strips */
+  0%, 100% {
+    opacity: 1;
+    transform: translate3d(5px, 0, 0);
+    clip-path: polygon(0 2%, 100% 2%, 100% 10%, 0 10%);
+  }
+  11%  { clip-path: polygon(0 44%, 100% 44%, 100% 52%, 0 52%); }
+  22%  { clip-path: polygon(0 15%, 100% 15%, 100% 18%, 0 18%); }
+  33%  { clip-path: polygon(0 68%, 100% 68%, 100% 76%, 0 76%); }
+  44%  { clip-path: polygon(0  8%, 100%  8%, 100% 16%, 0 16%); }
+  50%  { clip-path: polygon(0 30%, 100% 30%, 100% 33%, 0 33%); }
+  61%  { clip-path: polygon(0 82%, 100% 82%, 100% 90%, 0 90%); }
+  72%  { clip-path: polygon(0 22%, 100% 22%, 100% 30%, 0 30%); }
+  83%  { clip-path: polygon(0 55%, 100% 55%, 100% 63%, 0 63%); }
+  92%  { clip-path: polygon(0 40%, 100% 40%, 100% 43%, 0 43%); }
+}
+
+@keyframes polar-gl-2 {
+  /* Amber −4px left — strips intentionally stagger against layer 1 */
+  0%, 100% {
+    opacity: 1;
+    transform: translate3d(-4px, 0, 0);
+    clip-path: polygon(0 35%, 100% 35%, 100% 43%, 0 43%);
+  }
+  10%  { clip-path: polygon(0  5%, 100%  5%, 100%  8%, 0  8%); }
+  21%  { clip-path: polygon(0 58%, 100% 58%, 100% 66%, 0 66%); }
+  32%  { clip-path: polygon(0 12%, 100% 12%, 100% 20%, 0 20%); }
+  43%  { clip-path: polygon(0 75%, 100% 75%, 100% 82%, 0 82%); }
+  54%  { clip-path: polygon(0 27%, 100% 27%, 100% 31%, 0 31%); }
+  65%  { clip-path: polygon(0 50%, 100% 50%, 100% 58%, 0 58%); }
+  76%  { clip-path: polygon(0  3%, 100%  3%, 100% 11%, 0 11%); }
+  87%  { clip-path: polygon(0 88%, 100% 88%, 100% 95%, 0 95%); }
+  95%  { clip-path: polygon(0 62%, 100% 62%, 100% 66%, 0 66%); }
+}
+
+@keyframes polar-gl-3 {
+  /* Pale green, vertical −3px — very thin strips (2–4%) scan full height */
+  0%, 100% {
+    opacity: 1;
+    transform: translate3d(0, -3px, 0);
+    clip-path: polygon(0  1%, 100%  1%, 100%  4%, 0  4%);
+  }
+   9%  { clip-path: polygon(0 22%, 100% 22%, 100% 25%, 0 25%); }
+  18%  { clip-path: polygon(0 43%, 100% 43%, 100% 46%, 0 46%); }
+  27%  { clip-path: polygon(0 14%, 100% 14%, 100% 17%, 0 17%); }
+  36%  { clip-path: polygon(0 62%, 100% 62%, 100% 65%, 0 65%); }
+  45%  { clip-path: polygon(0 35%, 100% 35%, 100% 39%, 0 39%); }
+  54%  { clip-path: polygon(0 80%, 100% 80%, 100% 83%, 0 83%); }
+  63%  { clip-path: polygon(0 52%, 100% 52%, 100% 55%, 0 55%); }
+  72%  { clip-path: polygon(0 95%, 100% 95%, 100% 98%, 0 98%); }
+  81%  { clip-path: polygon(0 72%, 100% 72%, 100% 75%, 0 75%); }
+  90%  { clip-path: polygon(0 28%, 100% 28%, 100% 31%, 0 31%); }
+}
+
+@keyframes polar-gl-4 {
+  /* Bright amber double-flash — two impulses per 2.4 s cycle */
+  0%,  4.5%,  100%  { opacity: 0; transform: translate3d(0, 0, 0); }
+  1%    { opacity: 0;    transform: translate3d(5px,  1px, 0); }
+  2%    { opacity: 0.90; transform: translate3d(5px,  1px, 0); }
+  3%    { opacity: 0.15; transform: translate3d(5px,  1px, 0); }
+  3.5%  { opacity: 0.60; transform: translate3d(-3px, 1px, 0); }
+  4%    { opacity: 0; }
+  50%   { opacity: 0; }
+  51%   { opacity: 0;    transform: translate3d(4px, -1px, 0); }
+  51.8% { opacity: 0.45; transform: translate3d(4px, -1px, 0); }
+  52.5% { opacity: 0; }
 }
 
 /* Camera recoil — fires when a card ejects.  The camera is upside-down so the
