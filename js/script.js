@@ -817,27 +817,33 @@ class AnimationCoordinator {
         const spacerRect = photoSpacer.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
 
-        // Animation starts when spacer top enters viewport bottom,
-        // ends when spacer top reaches viewport top
-        const progress = 1 - (spacerRect.top / viewportHeight);
-        const clamped = Math.max(0, Math.min(1, progress));
+        // Entry: 0→1 as spacer.top descends from viewportH to 0
+        const entryProgress = 1 - (spacerRect.top / viewportHeight);
+        const entryClamped  = Math.max(0, Math.min(1, entryProgress));
 
-        // Hide photo section entirely until animation is about to start
-        photoSection.style.visibility = clamped > 0 ? 'visible' : 'hidden';
+        // Exit: 0→1 over the last viewport of the spacer (spacer.bottom descends from viewportH to 0)
+        const exitProgress = Math.max(0, Math.min(1, 1 - (spacerRect.bottom / viewportHeight)));
 
-        // clip-path: inset(0 0 <remaining%> 0) — reveals from top to bottom
-        const clipBottom = (1 - clamped) * 100;
-        photoSection.style.clipPath = `inset(0 0 ${clipBottom}% 0)`;
-
-        // Position static line at the reveal edge
-        const revealEdgeY = clamped * viewportHeight;
-        staticLineCanvas.style.top = `${revealEdgeY - 2}px`;
-
-        // Show static line only while scrolling and photo is visible
-        if (clamped > 0 && clamped < 1) {
-          showStaticLine();
+        if (exitProgress > 0) {
+          // Exit phase — clip from the top so #photo slides away as next section enters
+          photoSection.style.visibility = exitProgress < 1 ? 'visible' : 'hidden';
+          photoSection.style.clipPath = `inset(${exitProgress * 100}% 0 0 0)`;
+          staticLineCanvas.style.top  = `${exitProgress * viewportHeight - 2}px`;
+          if (exitProgress < 1) {
+            showStaticLine();
+          } else {
+            hideStaticLine();
+          }
         } else {
-          hideStaticLine();
+          // Entry phase — reveal from top to bottom
+          photoSection.style.visibility = entryClamped > 0 ? 'visible' : 'hidden';
+          photoSection.style.clipPath   = `inset(0 0 ${(1 - entryClamped) * 100}% 0)`;
+          staticLineCanvas.style.top    = `${entryClamped * viewportHeight - 2}px`;
+          if (entryClamped > 0 && entryClamped < 1) {
+            showStaticLine();
+          } else {
+            hideStaticLine();
+          }
         }
 
         // Hide static line when scrolling stops

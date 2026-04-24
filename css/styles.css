@@ -141,12 +141,13 @@
   height: 100%;
   min-height: 100vh;
 }
+
 .coming-soon__label {
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 700;
-  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
-  color: rgba(148, 210, 189, 0.35);
-  letter-spacing: 0.06em;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(0.85rem, 1.6vw, 1.2rem);
+  letter-spacing: 0.10em;
+  white-space: nowrap;
 }
 
 /* ============================================================================
@@ -2552,6 +2553,22 @@ nav {
 #art-direction {
   background: #001219;
   overflow: hidden;
+}
+
+#illustration {
+  background: #005F73;
+}
+
+#illustration .coming-soon__label {
+  --glitch-final-color: #94D2BD;
+}
+
+#blog {
+  background: #BB3E03;
+}
+
+#blog .coming-soon__label {
+  --glitch-final-color: #E9D8A6;
 }
 
 #art-direction .background {
