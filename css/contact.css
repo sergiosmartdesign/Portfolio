@@ -240,7 +240,7 @@
   width: clamp(100px, 28vmin, 260px);
   aspect-ratio: 1;
   border-radius: 50%;
-  z-index: 2;
+  z-index: 1;
   margin-bottom: 1vmin;
   flex-shrink: 0;
   filter: drop-shadow(0 0 4rem var(--ct-sun-glow-anim));
@@ -940,34 +940,6 @@
 }
 
 /* Idle: gentle hover drift */
-@keyframes ct-del-idle {
-  0%, 100% { transform: translateY(0)      translateX(0)       rotate(0deg); }
-  30%      { transform: translateY(-1.2vmin) translateX(0.4vmin)  rotate(0.3deg); }
-  65%      { transform: translateY(-0.6vmin) translateX(-0.3vmin) rotate(-0.2deg); }
-}
-
-/* Departure: flux charge shake → stillness → vertical sky launch */
-@keyframes ct-del-depart {
-  /* === Flux capacitor charging: rapid vibration === */
-  0%   { transform: translate(0, 0)         rotate(0deg)    scale(1);    filter: blur(0);            opacity: 1; }
-  4%   { transform: translate(-1.5vmin, 0.8vmin)  rotate(-1.5deg); }
-  8%   { transform: translate(2vmin, -1vmin)       rotate(2deg); }
-  13%  { transform: translate(-1.2vmin, 1.5vmin)  rotate(-1.2deg); }
-  17%  { transform: translate(2.5vmin, -1.5vmin)  rotate(2.5deg); }
-  22%  { transform: translate(-2vmin, 0.5vmin)    rotate(-2deg); }
-  26%  { transform: translate(1.8vmin, -0.8vmin)  rotate(1.8deg); }
-  31%  { transform: translate(-2.5vmin, 1.5vmin)  rotate(-2.5deg); }
-  35%  { transform: translate(1.2vmin, -1.2vmin)  rotate(1.2deg); }
-  40%  { transform: translate(-1.8vmin, 0.6vmin)  rotate(-1deg); }
-  /* === Pre-launch stillness + power surge === */
-  45%  { transform: translate(0, 0) rotate(0deg) scale(1);    filter: blur(0); }
-  51%  { transform: translate(0, -1.5vmin)       scale(1.07); filter: brightness(3.5); }
-  /* === LAUNCH — banking hard right, rockets to top-right corner === */
-  58%  { transform: translate(8vmin,  -16vmin) scale(0.56) rotate(8deg);   filter: blur(1.5px) brightness(1.8); opacity: 0.95; }
-  70%  { transform: translate(32vmin, -52vmin) scale(0.19) rotate(18deg);  filter: blur(5px);                   opacity: 0.5; }
-  84%  { transform: translate(65vmin, -82vmin) scale(0.05) rotate(26deg);  filter: blur(10px);                  opacity: 0.15; }
-  100% { transform: translate(95vmin, -110vmin) scale(0)  rotate(30deg);   filter: blur(16px);                  opacity: 0; }
-}
 
 /* Exhaust trail: drags left as car banks right */
 @keyframes ct-del-trail {

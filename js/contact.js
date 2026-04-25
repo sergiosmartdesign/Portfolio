@@ -1,12 +1,12 @@
 /* ─── Contact Section — Synthwave Scene ───────────────────────────────────
    Boot sequence (GSAP timeline, fires once on first intersection):
-     stars → mountains → sun → ground → palms → content → DeLorean
+     stars → mountains → sun → ground → content → DeLorean
 
    DeLorean state machine:
-     hidden    → off-screen top-left
+     hidden    → off-screen (CSS transform)
      entering  → banks diagonally from top-left to ground (ct-del-arrive)
-     idle      → gentle hover (ct-del-idle)
-     departing → flux charge + right-bank sky launch (ct-del-depart)
+     tracking  → spring-physics mouse following with organic hover (GSAP rAF)
+     departing → high-speed GSAP exit to top-right
    ─────────────────────────────────────────────────────────────────────────── */
 
 (function () {
@@ -65,7 +65,7 @@
      DELOREAN STATE MACHINE
      ════════════════════════════════════════════════════════════════════════ */
 
-  const DEL_STATES   = ['hidden', 'entering', 'idle', 'departing'];
+  const DEL_STATES   = ['hidden', 'entering', 'tracking', 'departing'];
   let   delState     = 'hidden';
   let   sectionVisible = false;
 
@@ -76,41 +76,126 @@
     delorean.classList.add('ct-del--' + next);
   }
 
+  /* ── Mouse-tracking spring physics ───────────────────────────────────── */
+  let rafId        = null;
+  let mouseX       = 0,  mouseY      = 0;   // target offset from anchor
+  let curX         = 0,  curY        = 0;   // current interpolated position
+  let velX         = 0,  velY        = 0;   // physics velocity
+  let mouseAnchorX = 0,  mouseAnchorY = 0;  // DeLorean natural center in section
+
+  const SPRING   = 0.055;  // spring stiffness
+  const FRICTION = 0.80;   // damping (lower = more lag/weight)
+
+  function onMouseMove(e) {
+    const rect = section.getBoundingClientRect();
+    mouseX = (e.clientX - rect.left) - mouseAnchorX;
+    mouseY = (e.clientY - rect.top)  - mouseAnchorY;
+  }
+
+  function onMouseLeave() {
+    mouseX = 0;
+    mouseY = 0;
+  }
+
+  function trackingTick() {
+    const t  = performance.now() * 0.001;
+
+    /* Organic hover oscillation — layered sinusoids for natural float */
+    const hX = Math.sin(t * 0.55 + 1.2) * 3;
+    const hY = Math.sin(t * 0.90) * 7 + Math.sin(t * 1.3 + 0.8) * 2.5;
+
+    /* Spring toward target + hover offset */
+    const tX = mouseX + hX;
+    const tY = mouseY + hY;
+
+    velX += (tX - curX) * SPRING;
+    velY += (tY - curY) * SPRING;
+    velX *= FRICTION;
+    velY *= FRICTION;
+    curX += velX;
+    curY += velY;
+
+    /* Bank angle based on lateral velocity — like an aircraft rolling */
+    const bank = Math.max(-24, Math.min(24, velX * 1.6));
+
+    gsap.set(delorean, { x: curX, y: curY, rotation: bank });
+
+    rafId = requestAnimationFrame(trackingTick);
+  }
+
+  function startTracking() {
+    /* Capture the DeLorean's natural center position in section coords */
+    const carRect     = delorean.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+    mouseAnchorX = carRect.left + carRect.width  / 2 - sectionRect.left;
+    mouseAnchorY = carRect.top  + carRect.height / 2 - sectionRect.top;
+
+    curX = 0; curY = 0; velX = 0; velY = 0;
+    mouseX = 0; mouseY = 0;
+
+    section.addEventListener('mousemove', onMouseMove, { passive: true });
+    section.addEventListener('mouseleave', onMouseLeave);
+    rafId = requestAnimationFrame(trackingTick);
+  }
+
+  function stopTracking() {
+    section.removeEventListener('mousemove', onMouseMove);
+    section.removeEventListener('mouseleave', onMouseLeave);
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
   function delEnter() {
     if (delState !== 'hidden') return;
     delSetState('entering');
   }
 
   function delDepart() {
-    if (delState !== 'idle') return;
+    if (delState !== 'tracking') return;
+    stopTracking();
     delSetState('departing');
+
     if (flashEl) {
       setTimeout(() => {
         flashEl.classList.add('ct-flash--active');
         flashEl.addEventListener('animationend', () => {
           flashEl.classList.remove('ct-flash--active');
         }, { once: true });
-      }, 810);
+      }, 280);
     }
-  }
 
-  if (delorean) {
-    delorean.addEventListener('animationend', (e) => {
-      if (e.animationName === 'ct-del-arrive' && delState === 'entering') {
-        requestAnimationFrame(() => {
-          delSetState('idle');
-          if (!sectionVisible) requestAnimationFrame(delDepart);
-        });
-      } else if (e.animationName === 'ct-del-depart' && delState === 'departing') {
+    /* High-speed GSAP exit from current tracked position */
+    gsap.to(delorean, {
+      x: curX + 380,
+      y: curY - 820,
+      scale: 0.02,
+      rotation: 42,
+      opacity: 0,
+      duration: 0.82,
+      ease: 'power4.in',
+      overwrite: true,
+      onComplete: () => {
+        gsap.set(delorean, { clearProps: 'all' });
         delSetState('hidden');
         if (!sectionVisible) section.classList.add('ct-paused');
       }
     });
   }
 
+  if (delorean) {
+    delorean.addEventListener('animationend', (e) => {
+      if (e.animationName === 'ct-del-arrive' && delState === 'entering') {
+        requestAnimationFrame(() => {
+          delSetState('tracking');
+          startTracking();
+          if (!sectionVisible) requestAnimationFrame(delDepart);
+        });
+      }
+    });
+  }
+
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (btn.getAttribute('href') !== '#contact' && delState === 'idle') delDepart();
+      if (btn.getAttribute('href') !== '#contact' && delState === 'tracking') delDepart();
     });
   });
 
@@ -213,7 +298,7 @@
           }
         } else {
           sectionVisible = false;
-          if (delState === 'idle') {
+          if (delState === 'tracking') {
             delDepart();
           } else if (delState === 'hidden') {
             section.classList.add('ct-paused');
