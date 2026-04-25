@@ -392,7 +392,7 @@
    z-layout: body z:2 sits above wheels z:1, grain z:5 above both
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Wrapper — drives the floating / acceleration animation */
+/* Wrapper — state machine handles all animation via JS-toggled classes */
 .ct-delorean {
   position: absolute;
   bottom: 4vmin;          /* raises the chassis so wheels touch ground */
@@ -402,17 +402,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  animation: ct-del-drive 30s ease infinite;
   perspective: 1000px;
   pointer-events: none;
-}
-
-@keyframes ct-del-drive {
-  from { transform: translateY(0); }
-  9%   { transform: translateX(-2vmin); }
-  20%  { transform: translateX(0); }
-  50%  { transform: translate(-0.05vmin, 6vmin) scale(1.5); }
-  to   { transform: translateY(0); }
 }
 
 /* ── Car root (all children are absolutely or block-positioned within) ── */
@@ -852,6 +843,226 @@
   box-shadow: inset 0 0 0.6vmin rgba(0,0,0,0.9);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   DELOREAN STATE MACHINE — entrance · idle · departure
+   JS toggles: ct-del--hidden | ct-del--entering | ct-del--idle | ct-del--departing
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Parked at the grid vanishing point — invisible dot at the horizon */
+.ct-del--hidden {
+  transform: translateY(52vmin) scale(0.05);
+  opacity: 0;
+  animation: none !important;
+}
+
+/* Rushing toward camera from horizon depth */
+.ct-del--entering {
+  animation: ct-del-arrive 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Arrival light burst — amber/cyan radial centered on car */
+.ct-del--entering::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(238, 155, 0, 0.55) 0%,
+    rgba(0, 220, 255, 0.22) 45%,
+    transparent 70%
+  );
+  animation: ct-del-flash-in 0.9s ease-out forwards;
+  animation-delay: 0.96s;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Underglow activates as car approaches */
+.ct-del--entering .ct-del-underglow {
+  animation: ct-del-glow-arrive 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Gentle synthwave hover */
+.ct-del--idle {
+  animation: ct-del-idle 5s ease-in-out infinite;
+}
+
+/* Flux capacitor charge → vertical sky launch */
+.ct-del--departing {
+  animation: ct-del-depart 1.8s linear forwards;
+}
+
+/* Exhaust flame trail timed to the launch moment */
+.ct-del--departing::after {
+  content: '';
+  position: absolute;
+  bottom: 2vmin;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40vmin;
+  height: 2.4vmin;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(155, 34, 38, 0.5)  10%,
+    rgba(238, 155, 0, 0.9)  35%,
+    rgba(255, 215, 70, 1)   50%,
+    rgba(238, 155, 0, 0.9)  65%,
+    rgba(155, 34, 38, 0.5)  90%,
+    transparent 100%
+  );
+  filter: blur(4px);
+  opacity: 0;
+  animation: ct-del-trail 1.8s linear forwards;
+  pointer-events: none;
+}
+
+/* Underglow flares during charge and extinguishes at launch */
+.ct-del--departing .ct-del-underglow {
+  animation: ct-del-glow-charge 1.8s linear forwards;
+}
+
+/* Taillights blaze red-hot during charge then cut at launch */
+.ct-del--departing .ct-del-light--l,
+.ct-del--departing .ct-del-light--r {
+  animation: ct-del-brakelight 1.8s linear forwards;
+}
+
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+
+/* Entrance: tiny dot at horizon → rushes to camera → bounce settle */
+/* Entrance: banking diagonal flight from top-left corner to ground */
+@keyframes ct-del-arrive {
+  0%   { transform: translate(-78vmin, -90vmin) scale(0.22) rotate(20deg);           opacity: 0;    filter: blur(10px); }
+  6%   { transform: translate(-68vmin, -76vmin) scale(0.28) rotate(18deg);           opacity: 0.5;  filter: blur(5px);  }
+  /* Cutting diagonally across the sky — levels out mid-flight */
+  42%  { transform: translate(-18vmin, -28vmin) scale(0.72) rotate(6deg);            opacity: 1;    filter: blur(1px);  }
+  /* Overshoots slightly left of center then corrects */
+  70%  { transform: translate(5vmin, 3vmin)     scale(1.06) rotate(-4deg);                          filter: blur(0); }
+  79%  { transform: translate(-3vmin, -1.5vmin) scale(0.97) rotate(1.5deg); }
+  88%  { transform: translate(1.5vmin, 0.8vmin) scale(1.02) rotate(-0.8deg); }
+  95%  { transform: translate(-0.5vmin, 0)      scale(0.99) rotate(0.3deg); }
+  100% { transform: translate(0, 0)             scale(1)    rotate(0deg);             opacity: 1;    filter: blur(0); }
+}
+
+/* Arrival flash burst */
+@keyframes ct-del-flash-in {
+  0%   { opacity: 0; transform: scale(0.3); }
+  18%  { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.8); }
+}
+
+/* Underglow fades in as car arrives */
+@keyframes ct-del-glow-arrive {
+  0%,  60% { opacity: 0; filter: blur(20px); }
+  70%       { opacity: 0.9; filter: blur(8px); }
+  80%       { opacity: 1.1; filter: blur(6px); }
+  100%      { opacity: 0.6; filter: blur(14px); }
+}
+
+/* Idle: gentle hover drift */
+@keyframes ct-del-idle {
+  0%, 100% { transform: translateY(0)      translateX(0)       rotate(0deg); }
+  30%      { transform: translateY(-1.2vmin) translateX(0.4vmin)  rotate(0.3deg); }
+  65%      { transform: translateY(-0.6vmin) translateX(-0.3vmin) rotate(-0.2deg); }
+}
+
+/* Departure: flux charge shake → stillness → vertical sky launch */
+@keyframes ct-del-depart {
+  /* === Flux capacitor charging: rapid vibration === */
+  0%   { transform: translate(0, 0)         rotate(0deg)    scale(1);    filter: blur(0);            opacity: 1; }
+  4%   { transform: translate(-1.5vmin, 0.8vmin)  rotate(-1.5deg); }
+  8%   { transform: translate(2vmin, -1vmin)       rotate(2deg); }
+  13%  { transform: translate(-1.2vmin, 1.5vmin)  rotate(-1.2deg); }
+  17%  { transform: translate(2.5vmin, -1.5vmin)  rotate(2.5deg); }
+  22%  { transform: translate(-2vmin, 0.5vmin)    rotate(-2deg); }
+  26%  { transform: translate(1.8vmin, -0.8vmin)  rotate(1.8deg); }
+  31%  { transform: translate(-2.5vmin, 1.5vmin)  rotate(-2.5deg); }
+  35%  { transform: translate(1.2vmin, -1.2vmin)  rotate(1.2deg); }
+  40%  { transform: translate(-1.8vmin, 0.6vmin)  rotate(-1deg); }
+  /* === Pre-launch stillness + power surge === */
+  45%  { transform: translate(0, 0) rotate(0deg) scale(1);    filter: blur(0); }
+  51%  { transform: translate(0, -1.5vmin)       scale(1.07); filter: brightness(3.5); }
+  /* === LAUNCH — banking hard right, rockets to top-right corner === */
+  58%  { transform: translate(8vmin,  -16vmin) scale(0.56) rotate(8deg);   filter: blur(1.5px) brightness(1.8); opacity: 0.95; }
+  70%  { transform: translate(32vmin, -52vmin) scale(0.19) rotate(18deg);  filter: blur(5px);                   opacity: 0.5; }
+  84%  { transform: translate(65vmin, -82vmin) scale(0.05) rotate(26deg);  filter: blur(10px);                  opacity: 0.15; }
+  100% { transform: translate(95vmin, -110vmin) scale(0)  rotate(30deg);   filter: blur(16px);                  opacity: 0; }
+}
+
+/* Exhaust trail: drags left as car banks right */
+@keyframes ct-del-trail {
+  0%,  44% { opacity: 0; transform: translateX(-50%) scaleX(0.2); }
+  52%       { opacity: 0.9; transform: translateX(-50%) scaleX(1.1); filter: blur(3px); }
+  65%       { opacity: 0.6; transform: translateX(-30%) scaleX(1.8) scaleY(1.8); filter: blur(5px); }
+  80%       { opacity: 0.2; transform: translateX(-15%) scaleX(1.1) scaleY(1.2); }
+  100%      { opacity: 0;   transform: translateX(0%)   scaleX(0.5); }
+}
+
+/* Underglow: pulsed flares during charge then blinds white at launch */
+@keyframes ct-del-glow-charge {
+  0%,  30% { opacity: 0.6; filter: blur(14px); transform: scaleX(1); }
+  36%       { opacity: 1;   filter: blur(8px);  transform: scaleX(1.25); }
+  41%       { opacity: 0.5; filter: blur(14px); transform: scaleX(1); }
+  46%       { opacity: 1.6; filter: blur(4px);  transform: scaleX(2); }
+  52%       { opacity: 2.5; filter: blur(2px);  transform: scaleX(2.5); }
+  58%       { opacity: 1;   transform: scaleX(1.5); }
+  65%       { opacity: 0; }
+  100%      { opacity: 0; }
+}
+
+/* Taillights build to red-hot then cut at launch */
+@keyframes ct-del-brakelight {
+  0%, 40% {
+    opacity: 1;
+    box-shadow:
+      0 0 0.8vmin rgba(174,32,18,0.95),
+      0 0 2.5vmin rgba(174,32,18,0.55),
+      0 0 6vmin   rgba(187,62,3,0.3);
+    filter: brightness(1);
+  }
+  46% {
+    opacity: 1;
+    box-shadow:
+      0 0 2vmin  rgba(255,100,0,1),
+      0 0 8vmin  rgba(255,180,0,0.9),
+      0 0 20vmin rgba(255,150,0,0.7);
+    filter: brightness(2);
+  }
+  52% {
+    opacity: 1;
+    box-shadow:
+      0 0 3vmin  rgba(255,200,100,1),
+      0 0 12vmin rgba(255,220,0,1),
+      0 0 32vmin rgba(255,200,50,0.85);
+    filter: brightness(5);
+  }
+  62% { opacity: 0.5; filter: brightness(2); }
+  70% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ── Scene-level flash element ─────────────────────────────────────────── */
+.ct-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0;
+}
+
+.ct-flash--active {
+  animation: ct-scene-flash 0.85s ease-out forwards;
+}
+
+@keyframes ct-scene-flash {
+  0%   { opacity: 0; background: transparent; }
+  12%  { opacity: 0.85; background: rgba(255, 220, 100, 0.6); }
+  28%  { opacity: 0.5;  background: rgba(0, 200, 255, 0.35); }
+  100% { opacity: 0;  background: transparent; }
+}
+
 /* ── CSS scanline grain (replaces external noise.svg) ─────────────────────── */
 .ct-grain {
   position: absolute;
@@ -867,6 +1078,141 @@
     rgba(255, 255, 255, 0.15) 2px,
     rgba(255, 255, 255, 0.15) 3px
   );
+}
+
+/* ── VHS / CRT overlays (reuse .scanlines / .vhs-static from styles.css) ─── */
+/* Raise z-index above all scene elements (grain=5, palms=4, mountains=3).
+   .ct-scene is its own stacking context (z:1) so these never obscure .ct-content. */
+#contact .scanlines {
+  z-index: 8;
+  opacity: 0.6;
+}
+#contact .vhs-static {
+  z-index: 9;
+  opacity: 0.8;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE BOOT SEQUENCE
+   .ct-scene--boot is applied at JS init.  JS adds ct-r--* reveal classes
+   in a staggered sequence when the section first intersects the viewport.
+   Stars → mountains → sun → ground → palms → delorean (handled by state machine).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Hidden initial states (while ct-scene--boot is active) ─────────────── */
+.ct-scene--boot #ct-stars       { opacity: 0; }
+.ct-scene--boot .ct-sky::after  { opacity: 0; }
+.ct-scene--boot .ct-sky::before { opacity: 0; }
+.ct-scene--boot .ct-sun         { opacity: 0; }
+.ct-scene--boot .ct-ground      { opacity: 0; }
+.ct-scene--boot .ct-palm--lg    { opacity: 0; animation: ct-palm-lg 5s ease-in-out infinite; }
+.ct-scene--boot .ct-palm--sm    { opacity: 0; animation: ct-palm-sm 4s ease-in-out infinite; }
+.ct-scene--boot .ct-content     { opacity: 0; }
+
+/* ── Reveal: stars glitch-flicker in ──────────────────────────────────────── */
+#ct-stars.ct-r--stars {
+  animation: ct-boot-stars 0.7s ease-out forwards;
+}
+
+/* ── Reveal: mountain silhouettes glitch-rise ─────────────────────────────── */
+.ct-sky.ct-r--mountains::after,
+.ct-sky.ct-r--mountains::before {
+  animation: ct-boot-mountains 0.75s ease-out forwards;
+}
+
+/* ── Reveal: sun CRT scanline power-on ────────────────────────────────────── */
+.ct-sun.ct-r--sun {
+  animation: ct-boot-sun 0.9s ease-out forwards;
+}
+
+/* ── Reveal: ground grid materialize ─────────────────────────────────────── */
+.ct-ground.ct-r--ground {
+  animation: ct-boot-ground 0.7s ease-out forwards;
+}
+
+/* ── Reveal: palms glitch teleport in + keep sway ────────────────────────── */
+.ct-palm--lg.ct-r--palm {
+  animation:
+    ct-boot-palm   0.65s ease-out both,
+    ct-palm-lg     5s   ease-in-out 0.65s infinite;
+}
+.ct-palm--sm.ct-r--palm {
+  animation:
+    ct-boot-palm   0.65s ease-out both,
+    ct-palm-sm     4s   ease-in-out 0.65s infinite;
+}
+
+/* ── Reveal: contact text block ──────────────────────────────────────────── */
+.ct-content.ct-r--content {
+  animation: ct-boot-content 0.8s ease-out forwards;
+}
+
+/* ── Boot sequence keyframes ──────────────────────────────────────────────── */
+
+/* Stars: rapid VHS static burst → stable */
+@keyframes ct-boot-stars {
+  0%   { opacity: 0; }
+  10%  { opacity: 0; }
+  20%  { opacity: 0.85; }
+  30%  { opacity: 0.04; }
+  45%  { opacity: 1; }
+  57%  { opacity: 0.3; }
+  68%  { opacity: 1; }
+  80%  { opacity: 0.6; }
+  90%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* Mountains: rise from below + glitch flicker */
+@keyframes ct-boot-mountains {
+  0%   { opacity: 0; transform: translateY(35%); }
+  20%  { opacity: 0.9; transform: translateY(0); }
+  34%  { opacity: 0.1; transform: translateY(2%); }
+  50%  { opacity: 1;   transform: translateY(0); }
+  65%  { opacity: 0.45; }
+  80%  { opacity: 1; }
+  90%  { opacity: 0.75; }
+  100% { opacity: 1;   transform: translateY(0); }
+}
+
+/* Sun: CRT scanline power-on — horizontal sliver expands to full circle */
+@keyframes ct-boot-sun {
+  0%   { opacity: 0;   transform: scaleY(0.03) scaleX(1.08); }
+  10%  { opacity: 0.95; transform: scaleY(0.05) scaleX(1.05); }
+  22%  { opacity: 0.2;  transform: scaleY(0.08) scaleX(1); }
+  38%  { opacity: 1;    transform: scaleY(0.48) scaleX(1); }
+  52%  { opacity: 0.5;  transform: scaleY(0.6)  scaleX(1); }
+  66%  { opacity: 1;    transform: scaleY(0.85) scaleX(1); }
+  82%  { opacity: 0.8;  transform: scaleY(0.96) scaleX(1); }
+  100% { opacity: 1;    transform: scaleY(1)    scaleX(1); }
+}
+
+/* Ground: grid snaps in from the horizon with glitch */
+@keyframes ct-boot-ground {
+  0%   { opacity: 0; transform: translateY(18%); }
+  18%  { opacity: 0; transform: translateY(10%); }
+  36%  { opacity: 0.8; transform: translateY(0); }
+  50%  { opacity: 0.2; }
+  65%  { opacity: 1; }
+  80%  { opacity: 0.55; }
+  100% { opacity: 1;   transform: translateY(0); }
+}
+
+/* Palm: opacity-only glitch (transform kept by sway animation) */
+@keyframes ct-boot-palm {
+  0%   { opacity: 0; }
+  22%  { opacity: 0.85; }
+  38%  { opacity: 0.1; }
+  58%  { opacity: 1; }
+  74%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Content: fade up */
+@keyframes ct-boot-content {
+  0%   { opacity: 0; transform: translateY(1.5rem); }
+  40%  { opacity: 0.5; transform: translateY(0.4rem); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -962,9 +1308,16 @@
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PERFORMANCE — pause all animations when section is off-screen
+   Entry/departure are exempt so they can complete through the scroll boundary.
    ═══════════════════════════════════════════════════════════════════════════ */
 #contact.ct-paused * {
   animation-play-state: paused !important;
+}
+#contact.ct-paused .ct-del--entering,
+#contact.ct-paused .ct-del--entering *,
+#contact.ct-paused .ct-del--departing,
+#contact.ct-paused .ct-del--departing * {
+  animation-play-state: running !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -979,8 +1332,23 @@
   .ct-delorean,
   .ct-del-light--l,
   .ct-del-light--r,
-  .ct-del-underglow {
+  .ct-del-underglow,
+  #contact .scanlines,
+  #contact .vhs-static {
     animation: none;
+  }
+  /* Show car at rest immediately, skip entrance/exit motion */
+  .ct-del--hidden,
+  .ct-del--entering,
+  .ct-del--idle {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .ct-del--departing {
+    animation: none !important;
+    opacity: 0 !important;
+    transform: none !important;
   }
 }
 
