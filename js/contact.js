@@ -1,21 +1,12 @@
 /* ─── Contact Section — Synthwave Scene ───────────────────────────────────
-   Star field: box-shadow pixel-stars generated at runtime.
-
-   Boot sequence (first intersection only):
-     0ms   — stars glitch-flicker in
-     260ms — mountain silhouettes glitch-rise
-     460ms — sun CRT scanline power-on
-     680ms — ground grid materialises
-     880ms — large palm glitch-teleport
-     1020ms — small palm glitch-teleport
-     1100ms — contact text fades up
-     1280ms — DeLorean flies in from top-left corner
+   Boot sequence (GSAP timeline, fires once on first intersection):
+     stars → mountains → sun → ground → palms → content → DeLorean
 
    DeLorean state machine:
-     hidden    → invisible at the left-edge of the top-left sky
-     entering  → banks in diagonally top-left → centre-bottom (ct-del-arrive)
-     idle      → gentle synthwave hover (ct-del-idle)
-     departing → flux capacitor charge + right-bank sky launch (ct-del-depart)
+     hidden    → off-screen top-left
+     entering  → banks diagonally from top-left to ground (ct-del-arrive)
+     idle      → gentle hover (ct-del-idle)
+     departing → flux charge + right-bank sky launch (ct-del-depart)
    ─────────────────────────────────────────────────────────────────────────── */
 
 (function () {
@@ -23,14 +14,12 @@
 
   const section  = document.getElementById('contact');
   const starsEl  = document.getElementById('ct-stars');
-  const delorean = section ? section.querySelector('.ct-delorean')    : null;
-  const flashEl  = section ? section.querySelector('.ct-flash')       : null;
-  const sceneEl  = section ? section.querySelector('.ct-scene')       : null;
+  const delorean = section ? section.querySelector('.ct-delorean')       : null;
+  const flashEl  = section ? section.querySelector('.ct-flash')          : null;
 
   if (!section || !starsEl) return;
 
-  /* ── Apply boot class immediately so all elements start hidden ─────────── */
-  /* Class goes on #contact so descendants including .ct-content are matched. */
+  /* ── Apply boot class immediately — hides all elements before GSAP runs ── */
   section.classList.add('ct-scene--boot');
 
   /* ── Star colors ──────────────────────────────────────────────────────── */
@@ -48,28 +37,20 @@
     return parts.join(', ');
   }
 
-  /* ── Build / rebuild star field ───────────────────────────────────────── */
   function buildStars() {
     const W = Math.max(window.innerWidth * 1.2, 1600);
     const H = 2000;
-
     let styleTag = document.getElementById('ct-stars-style');
     if (!styleTag) {
       styleTag = document.createElement('style');
       styleTag.id = 'ct-stars-style';
       document.head.appendChild(styleTag);
     }
-
-    const shadowS = makeShadows(700, W, H);
-    const shadowM = makeShadows(200, W, H);
-    const shadowL = makeShadows(100, W, H);
-
     styleTag.textContent = `
-      .ct-s1, .ct-s1::after { box-shadow: ${shadowS}; }
-      .ct-s2, .ct-s2::after { box-shadow: ${shadowM}; }
-      .ct-s3, .ct-s3::after { box-shadow: ${shadowL}; }
+      .ct-s1, .ct-s1::after { box-shadow: ${makeShadows(700, W, H)}; }
+      .ct-s2, .ct-s2::after { box-shadow: ${makeShadows(200, W, H)}; }
+      .ct-s3, .ct-s3::after { box-shadow: ${makeShadows(100, W, H)}; }
     `;
-
     starsEl.innerHTML = '';
     const frag = document.createDocumentFragment();
     ['ct-s1', 'ct-s2', 'ct-s3'].forEach(cls => {
@@ -84,9 +65,9 @@
      DELOREAN STATE MACHINE
      ════════════════════════════════════════════════════════════════════════ */
 
-  const DEL_STATES = ['hidden', 'entering', 'idle', 'departing'];
-  let delState     = 'hidden';
-  let sectionVisible = false;
+  const DEL_STATES   = ['hidden', 'entering', 'idle', 'departing'];
+  let   delState     = 'hidden';
+  let   sectionVisible = false;
 
   function delSetState(next) {
     if (!delorean || !DEL_STATES.includes(next) || delState === next) return;
@@ -103,8 +84,6 @@
   function delDepart() {
     if (delState !== 'idle') return;
     delSetState('departing');
-
-    /* Scene flash fires at the pre-launch power surge — 45% × 1.8s ≈ 810ms */
     if (flashEl) {
       setTimeout(() => {
         flashEl.classList.add('ct-flash--active');
@@ -129,77 +108,97 @@
     });
   }
 
-  /* ── Nav buttons immediately trigger departure ────────────────────────── */
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (btn.getAttribute('href') !== '#contact' && delState === 'idle') {
-        delDepart();
-      }
+      if (btn.getAttribute('href') !== '#contact' && delState === 'idle') delDepart();
     });
   });
 
   /* ════════════════════════════════════════════════════════════════════════
-     BOOT SEQUENCE — runs once on first intersection
-     Reveals scene elements in order: stars → mountains → sun → ground
-     → palms → content → delorean entrance
+     BOOT SEQUENCE — GSAP timeline
+     Inline styles set by GSAP override CSS cascade cleanly; no fill-mode fights.
      ════════════════════════════════════════════════════════════════════════ */
 
   let sceneBoot = false;
+  let resizeTimer;
 
-  function reveal(selector, cls) {
-    const el = section.querySelector(selector);
-    if (el) el.classList.add(cls);
+  /* Helper: build a glitch sequence on one element inside the timeline.
+     Rapid opacity flickers then locks at 1. Returns time consumed. */
+  function glitchIn(tl, target, position, opts = {}) {
+    const { withY = false, withScaleY = false } = opts;
+    const base = withY    ? { opacity: 0, y: '28%' }
+               : withScaleY ? { opacity: 0, scaleY: 0.04, scaleX: 1.08 }
+               : { opacity: 0 };
+
+    tl.set(target, base, position);
+
+    if (withY) {
+      tl.to(target, { y: 0, opacity: 0.9, duration: 0.14, ease: 'power2.out' });
+      tl.to(target, { opacity: 0.05, duration: 0.07 });
+    } else if (withScaleY) {
+      tl.to(target, { scaleY: 0.08, scaleX: 1.05, opacity: 0.9, duration: 0.10 });
+      tl.to(target, { opacity: 0.1, duration: 0.06 });
+      tl.to(target, { scaleY: 0.42, scaleX: 1, opacity: 1, duration: 0.14 });
+      tl.to(target, { opacity: 0.45, duration: 0.07 });
+      tl.to(target, { scaleY: 0.78, opacity: 1, duration: 0.12 });
+      tl.to(target, { opacity: 0.8, duration: 0.05 });
+      tl.to(target, { scaleY: 1, opacity: 1, duration: 0.10 });
+      return;
+    } else {
+      tl.to(target, { opacity: 0.88, duration: 0.09 });
+      tl.to(target, { opacity: 0.04, duration: 0.06 });
+    }
+
+    tl.to(target, { opacity: 1, duration: 0.10 });
+    tl.to(target, { opacity: 0.35, duration: 0.06 });
+    tl.to(target, { opacity: 1, duration: 0.09 });
+    tl.to(target, { opacity: 0.65, duration: 0.05 });
+    tl.to(target, { opacity: 1, duration: 0.08 });
   }
 
   function bootScene() {
-    if (sceneBoot) return;
+    if (sceneBoot || typeof gsap === 'undefined') return;
     sceneBoot = true;
 
-    /* Stars — first: build them now so they exist when the reveal fires */
     buildStars();
-    requestAnimationFrame(() => {
-      starsEl.classList.add('ct-r--stars');
-    });
 
-    /* Mountains */
-    setTimeout(() => {
-      reveal('.ct-sky', 'ct-r--mountains');
-    }, 260);
+    gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'none' } });
 
-    /* Sun */
-    setTimeout(() => {
-      reveal('.ct-sun', 'ct-r--sun');
-    }, 460);
+      /* 1 — STARS: VHS static burst */
+      glitchIn(tl, '#ct-stars', 0);
 
-    /* Ground grid */
-    setTimeout(() => {
-      reveal('.ct-ground', 'ct-r--ground');
-    }, 680);
+      /* 2 — FAR MOUNTAINS: rise from horizon */
+      glitchIn(tl, ['.ct-horizon-glow', '.ct-mountains--far'], '+=0.08', { withY: true });
 
-    /* Large palm */
-    setTimeout(() => {
-      reveal('.ct-palm--lg', 'ct-r--palm');
-    }, 880);
+      /* 3 — MID MOUNTAINS: dramatic peaks staggered in */
+      glitchIn(tl, '.ct-mountains--mid', '+=0.06', { withY: true });
 
-    /* Small palm */
-    setTimeout(() => {
-      reveal('.ct-palm--sm', 'ct-r--palm');
-    }, 1020);
+      /* 4 — NEAR MOUNTAINS: foreground foothills snap in last */
+      glitchIn(tl, '.ct-mountains--near', '+=0.05', { withY: true });
 
-    /* Contact text */
-    setTimeout(() => {
-      reveal('.ct-content', 'ct-r--content');
-    }, 1100);
+      /* 5 — SUN: CRT scanline power-on */
+      glitchIn(tl, '.ct-sun', '+=0.08', { withScaleY: true });
 
-    /* DeLorean — flies in from top-left after scene is established */
-    setTimeout(delEnter, 1280);
+      /* 6 — GROUND GRID: snap in from horizon */
+      glitchIn(tl, '.ct-ground', '+=0.08', { withY: true });
+
+      /* 7 — CONTENT: smooth fade-slide up */
+      tl.fromTo('.ct-content',
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
+        '+=0.08'
+      );
+
+      /* 8 — DELOREAN: flies in from top-left after scene is established */
+      tl.call(delEnter, null, '+=0.18');
+
+    }, section);
   }
 
   /* ════════════════════════════════════════════════════════════════════════
      INTERSECTION OBSERVER
      ════════════════════════════════════════════════════════════════════════ */
-
-  let resizeTimer;
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -207,18 +206,15 @@
         if (entry.isIntersecting) {
           sectionVisible = true;
           section.classList.remove('ct-paused');
-
           if (!sceneBoot) {
             bootScene();
           } else if (delState === 'hidden') {
-            /* Subsequent visit: skip scene animation, just fly the car in */
             setTimeout(delEnter, 350);
           }
         } else {
           sectionVisible = false;
           if (delState === 'idle') {
             delDepart();
-            /* ct-paused set by animationend once departure completes */
           } else if (delState === 'hidden') {
             section.classList.add('ct-paused');
           }
@@ -230,8 +226,6 @@
 
   observer.observe(section);
 
-  /* ── Star rebuild on resize ───────────────────────────────────────────── */
-  /* Stars are built in bootScene on first intersection; only rebuild after */
   window.addEventListener('resize', () => {
     if (!sceneBoot) return;
     clearTimeout(resizeTimer);

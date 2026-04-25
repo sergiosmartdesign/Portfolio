@@ -52,6 +52,7 @@
           "jobTitle": "Senior Art Director, Photographer & UX/UI Designer",
           "description": "Senior Art Director, Photographer and UX/UI Designer based in Bogotá, Colombia. Specialising in brand identity, web design, UX/UI, photography, and illustration.",
           "url": "https://sergioayala.design/",
+          "email": "mailto:sergionook@gmail.com",
           "image": "https://sergioayala.design/images/og-image.jpg",
           "sameAs": [
             "https://www.instagram.com/sersh01/",
@@ -100,6 +101,14 @@
           "url": "https://sergioayala.design/",
           "author": { "@id": "https://sergioayala.design/#person" },
           "inLanguage": ["en", "es"]
+        },
+        {
+          "@type": "ContactPage",
+          "@id": "https://sergioayala.design/#contact",
+          "name": "Contact Sergio Ayala",
+          "description": "Get in touch with Sergio Ayala for freelance art direction, photography, UX/UI design, and creative projects. Available worldwide.",
+          "url": "https://sergioayala.design/#contact",
+          "mainEntity": { "@id": "https://sergioayala.design/#person" }
         }
       ]
     }
@@ -1048,48 +1057,24 @@
             <div class="coming-soon"><p class="coming-soon__label glitch-text" data-splitting>[ · c o m i n g · s o o n · ]</p></div>
         </section>
 
-        <section id="contact" aria-label="Contact Sergio Ayala">
+        <section id="contact" aria-labelledby="ct-name-heading">
 
             <!-- ── Synthwave scene ───────────────────────────────────────── -->
             <div class="ct-scene" aria-hidden="true">
 
-                <!-- Sky: stars + sun + scanlines + mountains via ::after/::before -->
+                <!-- Sky: stars + sun + scanlines + mountains (real divs for GSAP) -->
                 <div class="ct-sky">
                     <div id="ct-stars"></div>
                     <div class="ct-skylines"></div>
+                    <div class="ct-horizon-glow"></div>
+                    <div class="ct-mountains--far"></div>
+                    <div class="ct-mountains--mid"></div>
+                    <div class="ct-mountains--near"></div>
                     <div class="ct-sun"></div>
                 </div>
 
                 <!-- Ground: perspective grid via ::before, vignette via ::after -->
                 <div class="ct-ground"></div>
-
-                <!-- Large palm — right side, sits at the horizon -->
-                <div class="ct-palm ct-palm--lg">
-                    <div class="ct-palm__crown">
-                        <div class="ct-palm__leaf ct-palm__leaf--1"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--1s"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--2"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--2s"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--3"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--3s"></div>
-                    </div>
-                    <div class="ct-palm__trunk"></div>
-                    <div class="ct-palm__trunk-base"></div>
-                </div>
-
-                <!-- Small palm — left side, scaled down -->
-                <div class="ct-palm ct-palm--sm">
-                    <div class="ct-palm__crown">
-                        <div class="ct-palm__leaf ct-palm__leaf--1"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--1s"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--2"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--2s"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--3"></div>
-                        <div class="ct-palm__leaf ct-palm__leaf--3s"></div>
-                    </div>
-                    <div class="ct-palm__trunk"></div>
-                    <div class="ct-palm__trunk-base"></div>
-                </div>
 
                 <!-- Scene-level flash for flux capacitor departure -->
                 <div class="ct-flash" aria-hidden="true"></div>
@@ -1138,23 +1123,27 @@
 
             </div><!-- /.ct-scene -->
 
-            <!-- ── Contact content (sky layer, z:50 above scene) ─────────── -->
+            <!-- ── Contact content (sky layer, z:50) ───── -->
             <div class="ct-content">
-                <p class="ct-section-label">[ · c o n t a c t · ]</p>
-                <h2 class="ct-name">SERGIO AYALA</h2>
-                <p class="ct-role">Senior Art Director · Photographer · UX/UI</p>
-                <p class="ct-location-text">Bogotá, Colombia — Available worldwide</p>
-                <nav class="ct-links" aria-label="Contact links">
-                    <a href="mailto:sergionook@gmail.com" class="ct-link">
+                <p class="ct-section-label" aria-hidden="true">[ · c o n t a c t · ]</p>
+                <address class="ct-address">
+                    <h2 class="ct-name" id="ct-name-heading">SERGIO AYALA</h2>
+                    <p class="ct-role">Senior Art Director · Photographer · UX/UI</p>
+                    <p class="ct-tagline">Let's work together</p>
+                    <p class="ct-location-text">Bogotá, Colombia — Available worldwide</p>
+                </address>
+                <nav class="ct-links" aria-label="Contact Sergio Ayala">
+                    <a href="mailto:sergionook@gmail.com" class="ct-link"
+                       aria-label="Send Sergio Ayala an email">
                         [ · e m a i l · ]
                     </a>
                     <a href="https://www.instagram.com/sersh01/" class="ct-link"
-                       target="_blank" rel="noopener noreferrer"
+                       target="_blank" rel="noopener noreferrer me"
                        aria-label="Sergio Ayala on Instagram">
                         [ · i n s t a g r a m · ]
                     </a>
                     <a href="https://www.linkedin.com/in/sergio-ayala-ai" class="ct-link"
-                       target="_blank" rel="noopener noreferrer"
+                       target="_blank" rel="noopener noreferrer me"
                        aria-label="Sergio Ayala on LinkedIn">
                         [ · l i n k e d i n · ]
                     </a>
