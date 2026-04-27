@@ -370,6 +370,14 @@
    z-layout: body z:2 sits above wheels z:1, grain z:5 above both
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Asteroid + explosion canvas — above everything */
+.ct-asteroids {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+}
+
 /* Wrapper — state machine handles all animation via JS-toggled classes */
 .ct-delorean {
   position: absolute;
