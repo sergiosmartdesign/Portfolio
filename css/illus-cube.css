@@ -1,0 +1,503 @@
+/* ============================================================================
+   ILLUSTRATION — Interdimensional Gallery on Timeless Art
+   Cube CSS3D gallery, scoped to #illustration with .illus-* namespace
+   ============================================================================ */
+
+/* ── Section height override ─────────────────────────────────────────────── */
+#illustration {
+    height: 2800vh; /* JS overrides to N*100vh — this is the fallback */
+    min-height: unset;
+    background: #003847;
+}
+
+/* ── Design tokens ────────────────────────────────────────────────────────── */
+.illus-tunnel {
+    --illus-bg:           #003847;
+    --illus-fg:           #E9D8A6;
+    --illus-muted:        #94D2BD;
+    --illus-accent:       #EE9B00;
+    --illus-card-bg:      rgba(0, 30, 38, 0.86);
+    --illus-card-border:  rgba(238, 155, 0, 0.22);
+    --illus-hairline:     0.0625rem;
+    --illus-ui-inset:     2rem;
+}
+
+/* ── Sticky viewport wrapper ─────────────────────────────────────────────── */
+.illus-tunnel {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--illus-bg);
+}
+
+/* ── VHS / CRT overlay ────────────────────────────────────────────────────── */
+#illustration .scanlines,
+#illustration .vhs-static {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#illustration .scanlines  { z-index: 6; }
+#illustration .vhs-static { z-index: 7; }
+
+#illustration.paused-animations .scanlines,
+#illustration.paused-animations .vhs-static {
+    animation-play-state: paused !important;
+}
+
+/* ── 3D scene container ───────────────────────────────────────────────────── */
+.illus-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1100px;
+    pointer-events: none;
+}
+
+.illus-cube {
+    --s: min(74vw, 74vh, 560px);
+    width: var(--s);
+    height: var(--s);
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(90deg) rotateY(0deg);
+    will-change: transform;
+}
+
+.illus-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    backface-visibility: hidden;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(148, 210, 189, 0.04) 0,
+            rgba(148, 210, 189, 0.04) 1px,
+            transparent 1px,
+            transparent 48px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(148, 210, 189, 0.04) 0,
+            rgba(148, 210, 189, 0.04) 1px,
+            transparent 1px,
+            transparent 48px
+        ),
+        #002530;
+}
+
+.illus-face img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Counter-rotate images so they always appear upright to the viewer */
+.illus-face[data-face="back"]   img { transform: scaleX(-1); }
+.illus-face[data-face="top"]    img { transform: rotate(180deg); }
+.illus-face[data-face="bottom"] img { transform: rotate(180deg); }
+
+.illus-face[data-face="front"]  { transform: translateZ(calc(var(--s) / 2)); }
+.illus-face[data-face="back"]   { transform: rotateY(180deg)  translateZ(calc(var(--s) / 2)); }
+.illus-face[data-face="right"]  { transform: rotateY(90deg)   translateZ(calc(var(--s) / 2)); }
+.illus-face[data-face="left"]   { transform: rotateY(-90deg)  translateZ(calc(var(--s) / 2)); }
+.illus-face[data-face="top"]    { transform: rotateX(-90deg)  translateZ(calc(var(--s) / 2)); }
+.illus-face[data-face="bottom"] { transform: rotateX(90deg)   translateZ(calc(var(--s) / 2)); }
+
+/* ── HUD (top-right) ─────────────────────────────────────────────────────── */
+.illus-hud {
+    position: absolute;
+    top: var(--illus-ui-inset);
+    right: var(--illus-ui-inset);
+    text-align: right;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--illus-muted);
+    text-transform: uppercase;
+    pointer-events: none;
+    user-select: none;
+    z-index: 20;
+}
+
+.illus-progress-bar {
+    width: 7.5rem;
+    height: var(--illus-hairline);
+    background: color-mix(in srgb, var(--illus-muted) 40%, transparent);
+    margin-block-start: 0.5rem;
+    margin-inline-start: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.illus-progress-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 0%;
+    background: var(--illus-accent);
+    transition: width 0.1s linear;
+}
+
+.illus-scene-label {
+    font-size: 0.6rem;
+    color: var(--illus-accent);
+    margin-block-start: 0.4rem;
+}
+
+/* ── Navigation dots (left-center) ──────────────────────────────────────── */
+.illus-strip {
+    position: absolute;
+    left: calc(var(--illus-ui-inset) + 0.125rem);
+    top: 50%;
+    translate: -50% -50%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 20;
+}
+
+.illus-dot {
+    position: relative;
+    display: block;
+    width: 0.25rem;
+    height: 0.25rem;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: color-mix(in srgb, var(--illus-muted) 55%, transparent);
+    cursor: pointer;
+    transition: background 0.3s, scale 0.3s;
+}
+
+.illus-dot::before {
+    content: "";
+    position: absolute;
+    inset: -0.4rem;
+}
+
+.illus-dot.active {
+    background: var(--illus-accent);
+    scale: 1.8;
+}
+
+/* ── Face caption (bottom-center) ───────────────────────────────────────── */
+.illus-caption {
+    position: absolute;
+    bottom: var(--illus-ui-inset);
+    left: 50%;
+    translate: -50% 0;
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    z-index: 20;
+}
+
+.illus-caption-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.28em;
+    color: var(--illus-accent);
+    text-transform: uppercase;
+    margin-block-end: 0.15rem;
+}
+
+.illus-caption-name {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    letter-spacing: 0.08em;
+    color: var(--illus-muted);
+    opacity: 0.45;
+    line-height: 1;
+}
+
+/* ── Sections layer ──────────────────────────────────────────────────────── */
+.illus-sections {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 15;
+}
+
+.illus-section {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 6rem calc(5rem + var(--illus-ui-inset)) 6rem 5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+}
+
+.illus-section.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.illus-card {
+    max-width: 23.75rem;
+    padding: 2.25rem 2rem;
+    background: var(--illus-card-bg);
+    border-left: var(--illus-hairline) solid var(--illus-card-border);
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+}
+
+.illus-card--right {
+    margin-inline-start: auto;
+    border-left: none;
+    border-right: var(--illus-hairline) solid var(--illus-card-border);
+    text-align: right;
+}
+
+.illus-card--right .illus-h-line     { transform-origin: right; margin-inline-start: auto; }
+.illus-card--right .illus-cta-row    { justify-content: flex-end; }
+.illus-card--right .illus-stat-row   { justify-content: flex-end; }
+
+.illus-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--illus-accent);
+    margin-block-end: 1.1rem;
+}
+
+.illus-h1 {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    letter-spacing: 0.02em;
+    line-height: 0.92;
+    color: var(--illus-fg);
+}
+
+.illus-h2 {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    letter-spacing: 0.02em;
+    line-height: 0.92;
+    color: var(--illus-fg);
+}
+
+.illus-body {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    color: color-mix(in srgb, var(--illus-fg) 55%, transparent);
+    margin-block-start: 1.25rem;
+}
+
+.illus-technique {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--illus-accent);
+    opacity: 0.65;
+    margin-block-start: 0.8rem;
+}
+
+.illus-h-line {
+    width: 3.125rem;
+    height: var(--illus-hairline);
+    background: var(--illus-accent);
+    margin-block-end: 1.2rem;
+    transform-origin: left;
+}
+
+.illus-stat-row {
+    display: flex;
+    gap: 2.5rem;
+    margin-block-start: 2rem;
+    flex-wrap: wrap;
+}
+
+.illus-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.illus-stat-num {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--illus-accent);
+    line-height: 1;
+}
+
+.illus-stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--illus-muted);
+}
+
+/* ── CTA buttons ─────────────────────────────────────────────────────────── */
+.illus-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-block-start: 1.75rem;
+}
+
+.illus-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.25rem;
+    border: var(--illus-hairline) solid var(--illus-accent);
+    background: transparent;
+    color: var(--illus-accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.illus-cta:hover {
+    background: var(--illus-accent);
+    color: var(--illus-bg);
+}
+
+.illus-cta svg { width: 0.6875rem; height: 0.6875rem; }
+
+.illus-cta-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.25rem;
+    border: var(--illus-hairline) solid color-mix(in srgb, var(--illus-muted) 45%, transparent);
+    background: transparent;
+    color: var(--illus-muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.illus-cta-back:hover {
+    background: color-mix(in srgb, var(--illus-muted) 12%, transparent);
+    border-color: var(--illus-muted);
+    color: var(--illus-fg);
+}
+
+.illus-cta-back svg { width: 0.6875rem; height: 0.6875rem; }
+
+/* ── Card inner staggered reveal ─────────────────────────────────────────── */
+.illus-tag,
+.illus-h1,
+.illus-h2,
+.illus-body,
+.illus-technique,
+.illus-stat-row,
+.illus-cta,
+.illus-cta-back {
+    opacity: 0;
+    translate: 0 0.625rem;
+}
+
+.illus-h1,
+.illus-h2 {
+    translate: 0 1.125rem;
+    transition: opacity 0.5s ease 0.08s, translate 0.5s ease 0.08s;
+}
+
+.illus-tag          { transition: opacity 0.5s ease 0s,    translate 0.5s ease 0s; }
+.illus-body         { transition: opacity 0.5s ease 0.2s,  translate 0.5s ease 0.2s; }
+.illus-technique    { transition: opacity 0.5s ease 0.28s, translate 0.5s ease 0.28s; }
+.illus-stat-row     { transition: opacity 0.5s ease 0.3s,  translate 0.5s ease 0.3s; }
+
+.illus-cta,
+.illus-cta-back {
+    transition:
+        opacity 0.5s ease 0.35s,
+        translate 0.5s ease 0.35s,
+        background 0.2s,
+        color 0.2s,
+        border-color 0.2s;
+}
+
+.illus-h-line {
+    opacity: 0;
+    scale: 0 1;
+    transition: opacity 0.4s ease 0.04s, scale 0.4s ease 0.04s;
+}
+
+.illus-section.active .illus-tag,
+.illus-section.active .illus-h1,
+.illus-section.active .illus-h2,
+.illus-section.active .illus-body,
+.illus-section.active .illus-technique,
+.illus-section.active .illus-stat-row,
+.illus-section.active .illus-cta,
+.illus-section.active .illus-cta-back {
+    opacity: 1;
+    translate: 0 0;
+}
+
+.illus-section.active .illus-h-line {
+    opacity: 1;
+    scale: 1 1;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (width <= 56.25em) {
+    .illus-hud {
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .illus-strip {
+        display: none;
+    }
+
+    .illus-caption {
+        bottom: 1rem;
+    }
+
+    .illus-section {
+        padding: 0 1.5rem 3.5rem;
+        align-items: flex-end;
+    }
+
+    .illus-section[data-idx="0"] {
+        align-items: center;
+        padding: 4rem 1.5rem;
+    }
+
+    .illus-card,
+    .illus-card--right {
+        max-width: 100%;
+        padding: 1.5rem 1.25rem;
+    }
+
+    .illus-body {
+        line-height: 1.55;
+    }
+
+    .illus-stat-row { gap: 1.5rem; margin-block-start: 1.25rem; }
+    .illus-cta-row  { margin-block-start: 1.25rem; }
+}

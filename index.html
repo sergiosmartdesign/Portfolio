@@ -119,6 +119,8 @@
     <link rel="stylesheet" href="css/scroll-hint.css">
     <link rel="stylesheet" href="css/preloader.css">
     <link rel="stylesheet" href="css/contact.css">
+    <link rel="stylesheet" href="css/illus-cube.css">
+    <link rel="stylesheet" href="css/blog.css">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -1049,12 +1051,438 @@
         </section>
         <div class="photo-scroll-spacer"></div>
 
-        <section id="illustration" aria-label="Illustration Portfolio">
-            <div class="coming-soon"><p class="coming-soon__label glitch-text" data-splitting>[ · c o m i n g · s o o n · ]</p></div>
+        <section id="illustration" aria-label="Illustration Portfolio — Interdimensional Gallery on Timeless Art">
+            <div class="illus-tunnel">
+
+                <!-- VHS / CRT overlay -->
+                <div class="scanlines" aria-hidden="true"></div>
+                <div class="vhs-static" aria-hidden="true"></div>
+
+                <!-- 3D Cube -->
+                <div class="illus-scene" aria-hidden="true">
+                    <div class="illus-cube">
+                        <div class="illus-face" data-face="top"></div>
+                        <div class="illus-face" data-face="front"></div>
+                        <div class="illus-face" data-face="right"></div>
+                        <div class="illus-face" data-face="back"></div>
+                        <div class="illus-face" data-face="left"></div>
+                        <div class="illus-face" data-face="bottom"></div>
+                    </div>
+                </div>
+
+                <!-- HUD -->
+                <div class="illus-hud" aria-hidden="true">
+                    <div class="illus-hud-pct">000%</div>
+                    <div class="illus-progress-bar">
+                        <div class="illus-progress-fill"></div>
+                    </div>
+                    <div class="illus-scene-label">TIMELESS</div>
+                </div>
+
+                <!-- Nav dots -->
+                <div class="illus-strip" role="navigation" aria-label="Illustration gallery navigation">
+                    <button class="illus-dot" data-goto="0" aria-label="Go to slide 1"></button>
+                    <button class="illus-dot" data-goto="1" aria-label="Go to slide 2"></button>
+                    <button class="illus-dot" data-goto="2" aria-label="Go to slide 3"></button>
+                    <button class="illus-dot" data-goto="3" aria-label="Go to slide 4"></button>
+                    <button class="illus-dot" data-goto="4" aria-label="Go to slide 5"></button>
+                    <button class="illus-dot" data-goto="5" aria-label="Go to slide 6"></button>
+                </div>
+
+                <!-- Face caption -->
+                <div class="illus-caption" aria-hidden="true">
+                    <div class="illus-caption-num">01</div>
+                    <div class="illus-caption-name">TIMELESS</div>
+                </div>
+
+                <!-- Content sections -->
+                <div class="illus-sections">
+
+                    <!-- 0: Intro -->
+                    <div class="illus-section" data-idx="0">
+                        <div class="illus-card">
+                            <div class="illus-tag">Interdimensional Gallery on Timeless Art</div>
+                            <h2 class="illus-h1">WORK THAT<br>REFUSES<br>TO AGE</h2>
+                            <p class="illus-body">These are illustrations built on a single principle: the concept outlives the medium. Each piece begins with an inversion — of scale, expectation, or logic — and stops only when the idea can't be reduced further. Scroll to move through the work.</p>
+                            <div class="illus-cta-row">
+                                <button class="illus-cta" data-goto="1">
+                                    Enter
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1 -->
+                    <div class="illus-section" data-idx="1">
+                        <div class="illus-card illus-card--right">
+                            <div class="illus-h-line"></div>
+                            <div class="illus-tag">Mar — 2024 &nbsp;·&nbsp; 01 — Art Rebellion</div>
+                            <h2 class="illus-h2">FLIP<br>THE<br>PROMPT</h2>
+                            <p class="illus-body">A cow walking a monster instead of a monster walking a cow. That inversion is enough to break template thinking. The cape ends up on the wrong body.</p>
+                            <span class="illus-technique">Digital illustration &nbsp;·&nbsp; Conceptual inversion</span>
+                            <div class="illus-cta-row">
+                                <button class="illus-cta-back" data-goto="0">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
+                                    Back
+                                </button>
+                                <button class="illus-cta" data-goto="2">
+                                    Turn
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2 -->
+                    <div class="illus-section" data-idx="2">
+                        <div class="illus-card">
+                            <div class="illus-h-line"></div>
+                            <div class="illus-tag">Jun — 2024 &nbsp;·&nbsp; 02 — Moo Walk</div>
+                            <h2 class="illus-h2">NEITHER<br>LEADS</h2>
+                            <p class="illus-body">Clashing colors. No balance. A dance with no choreography. When the model works against itself something more genuine surfaces.</p>
+                            <span class="illus-technique">Mixed media &nbsp;·&nbsp; Color theory subversion</span>
+                            <div class="illus-cta-row">
+                                <button class="illus-cta-back" data-goto="1">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
+                                    Back
+                                </button>
+                                <button class="illus-cta" data-goto="3">
+                                    Turn
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 -->
+                    <div class="illus-section" data-idx="3">
+                        <div class="illus-card illus-card--right">
+                            <div class="illus-h-line"></div>
+                            <div class="illus-tag">Sep — 2024 &nbsp;·&nbsp; 03 — Bad Art</div>
+                            <h2 class="illus-h2">REVERSE<br>CREATIVITY</h2>
+                            <p class="illus-body">AI is trained to polish and regularize. The harder direction is unlearning that. A television for a head is not an error. It is the point.</p>
+                            <span class="illus-technique">AI-assisted &nbsp;·&nbsp; Deliberate imperfection</span>
+                            <div class="illus-stat-row">
+                                <div class="illus-stat">
+                                    <span class="illus-stat-num">6</span>
+                                    <span class="illus-stat-label">Works</span>
+                                </div>
+                                <div class="illus-stat">
+                                    <span class="illus-stat-num">360</span>
+                                    <span class="illus-stat-label">Degrees</span>
+                                </div>
+                                <div class="illus-stat">
+                                    <span class="illus-stat-num">1</span>
+                                    <span class="illus-stat-label">Concept</span>
+                                </div>
+                            </div>
+                            <div class="illus-cta-row">
+                                <button class="illus-cta-back" data-goto="2">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
+                                    Back
+                                </button>
+                                <button class="illus-cta" data-goto="4">
+                                    Turn
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 -->
+                    <div class="illus-section" data-idx="4">
+                        <div class="illus-card">
+                            <div class="illus-h-line"></div>
+                            <div class="illus-tag">Dec — 2024 &nbsp;·&nbsp; 04 — No Rules</div>
+                            <h2 class="illus-h2">NONSENSE<br>AT THE<br>CENTER</h2>
+                            <p class="illus-body">Dada and the surrealists knew this. Put the absurd at the center and the edges stop pretending. Nine heads in the branches. The sun has a face and it approves.</p>
+                            <span class="illus-technique">Surrealist collage &nbsp;·&nbsp; Narrative inversion</span>
+                            <div class="illus-cta-row">
+                                <button class="illus-cta-back" data-goto="3">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
+                                    Back
+                                </button>
+                                <button class="illus-cta" data-goto="5">
+                                    Turn
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5 -->
+                    <div class="illus-section" data-idx="5">
+                        <div class="illus-card illus-card--right">
+                            <div class="illus-h-line"></div>
+                            <div class="illus-tag">Feb — 2025 &nbsp;·&nbsp; 05 — Super Monsters</div>
+                            <h2 class="illus-h2">RAW<br>NOT<br>POLISHED</h2>
+                            <p class="illus-body">Forward creativity takes a sketch and makes it real. This goes the other way. Imperfection left in place is closer to something honest.</p>
+                            <span class="illus-technique">Hand-drawn &nbsp;·&nbsp; Process as product</span>
+                            <div class="illus-cta-row">
+                                <button class="illus-cta-back" data-goto="4">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
+                                    Back
+                                </button>
+                                <button class="illus-cta" data-goto="0">
+                                    Begin again
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /.illus-sections -->
+            </div><!-- /.illus-tunnel -->
         </section>
 
-        <section id="blog" aria-label="Blog">
-            <div class="coming-soon"><p class="coming-soon__label glitch-text" data-splitting>[ · c o m i n g · s o o n · ]</p></div>
+        <section id="blog"
+                 aria-label="Blog — The Digital Dispatch by Sergio Ayala"
+                 itemscope itemtype="https://schema.org/Blog">
+
+            <meta itemprop="name" content="The Digital Dispatch — Sergio Ayala">
+            <meta itemprop="description" content="Art direction, design, photography and technology reflections by Senior Art Director Sergio Ayala, based in Bogotá, Colombia.">
+            <meta itemprop="author" content="Sergio Ayala">
+
+            <!-- ── Masthead ──────────────────────────────────────────────── -->
+            <header class="blog-masthead">
+                <div class="blog-masthead__top">
+                    <span class="blog-masthead__vol">VOL. I &nbsp;·&nbsp; ISSUE_024 &nbsp;·&nbsp; BOGOTÁ, COL.</span>
+                    <span class="blog-masthead__date">SYS:2026-04-27</span>
+                </div>
+                <div class="blog-masthead__center">
+                    <p class="blog-masthead__name">The Digital Dispatch</p>
+                    <p class="blog-masthead__sub">Art Direction &nbsp;·&nbsp; Design &nbsp;·&nbsp; Technology &nbsp;·&nbsp; Photography</p>
+                </div>
+                <div class="blog-masthead__bottom">
+                    <a href="#" class="blog-visit-link" rel="noopener noreferrer" target="_blank">
+                        Visit the Full Blog &nbsp;↗
+                    </a>
+                </div>
+            </header>
+
+            <!-- ── Separator ─────────────────────────────────────────────── -->
+            <div class="blog-sep" role="separator" aria-hidden="true">
+                <div class="blog-sep__line"></div>
+                <span class="blog-sep__label">Latest Transmission</span>
+                <div class="blog-sep__line"></div>
+            </div>
+
+            <!-- ── Main grid ─────────────────────────────────────────────── -->
+            <div class="blog-grid">
+
+                <!-- Hero: latest post -->
+                <article class="blog-hero"
+                         itemscope itemtype="https://schema.org/BlogPosting">
+                    <link itemprop="url" href="#">
+                    <meta itemprop="author" content="Sergio Ayala">
+
+                    <a href="#" rel="noopener noreferrer" target="_blank"
+                       aria-label="Read: The Death of the Average: Why AI Is Pushing Designers Toward the Extremes">
+                        <div class="blog-hero__img-wrap">
+                            <img src="images/photo/Kotor landscape.jpg"
+                                 alt="Kotor Montenegro landscape — panoramic view of the medieval walled city against rugged mountains at dusk"
+                                 class="blog-hero__img"
+                                 loading="lazy"
+                                 itemprop="image">
+                            <span class="blog-badge" aria-label="Latest post">Latest Post</span>
+                        </div>
+                    </a>
+
+                    <div class="blog-hero__meta">
+                        <span class="blog-tag" itemprop="keywords">Design Theory</span>
+                        <time class="blog-time" datetime="2026-04-20" itemprop="datePublished">SYS:2026-04-20</time>
+                    </div>
+
+                    <h2 class="blog-hero__headline" itemprop="headline">
+                        The Death of the Average: Why AI Is Pushing Designers Toward the Extremes
+                    </h2>
+
+                    <p class="blog-hero__excerpt" itemprop="description">
+                        Mediocrity has always been the enemy of good design. But in an era where artificial intelligence can generate the adequate on demand, the adequate has become worthless overnight. What does this mean for practitioners who built careers in the middle ground?
+                    </p>
+
+                    <div class="blog-hero__footer">
+                        <span class="blog-author">By
+                            <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                                <span itemprop="name">Sergio Ayala</span>
+                            </span>
+                        </span>
+                        <a href="#" class="blog-read-more" rel="noopener noreferrer" target="_blank">
+                            Read Full Transmission &nbsp;→
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Column rule -->
+                <div class="blog-col-rule" aria-hidden="true"></div>
+
+                <!-- Sidebar: always-on-file posts -->
+                <aside class="blog-sidebar" aria-label="Featured posts">
+                    <div class="blog-sidebar__header">
+                        <span class="blog-sidebar__label">Always on File</span>
+                        <div class="blog-sidebar__rule" aria-hidden="true"></div>
+                    </div>
+
+                    <article class="blog-side-post"
+                             itemscope itemtype="https://schema.org/BlogPosting">
+                        <a href="#" class="blog-side-post__link"
+                           rel="noopener noreferrer" target="_blank" itemprop="url">
+                            <div class="blog-side-post__img-wrap">
+                                <img src="images/photo/Fairy woods.jpg"
+                                     alt="Fairy woods — ethereal misty light filtering through ancient trees in a forest"
+                                     class="blog-side-post__img"
+                                     loading="lazy"
+                                     itemprop="image">
+                            </div>
+                            <div class="blog-side-post__body">
+                                <span class="blog-tag" itemprop="keywords">Photography</span>
+                                <h3 class="blog-side-post__headline" itemprop="headline">
+                                    Photographing the Unreal: When the Camera Lies Better Than the Artist
+                                </h3>
+                                <time class="blog-time" datetime="2026-03-15" itemprop="datePublished">SYS:2026-03-15</time>
+                            </div>
+                        </a>
+                    </article>
+
+                    <article class="blog-side-post"
+                             itemscope itemtype="https://schema.org/BlogPosting">
+                        <a href="#" class="blog-side-post__link"
+                           rel="noopener noreferrer" target="_blank" itemprop="url">
+                            <div class="blog-side-post__img-wrap">
+                                <img src="images/photo/Jewels of Petra.jpg"
+                                     alt="Jewels of Petra — intricate carved stone details of the ancient Nabataean city in Jordan"
+                                     class="blog-side-post__img"
+                                     loading="lazy"
+                                     itemprop="image">
+                            </div>
+                            <div class="blog-side-post__body">
+                                <span class="blog-tag" itemprop="keywords">Authorship</span>
+                                <h3 class="blog-side-post__headline" itemprop="headline">
+                                    Vibe Coding and the Question of Authorship in Digital Design
+                                </h3>
+                                <time class="blog-time" datetime="2026-02-28" itemprop="datePublished">SYS:2026-02-28</time>
+                            </div>
+                        </a>
+                    </article>
+
+                    <article class="blog-side-post"
+                             itemscope itemtype="https://schema.org/BlogPosting">
+                        <a href="#" class="blog-side-post__link"
+                           rel="noopener noreferrer" target="_blank" itemprop="url">
+                            <div class="blog-side-post__img-wrap">
+                                <img src="images/photo/Istanbul ships.jpg"
+                                     alt="Istanbul ships — silhouettes of vessels crossing the Bosphorus under a dramatic Turkish sky"
+                                     class="blog-side-post__img"
+                                     loading="lazy"
+                                     itemprop="image">
+                            </div>
+                            <div class="blog-side-post__body">
+                                <span class="blog-tag" itemprop="keywords">Culture</span>
+                                <h3 class="blog-side-post__headline" itemprop="headline">
+                                    The Cyberpunk Aesthetic Was Never a Future — It Was Always Now
+                                </h3>
+                                <time class="blog-time" datetime="2026-01-10" itemprop="datePublished">SYS:2026-01-10</time>
+                            </div>
+                        </a>
+                    </article>
+
+                </aside>
+
+            </div><!-- /.blog-grid -->
+
+            <!-- ── Separator ─────────────────────────────────────────────── -->
+            <div class="blog-sep" role="separator" aria-hidden="true">
+                <div class="blog-sep__line"></div>
+                <span class="blog-sep__label">More from the Archive</span>
+                <div class="blog-sep__line"></div>
+            </div>
+
+            <!-- ── Secondary 3-col grid ──────────────────────────────────── -->
+            <div class="blog-secondary">
+
+                <article class="blog-card"
+                         itemscope itemtype="https://schema.org/BlogPosting">
+                    <a href="#" class="blog-card__link"
+                       rel="noopener noreferrer" target="_blank" itemprop="url">
+                        <div class="blog-card__img-wrap">
+                            <img src="images/photo/Mt Saint Michel.jpg"
+                                 alt="Mont Saint-Michel — the iconic island abbey rising above morning mist on the Normandy coast"
+                                 class="blog-card__img"
+                                 loading="lazy"
+                                 itemprop="image">
+                        </div>
+                        <div class="blog-card__body">
+                            <span class="blog-tag" itemprop="keywords">Branding</span>
+                            <h3 class="blog-card__headline" itemprop="headline">
+                                Brand DNA vs AI Aesthetics: Winning the Battle for Visual Identity
+                            </h3>
+                            <p class="blog-card__excerpt" itemprop="description">
+                                Brands that lean into AI-generated output without anchoring their own DNA become indistinguishable from the noise.
+                            </p>
+                            <time class="blog-time" datetime="2025-12-05" itemprop="datePublished">SYS:2025-12-05</time>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="blog-card"
+                         itemscope itemtype="https://schema.org/BlogPosting">
+                    <a href="#" class="blog-card__link"
+                       rel="noopener noreferrer" target="_blank" itemprop="url">
+                        <div class="blog-card__img-wrap">
+                            <img src="images/photo/Cajon del Maipo.jpg"
+                                 alt="Cajón del Maipo — dramatic Andean canyon with jagged peaks and turquoise river in Chile"
+                                 class="blog-card__img"
+                                 loading="lazy"
+                                 itemprop="image">
+                        </div>
+                        <div class="blog-card__body">
+                            <span class="blog-tag" itemprop="keywords">UX</span>
+                            <h3 class="blog-card__headline" itemprop="headline">
+                                Why the Best UX Is Invisible — Until It Isn't
+                            </h3>
+                            <p class="blog-card__excerpt" itemprop="description">
+                                The sign of great user experience isn't delight. It's the absence of friction. When users feel an interface, something has already gone wrong.
+                            </p>
+                            <time class="blog-time" datetime="2025-11-18" itemprop="datePublished">SYS:2025-11-18</time>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="blog-card"
+                         itemscope itemtype="https://schema.org/BlogPosting">
+                    <a href="#" class="blog-card__link"
+                       rel="noopener noreferrer" target="_blank" itemprop="url">
+                        <div class="blog-card__img-wrap">
+                            <img src="images/photo/Wandering Fox Street photo.jpg"
+                                 alt="Wandering Fox — street photography capturing a fox navigating an urban environment at dusk"
+                                 class="blog-card__img"
+                                 loading="lazy"
+                                 itemprop="image">
+                        </div>
+                        <div class="blog-card__body">
+                            <span class="blog-tag" itemprop="keywords">Global Design</span>
+                            <h3 class="blog-card__headline" itemprop="headline">
+                                From Bogotá to Everywhere: Designing Without Borders
+                            </h3>
+                            <p class="blog-card__excerpt" itemprop="description">
+                                Working across Latin America, Europe, and North America has taught me that good design speaks in cultural registers most clients don't know they're listening for.
+                            </p>
+                            <time class="blog-time" datetime="2025-10-30" itemprop="datePublished">SYS:2025-10-30</time>
+                        </div>
+                    </a>
+                </article>
+
+            </div><!-- /.blog-secondary -->
+
+            <!-- ── Footer bar ─────────────────────────────────────────────── -->
+            <div class="blog-footer-bar">
+                <span class="blog-footer-bar__copy">© Sergio Ayala MMXXVI &nbsp;—&nbsp; All Transmissions Reserved</span>
+                <a href="#" class="blog-footer-bar__cta" rel="noopener noreferrer" target="_blank">
+                    Enter the Full Archive &nbsp;↗
+                </a>
+            </div>
+
         </section>
 
         <section id="contact" aria-labelledby="ct-name-heading">
@@ -1216,5 +1644,7 @@
     <script src="js/scroll-hint.js"></script>
     <script src="js/ascii-ripple.js"></script>
     <script src="js/contact.js"></script>
+    <script src="js/illustration-ink-cursor.js"></script>
+    <script src="js/illus-cube.js"></script>
 </body>
 </html>

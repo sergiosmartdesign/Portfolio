@@ -2555,12 +2555,23 @@ nav {
   overflow: hidden;
 }
 
-#illustration {
-  background: #005F73;
+#illustration,
+#illustration * {
+  cursor: none;
 }
 
 #illustration .coming-soon__label {
   --glitch-final-color: #94D2BD;
+}
+
+#ink-cursor {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9999;
 }
 
 #blog {
