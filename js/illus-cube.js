@@ -131,8 +131,9 @@
     const illus = document.getElementById('illustration');
     if (!illus) return;
 
-    const tunnel      = illus.querySelector('.illus-tunnel');
-    const cube        = illus.querySelector('.illus-cube');
+    const tunnel         = illus.querySelector('.illus-tunnel');
+    const cube           = illus.querySelector('.illus-cube');
+    const electricNoise  = document.getElementById('illus-cube-turbulence');
     const faces       = [...illus.querySelectorAll('.illus-face')];
     const hudPct      = illus.querySelector('.illus-hud-pct');
     const progFill    = illus.querySelector('.illus-progress-fill');
@@ -204,6 +205,25 @@
 
     const faceImgIdx = new Array(6).fill(-1);
 
+    // Returns the CSS transform needed to counter the cube's accumulated rotation
+    // so each image always appears right-side-up to the viewer.
+    //
+    // - Side faces (front/right/left): rotateY never affects the vertical axis → no correction.
+    // - Back face: rotateY(180deg) mirrors the X axis → scaleX(-1).
+    // - Top face (rx=90): accumulated ry tilts the image; correction = rotateZ(-ry).
+    // - Bottom face (rx=-90): same but opposite sign → rotateZ(+ry).
+    function getFaceCorrection(faceIdx, stopIdx) {
+        if (faceIdx === 3) return 'scaleX(-1)';
+        if (faceIdx === 0 || faceIdx === 5) {
+            const ryN  = ((STOPS[stopIdx].ry % 360) + 360) % 360;
+            if (ryN === 0) return '';
+            const sign = faceIdx === 0 ? -1 : 1;
+            const deg  = ((sign * ryN) % 360 + 360) % 360;
+            return `rotate(${deg}deg)`;
+        }
+        return '';
+    }
+
     async function setFaceImage(faceIdx, imgIdx) {
         if (faceImgIdx[faceIdx] === imgIdx) return;
         faceImgIdx[faceIdx] = imgIdx;
@@ -214,6 +234,7 @@
         if (!img) { img = new Image(); faces[faceIdx].appendChild(img); }
         img.alt = FACE_NAMES[imgIdx] ?? '';
         img.src = src;
+        img.style.transform = getFaceCorrection(faceIdx, imgIdx);
     }
 
     function checkImageSwaps(s) {
@@ -286,6 +307,35 @@
     let tgt    = getProgress();
     let smooth = tgt;
 
+    // ── Electric ring — scroll-velocity driven ───────────────────────────────
+    let elecActive = false;
+    let elecRaf    = null;
+    let elecTimer  = null;
+    let prevSmooth = smooth;
+
+    function elecTick() {
+        if (!elecActive) { elecRaf = null; return; }
+        if (electricNoise) electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
+        elecRaf = requestAnimationFrame(elecTick);
+    }
+
+    function elecOn() {
+        clearTimeout(elecTimer);
+        if (!elecActive) {
+            elecActive = true;
+            tunnel.classList.add('illus-electric-active');
+            if (!elecRaf) elecRaf = requestAnimationFrame(elecTick);
+        }
+    }
+
+    function elecOff() {
+        clearTimeout(elecTimer);
+        elecTimer = setTimeout(() => {
+            elecActive = false;
+            tunnel.classList.remove('illus-electric-active');
+        }, 500);
+    }
+
     window.addEventListener('scroll', () => { tgt = getProgress(); }, { passive: true });
 
     illus.addEventListener('click', e => {
@@ -302,6 +352,12 @@
         lastNow  = now;
         smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));
         smooth   = Math.max(0, Math.min(1, smooth));
+
+        // Electric ring: fire while cube is visibly rotating
+        const vel = Math.abs(smooth - prevSmooth);
+        prevSmooth = smooth;
+        if (vel > 0.0002) { elecOn(); } else { elecOff(); }
+
         setCubeTransform(smooth);
         checkImageSwaps(smooth);
         updateUI(smooth);

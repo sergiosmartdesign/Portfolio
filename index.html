@@ -1054,6 +1054,9 @@
         <section id="illustration" aria-label="Illustration Portfolio — Interdimensional Gallery on Timeless Art">
             <div class="illus-tunnel">
 
+                <!-- WebGL shader background -->
+                <canvas id="illus-shader-bg" aria-hidden="true"></canvas>
+
                 <!-- VHS / CRT overlay -->
                 <div class="scanlines" aria-hidden="true"></div>
                 <div class="vhs-static" aria-hidden="true"></div>
@@ -1069,6 +1072,21 @@
                         <div class="illus-face" data-face="bottom"></div>
                     </div>
                 </div>
+
+                <!-- SVG filter for cube electric ring -->
+                <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+                    <defs>
+                        <filter id="illus-cube-electric" x="-12%" y="-12%" width="124%" height="124%">
+                            <feTurbulence id="illus-cube-turbulence" type="turbulence"
+                                baseFrequency="0.025" numOctaves="4" seed="1" result="noise" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise"
+                                scale="18" xChannelSelector="R" yChannelSelector="G" />
+                        </filter>
+                    </defs>
+                </svg>
+
+                <!-- Teal electric ring — scroll-driven, z:3 -->
+                <div class="illus-cube-electric" aria-hidden="true"></div>
 
                 <!-- HUD -->
                 <div class="illus-hud" aria-hidden="true">
@@ -1645,6 +1663,7 @@
     <script src="js/ascii-ripple.js"></script>
     <script src="js/contact.js"></script>
     <script src="js/illustration-ink-cursor.js"></script>
+    <script src="js/illus-shader-bg.js"></script>
     <script src="js/illus-cube.js"></script>
 </body>
 </html>

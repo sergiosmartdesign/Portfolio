@@ -7,16 +7,16 @@
 #illustration {
     height: 2800vh; /* JS overrides to N*100vh — this is the fallback */
     min-height: unset;
-    background: #003847;
+    background: #001219;
 }
 
 /* ── Design tokens ────────────────────────────────────────────────────────── */
 .illus-tunnel {
-    --illus-bg:           #003847;
+    --illus-bg:           #001219;
     --illus-fg:           #E9D8A6;
     --illus-muted:        #94D2BD;
     --illus-accent:       #EE9B00;
-    --illus-card-bg:      rgba(0, 30, 38, 0.86);
+    --illus-card-bg:      rgba(0, 18, 25, 0.86);
     --illus-card-border:  rgba(238, 155, 0, 0.22);
     --illus-hairline:     0.0625rem;
     --illus-ui-inset:     2rem;
@@ -50,6 +50,17 @@
     animation-play-state: paused !important;
 }
 
+/* ── WebGL shader background ─────────────────────────────────────────────── */
+#illus-shader-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    display: block;
+}
+
 /* ── 3D scene container ───────────────────────────────────────────────────── */
 .illus-scene {
     position: absolute;
@@ -59,6 +70,7 @@
     justify-content: center;
     perspective: 1100px;
     pointer-events: none;
+    z-index: 2;
 }
 
 .illus-cube {
@@ -91,7 +103,7 @@
             transparent 1px,
             transparent 48px
         ),
-        #002530;
+        #001219;
 }
 
 .illus-face img {
@@ -103,10 +115,6 @@
     display: block;
 }
 
-/* Counter-rotate images so they always appear upright to the viewer */
-.illus-face[data-face="back"]   img { transform: scaleX(-1); }
-.illus-face[data-face="top"]    img { transform: rotate(180deg); }
-.illus-face[data-face="bottom"] img { transform: rotate(180deg); }
 
 .illus-face[data-face="front"]  { transform: translateZ(calc(var(--s) / 2)); }
 .illus-face[data-face="back"]   { transform: rotateY(180deg)  translateZ(calc(var(--s) / 2)); }
@@ -114,6 +122,31 @@
 .illus-face[data-face="left"]   { transform: rotateY(-90deg)  translateZ(calc(var(--s) / 2)); }
 .illus-face[data-face="top"]    { transform: rotateX(-90deg)  translateZ(calc(var(--s) / 2)); }
 .illus-face[data-face="bottom"] { transform: rotateX(90deg)   translateZ(calc(var(--s) / 2)); }
+
+/* ── Electric ring (scroll-driven, teal, z:3) ───────────────────────────── */
+.illus-cube-electric {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(74vw, 74vh, 560px);
+    height: min(74vw, 74vh, 560px);
+    translate: -50% -50%;
+    pointer-events: none;
+    border: 2px solid #94D2BD;
+    box-shadow:
+        0 0  6px rgba(148, 210, 189, 0.70),
+        0 0 18px rgba(148, 210, 189, 0.25),
+        0 0 32px rgba(238, 155,   0, 0.12);
+    filter: url(#illus-cube-electric);
+    will-change: filter;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 3;
+}
+
+.illus-tunnel.illus-electric-active .illus-cube-electric {
+    opacity: 1;
+}
 
 /* ── HUD (top-right) ─────────────────────────────────────────────────────── */
 .illus-hud {
