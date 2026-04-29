@@ -387,6 +387,10 @@
 
 .illus-section.active {
     opacity: 1;
+    pointer-events: none; /* wrapper stays transparent — only .illus-card captures events */
+}
+
+.illus-section.active .illus-card {
     pointer-events: auto;
 }
 
