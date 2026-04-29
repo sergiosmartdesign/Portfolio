@@ -146,6 +146,14 @@
     // Scale section height to number of images (100vh per stop)
     illus.style.height = (N * 100) + 'vh';
 
+    // Stamp expand hint into every face
+    faces.forEach(face => {
+        const lbl = document.createElement('div');
+        lbl.className   = 'illus-face-label';
+        lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
+        face.appendChild(lbl);
+    });
+
     // Generate additional nav dots
     for (let i = dots.length; i < N; i++) {
         const btn = document.createElement('button');
@@ -178,7 +186,7 @@
                 <div class="illus-cta-row">
                     <button class="illus-cta-back" data-goto="${i - 1}">${arrowL} Back</button>
                     <button class="illus-cta" data-goto="${nextIdx}">
-                        ${nextIdx === 0 ? 'Begin again' : 'Turn'} ${arrowR}
+                        ${nextIdx === 0 ? 'Begin again' : 'Next'} ${arrowR}
                     </button>
                 </div>
             </div>`;
@@ -307,34 +315,87 @@
     let tgt    = getProgress();
     let smooth = tgt;
 
-    // ── Electric ring — scroll-velocity driven ───────────────────────────────
+    // ── Electric border — scroll-velocity driven ─────────────────────────────
+    // Seed is cycled inside the main frame loop (no second RAF needed).
+    // elecOff uses a guard so the timeout is only scheduled once per idle entry.
     let elecActive = false;
-    let elecRaf    = null;
     let elecTimer  = null;
+    let elecFrame  = 0;
     let prevSmooth = smooth;
 
-    function elecTick() {
-        if (!elecActive) { elecRaf = null; return; }
-        if (electricNoise) electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
-        elecRaf = requestAnimationFrame(elecTick);
-    }
-
     function elecOn() {
-        clearTimeout(elecTimer);
+        if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
         if (!elecActive) {
             elecActive = true;
             tunnel.classList.add('illus-electric-active');
-            if (!elecRaf) elecRaf = requestAnimationFrame(elecTick);
         }
     }
 
     function elecOff() {
-        clearTimeout(elecTimer);
+        if (elecTimer) return;
         elecTimer = setTimeout(() => {
             elecActive = false;
+            elecTimer  = null;
             tunnel.classList.remove('illus-electric-active');
         }, 500);
     }
+
+    // ── Lightbox ─────────────────────────────────────────────────────────────
+    const lb = document.createElement('div');
+    lb.className = 'illus-lightbox';
+    lb.setAttribute('aria-hidden', 'true');
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.innerHTML = `
+        <div class="illus-lightbox-frame">
+            <img class="illus-lightbox-img" alt="">
+            <div class="illus-lightbox-border" aria-hidden="true"></div>
+            <button class="illus-lightbox-close" aria-label="Close">[ x ]</button>
+        </div>`;
+    document.body.appendChild(lb);
+
+    const lbImg   = lb.querySelector('.illus-lightbox-img');
+    let   lbOpen  = false;
+
+    function lbShow(src, alt) {
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.setAttribute('aria-hidden', 'false');
+        lb.classList.add('open');
+        lbOpen = true;
+        document.body.style.overflow = 'hidden';
+    }
+
+    function lbHide() {
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        lbOpen = false;
+        document.body.style.overflow = '';
+        setTimeout(() => { if (!lbOpen) lbImg.src = ''; }, 500);
+    }
+
+    lb.addEventListener('click', e => {
+        if (e.target === lb) lbHide();
+    });
+    lb.querySelector('.illus-lightbox-close').addEventListener('click', lbHide);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && lbOpen) lbHide(); });
+
+    // Transparent click zone over cube — opens lightbox on click
+    const clickZone = document.createElement('div');
+    clickZone.className = 'illus-cube-clickzone';
+    clickZone.setAttribute('role', 'button');
+    clickZone.setAttribute('tabindex', '0');
+    clickZone.setAttribute('aria-label', 'Expand image');
+    tunnel.appendChild(clickZone);
+
+    clickZone.addEventListener('click', () => {
+        const stop = Math.max(0, lastStop);
+        const img  = faces[FACE_MAP[stop]]?.querySelector('img');
+        if (img?.src) lbShow(img.src, img.alt);
+    });
+    clickZone.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickZone.click(); }
+    });
 
     window.addEventListener('scroll', () => { tgt = getProgress(); }, { passive: true });
 
@@ -353,10 +414,13 @@
         smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));
         smooth   = Math.max(0, Math.min(1, smooth));
 
-        // Electric ring: fire while cube is visibly rotating
+        // Electric border: on while scrolling, seed cycled at ~20 fps
         const vel = Math.abs(smooth - prevSmooth);
         prevSmooth = smooth;
-        if (vel > 0.0002) { elecOn(); } else { elecOff(); }
+        if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
+        if ((elecActive || lbOpen) && electricNoise && ++elecFrame % 3 === 0) {
+            electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
+        }
 
         setCubeTransform(smooth);
         checkImageSwaps(smooth);

@@ -88,6 +88,11 @@
     inset: 0;
     overflow: hidden;
     backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    box-sizing: border-box;
     background:
         repeating-linear-gradient(
             0deg,
@@ -107,12 +112,110 @@
 }
 
 .illus-face img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+
+.illus-face-label {
+    position: absolute;
+    bottom: 15px;
+    left: 50px;
+    right: 50px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: #EE9B00;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/* ── Click zone — captures clicks on the front-facing cube face ──────────── */
+.illus-cube-clickzone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(74vw, 74vh, 560px);
+    height: min(74vw, 74vh, 560px);
+    translate: -50% -50%;
+    z-index: 4;
+    cursor: zoom-in;
+}
+
+/* ── Fullscreen lightbox ─────────────────────────────────────────────────── */
+.illus-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 18, 25, 0.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.illus-lightbox.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.illus-lightbox-frame {
+    position: relative;
+    display: inline-flex;
+    transform: scale(0.2);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.illus-lightbox.open .illus-lightbox-frame {
+    transform: scale(1);
+}
+
+.illus-lightbox-img {
+    display: block;
+    max-width: 88vw;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+}
+
+.illus-lightbox-border {
+    position: absolute;
+    inset: -6px;
+    border: 2px solid #94D2BD;
+    box-shadow:
+        0 0  8px rgba(148, 210, 189, 0.85),
+        0 0 24px rgba(148, 210, 189, 0.40),
+        0 0 48px rgba(238, 155,   0, 0.18);
+    filter: url(#illus-cube-electric);
+    pointer-events: none;
+}
+
+.illus-lightbox-close {
+    position: absolute;
+    top: -2.75rem;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: #94D2BD;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.22em;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.illus-lightbox-close:hover {
+    color: #EE9B00;
+    text-shadow: 0 0 12px rgba(238, 155, 0, 0.6);
 }
 
 
@@ -123,14 +226,15 @@
 .illus-face[data-face="top"]    { transform: rotateX(-90deg)  translateZ(calc(var(--s) / 2)); }
 .illus-face[data-face="bottom"] { transform: rotateX(90deg)   translateZ(calc(var(--s) / 2)); }
 
-/* ── Electric ring (scroll-driven, teal, z:3) ───────────────────────────── */
-.illus-cube-electric {
+/* ── Electric border faces — rotate with the cube in 3D ─────────────────── */
+/* Sibling elements to the image faces, using identical transforms so they   */
+/* sit exactly on each cube face and turn with the cube. backface-visibility  */
+/* hidden ensures only the front-facing face's border is visible at a time.  */
+.illus-face-elec {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: min(74vw, 74vh, 560px);
-    height: min(74vw, 74vh, 560px);
-    translate: -50% -50%;
+    inset: 0;
+    backface-visibility: hidden;
+    background: transparent;
     pointer-events: none;
     border: 2px solid #94D2BD;
     box-shadow:
@@ -138,15 +242,21 @@
         0 0 18px rgba(148, 210, 189, 0.25),
         0 0 32px rgba(238, 155,   0, 0.12);
     filter: url(#illus-cube-electric);
-    will-change: filter;
     opacity: 0;
     transition: opacity 0.4s ease;
-    z-index: 3;
 }
 
-.illus-tunnel.illus-electric-active .illus-cube-electric {
+.illus-tunnel.illus-electric-active .illus-face-elec {
     opacity: 1;
 }
+
+/* Mirror the image-face transforms exactly */
+.illus-face-elec[data-face="front"]  { transform: translateZ(calc(var(--s) / 2)); }
+.illus-face-elec[data-face="back"]   { transform: rotateY(180deg)  translateZ(calc(var(--s) / 2)); }
+.illus-face-elec[data-face="right"]  { transform: rotateY(90deg)   translateZ(calc(var(--s) / 2)); }
+.illus-face-elec[data-face="left"]   { transform: rotateY(-90deg)  translateZ(calc(var(--s) / 2)); }
+.illus-face-elec[data-face="top"]    { transform: rotateX(-90deg)  translateZ(calc(var(--s) / 2)); }
+.illus-face-elec[data-face="bottom"] { transform: rotateX(90deg)   translateZ(calc(var(--s) / 2)); }
 
 /* ── HUD (top-right) ─────────────────────────────────────────────────────── */
 .illus-hud {
@@ -310,6 +420,14 @@
     margin-block-end: 1.1rem;
 }
 
+.illus-tag--hero {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0.18em;
+}
+
 .illus-h1 {
     font-family: 'Funnel Display', sans-serif;
     font-weight: 800;
@@ -317,6 +435,31 @@
     letter-spacing: 0.02em;
     line-height: 0.92;
     color: var(--illus-fg);
+}
+
+.illus-word-art {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.7rem, 4.2vw, 3rem);
+    letter-spacing: 0.14em;
+    line-height: 1.35;
+    display: flex;
+    flex-direction: column;
+}
+
+.illus-word-in {
+    padding-inline-start: 2.2ch;
+}
+
+/* Gate glitch off until slide 0 is active; override white to cream */
+#illustration .illus-word-art [data-char]:after {
+    animation-name: none;
+    color: var(--illus-fg);
+    font-weight: 800;
+}
+
+#illustration .illus-section.active .illus-word-art [data-char]:after {
+    animation-name: glitch-switch;
 }
 
 .illus-h2 {
@@ -329,8 +472,9 @@
 }
 
 .illus-body {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.78rem;
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
     line-height: 1.8;
     color: color-mix(in srgb, var(--illus-fg) 55%, transparent);
     margin-block-start: 1.25rem;
@@ -384,24 +528,41 @@
     color: var(--illus-muted);
 }
 
+/* ── Button glitch — fires once when section enters .active ──────────────── */
+@keyframes illus-btn-glitch {
+    0%        { transform: translate(0)      skewX(0);       filter: none; }
+    12%       { transform: translateX(-5px)  skewX(-2deg);
+                filter: drop-shadow( 4px 0 0 rgba(148,210,189,.85))
+                        drop-shadow(-4px 0 0 rgba(238,155,  0,.85)); }
+    26%       { transform: translateX( 4px)  skewX( 1.5deg);
+                filter: drop-shadow(-3px 0 0 rgba(148,210,189,.65))
+                        drop-shadow( 3px 0 0 rgba(238,155,  0,.65)); }
+    40%       { transform: translateX(-2px)  skewX(-1deg);   filter: none; }
+    55%       { transform: translateX( 3px)  skewX( 1deg);
+                filter: drop-shadow( 5px 0 0 rgba(148,210,189,.75))
+                        drop-shadow(-5px 0 0 rgba(238,155,  0,.75)); }
+    70%       { transform: translateX(-1px);                 filter: none; }
+    85%, 100% { transform: none;                             filter: none; }
+}
+
 /* ── CTA buttons ─────────────────────────────────────────────────────────── */
 .illus-cta-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     margin-block-start: 1.75rem;
 }
 
 .illus-cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 1.25rem;
+    gap: 0.75rem;
+    padding: 0.9rem 2rem;
     border: var(--illus-hairline) solid var(--illus-accent);
     background: transparent;
     color: var(--illus-accent);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.62rem;
+    font-size: 0.78rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
@@ -413,18 +574,18 @@
     color: var(--illus-bg);
 }
 
-.illus-cta svg { width: 0.6875rem; height: 0.6875rem; }
+.illus-cta svg { width: 0.875rem; height: 0.875rem; }
 
 .illus-cta-back {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 1.25rem;
+    gap: 0.75rem;
+    padding: 0.9rem 2rem;
     border: var(--illus-hairline) solid color-mix(in srgb, var(--illus-muted) 45%, transparent);
     background: transparent;
     color: var(--illus-muted);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.62rem;
+    font-size: 0.78rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
@@ -437,7 +598,7 @@
     color: var(--illus-fg);
 }
 
-.illus-cta-back svg { width: 0.6875rem; height: 0.6875rem; }
+.illus-cta-back svg { width: 0.875rem; height: 0.875rem; }
 
 /* ── Card inner staggered reveal ─────────────────────────────────────────── */
 .illus-tag,
@@ -471,6 +632,9 @@
         background 0.2s,
         color 0.2s,
         border-color 0.2s;
+    /* glitch fires after the slide-up finishes (0.35s delay + 0.5s transition) */
+    animation: illus-btn-glitch 0.55s steps(1, end) 1;
+    animation-play-state: paused;
 }
 
 .illus-h-line {
@@ -489,6 +653,16 @@
 .illus-section.active .illus-cta-back {
     opacity: 1;
     translate: 0 0;
+}
+
+.illus-section.active .illus-cta {
+    animation-play-state: running;
+    animation-delay: 0.9s;
+}
+
+.illus-section.active .illus-cta-back {
+    animation-play-state: running;
+    animation-delay: 1.05s;
 }
 
 .illus-section.active .illus-h-line {

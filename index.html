@@ -7,7 +7,7 @@
     <!-- ═══ FONTS ══════════════════════════════════════════════════════════ -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;800&family=Workbench&family=Playwrite+DK+Loopet:wght@100..400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;800&family=Share+Tech+Mono&family=Workbench&family=Playwrite+DK+Loopet:wght@100..400&display=swap">
 
     <!-- ═══ SECURITY HEADERS (HTML-deliverable subset) ══════════════════════ -->
     <meta http-equiv="Content-Security-Policy"
@@ -1070,6 +1070,13 @@
                         <div class="illus-face" data-face="back"></div>
                         <div class="illus-face" data-face="left"></div>
                         <div class="illus-face" data-face="bottom"></div>
+                        <!-- Electric border — one per face, rotates with cube in 3D -->
+                        <div class="illus-face-elec" data-face="top"    aria-hidden="true"></div>
+                        <div class="illus-face-elec" data-face="front"  aria-hidden="true"></div>
+                        <div class="illus-face-elec" data-face="right"  aria-hidden="true"></div>
+                        <div class="illus-face-elec" data-face="back"   aria-hidden="true"></div>
+                        <div class="illus-face-elec" data-face="left"   aria-hidden="true"></div>
+                        <div class="illus-face-elec" data-face="bottom" aria-hidden="true"></div>
                     </div>
                 </div>
 
@@ -1078,15 +1085,12 @@
                     <defs>
                         <filter id="illus-cube-electric" x="-12%" y="-12%" width="124%" height="124%">
                             <feTurbulence id="illus-cube-turbulence" type="turbulence"
-                                baseFrequency="0.025" numOctaves="4" seed="1" result="noise" />
+                                baseFrequency="0.025" numOctaves="2" seed="1" result="noise" />
                             <feDisplacementMap in="SourceGraphic" in2="noise"
                                 scale="18" xChannelSelector="R" yChannelSelector="G" />
                         </filter>
                     </defs>
                 </svg>
-
-                <!-- Teal electric ring — scroll-driven, z:3 -->
-                <div class="illus-cube-electric" aria-hidden="true"></div>
 
                 <!-- HUD -->
                 <div class="illus-hud" aria-hidden="true">
@@ -1119,8 +1123,13 @@
                     <!-- 0: Intro -->
                     <div class="illus-section" data-idx="0">
                         <div class="illus-card">
-                            <div class="illus-tag">Interdimensional Gallery on Timeless Art</div>
-                            <h2 class="illus-h1">WORK THAT<br>REFUSES<br>TO AGE</h2>
+                            <div class="illus-tag illus-tag--hero">INTERDIMENSIONAL GALLERY Of TIMELESS ART</div>
+                            <div class="illus-h1 illus-word-art" role="heading" aria-level="2" aria-label="Illustration">
+                                <span class="glitch-text" data-splitting>[ · I L</span>
+                                <span class="glitch-text illus-word-in" data-splitting>L U S T</span>
+                                <span class="glitch-text illus-word-in" data-splitting>R A T</span>
+                                <span class="glitch-text illus-word-in" data-splitting>I O N · ]</span>
+                            </div>
                             <p class="illus-body">These are illustrations built on a single principle: the concept outlives the medium. Each piece begins with an inversion — of scale, expectation, or logic — and stops only when the idea can't be reduced further. Scroll to move through the work.</p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta" data-goto="1">
