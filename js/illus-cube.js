@@ -32,13 +32,9 @@
         'images/photo/Streets of Istanbul.jpg'
     ];
 
-    const FACE_NAMES = [
-        'TIMELESS', 'REBELLION', 'SURREAL', 'DRAMATIC', 'CLASSICAL', 'OTHERWORLDLY',
-        'FLAMINGO', 'NOMADS', 'CANYON', 'CASTLE', 'PURSUIT', 'COLLISION',
-        'COMPANION', 'ADRIATIC', 'GEOMETRY', 'CAVE CITY', 'BOSPHORUS', 'ROSE CITY',
-        'KOTOR', 'LONDON', 'ASCENT', 'MEDIEVAL', 'TIDAL', 'TOMBS',
-        'CARVED', 'VENETIAN', 'SEVILLA', 'ISTANBUL'
-    ];
+    const FACE_NAMES = IMAGES.map(src =>
+        src.split('/').pop().replace(/\.[^.]+$/, '').toUpperCase()
+    );
 
     const EXTRA_CARDS = [
         { date: 'Apr — 2024', num: '06', theme: 'Andean Light',        h2: 'STILL\nWATERS',          technique: 'Landscape photography · Long exposure' },
@@ -297,9 +293,15 @@
         if (stop === lastStop) return;
         lastStop = stop;
 
-        sceneLabel.textContent  = FACE_NAMES[stop] ?? '';
-        captionNum.textContent  = String(stop + 1).padStart(2, '0');
-        captionName.textContent = FACE_NAMES[stop] ?? '';
+        const name   = FACE_NAMES[stop] ?? '';
+        const spaced = name.split('').join(' ');
+
+        sceneLabel.textContent = name;
+        captionNum.textContent = String(stop + 1).padStart(2, '0');
+        captionName.textContent = '[ · ' + spaced + ' · ]';
+        captionName.classList.remove('illus-name-glitch');
+        void captionName.offsetWidth;
+        captionName.classList.add('illus-name-glitch');
 
         allDots.forEach((d, i)      => d.classList.toggle('active', i === stop));
         allSections.forEach((sec, i) => sec.classList.toggle('active', i === stop));
@@ -356,6 +358,11 @@
 
     const lbImg   = lb.querySelector('.illus-lightbox-img');
     let   lbOpen  = false;
+    let   lbElecTimer = null;
+
+    // Frame scale animation uses cubic-bezier(0.34, 1.56, 0.64, 1) over 0.5s.
+    // The spring overshoots before settling; 620ms covers the full settle window.
+    const LB_SETTLE_MS = 620;
 
     function lbShow(src, alt) {
         lbImg.src = src;
@@ -364,9 +371,21 @@
         lb.classList.add('open');
         lbOpen = true;
         document.body.style.overflow = 'hidden';
+
+        if (lbElecTimer) { clearTimeout(lbElecTimer); lbElecTimer = null; }
+        lb.classList.remove('lb-elec-active');
+        // Force a style flush so the snap-on transition takes effect immediately
+        void lb.offsetWidth;
+        lb.classList.add('lb-elec-active');
+        lbElecTimer = setTimeout(() => {
+            lb.classList.remove('lb-elec-active');
+            lbElecTimer = null;
+        }, LB_SETTLE_MS);
     }
 
     function lbHide() {
+        if (lbElecTimer) { clearTimeout(lbElecTimer); lbElecTimer = null; }
+        lb.classList.remove('lb-elec-active');
         lb.classList.remove('open');
         lb.setAttribute('aria-hidden', 'true');
         lbOpen = false;
