@@ -180,8 +180,8 @@
         sec.innerHTML = `
             <div class="illus-card${isRight ? ' illus-card--right' : ''}">
                 <div class="illus-h-line"></div>
-                <div class="illus-tag">${card.date} &nbsp;·&nbsp; ${card.num} — ${card.theme}</div>
-                <h2 class="illus-h2">${h2Lines}</h2>
+                <div class="illus-tag glitch-text" data-splitting>${card.date} &nbsp;·&nbsp; ${card.num} — ${card.theme}</div>
+                <h2 class="illus-h2 glitch-text" data-splitting>${h2Lines}</h2>
                 <span class="illus-technique">${card.technique}</span>
                 <div class="illus-cta-row">
                     <button class="illus-cta-back" data-goto="${i - 1}">${arrowL} Back</button>
