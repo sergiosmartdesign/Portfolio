@@ -16,8 +16,8 @@
     --illus-fg:           #E9D8A6;
     --illus-muted:        #94D2BD;
     --illus-accent:       #EE9B00;
-    --illus-card-bg:      rgba(0, 18, 25, 0.86);
-    --illus-card-border:  rgba(238, 155, 0, 0.22);
+    --illus-card-bg:      rgba(10, 147, 150, 0.5);
+    --illus-card-border:  rgba(238, 155, 0, 0.35);
     --illus-hairline:     0.0625rem;
     --illus-ui-inset:     2rem;
 }
@@ -93,22 +93,7 @@
     justify-content: center;
     padding: 50px;
     box-sizing: border-box;
-    background:
-        repeating-linear-gradient(
-            0deg,
-            rgba(148, 210, 189, 0.04) 0,
-            rgba(148, 210, 189, 0.04) 1px,
-            transparent 1px,
-            transparent 48px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            rgba(148, 210, 189, 0.04) 0,
-            rgba(148, 210, 189, 0.04) 1px,
-            transparent 1px,
-            transparent 48px
-        ),
-        #001219;
+    background: #001219;
 }
 
 .illus-face img {
@@ -118,6 +103,29 @@
     width: auto;
     height: auto;
     opacity: 0;
+}
+
+/* ── Intro text panel (face 0 / top — stop 0 only) ──────────────────────── */
+.illus-face-intro-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(0.72rem, 2vmin, 1.05rem);
+    letter-spacing: 0.15em;
+    line-height: 2;
+    color: #E9D8A6;
+    text-align: center;
+    white-space: pre-line;
+    text-shadow:
+        0 0 12px rgba(233, 216, 166, 0.55),
+        0 0 32px rgba(233, 216, 166, 0.22);
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.illus-face-intro-text.illus-text-enter {
+    animation: illus-intro-title-enter 0.55s steps(1, end) 1 forwards;
+    will-change: opacity, translate, filter;
 }
 
 /* ── Image entry animation — scan reveal ─────────────────────────────────── */
@@ -146,17 +154,17 @@
     top: 0;
     transform: translateY(-2px);
     background: linear-gradient(90deg,
-        transparent         0%,
-        rgba(238,155,0,.30) 12%,
-        #EE9B00             50%,
-        rgba(238,155,0,.30) 88%,
-        transparent         100%
+        transparent           0%,
+        rgba(148,210,189,.30) 12%,
+        #94D2BD               50%,
+        rgba(148,210,189,.30) 88%,
+        transparent           100%
     );
     box-shadow:
-        0 0  4px  2px rgba(238,155,0,1.00),
-        0 0 12px  4px rgba(238,155,0,.60),
-        0 0 32px  8px rgba(238,155,0,.28),
-        0 0 72px 14px rgba(238,155,0,.10);
+        0 0  4px  2px rgba(148,210,189,1.00),
+        0 0 12px  4px rgba(148,210,189,.60),
+        0 0 32px  8px rgba(148,210,189,.28),
+        0 0 72px 14px rgba(148,210,189,.10);
     opacity: 0;
     pointer-events: none;
     z-index: 2;
@@ -608,8 +616,6 @@
     padding: 2.25rem 2rem;
     background: var(--illus-card-bg);
     border-left: var(--illus-hairline) solid var(--illus-card-border);
-    backdrop-filter: blur(6px) saturate(120%);
-    -webkit-backdrop-filter: blur(6px) saturate(120%);
 }
 
 .illus-card--right {
@@ -628,7 +634,7 @@
     font-size: 0.6rem;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--illus-accent);
+    color: #E9D8A6;
     margin-block-end: 1.1rem;
 }
 
@@ -688,7 +694,7 @@
     font-weight: 300;
     font-size: 1rem;
     line-height: 1.8;
-    color: color-mix(in srgb, var(--illus-fg) 55%, transparent);
+    color: #001219;
     margin-block-start: 1.25rem;
 }
 
@@ -698,8 +704,8 @@
     font-size: 0.58rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--illus-accent);
-    opacity: 0.65;
+    color: #001219;
+    opacity: 0.7;
     margin-block-start: 0.8rem;
 }
 
@@ -769,21 +775,22 @@
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 2rem;
-    border: var(--illus-hairline) solid var(--illus-accent);
-    background: transparent;
-    color: var(--illus-accent);
+    padding: 0.85rem 1.75rem;
+    border: 2px solid var(--illus-accent);
+    background: var(--illus-accent);
+    color: #001219;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .illus-cta:hover {
-    background: var(--illus-accent);
-    color: var(--illus-bg);
+    background: transparent;
+    color: var(--illus-accent);
+    box-shadow: 0 0 18px rgba(238,155,0,.45), inset 0 0 0 0 transparent;
 }
 
 .illus-cta svg { width: 0.875rem; height: 0.875rem; }
@@ -792,12 +799,12 @@
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 2rem;
-    border: var(--illus-hairline) solid color-mix(in srgb, var(--illus-muted) 45%, transparent);
+    padding: 0.85rem 1.75rem;
+    border: 2px solid #001219;
     background: transparent;
-    color: var(--illus-muted);
+    color: #001219;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     cursor: pointer;
@@ -805,8 +812,7 @@
 }
 
 .illus-cta-back:hover {
-    background: color-mix(in srgb, var(--illus-muted) 12%, transparent);
-    border-color: var(--illus-muted);
+    background: #001219;
     color: var(--illus-fg);
 }
 
@@ -945,4 +951,130 @@
 
     .illus-stat-row { gap: 1.5rem; margin-block-start: 1.25rem; }
     .illus-cta-row  { margin-block-start: 1.25rem; }
+}
+
+/* ── Section intro animation ─────────────────────────────────────────────── */
+
+@keyframes illus-cube-intro-grow {
+    0%    { scale: 0.04; }
+    68%   { scale: 1.06; }
+    84%   { scale: 0.97; }
+    100%  { scale: 1; }
+}
+
+@keyframes illus-intro-body-scan {
+    0%   { clip-path: inset(0 0 100% 0); opacity: 0.5;
+           filter: brightness(2.5) saturate(0.4); }
+    15%  { opacity: 1;  filter: brightness(1.6) saturate(0.7); }
+    60%  { clip-path: inset(0 0 8% 0);  filter: brightness(1.1); }
+    100% { clip-path: inset(0 0 0% 0);  filter: none; opacity: 1; }
+}
+
+@keyframes illus-intro-title-enter {
+    0%        { opacity: 0; translate: 0 12px; filter: none; }
+    10%       { opacity: 1; translate: -8px 0;
+                filter: drop-shadow( 10px 0 0 rgba(238,155,  0,.90))
+                        drop-shadow(-10px 0 0 rgba(148,210,189,.90)); }
+    24%       { translate:  6px 0;
+                filter: drop-shadow( -6px 0 0 rgba(238,155,  0,.70))
+                        drop-shadow(  6px 0 0 rgba(148,210,189,.70)); }
+    38%       { translate: -4px 0; filter: none; }
+    52%       { translate:  2px 0; filter: drop-shadow(4px 0 0 rgba(238,155,0,.50)); }
+    66%       { translate: -1px 0; filter: none; }
+    80%, 100% { translate: 0 0;    filter: none; opacity: 1; }
+}
+
+/* Suppress everything except VHS + scanlines while intro plays */
+#illustration.illus-intro-active #illus-shader-bg {
+    opacity: 0;
+    transition: none;
+}
+
+/* Hide the 3D scene entirely — visibility doesn't flatten transform-style: preserve-3d */
+#illustration.illus-intro-active .illus-scene {
+    visibility: hidden;
+}
+
+#illustration.illus-intro-active .illus-hud,
+#illustration.illus-intro-active .illus-strip,
+#illustration.illus-intro-active .illus-caption {
+    opacity: 0;
+    transition: none;
+}
+
+/* Hide the entire card wrapper (frosted glass box + all children) */
+#illustration.illus-intro-active .illus-section[data-idx="0"] {
+    opacity: 0;
+    transition: none;
+}
+
+/* Override .illus-section.active child reveals during intro — ID specificity wins */
+#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-tag,
+#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-h1,
+#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-body,
+#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-cta {
+    opacity: 0;
+    translate: 0 0.625rem;
+    transition: none;
+    animation: none;
+}
+
+/* Phase 1 — shader fades in */
+#illustration.illus-intro-active.illus-i-shader #illus-shader-bg {
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+/* Phase 2 — reveal scene, cube grows via scale-only animation (JS drives the spin) */
+#illustration.illus-intro-active.illus-i-cube .illus-scene {
+    visibility: visible;
+}
+
+#illustration.illus-intro-active.illus-i-cube .illus-cube {
+    animation: illus-cube-intro-grow 2.5s cubic-bezier(0.22, 1, 0.36, 1) 1 both;
+}
+
+/* Phase 3 — card wrapper fades in, then body text scans */
+#illustration.illus-intro-active.illus-i-body .illus-section[data-idx="0"] {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+#illustration.illus-intro-active.illus-i-body .illus-section[data-idx="0"] .illus-body {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+    animation: illus-intro-body-scan 0.72s ease-out 1 both;
+}
+
+/* Phase 4 — ILLUSTRATION title with chromatic-aberration glitch entry */
+#illustration.illus-intro-active.illus-i-title .illus-section[data-idx="0"] .illus-h1 {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+    animation: illus-intro-title-enter 0.55s steps(1, end) 1 both;
+}
+
+/* Phase 5 — hero tag fades in */
+#illustration.illus-intro-active.illus-i-rest .illus-section[data-idx="0"] .illus-tag {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 0.45s ease, translate 0.45s ease;
+    animation: none;
+}
+
+/* Phase 6 — CTA Enter button slides in */
+#illustration.illus-intro-active.illus-i-buttons .illus-section[data-idx="0"] .illus-cta {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 0.45s ease, translate 0.45s ease, background 0.2s, color 0.2s;
+    animation: none;
+}
+
+/* Phase 7 — HUD, nav dots and caption fade in together */
+#illustration.illus-intro-active.illus-i-hud .illus-hud,
+#illustration.illus-intro-active.illus-i-hud .illus-strip,
+#illustration.illus-intro-active.illus-i-hud .illus-caption {
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }

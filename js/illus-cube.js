@@ -77,6 +77,7 @@
 
     const STOPS        = buildRandomStops(N);
     const FACE_MAP     = buildFaceMap(STOPS);
+    const INTRO_FACE   = FACE_MAP[0]; // physical face shown at stop 0 — reserved for text
 
     // The original reference uses 3 transition types: pure pitch (drx=±90, dry=0),
     // pure yaw (drx=0, dry=±90), and diagonal (drx=±90, dry=±90).
@@ -126,6 +127,10 @@
 
     const illus = document.getElementById('illustration');
     if (!illus) return;
+
+    // Lock the section in suppressed state immediately — before any RAF frame or
+    // updateUI call can trigger the normal card reveal transitions.
+    illus.classList.add('illus-intro-active');
 
     const tunnel         = illus.querySelector('.illus-tunnel');
     const cube           = illus.querySelector('.illus-cube');
@@ -235,6 +240,16 @@
     async function setFaceImage(faceIdx, imgIdx) {
         if (faceImgIdx[faceIdx] === imgIdx) return;
         faceImgIdx[faceIdx] = imgIdx;
+
+        // Stop 0 on the intro face shows text — no image ever goes there at imgIdx 0
+        if (faceIdx === INTRO_FACE && imgIdx === 0) return;
+
+        // Another stop is claiming the intro face — hide its text panel
+        if (faceIdx === INTRO_FACE) {
+            const introTxt = faces[INTRO_FACE].querySelector('.illus-face-intro-text');
+            if (introTxt) introTxt.classList.remove('illus-text-enter');
+        }
+
         const src = IMAGES[imgIdx];
         await preloadImage(src);
         if (faceImgIdx[faceIdx] !== imgIdx) return;
@@ -330,9 +345,26 @@
     let imgGlitchPending = false;
 
     function fireImgGlitch(stop) {
+        if (introPlaying) return;
         const face     = faces[FACE_MAP[stop]];
-        const img      = face?.querySelector('img');
         const scanLine = face?.querySelector('.illus-scan-line');
+
+        if (stop === 0) {
+            // Intro text face — animate text with title glitch, not an image
+            const txt = face?.querySelector('.illus-face-intro-text');
+            if (!txt) return;
+            // Clear any img that may have been swapped onto this face previously
+            const staleImg = face?.querySelector('img');
+            if (staleImg) staleImg.classList.remove('illus-img-enter');
+            txt.classList.remove('illus-text-enter');
+            if (scanLine) scanLine.classList.remove('illus-scan-active');
+            void face.offsetWidth;
+            txt.classList.add('illus-text-enter');
+            if (scanLine) scanLine.classList.add('illus-scan-active');
+            return;
+        }
+
+        const img = face?.querySelector('img');
         if (!img) return;
 
         // Single reflow restarts both animations simultaneously
@@ -346,10 +378,15 @@
     // ── Electric border — scroll-velocity driven ─────────────────────────────
     // Seed is cycled inside the main frame loop (no second RAF needed).
     // elecOff uses a guard so the timeout is only scheduled once per idle entry.
-    let elecActive = false;
-    let elecTimer  = null;
-    let elecFrame  = 0;
-    let prevSmooth = smooth;
+    let elecActive      = false;
+    let elecTimer       = null;
+    let elecFrame       = 0;
+    let prevSmooth      = smooth;
+    let introElecActive    = false; // true only during cube-grow phase of intro
+    let introPlayed        = false;
+    let introPlaying       = false;
+    let introCubeSpinStart = 0;    // performance.now() when cube phase began; 0 = inactive
+    let introTimers        = [];   // tracks setTimeout IDs so reset can cancel mid-sequence
 
     function elecOn() {
         if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
@@ -360,6 +397,7 @@
     }
 
     function elecOff() {
+        if (introElecActive) return; // hold border on during intro glow window
         if (elecTimer) return;
         elecTimer = setTimeout(() => {
             elecActive = false;
@@ -414,36 +452,34 @@
         </svg>`;
     tunnel.appendChild(scrollHint);
 
+    const hintScreen = scrollHint.querySelector('.illus-scroll-screen');
+
     let hintTimer  = null;
     let loopTimer  = null;
     let inSection  = false;
-    const HINT_MS       = 3500; // idle delay before first show
-    const LOOP_MS       = 3000; // how long screen stays visible per cycle
-    const LOOP_PAUSE_MS = 600;  // gap between hide and next show (covers 0.15s fade)
+    const HINT_MS       = 3500;
+    const LOOP_MS       = 6000;
+    const LOOP_PAUSE_MS = 600;
 
     function showHint() {
         if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
-        const screen = scrollHint.querySelector('.illus-scroll-screen');
-        if (screen) {
-            screen.classList.remove('illus-screen-playing');
-            void screen.offsetWidth; // force reflow so animation restarts cleanly
-            screen.classList.add('illus-screen-playing');
+        if (hintScreen) {
+            hintScreen.classList.remove('illus-screen-playing');
+            void hintScreen.offsetWidth;
+            hintScreen.classList.add('illus-screen-playing');
         }
         scrollHint.classList.add('illus-scroll-visible');
         tunnel.classList.add('illus-idle');
 
-        // Auto-hide after 3 s, then restart — user is still idle so keep illus-idle
         loopTimer = setTimeout(() => {
-            const scr = scrollHint.querySelector('.illus-scroll-screen');
-            if (scr) scr.classList.remove('illus-screen-playing');
+            if (hintScreen) hintScreen.classList.remove('illus-screen-playing');
             scrollHint.classList.remove('illus-scroll-visible');
             loopTimer = setTimeout(showHint, LOOP_PAUSE_MS);
         }, LOOP_MS);
     }
     function hideHint() {
         if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
-        const screen = scrollHint.querySelector('.illus-scroll-screen');
-        if (screen) screen.classList.remove('illus-screen-playing');
+        if (hintScreen) hintScreen.classList.remove('illus-screen-playing');
         scrollHint.classList.remove('illus-scroll-visible');
         tunnel.classList.remove('illus-idle');
     }
@@ -465,6 +501,77 @@
         scrollHint.classList.toggle('illus-scroll-hint--right', hintRight);
         scrollHint.classList.toggle('illus-scroll-hint--left',  !hintRight);
     }
+
+    // ── Section intro animation ───────────────────────────────────────────────
+    // Plays once on first section entry (scroll or nav button).
+    // Timeline: VHS+grid → shader → cube+electric → body → title → tag → buttons → HUD.
+    function playIntro() {
+        if (introPlayed || introPlaying) return;
+        introPlayed  = true;
+        introPlaying = true;
+
+        // illus-intro-active was already set at init time — no need to add it here
+
+        // Steps are sorted chronologically for readability; setTimeout fires them correctly regardless.
+        const steps = [
+            [  700, 'illus-i-shader',  null],
+            [ 1700, 'illus-i-cube',    () => {
+                introCubeSpinStart = performance.now();
+                introElecActive    = true;
+                tunnel.classList.add('illus-electric-active');
+            }],
+            [ 3900, 'illus-i-body',    null],
+            [ 4700, 'illus-i-title',   null],
+            [ 5350, 'illus-i-rest',    null],
+            [ 5800, 'illus-i-buttons', null],
+            [ 6050, 'illus-i-hud',     null],
+            [ 6500, null, () => {
+                illus.classList.remove(
+                    'illus-intro-active',
+                    'illus-i-shader', 'illus-i-cube',
+                    'illus-i-body',   'illus-i-title',
+                    'illus-i-rest',   'illus-i-buttons', 'illus-i-hud'
+                );
+                introCubeSpinStart = 0;
+                introPlaying       = false;
+            }],
+            // Electric border stays 5 s after grow ends (1700 + 2500 = 4200 ms → off at 9200 ms)
+            [ 9200, null, () => {
+                introElecActive = false;
+                elecActive      = false;
+                tunnel.classList.remove('illus-electric-active');
+            }],
+        ];
+
+        introTimers = [];
+        steps.forEach(([ms, cls, cb]) => {
+            introTimers.push(setTimeout(() => {
+                if (cls) illus.classList.add(cls);
+                if (cb)  cb();
+            }, ms));
+        });
+    }
+
+    function resetIntro() {
+        introTimers.forEach(clearTimeout);
+        introTimers = [];
+        introPlayed        = false;
+        introPlaying       = false;
+        introElecActive    = false;
+        introCubeSpinStart = 0;
+        elecActive         = false;
+        if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
+        tunnel.classList.remove('illus-electric-active');
+        illus.classList.remove(
+            'illus-i-shader', 'illus-i-cube',    'illus-i-body',
+            'illus-i-title',  'illus-i-rest',    'illus-i-buttons', 'illus-i-hud'
+        );
+        illus.classList.add('illus-intro-active');
+    }
+
+    document.querySelectorAll('a[href="#illustration"]').forEach(btn => {
+        btn.addEventListener('click', resetIntro);
+    });
 
     // ── Lightbox ─────────────────────────────────────────────────────────────
     const lb = document.createElement('div');
@@ -557,14 +664,24 @@
         requestAnimationFrame(frame);
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
+
+        // Intro trigger — checked every frame so it can't be missed by a missed scroll event.
+        // Read getBoundingClientRect before any DOM writes to avoid forced layout.
+        if (!introPlayed && !introPlaying) {
+            const rect = illus.getBoundingClientRect();
+            if (rect.top <= 0 && rect.bottom > 0) playIntro();
+        }
+
         smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));
         smooth   = Math.max(0, Math.min(1, smooth));
 
-        // Electric border: on while scrolling, seed cycled at ~20 fps
+        // Electric border: on while scrolling, seed cycled at ~20 fps normally,
+        // ~10 fps during intro glow (7.5 s window) to reduce GPU compositing cost.
         const vel = Math.abs(smooth - prevSmooth);
         prevSmooth = smooth;
         if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
-        if ((elecActive || lbOpen) && electricNoise && ++elecFrame % 3 === 0) {
+        const seedRate = introElecActive ? 6 : 3;
+        if ((elecActive || lbOpen || introElecActive) && electricNoise && ++elecFrame % seedRate === 0) {
             electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
         }
 
@@ -572,11 +689,28 @@
         const nowInSection = smooth > 0.001 && smooth < 0.999;
         if (nowInSection !== inSection) {
             inSection = nowInSection;
-            if (inSection) scheduleHint();
+            if (inSection && !introPlaying) scheduleHint();
             else { hideHint(); if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; } }
         }
 
-        setCubeTransform(smooth);
+        // During intro cube-grow phase, JS drives the rotation so it composes cleanly
+        // with transform-style:preserve-3d (no opacity flattening risk).
+        // X-axis: full forward tumble (top→front→bottom→back→top).
+        // Y-axis: two full sweeps (shows all side faces).
+        // Both return to initial pose at t=1 — no jump when setCubeTransform resumes.
+        if (introCubeSpinStart > 0) {
+            const elapsed = now - introCubeSpinStart;
+            const SPIN_MS = 2200;
+            const t       = Math.min(elapsed / SPIN_MS, 1);
+            const ease    = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            const rx      = 90  - ease * 360;  // 90° → -270° ≡ 90° (full X tumble)
+            const ry      = ease * 720;         // 0°  → 720°  ≡ 0°  (double Y sweep)
+            cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+            if (t >= 1) introCubeSpinStart = 0;
+        } else {
+            setCubeTransform(smooth);
+        }
+
         checkImageSwaps(smooth);
         updateUI(smooth);
 

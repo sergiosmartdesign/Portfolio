@@ -418,7 +418,7 @@ class NavigationManager {
 
           if (sectionId === 'intro') {
             e.preventDefault();
-            smoothScrollTo(0);
+            window.scrollTo(0, 0);
             this.setActiveButton('intro');
             return;
           }
@@ -443,19 +443,23 @@ class NavigationManager {
               const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
               const targetY = spacerTop + window.innerHeight * 2;
               // If coming from above the photo zone, jump there instantly to skip the about section
-              if (window.scrollY < spacerTop) {
-                window.scrollTo(0, spacerTop);
-              }
-              smoothScrollTo(targetY, TIMING.PHOTO_SCROLL_DURATION);
+              window.scrollTo(0, targetY);
             }
             this.setActiveButton('photo');
             history.pushState(null, '', '#photo');
             return;
           }
 
-          setTimeout(() => {
-            this.setActiveButton(sectionId);
-          }, TIMING.NAV_SCROLL_DELAY);
+          // General rule: all other sections scroll instantly to their top
+          // and activate entrance animations through IntersectionObserver re-entry.
+          e.preventDefault();
+          const target = document.getElementById(sectionId);
+          if (target) {
+            window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
+          }
+          if (window.sectionEnter?.[sectionId]) window.sectionEnter[sectionId]();
+          this.setActiveButton(sectionId);
+          history.pushState(null, '', `#${sectionId}`);
         }
       });
     });
