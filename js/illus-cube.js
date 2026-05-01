@@ -142,12 +142,16 @@
     // Scale section height to number of images (100vh per stop)
     illus.style.height = (N * 100) + 'vh';
 
-    // Stamp expand hint into every face
+    // Stamp expand hint + scan line into every face
     faces.forEach(face => {
         const lbl = document.createElement('div');
         lbl.className   = 'illus-face-label';
         lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
         face.appendChild(lbl);
+
+        const sl = document.createElement('div');
+        sl.className = 'illus-scan-line';
+        face.appendChild(sl);
     });
 
     // Generate additional nav dots
@@ -326,15 +330,17 @@
     let imgGlitchPending = false;
 
     function fireImgGlitch(stop) {
-        const faceIdx = FACE_MAP[stop];
-        const img     = faces[faceIdx]?.querySelector('img');
+        const face     = faces[FACE_MAP[stop]];
+        const img      = face?.querySelector('img');
+        const scanLine = face?.querySelector('.illus-scan-line');
         if (!img) return;
+
+        // Single reflow restarts both animations simultaneously
         img.classList.remove('illus-img-enter');
-        void img.offsetWidth;
+        if (scanLine) scanLine.classList.remove('illus-scan-active');
+        void face.offsetWidth;
         img.classList.add('illus-img-enter');
-        img.addEventListener('animationend', () => {
-            img.classList.remove('illus-img-enter');
-        }, { once: true });
+        if (scanLine) scanLine.classList.add('illus-scan-active');
     }
 
     // ── Electric border — scroll-velocity driven ─────────────────────────────
@@ -409,10 +415,14 @@
     tunnel.appendChild(scrollHint);
 
     let hintTimer  = null;
+    let loopTimer  = null;
     let inSection  = false;
-    const HINT_MS  = 3500;
+    const HINT_MS       = 3500; // idle delay before first show
+    const LOOP_MS       = 3000; // how long screen stays visible per cycle
+    const LOOP_PAUSE_MS = 600;  // gap between hide and next show (covers 0.15s fade)
 
     function showHint() {
+        if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
         const screen = scrollHint.querySelector('.illus-scroll-screen');
         if (screen) {
             screen.classList.remove('illus-screen-playing');
@@ -421,8 +431,17 @@
         }
         scrollHint.classList.add('illus-scroll-visible');
         tunnel.classList.add('illus-idle');
+
+        // Auto-hide after 3 s, then restart — user is still idle so keep illus-idle
+        loopTimer = setTimeout(() => {
+            const scr = scrollHint.querySelector('.illus-scroll-screen');
+            if (scr) scr.classList.remove('illus-screen-playing');
+            scrollHint.classList.remove('illus-scroll-visible');
+            loopTimer = setTimeout(showHint, LOOP_PAUSE_MS);
+        }, LOOP_MS);
     }
     function hideHint() {
+        if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
         const screen = scrollHint.querySelector('.illus-scroll-screen');
         if (screen) screen.classList.remove('illus-screen-playing');
         scrollHint.classList.remove('illus-scroll-visible');
