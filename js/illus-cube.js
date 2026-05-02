@@ -64,6 +64,18 @@
     const N            = IMAGES.length;
     const SWAP_RADIUS  = 3;
 
+    const FACE_COLORS = [
+        { hex: '#005F73', rgb: '0,95,115'    },
+        { hex: '#0A9396', rgb: '10,147,150'  },
+        { hex: '#94D2BD', rgb: '148,210,189' },
+        { hex: '#E9D8A6', rgb: '233,216,166' },
+        { hex: '#EE9B00', rgb: '238,155,0'   },
+        { hex: '#CA6702', rgb: '202,103,2'   },
+        { hex: '#BB3E03', rgb: '187,62,3'    },
+        { hex: '#AE2012', rgb: '174,32,18'   },
+        { hex: '#9B2226', rgb: '155,34,38'   },
+    ];
+
     // Seeded PRNG — same path every page load, so image order is always identical
     function mulberry32(seed) {
         return function () {
@@ -78,6 +90,11 @@
     const STOPS        = buildRandomStops(N);
     const FACE_MAP     = buildFaceMap(STOPS);
     const INTRO_FACE   = FACE_MAP[0]; // physical face shown at stop 0 — reserved for text
+
+    // One color per stop, seeded after buildRandomStops so the sequence is stable
+    const STOP_COLORS  = Array.from({ length: N }, () =>
+        Math.floor(rand() * FACE_COLORS.length)
+    );
 
     // The original reference uses 3 transition types: pure pitch (drx=±90, dry=0),
     // pure yaw (drx=0, dry=±90), and diagonal (drx=±90, dry=±90).
@@ -305,8 +322,10 @@
 
     function updateUI(s) {
         const pct  = Math.round(s * 100);
-        hudPct.textContent   = String(pct).padStart(3, '0') + '%';
-        progFill.style.width = pct + '%';
+        hudPct.textContent      = String(pct).padStart(3, '0') + '%';
+        progFill.style.width    = pct + '%';
+        hintHudPct.textContent  = String(pct).padStart(3, '0') + '%';
+        hintHudFill.style.width = pct + '%';
 
         const stop = Math.min(N - 1, Math.round(s * (N - 1)));
         if (stop === lastStop) return;
@@ -315,7 +334,8 @@
         const name   = FACE_NAMES[stop] ?? '';
         const spaced = name.split('').join(' ');
 
-        sceneLabel.textContent = name;
+        hintHudLabel.textContent = name;
+        sceneLabel.textContent   = name;
         captionNum.textContent = String(stop + 1).padStart(2, '0');
         captionName.textContent = '[ · ' + spaced + ' · ]';
         captionName.classList.remove('illus-name-glitch');
@@ -338,6 +358,12 @@
     let tgt    = getProgress();
     let smooth = tgt;
 
+    function applyFaceColor(stop) {
+        const c = FACE_COLORS[STOP_COLORS[stop]];
+        tunnel.style.setProperty('--illus-face-color', c.hex);
+        tunnel.style.setProperty('--illus-face-rgb', c.rgb);
+    }
+
     // ── Image entry glitch — fires when the face is nearly fully front-facing ─
     // Pending flag is set when the stop changes; the frame loop checks the
     // remaining normalized distance to the target stop and fires once the cube
@@ -346,6 +372,7 @@
 
     function fireImgGlitch(stop) {
         if (introPlaying) return;
+        applyFaceColor(stop);
         const face     = faces[FACE_MAP[stop]];
         const scanLine = face?.querySelector('.illus-scan-line');
 
@@ -454,6 +481,21 @@
 
     const hintScreen = scrollHint.querySelector('.illus-scroll-screen');
 
+    const hintHud = document.createElement('div');
+    hintHud.className = 'illus-hint-hud illus-hint-hud--right';
+    hintHud.setAttribute('aria-hidden', 'true');
+    hintHud.innerHTML = `
+        <div class="illus-hint-hud-pct">000%</div>
+        <div class="illus-hint-hud-bar">
+            <div class="illus-hint-hud-fill"></div>
+        </div>
+        <div class="illus-hint-hud-label">TIMELESS</div>`;
+    tunnel.appendChild(hintHud);
+
+    const hintHudPct   = hintHud.querySelector('.illus-hint-hud-pct');
+    const hintHudFill  = hintHud.querySelector('.illus-hint-hud-fill');
+    const hintHudLabel = hintHud.querySelector('.illus-hint-hud-label');
+
     let hintTimer  = null;
     let loopTimer  = null;
     let inSection  = false;
@@ -500,6 +542,8 @@
         const hintRight = stop % 2 === 0;
         scrollHint.classList.toggle('illus-scroll-hint--right', hintRight);
         scrollHint.classList.toggle('illus-scroll-hint--left',  !hintRight);
+        hintHud.classList.toggle('illus-hint-hud--right', hintRight);
+        hintHud.classList.toggle('illus-hint-hud--left',  !hintRight);
     }
 
     // ── Section intro animation ───────────────────────────────────────────────
