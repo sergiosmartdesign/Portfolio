@@ -481,20 +481,27 @@
 
     const hintScreen = scrollHint.querySelector('.illus-scroll-screen');
 
-    const hintHud = document.createElement('div');
-    hintHud.className = 'illus-hint-hud illus-hint-hud--right';
-    hintHud.setAttribute('aria-hidden', 'true');
-    hintHud.innerHTML = `
-        <div class="illus-hint-hud-pct">000%</div>
-        <div class="illus-hint-hud-bar">
-            <div class="illus-hint-hud-fill"></div>
-        </div>
-        <div class="illus-hint-hud-label">TIMELESS</div>`;
-    tunnel.appendChild(hintHud);
+    const hintHud      = document.createElement('div');
+    const hintHudPct   = document.createElement('div');
+    const hintHudBar   = document.createElement('div');
+    const hintHudFill  = document.createElement('div');
+    const hintHudLabel = document.createElement('div');
 
-    const hintHudPct   = hintHud.querySelector('.illus-hint-hud-pct');
-    const hintHudFill  = hintHud.querySelector('.illus-hint-hud-fill');
-    const hintHudLabel = hintHud.querySelector('.illus-hint-hud-label');
+    hintHud.className      = 'illus-hint-hud illus-hint-hud--right';
+    hintHudPct.className   = 'illus-hint-hud-pct';
+    hintHudBar.className   = 'illus-hint-hud-bar';
+    hintHudFill.className  = 'illus-hint-hud-fill';
+    hintHudLabel.className = 'illus-hint-hud-label';
+
+    hintHud.setAttribute('aria-hidden', 'true');
+    hintHudPct.textContent   = '000%';
+    hintHudLabel.textContent = 'TIMELESS';
+
+    hintHudBar.appendChild(hintHudFill);
+    hintHud.appendChild(hintHudPct);
+    hintHud.appendChild(hintHudBar);
+    hintHud.appendChild(hintHudLabel);
+    tunnel.appendChild(hintHud);
 
     let hintTimer  = null;
     let loopTimer  = null;
@@ -709,6 +716,8 @@
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
 
+        tgt = getProgress();
+
         // Intro trigger — checked every frame so it can't be missed by a missed scroll event.
         // Read getBoundingClientRect before any DOM writes to avoid forced layout.
         if (!introPlayed && !introPlaying) {
@@ -761,7 +770,7 @@
         // Fire image glitch once the cube face is mostly front-facing.
         // remaining: 0.5 when stop just changed, 0 when fully arrived.
         // Threshold 0.12 ≈ 76% through the landing rotation.
-        if (imgGlitchPending && lastStop >= 0) {
+        if (imgGlitchPending && lastStop >= 0 && !introPlaying) {
             const remaining = Math.abs(smooth - lastStop / (N - 1)) * (N - 1);
             if (remaining < 0.12) {
                 imgGlitchPending = false;
