@@ -8,7 +8,7 @@
     if (!gl) return;
 
     const isSafari = window.BrowserDetect && window.BrowserDetect.isSafari;
-    const LOOP_COUNT = isSafari ? 30 : 60;
+    const LOOP_COUNT = isSafari ? 18 : 32;
 
     const VS = `#version 300 es
 in vec4 aPosition;

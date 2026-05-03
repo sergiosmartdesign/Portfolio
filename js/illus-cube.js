@@ -164,11 +164,22 @@
     // Scale section height to number of images (100vh per stop)
     illus.style.height = (N * 100) + 'vh';
 
-    // Stamp expand hint + scan line into every face
-    faces.forEach(face => {
+    // Stamp face label + scan line into every face.
+    // The gallery-title face (stop 0) gets the section descriptor instead of the expand hint.
+    faces.forEach((face, fi) => {
         const lbl = document.createElement('div');
-        lbl.className   = 'illus-face-label';
-        lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
+        if (fi === INTRO_FACE) {
+            lbl.className = 'illus-face-label illus-face-label--gallery';
+            lbl.innerHTML =
+                '[ · I N T E R D I M E N S I O N A L<br>' +
+                'G A L L E R Y<br>' +
+                'O F<br>' +
+                'T I M E L E S S<br>' +
+                'A R T · ]';
+        } else {
+            lbl.className   = 'illus-face-label';
+            lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
+        }
         face.appendChild(lbl);
 
         const sl = document.createElement('div');
@@ -258,13 +269,14 @@
         if (faceImgIdx[faceIdx] === imgIdx) return;
         faceImgIdx[faceIdx] = imgIdx;
 
-        // Stop 0 on the intro face shows text — no image ever goes there at imgIdx 0
-        if (faceIdx === INTRO_FACE && imgIdx === 0) return;
-
-        // Another stop is claiming the intro face — hide its text panel
-        if (faceIdx === INTRO_FACE) {
-            const introTxt = faces[INTRO_FACE].querySelector('.illus-face-intro-text');
-            if (introTxt) introTxt.classList.remove('illus-text-enter');
+        // Stop 0 on the gallery-title face: clear any photo placed by a later stop
+        if (faceIdx === INTRO_FACE && imgIdx === 0) {
+            const staleImg = faces[INTRO_FACE].querySelector('img');
+            if (staleImg) {
+                staleImg.classList.remove('illus-img-enter');
+                staleImg.removeAttribute('src');
+            }
+            return;
         }
 
         const src = IMAGES[imgIdx];
@@ -377,17 +389,12 @@
         const scanLine = face?.querySelector('.illus-scan-line');
 
         if (stop === 0) {
-            // Intro text face — animate text with title glitch, not an image
-            const txt = face?.querySelector('.illus-face-intro-text');
-            if (!txt) return;
-            // Clear any img that may have been swapped onto this face previously
-            const staleImg = face?.querySelector('img');
-            if (staleImg) staleImg.classList.remove('illus-img-enter');
-            txt.classList.remove('illus-text-enter');
-            if (scanLine) scanLine.classList.remove('illus-scan-active');
-            void face.offsetWidth;
-            txt.classList.add('illus-text-enter');
-            if (scanLine) scanLine.classList.add('illus-scan-active');
+            // Gallery title face — no image; pulse the scan line as landing feedback
+            if (scanLine) {
+                scanLine.classList.remove('illus-scan-active');
+                void face.offsetWidth;
+                scanLine.classList.add('illus-scan-active');
+            }
             return;
         }
 
@@ -412,6 +419,7 @@
     let introElecActive    = false; // true only during cube-grow phase of intro
     let introPlayed        = false;
     let introPlaying       = false;
+    let introSeenOnce      = false; // persists across resets — enables fast re-entry
     let introCubeSpinStart = 0;    // performance.now() when cube phase began; 0 = inactive
     let introTimers        = [];   // tracks setTimeout IDs so reset can cancel mid-sequence
 
@@ -558,25 +566,31 @@
     // Timeline: VHS+grid → shader → cube+electric → body → title → tag → buttons → HUD.
     function playIntro() {
         if (introPlayed || introPlaying) return;
-        introPlayed  = true;
-        introPlaying = true;
+        introPlayed = true;
 
-        // illus-intro-active was already set at init time — no need to add it here
+        // Re-visit: skip full sequence, section is already in clean visible state
+        if (introSeenOnce) {
+            introPlaying = false;
+            return;
+        }
 
-        // Steps are sorted chronologically for readability; setTimeout fires them correctly regardless.
+        introSeenOnce = true;
+        introPlaying  = true;
+
+        // Steps — total duration 3.2 s (down from 6.5 s).
         const steps = [
-            [  700, 'illus-i-shader',  null],
-            [ 1700, 'illus-i-cube',    () => {
+            [  100, 'illus-i-shader',  null],
+            [  600, 'illus-i-cube',    () => {
                 introCubeSpinStart = performance.now();
                 introElecActive    = true;
                 tunnel.classList.add('illus-electric-active');
             }],
-            [ 3900, 'illus-i-body',    null],
-            [ 4700, 'illus-i-title',   null],
-            [ 5350, 'illus-i-rest',    null],
-            [ 5800, 'illus-i-buttons', null],
-            [ 6050, 'illus-i-hud',     null],
-            [ 6500, null, () => {
+            [ 1500, 'illus-i-body',    null],
+            [ 2000, 'illus-i-title',   null],
+            [ 2400, 'illus-i-rest',    null],
+            [ 2600, 'illus-i-buttons', null],
+            [ 2800, 'illus-i-hud',     null],
+            [ 3200, null, () => {
                 illus.classList.remove(
                     'illus-intro-active',
                     'illus-i-shader', 'illus-i-cube',
@@ -586,8 +600,8 @@
                 introCubeSpinStart = 0;
                 introPlaying       = false;
             }],
-            // Electric border stays 5 s after grow ends (1700 + 2500 = 4200 ms → off at 9200 ms)
-            [ 9200, null, () => {
+            // Electric border fades off 2.3 s after grow ends (600 + 2200 + 2300 = 5100 ms)
+            [ 5100, null, () => {
                 introElecActive = false;
                 elecActive      = false;
                 tunnel.classList.remove('illus-electric-active');
@@ -617,7 +631,22 @@
             'illus-i-shader', 'illus-i-cube',    'illus-i-body',
             'illus-i-title',  'illus-i-rest',    'illus-i-buttons', 'illus-i-hud'
         );
-        illus.classList.add('illus-intro-active');
+        if (introSeenOnce) {
+            // Re-visit: drop suppression so the section is immediately visible on scroll-in
+            illus.classList.remove('illus-intro-active');
+        } else {
+            illus.classList.add('illus-intro-active');
+        }
+
+        // Immediately evict any photo from the gallery-title face so there is no
+        // flash on re-entry. Force faceImgIdx to -1 so the cache check in
+        // setFaceImage does not skip the clear on the very next checkImageSwaps call.
+        const titleFaceImg = faces[INTRO_FACE].querySelector('img');
+        if (titleFaceImg) {
+            titleFaceImg.classList.remove('illus-img-enter');
+            titleFaceImg.removeAttribute('src');
+        }
+        faceImgIdx[INTRO_FACE] = -1;
     }
 
     document.querySelectorAll('a[href="#illustration"]').forEach(btn => {
@@ -709,10 +738,10 @@
         gotoSlide(parseInt(btn.dataset.goto, 10));
     });
 
-    let lastNow = performance.now();
+    let lastNow  = performance.now();
+    let rafActive = false;
 
     function frame(now) {
-        requestAnimationFrame(frame);
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
 
@@ -779,6 +808,26 @@
         }
     }
 
-    requestAnimationFrame(frame);
+    function loop(now) {
+        frame(now);
+        if (rafActive) requestAnimationFrame(loop);
+    }
+
+    function startLoop() {
+        if (rafActive) return;
+        rafActive = true;
+        lastNow   = performance.now();
+        requestAnimationFrame(loop);
+    }
+
+    function stopLoop() {
+        rafActive = false;
+    }
+
+    const sectionVisObserver = new IntersectionObserver(entries => {
+        entries[0].isIntersecting ? startLoop() : stopLoop();
+    }, { threshold: 0 });
+
+    sectionVisObserver.observe(illus);
 
 }());

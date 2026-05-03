@@ -108,31 +108,6 @@
     opacity: 0;
 }
 
-/* ── Intro text panel (face 0 / top — stop 0 only) ──────────────────────── */
-.illus-face-intro-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-weight: 700;
-    font-size: clamp(0.58rem, 1.5vmin, 0.82rem);
-    letter-spacing: 0.15em;
-    line-height: 2;
-    color: #E9D8A6;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    max-width: 100%;
-    text-shadow:
-        0 0 12px rgba(233, 216, 166, 0.55),
-        0 0 32px rgba(233, 216, 166, 0.22);
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
-}
-
-.illus-face-intro-text.illus-text-enter {
-    animation: illus-intro-title-enter 0.55s steps(1, end) 1 forwards;
-    will-change: opacity, translate, filter;
-}
-
 /* ── Image entry animation — scan reveal ─────────────────────────────────── */
 /* Scan line sweeps top→bottom (GPU transform, no layout cost).               */
 /* Image clip-path is locked to the same linear 1.1 s so they stay in sync:  */
@@ -198,6 +173,17 @@
     pointer-events: none;
     user-select: none;
     white-space: nowrap;
+}
+
+/* Gallery title variant — multi-line, anchored above the face bottom edge */
+.illus-face-label--gallery {
+    white-space: normal;
+    line-height: 1.7;
+    font-size: 0.66rem;
+    bottom: 18px;
+    text-shadow:
+        0 0 10px rgba(238, 155, 0, 0.45),
+        0 0 24px rgba(238, 155, 0, 0.18);
 }
 
 /* ── Click zone — captures clicks on the front-facing cube face ──────────── */
@@ -750,7 +736,7 @@
     font-weight: 300;
     font-size: 1rem;
     line-height: 1.8;
-    color: #001219;
+    color: var(--illus-fg);
     margin-block-start: 1.25rem;
 }
 
@@ -760,8 +746,8 @@
     font-size: 0.58rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #001219;
-    opacity: 0.7;
+    color: var(--illus-muted);
+    opacity: 0.85;
     margin-block-start: 0.8rem;
 }
 
@@ -856,9 +842,9 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.85rem 1.75rem;
-    border: 2px solid #001219;
+    border: 2px solid rgba(148, 210, 189, 0.45);
     background: transparent;
-    color: #001219;
+    color: var(--illus-muted);
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.82rem;
     letter-spacing: 0.18em;
@@ -868,8 +854,9 @@
 }
 
 .illus-cta-back:hover {
-    background: #001219;
+    background: rgba(148, 210, 189, 0.12);
     color: var(--illus-fg);
+    border-color: var(--illus-muted);
 }
 
 .illus-cta-back svg { width: 0.875rem; height: 0.875rem; }
