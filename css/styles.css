@@ -2972,10 +2972,11 @@ nav {
   flex-shrink: 0;
 }
 
-/* 3-column top grid — z:0 so bg-image (z:1) covers it on hover */
+/* Top grid — no z-index so the grid doesn't create a stacking context.
+   Active accordion items (z:2) participate in the overlay's context and
+   appear above the bg-image (z:1) on hover. */
 .photo-top-grid {
   position: relative;
-  z-index: 0;
   display: grid;
   grid-template-columns: 2.4fr 1fr;
   gap: clamp(1.5rem, 3vw, 3rem);
@@ -3591,7 +3592,7 @@ nav {
   min-height: 0;
   display: grid;
   grid-template-columns: 40px 1fr 2fr 1fr 1fr 80px;
-  column-gap: 2rem;
+  column-gap: 1rem;
   padding: 0;
   align-items: center;
   border-bottom: 1px solid rgba(10, 147, 150, 0.18);
@@ -3857,10 +3858,9 @@ nav {
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
   color: #001219;
   --glitch-final-color: #001219;
-  text-align: center;
+  text-align: left;
   line-height: 1.6;
-  margin: clamp(0.4rem, 0.8vh, 0.6rem) auto 0;
-  max-width: 42ch;
+  margin: clamp(0.4rem, 0.8vh, 0.6rem) 0 0;
   position: relative;
   z-index: 0;
   white-space: normal; /* override .glitch-text pre */
