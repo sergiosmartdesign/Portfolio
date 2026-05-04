@@ -165,25 +165,61 @@
     bottom: 15px;
     left: 50px;
     right: 50px;
+    padding: 8px 14px;
     text-align: center;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.72rem;
+    font-size: clamp(0.72rem, 1.9vmin, 0.95rem);
+    font-weight: 700;
     letter-spacing: 0.18em;
     color: #EE9B00;
+    background: rgba(0, 18, 25, 0.88);
     pointer-events: none;
     user-select: none;
     white-space: nowrap;
 }
 
-/* Gallery title variant — multi-line, anchored above the face bottom edge */
+/* Gallery title variant — stacked word-art layout, matching .illus-word-art */
 .illus-face-label--gallery {
-    white-space: normal;
-    line-height: 1.7;
-    font-size: 0.66rem;
-    bottom: 18px;
+    bottom: auto;
+    top: 50%;
+    left: 32px;
+    right: 32px;
+    padding: 22px 24px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    white-space: nowrap;
+    background: rgba(0, 18, 25, 0.88);
+    font-size: clamp(0.72rem, 1.9vmin, 1rem);
+    font-weight: 700;
+    line-height: 4;
+    letter-spacing: 0.2em;
     text-shadow:
-        0 0 10px rgba(238, 155, 0, 0.45),
-        0 0 24px rgba(238, 155, 0, 0.18);
+        0 0 14px rgba(238, 155, 0, 0.60),
+        0 0 32px rgba(238, 155, 0, 0.28),
+        0 0 56px rgba(238, 155, 0, 0.10);
+}
+
+/* Indent all lines after the first to align under the content start.
+   "[ · " = 4 chars × (1ch each) + 4 × 0.2em letter-spacing = calc(4ch + 0.8em) */
+.illus-gallery-indent {
+    padding-inline-start: calc(4ch + 0.8em);
+}
+
+/* Subtitle — centered independently, separated from the title block */
+.illus-gallery-sub {
+    display: block;
+    margin-top: 22px;
+    padding-inline-start: 0;
+    align-self: center;
+    font-size: clamp(0.5rem, 1.3vmin, 0.65rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    opacity: 0.60;
+    white-space: normal;
+    text-align: center;
+    word-break: break-word;
 }
 
 /* ── Click zone — captures clicks on the front-facing cube face ──────────── */
@@ -581,6 +617,12 @@
     pointer-events: none;
     user-select: none;
     z-index: 20;
+    transition: opacity 0.3s ease;
+}
+
+/* Hide caption on the gallery-title face (stop 0 — no image, no image title) */
+.illus-tunnel.illus-stop-zero .illus-caption {
+    opacity: 0;
 }
 
 .illus-caption-num {
@@ -1002,128 +1044,89 @@
 
 /* ── Section intro animation ─────────────────────────────────────────────── */
 
-@keyframes illus-cube-intro-grow {
-    0%    { scale: 0.04; }
-    68%   { scale: 1.06; }
-    84%   { scale: 0.97; }
-    100%  { scale: 1; }
-}
-
-@keyframes illus-intro-body-scan {
-    0%   { clip-path: inset(0 0 100% 0); opacity: 0.5;
-           filter: brightness(2.5) saturate(0.4); }
-    15%  { opacity: 1;  filter: brightness(1.6) saturate(0.7); }
-    60%  { clip-path: inset(0 0 8% 0);  filter: brightness(1.1); }
-    100% { clip-path: inset(0 0 0% 0);  filter: none; opacity: 1; }
-}
-
-@keyframes illus-intro-title-enter {
-    0%        { opacity: 0; translate: 0 12px; filter: none; }
-    10%       { opacity: 1; translate: -8px 0;
-                filter: drop-shadow( 10px 0 0 rgba(238,155,  0,.90))
-                        drop-shadow(-10px 0 0 rgba(148,210,189,.90)); }
-    24%       { translate:  6px 0;
-                filter: drop-shadow( -6px 0 0 rgba(238,155,  0,.70))
-                        drop-shadow(  6px 0 0 rgba(148,210,189,.70)); }
-    38%       { translate: -4px 0; filter: none; }
-    52%       { translate:  2px 0; filter: drop-shadow(4px 0 0 rgba(238,155,0,.50)); }
-    66%       { translate: -1px 0; filter: none; }
-    80%, 100% { translate: 0 0;    filter: none; opacity: 1; }
-}
-
-/* Suppress everything except VHS + scanlines while intro plays */
-#illustration.illus-intro-active #illus-shader-bg {
-    opacity: 0;
-    transition: none;
-}
-
-/* Hide the 3D scene entirely — visibility doesn't flatten transform-style: preserve-3d */
-#illustration.illus-intro-active .illus-scene {
-    visibility: hidden;
-}
-
+/* ── Intro: suppress shell elements until the animation fires ───────────────
+   Sections and card children start at opacity:0 by their own default CSS,
+   so only the elements that are naturally visible need suppressing here.
+──────────────────────────────────────────────────────────────────────────── */
+#illustration.illus-intro-active #illus-shader-bg,
+#illustration.illus-intro-active .illus-scene,
 #illustration.illus-intro-active .illus-hud,
 #illustration.illus-intro-active .illus-strip,
 #illustration.illus-intro-active .illus-caption,
 #illustration.illus-intro-active .illus-hint-hud {
     opacity: 0;
     transition: none;
-}
-
-/* Hide the entire card wrapper (frosted glass box + all children) */
-#illustration.illus-intro-active .illus-section[data-idx="0"] {
-    opacity: 0;
-    transition: none;
-}
-
-/* Override .illus-section.active child reveals during intro — ID specificity wins */
-#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-tag,
-#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-h1,
-#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-body,
-#illustration.illus-intro-active .illus-section[data-idx="0"] .illus-cta {
-    opacity: 0;
-    translate: 0 0.625rem;
-    transition: none;
     animation: none;
 }
 
-/* Phase 1 — shader fades in */
-#illustration.illus-intro-active.illus-i-shader #illus-shader-bg {
-    opacity: 1;
-    transition: opacity 1s ease;
+/* ── Slide-in keyframes ─────────────────────────────────────────────────── */
+@keyframes illus-enter-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
-/* Phase 2 — reveal scene, cube grows via scale-only animation (JS drives the spin) */
-#illustration.illus-intro-active.illus-i-cube .illus-scene {
-    visibility: visible;
+@keyframes illus-enter-scale {
+    from { opacity: 0; scale: 0.88; }
+    to   { opacity: 1; scale: 1; }
 }
 
-#illustration.illus-intro-active.illus-i-cube .illus-cube {
-    animation: illus-cube-intro-grow 2.5s cubic-bezier(0.22, 1, 0.36, 1) 1 both;
+@keyframes illus-enter-left {
+    from { opacity: 0; translate: -28px 0; }
+    to   { opacity: 1; translate: 0 0; }
 }
 
-/* Phase 3 — card wrapper fades in, then body text scans */
-#illustration.illus-intro-active.illus-i-body .illus-section[data-idx="0"] {
-    opacity: 1;
-    transition: opacity 0.3s ease;
+@keyframes illus-enter-up {
+    from { opacity: 0; translate: 0 18px; }
+    to   { opacity: 1; translate: 0 0; }
 }
 
-#illustration.illus-intro-active.illus-i-body .illus-section[data-idx="0"] .illus-body {
-    opacity: 1;
-    translate: 0 0;
-    transition: none;
-    animation: illus-intro-body-scan 0.72s ease-out 1 both;
+/* ── illus-entering — CSS drives the full stagger ──────────────────────────
+   animation-fill-mode: both → element stays at from-state during delay
+   (backwards) and at to-state after finishing (forwards).
+   Card and its children use their existing opacity transitions; only the
+   transition-delay is overridden here to create the intro stagger.
+──────────────────────────────────────────────────────────────────────────── */
+
+#illustration.illus-entering #illus-shader-bg {
+    animation: illus-enter-fade 400ms ease 0ms both;
 }
 
-/* Phase 4 — ILLUSTRATION title with chromatic-aberration glitch entry */
-#illustration.illus-intro-active.illus-i-title .illus-section[data-idx="0"] .illus-h1 {
-    opacity: 1;
-    translate: 0 0;
-    transition: none;
-    animation: illus-intro-title-enter 0.55s steps(1, end) 1 both;
+#illustration.illus-entering .illus-scene {
+    animation: illus-enter-scale 480ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
 }
 
-/* Phase 5 — hero tag fades in */
-#illustration.illus-intro-active.illus-i-rest .illus-section[data-idx="0"] .illus-tag {
-    opacity: 1;
-    translate: 0 0;
-    transition: opacity 0.45s ease, translate 0.45s ease;
-    animation: none;
+#illustration.illus-entering .illus-hud {
+    animation: illus-enter-left 400ms ease 160ms both;
 }
 
-/* Phase 6 — CTA Enter button slides in */
-#illustration.illus-intro-active.illus-i-buttons .illus-section[data-idx="0"] .illus-cta {
-    opacity: 1;
-    translate: 0 0;
-    transition: opacity 0.45s ease, translate 0.45s ease, background 0.2s, color 0.2s;
-    animation: none;
+#illustration.illus-entering .illus-strip,
+#illustration.illus-entering .illus-caption {
+    animation: illus-enter-up 380ms ease 300ms both;
 }
 
-/* Phase 7 — HUD, nav dots and caption fade in together */
-#illustration.illus-intro-active.illus-i-hud .illus-hud,
-#illustration.illus-intro-active.illus-i-hud .illus-strip,
-#illustration.illus-intro-active.illus-i-hud .illus-caption,
-#illustration.illus-intro-active.illus-i-hud .illus-hint-hud {
-    opacity: 1;
-    transition: opacity 0.5s ease;
+#illustration.illus-entering .illus-hint-hud {
+    animation: illus-enter-fade 380ms ease 300ms both;
+}
+
+/* Card wrapper — delay the opacity:0→1 transition so it lands after the cube */
+#illustration.illus-entering .illus-section[data-idx="0"] {
+    transition-delay: 0.18s;
+}
+
+/* Card inner elements — extended stagger on first entry */
+#illustration.illus-entering .illus-section[data-idx="0"] .illus-h-line {
+    transition-delay: 0.32s;
+}
+#illustration.illus-entering .illus-section[data-idx="0"] .illus-tag {
+    transition-delay: 0.36s;
+}
+#illustration.illus-entering .illus-section[data-idx="0"] .illus-h1 {
+    transition-delay: 0.46s;
+}
+#illustration.illus-entering .illus-section[data-idx="0"] .illus-body {
+    transition-delay: 0.58s;
+}
+#illustration.illus-entering .illus-section[data-idx="0"] .illus-cta,
+#illustration.illus-entering .illus-section[data-idx="0"] .illus-cta-back {
+    transition-delay: 0.70s;
 }

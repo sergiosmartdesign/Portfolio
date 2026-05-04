@@ -1177,6 +1177,90 @@ class AnimationCoordinator {
       updateArtEntrance();
     }
 
+    // Art Direction list — sequenced after letter animation
+    const adList      = artEntranceSection ? artEntranceSection.querySelector('.ad-list') : null;
+    const adListLinks = artEntranceSection ? [...artEntranceSection.querySelectorAll('.ad-text-link')] : [];
+
+    if (adList && adListLinks.length) {
+      let adListDone = false;
+      const FRAME_MS = 45;
+
+      // Pure JS scramble — no Splitting.js, no CSS animation restart issues
+      const scrambleItem = (el, delay) => {
+        const finalText = el.getAttribute('data-content');
+        const chars     = [...finalText];
+        const n         = chars.length;
+        // Each char resolves after: initialDelay + charIndex * stepMs
+        const INIT_DELAY = 300;
+        const STEP_MS    = 90;
+        const resolveAt  = i => INIT_DELAY + i * STEP_MS;
+        const maxResolve = resolveAt(n - 1);
+
+        setTimeout(() => {
+          let elapsed = 0;
+          const tick = () => {
+            let out = '';
+            for (let i = 0; i < n; i++) {
+              if (elapsed >= resolveAt(i)) {
+                out += chars[i];
+              } else {
+                out += GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+              }
+            }
+            el.textContent = out;
+            elapsed += FRAME_MS;
+            if (elapsed <= maxResolve + FRAME_MS) {
+              setTimeout(tick, FRAME_MS);
+            } else {
+              el.textContent = finalText;
+            }
+          };
+          tick();
+        }, delay);
+      };
+
+      const triggerAdListGlitch = () => {
+        adListDone = true;
+        adList.classList.add('ad-list-ready');
+        adListLinks.forEach((link, i) => scrambleItem(link, i * 120));
+      };
+
+      const resetAdList = () => {
+        adListDone = false;
+        adList.classList.remove('ad-list-ready');
+        adListLinks.forEach(link => {
+          link.textContent = link.getAttribute('data-content');
+        });
+      };
+
+      // Nav button — letters play first, then list scrambles after they finish
+      if (window.playArtEntranceAnimation) {
+        const _origPlay   = window.playArtEntranceAnimation;
+        const cellCount   = artEntranceSection.querySelectorAll('.art-cell').length;
+        const lettersDone = (cellCount - 1) * 120 + 400;
+        window.playArtEntranceAnimation = () => {
+          resetAdList();
+          _origPlay();
+          setTimeout(triggerAdListGlitch, lettersDone);
+        };
+      }
+
+      // Scroll path — fire once letters are fully revealed (section top at viewport top)
+      const onScrollAdList = () => {
+        if (adListDone || !artEntranceSection) return;
+        const rect     = artEntranceSection.getBoundingClientRect();
+        const progress = (window.innerHeight - rect.top) / window.innerHeight;
+        if (progress >= 1) triggerAdListGlitch();
+      };
+      window.addEventListener('scroll', onScrollAdList, { passive: true });
+
+      // Reset on section exit so the sequence replays on next visit
+      const adListResetObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (!entry.isIntersecting) resetAdList(); });
+      }, { threshold: 0 });
+      adListResetObserver.observe(artEntranceSection);
+    }
+
     // ── Overlap collision star ───────────────────────────────────────────────
     const collisionStar = document.getElementById('line-collision-star');
     const photoLineEl   = document.querySelector('.photo-static-line');
@@ -1460,6 +1544,12 @@ window.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('preloaderDone', () => {
     if (window.ParticleSystem?.resume) window.ParticleSystem.resume();
     if (window.BarcodeAnimation?.start) window.BarcodeAnimation.start();
+    // On reload with #art-direction hash: scroll to section and play full sequence
+    if (location.hash === '#art-direction' && window.playArtEntranceAnimation) {
+      const artTarget = document.getElementById('art-direction');
+      if (artTarget) window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY);
+      window.playArtEntranceAnimation();
+    }
   }, { once: true });
 });
 

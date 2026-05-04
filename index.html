@@ -121,6 +121,7 @@
     <link rel="stylesheet" href="css/contact.css">
     <link rel="stylesheet" href="css/illus-cube.css">
     <link rel="stylesheet" href="css/blog.css">
+    <link rel="stylesheet" href="css/art-direction-list.css">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -211,10 +212,10 @@
                 <!-- Left Column -->
                 <div class="about-left">
                     <h2 id="abouttitle" class="glitch-text subtitle-glitch" data-splitting>
-                        <span class="title-line-1">Hello!</span><br>
+                        <span class="title-line-1">·Hello!</span><br>
                         <span class="title-line-2">I'm</span><br>
                         <span class="title-line-3">Sergio</span><br>
-                        <span class="title-line-4">Ayala</span>
+                        <span class="title-line-4">Ayala·</span>
                     </h2>
 
                     <div id="about-availability">
@@ -364,7 +365,7 @@
                             </div>
                         </div>
 
-                        <h2 id="dnatitle" class="glitch-text subtitle-glitch" data-splitting>Let's discover<br>what sets<br>your Brand<br>Apart.<br>It's<br>DNA</h2>
+                        <h2 id="dnatitle" class="glitch-text subtitle-glitch" data-splitting>·Let's discover<br>what sets<br>your Brand<br>Apart.<br>It's<br>DNA·</h2>
                     </div>
 
                     <p id="aboutp4" data-i18n-html="about.p4">My process begins with listening. It's not just about delivering a design, but about co-creating a visual language, that is the way to create good design. By talking with you we can <span class="about-highlight">understand your Brand's DNA,</span> translating it coherently into any format you need, whether it's relaunching your web platform, defining your photographic style, or conceptualizing your entire branding. <a href="mailto:sergionook@gmail.com" class="about-cta-marker"><em><strong>Let's work together</strong></em></a> to ensure your design doesn't just look good, but feels authentic and delivers a tangible impact on your audience.<br><br>You can explore what I've studied in the certificates gallery below and experience what I've done with it throughout this very project.</p>
@@ -563,6 +564,17 @@
                     <div class="art-cell" data-letter="N"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
                 </div>
             </div>
+
+            <!-- Discipline list — left rail, z:10, above all section layers -->
+            <nav class="ad-list" aria-label="Art direction disciplines">
+                <ol class="ad-list-items">
+                    <li><span class="ad-text-link" data-content="· B r a n d i n g ·">· B r a n d i n g ·</span></li>
+                    <li><span class="ad-text-link" data-content="· W e b ·">· W e b ·</span></li>
+                    <li><span class="ad-text-link" data-content="· E d i t o r i a l ·">· E d i t o r i a l ·</span></li>
+                    <li><span class="ad-text-link" data-content="· I d e n t i t y ·">· I d e n t i t y ·</span></li>
+                    <li><span class="ad-text-link" data-content="· M o t i o n ·">· M o t i o n ·</span></li>
+                </ol>
+            </nav>
         </section>
 
         <section id="photo" aria-label="Photography Portfolio">
@@ -581,10 +593,451 @@
             <!-- Portfolio overlay — text + accordion, scroll together, z:2 -->
             <div class="photo-portfolio-overlay">
                 <div class="photo-content-scroll">
+                <p class="photo-section-label" aria-hidden="true">[ · p h o t o g r a p h y · ]</p>
                 <div class="photo-top-grid">
 
-                    <!-- Left: intro text + instagram + cta stacked -->
+                    <!-- Left: accordion categories -->
                     <div class="photo-col-left">
+                        <div class="photo-accordion">
+                            <div class="photo-accordion-item">
+                                <button class="photo-category-btn" data-category="landscapes" aria-expanded="false">
+                                    <span class="photo-btn-label" data-i18n="photo.cat.landscapes">[ · l a n d s c a p e s · ]</span>
+                                    <span class="photo-btn-indicator" aria-hidden="true"></span>
+                                </button>
+                                <ul class="photo-project-list" data-category="landscapes" role="list">
+                            <li class="photo-project-item" data-image="images/photo/Isla en Uyuni.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.islaEnUyuni">Isla en Uyuni</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.uyuniBolivia">Uyuni, Bolivia</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Laguna Azul Chile.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.lagunaAzul">Laguna Azul</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.atacamaChile">Atacama, Chile</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Laguna Blanca Andes Bolivianos.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.lagunaBlanca">Laguna Blanca</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bolivianAndes">Bolivian Andes</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Rumbo Uyuni.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.rumboAUyuni">Rumbo a Uyuni</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bolivianAltiplano">Bolivian Altiplano</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Cajon del Maipo.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.cajonDelMaipo">Cajón del Maipo</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cajonDelMaipoChile">Cajón del Maipo, Chile</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Dali Desert.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.daliDesert">Dalí Desert</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.surLipezBolivia">Sur Lípez, Bolivia</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Andean Flamingo.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.andeanFlamingos">Andean Flamingos</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bolivianAndes">Bolivian Andes</span>
+                                <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
+                                <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
+                                <span class="photo-project-data photo-year hover-text">2016</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Kotor landscape.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.kotorLandscape">Kotor Landscape</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.kotorMontenegro">Kotor, Montenegro</span>
+                                <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
+                                <span class="photo-project-data photo-lens hover-text">S23 Ultra Ultrawide</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Petra horizon.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.petraHorizon">Petra Horizon</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                                </ul>
+                            </div>
+                            <div class="photo-accordion-item">
+                                <button class="photo-category-btn" data-category="street" aria-expanded="false">
+                                    <span class="photo-btn-label" data-i18n="photo.cat.street">[ · s t r e e t &nbsp; p h o t o · ]</span>
+                                    <span class="photo-btn-indicator" aria-hidden="true"></span>
+                                </button>
+                                <ul class="photo-project-list" data-category="street" role="list">
+                            <li class="photo-project-item" data-image="images/photo/Streets of Dubrovnik.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfDubrovnik">Streets of Dubrovnik</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.dubrovnikCroatia">Dubrovnik, Croatia</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Wandering Fox Street photo.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.wanderingFox">Wandering Fox Street Photo</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bragaPortugal">Braga, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Asturian Folklore street photo.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.asturianFolklore">Asturian Folklore</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.asturiasSpain">Asturias, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Making the Laundry.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.doingTheLaundry">Doing the Laundry</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.portoPortugal">Porto, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Streets of Sevilla.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfSevilla">Streets of Sevilla</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Ponte de Lima.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.ponteDeLima">Ponte de Lima</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.ponteDeLimaPortugal">Ponte de Lima, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Sevilla 2.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.peopleOfSevilla">People of Sevilla</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Ojo Sevillano.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.ojoSevillano">Ojo Sevillano</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2022</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Street Beauty Nantes.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetBeautyNantes">Street Beauty Nantes</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.nantesFrance">Nantes, France</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2021</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Streets of Biarritz.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfBiarritz">Streets of Biarritz</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.biarritzFrance">Biarritz, France</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2021</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Streets of Istanbul.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfIstanbul">Streets of Istanbul</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.istanbulTurkey">Istanbul, Turkey</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                                </ul>
+                            </div>
+                            <div class="photo-accordion-item">
+                                <button class="photo-category-btn" data-category="animals" aria-expanded="false">
+                                    <span class="photo-btn-label" data-i18n="photo.cat.animals">[ · a n i m a l s · ]</span>
+                                    <span class="photo-btn-indicator" aria-hidden="true"></span>
+                                </button>
+                                <ul class="photo-project-list" data-category="animals" role="list">
+                            <li class="photo-project-item" data-image="images/photo/Dog.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.dog">Dog</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cotaCundinamarca">Cota, Cundinamarca</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2021</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Shenanigan.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.shenanigan">Shenanigan</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.laMesaCundinamarca">La Mesa, Cundinamarca</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">Carl Zeiss Biotar</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Fairy woods.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.fairyWoods">Fairy Woods</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.doninhosFerrolSpain">Doniños, Ferrol, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">Carl Zeiss Biotar</span>
+                                <span class="photo-project-data photo-year hover-text">2022</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Coming for you.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.comingForYou">Coming for You</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bosniaHerz">Bosnia &amp; Herzegovina</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Crash.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.crash">Crash</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bosniaHerz">Bosnia &amp; Herzegovina</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Attack of the Titan.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.attackOfTheTitan">Attack of the Titan</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.doninhosFerrolSpain">Doniños, Ferrol, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                                </ul>
+                            </div>
+                            <div class="photo-accordion-item">
+                                <button class="photo-category-btn" data-category="travel" aria-expanded="false">
+                                    <span class="photo-btn-label" data-i18n="photo.cat.travel">[ · t r a v e l · ]</span>
+                                    <span class="photo-btn-indicator" aria-hidden="true"></span>
+                                </button>
+                                <ul class="photo-project-list" data-category="travel" role="list">
+                            <li class="photo-project-item" data-image="images/photo/Our Lady of the Rocks.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.ourLadyOfTheRocks">Our Lady of the Rocks</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.perastMontenegro">Perast, Montenegro</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Perast.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.perast">Perast</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.perastMontenegro">Perast, Montenegro</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/12 Houses.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.twelveHouses">12 Houses</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.veniceItaly">Venice, Italy</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Adrvan Restaurant Mostar.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.adrvanRestaurant">Adrvan Restaurant Mostar</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.mostarBosniaHerz">Mostar, Bosnia &amp; Herzegovina</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Dubrovnik.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.dubrovnik">Dubrovnik</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.dubrovnikCroatia">Dubrovnik, Croatia</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Kotor Montenegro.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.kotorMontenegro">Kotor Montenegro</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.kotorMontenegro">Kotor, Montenegro</span>
+                                <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
+                                <span class="photo-project-data photo-lens hover-text">S23 Ultra Telephoto</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Rovinj Croatia.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.rovinjCroatia">Rovinj Croatia</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.rovinjCroatia">Rovinj, Croatia</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Tourist Selfie.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.touristSelfie">Tourist Selfie</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.mostarBosniaHerz">Mostar, Bosnia &amp; Herzegovina</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Parada refrescante.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.paradaRefrescante">Parada refrescante</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.galiciaSpain">Galicia, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/London Bridge.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.londonBridge">London Bridge</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.londonUK">London, UK</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Find the Rhombus.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.findTheRhombus">Find the Rhombus</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.londonUK">London, UK</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Medieval.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.medieval">Medieval</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bosniaHerz">Bosnia &amp; Herzegovina</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2024</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/On the top.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.atTheTop">At the Top</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.portoPortugal">Porto, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Sevilla.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.sevilla">Sevilla</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/The River.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.theRiver">The River</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2023</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Looking to the Sky.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.lookingAtTheSky">Looking at the Sky</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cappadociaTurkey">Cappadocia, Turkey</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Indi.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.indi">Indi</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
+                                <span class="photo-project-data photo-lens hover-text">S23 Ultra Wide</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Beduinos.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.beduinos">Beduinos</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Cappadocia ice cream houses.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.cappadociaIceCream">Cappadocia Ice Cream Houses</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cappadociaTurkey">Cappadocia, Turkey</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Castillo de las Hadas.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.castilloDeLasHadas">Castillo de las Hadas</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.palacioPortugal">Palácio da Pena, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2022</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Goreme.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.goreme">Göreme</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.goremeTurkey">Göreme, Turkey</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Istanbul ships.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.istanbulShips">Istanbul Ships</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.istanbulTurkey">Istanbul, Turkey</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Jewels of Petra.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.jewelsOfPetra">Jewels of Petra</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
+                                <span class="photo-project-data photo-lens hover-text">S23 Ultra Wide</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Mt Saint Michel.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.montSaintMichel">Mont Saint-Michel</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.normandyFrance">Normandy, France</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2021</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Old tombs.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.oldTombs">Old Tombs</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Petra details.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.petraDetails">Petra Details</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Petra.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.petra">Petra</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
+                                <span class="photo-project-data photo-year hover-text">2026</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Sweet wine.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.sweetWine">Sweet Wine</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.portoPortugal">Porto, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
+                                <span class="photo-project-data photo-year hover-text">—</span>
+                            </li>
+                            <li class="photo-project-item" data-image="images/photo/Triton de Sintra.jpg">
+                                <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.tritonDeSintra">Tritón de Sintra</span>
+                                <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sintraPortugal">Sintra, Portugal</span>
+                                <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
+                                <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
+                                <span class="photo-project-data photo-year hover-text">2022</span>
+                            </li>
+                                </ul>
+                            </div>
+                            <div class="accordion-electric-border" aria-hidden="true"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: polaroid unit + editorial text -->
+                    <div class="photo-col-camera">
+                        <div class="photo-polaroid-unit">
+                            <div class="photo-polaroid-frame">
+
+                                <div class="photo-polaroid-reveal">
+                                    <img class="photo-polaroid-photo" id="polaroidPhoto" alt="" draggable="false">
+                                    <canvas class="photo-polaroid-canvas" id="polaroidCanvas"></canvas>
+                                </div>
+                                <div class="photo-polaroid-caption">
+                                    <span class="photo-polaroid-name" id="polaroidName"></span>
+                                    <span class="photo-polaroid-section" id="polaroidSection"></span>
+                                </div>
+                                <div class="photo-polaroid-border"></div>
+                            </div>
+                            <p class="photo-polaroid-hint"><strong>[ ·<br>m o u s e<br>o v e r<br>t o<br>R E V E A L<br>· ]</strong></p>
+                        </div>
+
                         <p class="photo-intro" data-i18n-html="photo.intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em></p>
 
                         <aside class="photo-col-instagram" aria-label="Sergio Ayala Photography on Instagram">
@@ -600,444 +1053,6 @@
                         <p class="photo-cta"><span class="photo-ai-highlight" data-i18n="photo.ui.cta">Click a category to expand its list — then hover over any photo title to preview the image.</span></p>
                     </div>
 
-                    <!-- Right: polaroid reveal -->
-                    <div class="photo-col-camera" aria-hidden="true">
-                        <div class="photo-polaroid-frame">
-
-                            <div class="photo-polaroid-reveal">
-                                <img class="photo-polaroid-photo" id="polaroidPhoto" alt="" draggable="false">
-                                <canvas class="photo-polaroid-canvas" id="polaroidCanvas"></canvas>
-                            </div>
-                            <div class="photo-polaroid-caption">
-                                <span class="photo-polaroid-name" id="polaroidName"></span>
-                                <span class="photo-polaroid-section" id="polaroidSection"></span>
-                            </div>
-                            <div class="photo-polaroid-border"></div>
-                        </div>
-                        <p class="photo-polaroid-hint"><strong>[ ·<br>m o u s e<br>o v e r<br>t o<br>R E V E A L<br>· ]</strong></p>
-                    </div>
-
-                </div>
-                <div class="photo-accordion">
-                    <div class="photo-accordion-item">
-                        <button class="photo-category-btn" data-category="landscapes" aria-expanded="false">
-                            <span class="photo-btn-label" data-i18n="photo.cat.landscapes">[ · l a n d s c a p e s · ]</span>
-                            <span class="photo-btn-indicator" aria-hidden="true"></span>
-                        </button>
-                        <ul class="photo-project-list" data-category="landscapes" role="list">
-                    <li class="photo-project-item" data-image="images/photo/Isla en Uyuni.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.islaEnUyuni">Isla en Uyuni</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.uyuniBolivia">Uyuni, Bolivia</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Laguna Azul Chile.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.lagunaAzul">Laguna Azul</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.atacamaChile">Atacama, Chile</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Laguna Blanca Andes Bolivianos.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.lagunaBlanca">Laguna Blanca</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bolivianAndes">Bolivian Andes</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Rumbo Uyuni.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.rumboAUyuni">Rumbo a Uyuni</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bolivianAltiplano">Bolivian Altiplano</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Cajon del Maipo.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.cajonDelMaipo">Cajón del Maipo</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cajonDelMaipoChile">Cajón del Maipo, Chile</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Dali Desert.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.daliDesert">Dalí Desert</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.surLipezBolivia">Sur Lípez, Bolivia</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Andean Flamingo.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.andeanFlamingos">Andean Flamingos</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bolivianAndes">Bolivian Andes</span>
-                        <span class="photo-project-data photo-camera hover-text">Canon EOS Rebel T1i</span>
-                        <span class="photo-project-data photo-lens hover-text">EF-S 18-55mm f/3.5-5.6 IS</span>
-                        <span class="photo-project-data photo-year hover-text">2016</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Kotor landscape.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.kotorLandscape">Kotor Landscape</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.kotorMontenegro">Kotor, Montenegro</span>
-                        <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
-                        <span class="photo-project-data photo-lens hover-text">S23 Ultra Ultrawide</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Petra horizon.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.petraHorizon">Petra Horizon</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                        </ul>
-                    </div>
-                    <div class="photo-accordion-item">
-                        <button class="photo-category-btn" data-category="street" aria-expanded="false">
-                            <span class="photo-btn-label" data-i18n="photo.cat.street">[ · s t r e e t &nbsp; p h o t o · ]</span>
-                            <span class="photo-btn-indicator" aria-hidden="true"></span>
-                        </button>
-                        <ul class="photo-project-list" data-category="street" role="list">
-                    <li class="photo-project-item" data-image="images/photo/Streets of Dubrovnik.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfDubrovnik">Streets of Dubrovnik</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.dubrovnikCroatia">Dubrovnik, Croatia</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Wandering Fox Street photo.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.wanderingFox">Wandering Fox Street Photo</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bragaPortugal">Braga, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Asturian Folklore street photo.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.asturianFolklore">Asturian Folklore</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.asturiasSpain">Asturias, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Making the Laundry.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.doingTheLaundry">Doing the Laundry</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.portoPortugal">Porto, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Streets of Sevilla.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfSevilla">Streets of Sevilla</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Ponte de Lima.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.ponteDeLima">Ponte de Lima</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.ponteDeLimaPortugal">Ponte de Lima, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Sevilla 2.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.peopleOfSevilla">People of Sevilla</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Ojo Sevillano.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.ojoSevillano">Ojo Sevillano</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2022</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Street Beauty Nantes.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetBeautyNantes">Street Beauty Nantes</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.nantesFrance">Nantes, France</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2021</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Streets of Biarritz.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfBiarritz">Streets of Biarritz</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.biarritzFrance">Biarritz, France</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2021</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Streets of Istanbul.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.streetsOfIstanbul">Streets of Istanbul</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.istanbulTurkey">Istanbul, Turkey</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                        </ul>
-                    </div>
-                    <div class="photo-accordion-item">
-                        <button class="photo-category-btn" data-category="animals" aria-expanded="false">
-                            <span class="photo-btn-label" data-i18n="photo.cat.animals">[ · a n i m a l s · ]</span>
-                            <span class="photo-btn-indicator" aria-hidden="true"></span>
-                        </button>
-                        <ul class="photo-project-list" data-category="animals" role="list">
-                    <li class="photo-project-item" data-image="images/photo/Dog.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.dog">Dog</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cotaCundinamarca">Cota, Cundinamarca</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2021</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Shenanigan.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.shenanigan">Shenanigan</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.laMesaCundinamarca">La Mesa, Cundinamarca</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">Carl Zeiss Biotar</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Fairy woods.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.fairyWoods">Fairy Woods</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.doninhosFerrolSpain">Doniños, Ferrol, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">Carl Zeiss Biotar</span>
-                        <span class="photo-project-data photo-year hover-text">2022</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Coming for you.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.comingForYou">Coming for You</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bosniaHerz">Bosnia & Herzegovina</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Crash.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.crash">Crash</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bosniaHerz">Bosnia & Herzegovina</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Attack of the Titan.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.attackOfTheTitan">Attack of the Titan</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.doninhosFerrolSpain">Doniños, Ferrol, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                        </ul>
-                    </div>
-                    <div class="photo-accordion-item">
-                        <button class="photo-category-btn" data-category="travel" aria-expanded="false">
-                            <span class="photo-btn-label" data-i18n="photo.cat.travel">[ · t r a v e l · ]</span>
-                            <span class="photo-btn-indicator" aria-hidden="true"></span>
-                        </button>
-                        <ul class="photo-project-list" data-category="travel" role="list">
-                    <li class="photo-project-item" data-image="images/photo/Our Lady of the Rocks.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.ourLadyOfTheRocks">Our Lady of the Rocks</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.perastMontenegro">Perast, Montenegro</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Perast.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.perast">Perast</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.perastMontenegro">Perast, Montenegro</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/12 Houses.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.twelveHouses">12 Houses</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.veniceItaly">Venice, Italy</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Adrvan Restaurant Mostar.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.adrvanRestaurant">Adrvan Restaurant Mostar</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.mostarBosniaHerz">Mostar, Bosnia & Herzegovina</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Dubrovnik.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.dubrovnik">Dubrovnik</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.dubrovnikCroatia">Dubrovnik, Croatia</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Kotor Montenegro.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.kotorMontenegro">Kotor Montenegro</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.kotorMontenegro">Kotor, Montenegro</span>
-                        <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
-                        <span class="photo-project-data photo-lens hover-text">S23 Ultra Telephoto</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Rovinj Croatia.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.rovinjCroatia">Rovinj Croatia</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.rovinjCroatia">Rovinj, Croatia</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Tourist Selfie.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.touristSelfie">Tourist Selfie</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.mostarBosniaHerz">Mostar, Bosnia & Herzegovina</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Parada refrescante.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.paradaRefrescante">Parada refrescante</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.galiciaSpain">Galicia, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/London Bridge.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.londonBridge">London Bridge</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.londonUK">London, UK</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Find the Rhombus.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.findTheRhombus">Find the Rhombus</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.londonUK">London, UK</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Medieval.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.medieval">Medieval</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.bosniaHerz">Bosnia & Herzegovina</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2024</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/On the top.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.atTheTop">At the Top</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.portoPortugal">Porto, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Sevilla.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.sevilla">Sevilla</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/The River.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.theRiver">The River</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sevilleSpain">Seville, Spain</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2023</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Looking to the Sky.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.lookingAtTheSky">Looking at the Sky</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cappadociaTurkey">Cappadocia, Turkey</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Indi.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.indi">Indi</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
-                        <span class="photo-project-data photo-lens hover-text">S23 Ultra Wide</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Beduinos.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.beduinos">Beduinos</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Cappadocia ice cream houses.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.cappadociaIceCream">Cappadocia Ice Cream Houses</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.cappadociaTurkey">Cappadocia, Turkey</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Castillo de las Hadas.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.castilloDeLasHadas">Castillo de las Hadas</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.palacioPortugal">Palácio da Pena, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2022</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Goreme.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.goreme">Göreme</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.goremeTurkey">Göreme, Turkey</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Istanbul ships.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.istanbulShips">Istanbul Ships</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.istanbulTurkey">Istanbul, Turkey</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Jewels of Petra.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.jewelsOfPetra">Jewels of Petra</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Samsung Galaxy S23 Ultra</span>
-                        <span class="photo-project-data photo-lens hover-text">S23 Ultra Wide</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Mt Saint Michel.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.montSaintMichel">Mont Saint-Michel</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.normandyFrance">Normandy, France</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2021</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Old tombs.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.oldTombs">Old Tombs</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Petra details.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.petraDetails">Petra Details</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Petra.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.petra">Petra</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.petraJordan">Petra, Jordan</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 21mm f/1.4</span>
-                        <span class="photo-project-data photo-year hover-text">2026</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Sweet wine.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.sweetWine">Sweet Wine</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.portoPortugal">Porto, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 70-300mm f/4-5.6</span>
-                        <span class="photo-project-data photo-year hover-text">—</span>
-                    </li>
-                    <li class="photo-project-item" data-image="images/photo/Triton de Sintra.jpg">
-                        <span class="photo-project-data photo-title hover-text" data-i18n="photo.t.tritonDeSintra">Tritón de Sintra</span>
-                        <span class="photo-project-data photo-location hover-text" data-i18n="photo.l.sintraPortugal">Sintra, Portugal</span>
-                        <span class="photo-project-data photo-camera hover-text">Fujifilm X-T4</span>
-                        <span class="photo-project-data photo-lens hover-text">XF 18-55mm f/2.8-4</span>
-                        <span class="photo-project-data photo-year hover-text">2022</span>
-                    </li>
-
-                        </ul>
-                    </div>
-                    <div class="accordion-electric-border" aria-hidden="true"></div>
                 </div>
                 <p class="pgallery-title" data-i18n="photo.ui.polaroids">[ · p o l a r o i d s · ]</p>
                 <p class="pgallery-desc glitch-text" data-splitting data-i18n-split="photo.ui.polaroidsDesc">Ten years of personal photography around the world, fifty frames selected so far. At one hundred, this archive becomes a printed book.</p>

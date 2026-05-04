@@ -171,11 +171,15 @@
         if (fi === INTRO_FACE) {
             lbl.className = 'illus-face-label illus-face-label--gallery';
             lbl.innerHTML =
-                '[ · I N T E R D I M E N S I O N A L<br>' +
-                'G A L L E R Y<br>' +
-                'O F<br>' +
-                'T I M E L E S S<br>' +
-                'A R T · ]';
+                '<span>[ · I N T E R D I M E N S I O N A L</span>' +
+                '<span class="illus-gallery-indent">C U B E</span>' +
+                '<span class="illus-gallery-indent">G A L L E R Y</span>' +
+                '<span class="illus-gallery-indent">O F</span>' +
+                '<span class="illus-gallery-indent">T I M E L E S S</span>' +
+                '<span class="illus-gallery-indent">A R T · ]</span>' +
+                '<span class="illus-gallery-sub">' +
+                '[ · s c r o l l | o r | c l I c k - E N T E R - | t o | v I e w · ]' +
+                '</span>';
         } else {
             lbl.className   = 'illus-face-label';
             lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
@@ -265,18 +269,47 @@
         return '';
     }
 
+    // Restores the gallery-title label on INTRO_FACE.
+    // Called whenever stop 0 reclaims the face, and on nav-button reset.
+    function restoreGalleryLabel() {
+        const lbl = faces[INTRO_FACE]?.querySelector('.illus-face-label');
+        if (!lbl) return;
+        lbl.className = 'illus-face-label illus-face-label--gallery';
+        lbl.innerHTML =
+            '<span>[ · I N T E R D I M E N S I O N A L</span>' +
+            '<span class="illus-gallery-indent">C U B E</span>' +
+            '<span class="illus-gallery-indent">G A L L E R Y</span>' +
+            '<span class="illus-gallery-indent">O F</span>' +
+            '<span class="illus-gallery-indent">T I M E L E S S</span>' +
+            '<span class="illus-gallery-indent">A R T · ]</span>' +
+            '<span class="illus-gallery-sub">' +
+            '[ · s c r o l l | o r | c l I c k - E N T E R - | t o | v I e w · ]' +
+            '</span>';
+    }
+
     async function setFaceImage(faceIdx, imgIdx) {
         if (faceImgIdx[faceIdx] === imgIdx) return;
         faceImgIdx[faceIdx] = imgIdx;
 
-        // Stop 0 on the gallery-title face: clear any photo placed by a later stop
+        // Stop 0 reclaims the gallery-title face: clear photo and restore title label
         if (faceIdx === INTRO_FACE && imgIdx === 0) {
             const staleImg = faces[INTRO_FACE].querySelector('img');
             if (staleImg) {
                 staleImg.classList.remove('illus-img-enter');
                 staleImg.removeAttribute('src');
             }
+            restoreGalleryLabel();
             return;
+        }
+
+        // A non-0 stop is claiming INTRO_FACE: swap title label to "click to expand"
+        // before the image loads so there is never a frame where both are visible.
+        if (faceIdx === INTRO_FACE) {
+            const lbl = faces[INTRO_FACE].querySelector('.illus-face-label');
+            if (lbl) {
+                lbl.className   = 'illus-face-label';
+                lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
+            }
         }
 
         const src = IMAGES[imgIdx];
@@ -313,11 +346,11 @@
     // Easing
     const easeIO = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
-    function getProgress() {
-        const rect  = illus.getBoundingClientRect();
+    function getProgress(rect) {
+        const r     = rect || illus.getBoundingClientRect();
         const total = illus.offsetHeight - window.innerHeight;
         if (total <= 0) return 0;
-        return Math.max(0, Math.min(1, -rect.top / total));
+        return Math.max(0, Math.min(1, -r.top / total));
     }
 
     function setCubeTransform(s) {
@@ -355,6 +388,8 @@
         captionName.classList.add('illus-name-glitch');
 
         imgGlitchPending = true;
+        // Hide the image-name caption on the gallery-title face (stop 0 has no photo)
+        tunnel.classList.toggle('illus-stop-zero', stop === 0);
         setHintSide(stop);
         allDots.forEach((d, i)      => d.classList.toggle('active', i === stop));
         allSections.forEach((sec, i) => sec.classList.toggle('active', i === stop));
@@ -383,7 +418,6 @@
     let imgGlitchPending = false;
 
     function fireImgGlitch(stop) {
-        if (introPlaying) return;
         applyFaceColor(stop);
         const face     = faces[FACE_MAP[stop]];
         const scanLine = face?.querySelector('.illus-scan-line');
@@ -412,16 +446,12 @@
     // ── Electric border — scroll-velocity driven ─────────────────────────────
     // Seed is cycled inside the main frame loop (no second RAF needed).
     // elecOff uses a guard so the timeout is only scheduled once per idle entry.
-    let elecActive      = false;
-    let elecTimer       = null;
-    let elecFrame       = 0;
-    let prevSmooth      = smooth;
-    let introElecActive    = false; // true only during cube-grow phase of intro
-    let introPlayed        = false;
-    let introPlaying       = false;
-    let introSeenOnce      = false; // persists across resets — enables fast re-entry
-    let introCubeSpinStart = 0;    // performance.now() when cube phase began; 0 = inactive
-    let introTimers        = [];   // tracks setTimeout IDs so reset can cancel mid-sequence
+    let elecActive    = false;
+    let elecTimer     = null;
+    let elecFrame     = 0;
+    let prevSmooth    = smooth;
+    let introSeenOnce = false;
+    let introTimer    = null;
 
     function elecOn() {
         if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
@@ -432,7 +462,6 @@
     }
 
     function elecOff() {
-        if (introElecActive) return; // hold border on during intro glow window
         if (elecTimer) return;
         elecTimer = setTimeout(() => {
             elecActive = false;
@@ -561,92 +590,29 @@
         hintHud.classList.toggle('illus-hint-hud--left',  !hintRight);
     }
 
-    // ── Section intro animation ───────────────────────────────────────────────
-    // Plays once on first section entry (scroll or nav button).
-    // Timeline: VHS+grid → shader → cube+electric → body → title → tag → buttons → HUD.
-    function playIntro() {
-        if (introPlayed || introPlaying) return;
-        introPlayed = true;
-
-        // Re-visit: skip full sequence, section is already in clean visible state
-        if (introSeenOnce) {
-            introPlaying = false;
-            return;
-        }
-
-        introSeenOnce = true;
-        introPlaying  = true;
-
-        // Steps — total duration 3.2 s (down from 6.5 s).
-        const steps = [
-            [  100, 'illus-i-shader',  null],
-            [  600, 'illus-i-cube',    () => {
-                introCubeSpinStart = performance.now();
-                introElecActive    = true;
-                tunnel.classList.add('illus-electric-active');
-            }],
-            [ 1500, 'illus-i-body',    null],
-            [ 2000, 'illus-i-title',   null],
-            [ 2400, 'illus-i-rest',    null],
-            [ 2600, 'illus-i-buttons', null],
-            [ 2800, 'illus-i-hud',     null],
-            [ 3200, null, () => {
-                illus.classList.remove(
-                    'illus-intro-active',
-                    'illus-i-shader', 'illus-i-cube',
-                    'illus-i-body',   'illus-i-title',
-                    'illus-i-rest',   'illus-i-buttons', 'illus-i-hud'
-                );
-                introCubeSpinStart = 0;
-                introPlaying       = false;
-            }],
-            // Electric border fades off 2.3 s after grow ends (600 + 2200 + 2300 = 5100 ms)
-            [ 5100, null, () => {
-                introElecActive = false;
-                elecActive      = false;
-                tunnel.classList.remove('illus-electric-active');
-            }],
-        ];
-
-        introTimers = [];
-        steps.forEach(([ms, cls, cb]) => {
-            introTimers.push(setTimeout(() => {
-                if (cls) illus.classList.add(cls);
-                if (cb)  cb();
-            }, ms));
-        });
-    }
-
     function resetIntro() {
-        introTimers.forEach(clearTimeout);
-        introTimers = [];
-        introPlayed        = false;
-        introPlaying       = false;
-        introElecActive    = false;
-        introCubeSpinStart = 0;
-        elecActive         = false;
+        if (introTimer) { clearTimeout(introTimer); introTimer = null; }
+        elecActive = false;
         if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
         tunnel.classList.remove('illus-electric-active');
-        illus.classList.remove(
-            'illus-i-shader', 'illus-i-cube',    'illus-i-body',
-            'illus-i-title',  'illus-i-rest',    'illus-i-buttons', 'illus-i-hud'
-        );
-        if (introSeenOnce) {
-            // Re-visit: drop suppression so the section is immediately visible on scroll-in
-            illus.classList.remove('illus-intro-active');
-        } else {
-            illus.classList.add('illus-intro-active');
-        }
+        illus.classList.remove('illus-entering', 'illus-intro-active');
 
-        // Immediately evict any photo from the gallery-title face so there is no
-        // flash on re-entry. Force faceImgIdx to -1 so the cache check in
-        // setFaceImage does not skip the clear on the very next checkImageSwaps call.
+        // Evict any stale photo and restore the gallery label — always, on every visit
         const titleFaceImg = faces[INTRO_FACE].querySelector('img');
         if (titleFaceImg) {
             titleFaceImg.classList.remove('illus-img-enter');
             titleFaceImg.removeAttribute('src');
         }
+        restoreGalleryLabel();
         faceImgIdx[INTRO_FACE] = -1;
+
+        if (introSeenOnce) return;
+        introSeenOnce = true;
+        illus.classList.add('illus-entering');
+        introTimer = setTimeout(() => {
+            illus.classList.remove('illus-entering');
+            introTimer = null;
+        }, 1300);
     }
 
     document.querySelectorAll('a[href="#illustration"]').forEach(btn => {
@@ -738,32 +704,33 @@
         gotoSlide(parseInt(btn.dataset.goto, 10));
     });
 
-    let lastNow  = performance.now();
-    let rafActive = false;
+    let lastNow = performance.now();
 
     function frame(now) {
+        requestAnimationFrame(frame);
+
+        // Skip all work when section is well off-screen — cheap early exit.
+        const bcr = illus.getBoundingClientRect();
+        if (bcr.top > window.innerHeight + 100 || bcr.bottom < -100) return;
+
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
 
-        tgt = getProgress();
+        tgt = getProgress(bcr);
 
-        // Intro trigger — checked every frame so it can't be missed by a missed scroll event.
-        // Read getBoundingClientRect before any DOM writes to avoid forced layout.
-        if (!introPlayed && !introPlaying) {
-            const rect = illus.getBoundingClientRect();
-            if (rect.top <= 0 && rect.bottom > 0) playIntro();
+        // First organic scroll entry — fires resetIntro() if user scrolled in
+        // without clicking the nav button (nav click already calls resetIntro directly).
+        if (!introSeenOnce && bcr.top <= 0 && bcr.bottom > 0) {
+            resetIntro();
         }
 
         smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));
         smooth   = Math.max(0, Math.min(1, smooth));
 
-        // Electric border: on while scrolling, seed cycled at ~20 fps normally,
-        // ~10 fps during intro glow (7.5 s window) to reduce GPU compositing cost.
         const vel = Math.abs(smooth - prevSmooth);
         prevSmooth = smooth;
         if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
-        const seedRate = introElecActive ? 6 : 3;
-        if ((elecActive || lbOpen || introElecActive) && electricNoise && ++elecFrame % seedRate === 0) {
+        if ((elecActive || lbOpen) && electricNoise && ++elecFrame % 3 === 0) {
             electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
         }
 
@@ -771,35 +738,18 @@
         const nowInSection = smooth > 0.001 && smooth < 0.999;
         if (nowInSection !== inSection) {
             inSection = nowInSection;
-            if (inSection && !introPlaying) scheduleHint();
+            if (inSection) scheduleHint();
             else { hideHint(); if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; } }
         }
 
-        // During intro cube-grow phase, JS drives the rotation so it composes cleanly
-        // with transform-style:preserve-3d (no opacity flattening risk).
-        // X-axis: full forward tumble (top→front→bottom→back→top).
-        // Y-axis: two full sweeps (shows all side faces).
-        // Both return to initial pose at t=1 — no jump when setCubeTransform resumes.
-        if (introCubeSpinStart > 0) {
-            const elapsed = now - introCubeSpinStart;
-            const SPIN_MS = 2200;
-            const t       = Math.min(elapsed / SPIN_MS, 1);
-            const ease    = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-            const rx      = 90  - ease * 360;  // 90° → -270° ≡ 90° (full X tumble)
-            const ry      = ease * 720;         // 0°  → 720°  ≡ 0°  (double Y sweep)
-            cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-            if (t >= 1) introCubeSpinStart = 0;
-        } else {
-            setCubeTransform(smooth);
-        }
-
+        setCubeTransform(smooth);
         checkImageSwaps(smooth);
         updateUI(smooth);
 
         // Fire image glitch once the cube face is mostly front-facing.
         // remaining: 0.5 when stop just changed, 0 when fully arrived.
         // Threshold 0.12 ≈ 76% through the landing rotation.
-        if (imgGlitchPending && lastStop >= 0 && !introPlaying) {
+        if (imgGlitchPending && lastStop >= 0) {
             const remaining = Math.abs(smooth - lastStop / (N - 1)) * (N - 1);
             if (remaining < 0.12) {
                 imgGlitchPending = false;
@@ -808,26 +758,6 @@
         }
     }
 
-    function loop(now) {
-        frame(now);
-        if (rafActive) requestAnimationFrame(loop);
-    }
-
-    function startLoop() {
-        if (rafActive) return;
-        rafActive = true;
-        lastNow   = performance.now();
-        requestAnimationFrame(loop);
-    }
-
-    function stopLoop() {
-        rafActive = false;
-    }
-
-    const sectionVisObserver = new IntersectionObserver(entries => {
-        entries[0].isIntersecting ? startLoop() : stopLoop();
-    }, { threshold: 0 });
-
-    sectionVisObserver.observe(illus);
+    requestAnimationFrame(frame);
 
 }());

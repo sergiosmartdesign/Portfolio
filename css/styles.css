@@ -2983,12 +2983,10 @@ nav {
   flex-shrink: 0;
 }
 
-/* Left column: intro text → instagram → cta, stacked and filling the same height as the polaroid column */
+/* Left column: accordion categories */
 .photo-col-left {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(1.2rem, 2.5vw, 2rem);
 }
 
 /* Intro paragraph + CTA */
@@ -2998,7 +2996,7 @@ nav {
   font-size: clamp(0.7rem, 1.1vw, 0.95rem);
   color: #001219;
   line-height: 1.6;
-  margin: 0 0 var(--spacing-md) 0;
+  margin: 0;
   flex-shrink: 0;
 }
 
@@ -3208,14 +3206,22 @@ nav {
   flex-shrink: 0;
 }
 
-/* Right column: polaroid reveal + left divider (col 2 → col 3) */
+/* Right column: polaroid unit stacked above editorial text */
 .photo-col-camera {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.2rem, 2.5vw, 2rem);
+  padding-top: 0.25rem;
+}
+
+/* Polaroid frame + hint side-by-side (same layout as before, now a sub-unit) */
+.photo-polaroid-unit {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   gap: clamp(0.5rem, 1vw, 1rem);
-  padding-top: 0.25rem;
 }
 
 .photo-polaroid-hint {
@@ -3604,7 +3610,7 @@ nav {
    active one (see .photo-project-item.active below). */
 .photo-accordion {
   position: relative;
-  margin-top: 20px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
 }
@@ -3785,6 +3791,12 @@ nav {
   .photo-camera-svg {
     max-width: 180px;
   }
+}
+
+/* Instagram left-border lines clash with the column divider inside the right col */
+.photo-col-camera .photo-col-instagram::before,
+.photo-col-camera .photo-col-instagram::after {
+  display: none;
 }
 
 @media (max-width: 768px) {

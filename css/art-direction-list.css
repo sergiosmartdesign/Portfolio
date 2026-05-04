@@ -1,0 +1,94 @@
+/* ── Art Direction — discipline list overlay ──────────────────────────────
+   Left-rail glitch list. z:10 — above all section layers (vignette z:8).
+   Ghost split: teal (#0A9396) / amber (#EE9B00) — project palette tension.
+   ──────────────────────────────────────────────────────────────────────── */
+
+#art-direction .ad-list {
+  position: absolute;
+  left: 6vw;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#art-direction .ad-list.ad-list-ready {
+  opacity: 1;
+}
+
+#art-direction .ad-list-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.8em;
+}
+
+/* ── Base text ── */
+#art-direction .ad-text-link {
+  --glitch-final-color: #E9D8A6;
+  position: relative;
+  display: inline-block;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.8vw, 2.4rem);
+  color: #E9D8A6;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: none;
+  pointer-events: auto;
+  cursor: default;
+  user-select: none;
+  z-index: 1;
+  text-shadow:
+    0 0 12px #001219,
+    0 0 30px #001219,
+    0 0 55px rgba(0, 18, 25, 0.9),
+    0 2px 6px rgba(0, 0, 0, 0.95);
+}
+
+/* ── Ghost layers — hidden at rest, revealed on hover ── */
+#art-direction .ad-text-link::before,
+#art-direction .ad-text-link::after {
+  content: attr(data-content);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Teal ghost — cool channel */
+#art-direction .ad-text-link::before {
+  color: #0A9396;
+  z-index: -1;
+}
+
+/* Amber ghost — warm channel */
+#art-direction .ad-text-link::after {
+  color: #EE9B00;
+  z-index: -2;
+}
+
+/* ── Hover — show ghosts and animate ── */
+#art-direction .ad-text-link:hover::before {
+  opacity: 1;
+  animation: ad-glitchy 0.3s ease 0.3s infinite;
+}
+
+#art-direction .ad-text-link:hover::after {
+  opacity: 1;
+  animation: ad-glitchy 0.3s ease infinite reverse;
+}
+
+@keyframes ad-glitchy {
+  0%   { transform: translate(-3px,  3px); }
+  25%  { transform: translate(-3px, -3px); }
+  50%  { transform: translate( 3px,  3px); }
+  75%  { transform: translate( 3px, -3px); }
+  100% { transform: translate(-3px,  3px); }
+}
