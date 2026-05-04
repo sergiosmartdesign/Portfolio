@@ -176,10 +176,7 @@
                 '<span class="illus-gallery-indent">G A L L E R Y</span>' +
                 '<span class="illus-gallery-indent">O F</span>' +
                 '<span class="illus-gallery-indent">T I M E L E S S</span>' +
-                '<span class="illus-gallery-indent">A R T · ]</span>' +
-                '<span class="illus-gallery-sub">' +
-                '[ · s c r o l l | o r | c l I c k - E N T E R - | t o | v I e w · ]' +
-                '</span>';
+                '<span class="illus-gallery-indent">A R T · ]</span>';
         } else {
             lbl.className   = 'illus-face-label';
             lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
@@ -281,10 +278,7 @@
             '<span class="illus-gallery-indent">G A L L E R Y</span>' +
             '<span class="illus-gallery-indent">O F</span>' +
             '<span class="illus-gallery-indent">T I M E L E S S</span>' +
-            '<span class="illus-gallery-indent">A R T · ]</span>' +
-            '<span class="illus-gallery-sub">' +
-            '[ · s c r o l l | o r | c l I c k - E N T E R - | t o | v I e w · ]' +
-            '</span>';
+            '<span class="illus-gallery-indent">A R T · ]</span>';
     }
 
     async function setFaceImage(faceIdx, imgIdx) {
@@ -471,53 +465,6 @@
     }
 
     // ── Scroll hint — opposite side of active card, after 3.5 s idle ─────────
-    const scrollHint = document.createElement('div');
-    scrollHint.className   = 'illus-scroll-hint illus-scroll-hint--right';
-    scrollHint.setAttribute('aria-hidden', 'true');
-    scrollHint.innerHTML = `
-        <svg class="illus-scroll-screen" viewBox="0 0 88 126" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs>
-                <pattern id="illus-hint-scan" x="0" y="0" width="88" height="4" patternUnits="userSpaceOnUse">
-                    <line x1="0" y1="0" x2="88" y2="0" stroke="rgba(148,210,189,0.07)" stroke-width="1"/>
-                </pattern>
-            </defs>
-
-            <!-- Geometric octagon frame — draws in via stroke-dashoffset -->
-            <path class="illus-frame-border"
-                  d="M14,1 L74,1 L87,14 L87,112 L74,125 L14,125 L1,112 L1,14 Z"
-                  stroke="#AE2012" stroke-width="1.5"/>
-
-            <!-- Amber L-shaped corner ticks -->
-            <g class="illus-frame-corners">
-                <polyline points="2,13 2,2 13,2"     stroke="#EE9B00" stroke-width="1.5" stroke-linecap="square" fill="none"/>
-                <polyline points="75,2 86,2 86,13"   stroke="#EE9B00" stroke-width="1.5" stroke-linecap="square" fill="none"/>
-                <polyline points="2,113 2,124 13,124" stroke="#EE9B00" stroke-width="1.5" stroke-linecap="square" fill="none"/>
-                <polyline points="75,124 86,124 86,113" stroke="#EE9B00" stroke-width="1.5" stroke-linecap="square" fill="none"/>
-            </g>
-
-            <!-- Screen stage: bg + content power on together as a unit -->
-            <g class="illus-screen-stage">
-                <path d="M16,6 L72,6 L82,16 L82,112 L72,120 L16,120 L6,112 L6,16 Z" fill="#001219"/>
-                <rect x="6" y="6" width="76" height="114" fill="url(#illus-hint-scan)"/>
-                <line x1="16" y1="116" x2="72" y2="116" stroke="#AE2012" stroke-width="0.5" opacity="0.6"/>
-
-                <!-- Scroll icon + label (fade in after screen opens) -->
-                <g class="illus-screen-content">
-                    <rect x="33" y="16" width="22" height="36" rx="11" stroke="#EE9B00" stroke-width="1.5"/>
-                    <circle class="illus-scroll-dot" cx="44" cy="26" r="3" fill="#EE9B00"/>
-                    <path class="illus-scroll-chevron" d="M38,60 L44,65 L50,60" stroke="#EE9B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path class="illus-scroll-chevron" d="M38,54 L44,59 L50,54" stroke="#EE9B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <text x="44" y="92" text-anchor="middle"
-                          font-family="'Share Tech Mono', monospace"
-                          font-size="7" letter-spacing="1.2"
-                          fill="#E9D8A6">[ · SCROLL · ]</text>
-                </g>
-            </g>
-        </svg>`;
-    tunnel.appendChild(scrollHint);
-
-    const hintScreen = scrollHint.querySelector('.illus-scroll-screen');
-
     const hintHud      = document.createElement('div');
     const hintHudPct   = document.createElement('div');
     const hintHudBar   = document.createElement('div');
@@ -534,58 +481,25 @@
     hintHudPct.textContent   = '000%';
     hintHudLabel.textContent = 'TIMELESS';
 
+    const hintHudScroll = document.createElement('div');
+    hintHudScroll.className = 'illus-hud-scroll';
+    hintHudScroll.innerHTML =
+        '<span>[ · s c r o l l</span>' +
+        '<span class="illus-hud-scroll-in">o r</span>' +
+        '<span class="illus-hud-scroll-in">c l I c k</span>' +
+        '<span class="illus-hud-scroll-in">- E N T E R -</span>' +
+        '<span class="illus-hud-scroll-in">t o</span>' +
+        '<span class="illus-hud-scroll-in">v I e w · ]</span>';
+
     hintHudBar.appendChild(hintHudFill);
     hintHud.appendChild(hintHudPct);
     hintHud.appendChild(hintHudBar);
     hintHud.appendChild(hintHudLabel);
+    hintHud.appendChild(hintHudScroll);
     tunnel.appendChild(hintHud);
 
-    let hintTimer  = null;
-    let loopTimer  = null;
-    let inSection  = false;
-    const HINT_MS       = 3500;
-    const LOOP_MS       = 6000;
-    const LOOP_PAUSE_MS = 600;
-
-    function showHint() {
-        if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
-        if (hintScreen) {
-            hintScreen.classList.remove('illus-screen-playing');
-            void hintScreen.offsetWidth;
-            hintScreen.classList.add('illus-screen-playing');
-        }
-        scrollHint.classList.add('illus-scroll-visible');
-        tunnel.classList.add('illus-idle');
-
-        loopTimer = setTimeout(() => {
-            if (hintScreen) hintScreen.classList.remove('illus-screen-playing');
-            scrollHint.classList.remove('illus-scroll-visible');
-            loopTimer = setTimeout(showHint, LOOP_PAUSE_MS);
-        }, LOOP_MS);
-    }
-    function hideHint() {
-        if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
-        if (hintScreen) hintScreen.classList.remove('illus-screen-playing');
-        scrollHint.classList.remove('illus-scroll-visible');
-        tunnel.classList.remove('illus-idle');
-    }
-
-    function scheduleHint() {
-        if (hintTimer) clearTimeout(hintTimer);
-        hintTimer = setTimeout(showHint, HINT_MS);
-    }
-
-    function resetHint() {
-        hideHint();
-        if (inSection) scheduleHint();
-        else if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
-    }
-
     function setHintSide(stop) {
-        // Even stop → card on left → hint on right; odd → hint on left
         const hintRight = stop % 2 === 0;
-        scrollHint.classList.toggle('illus-scroll-hint--right', hintRight);
-        scrollHint.classList.toggle('illus-scroll-hint--left',  !hintRight);
         hintHud.classList.toggle('illus-hint-hud--right', hintRight);
         hintHud.classList.toggle('illus-hint-hud--left',  !hintRight);
     }
@@ -695,7 +609,6 @@
 
     window.addEventListener('scroll', () => {
         tgt = getProgress();
-        resetHint();
     }, { passive: true });
 
     illus.addEventListener('click', e => {
@@ -732,14 +645,6 @@
         if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
         if ((elecActive || lbOpen) && electricNoise && ++elecFrame % 3 === 0) {
             electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
-        }
-
-        // Section visibility — start/stop the idle hint timer at entry/exit
-        const nowInSection = smooth > 0.001 && smooth < 0.999;
-        if (nowInSection !== inSection) {
-            inSection = nowInSection;
-            if (inSection) scheduleHint();
-            else { hideHint(); if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; } }
         }
 
         setCubeTransform(smooth);

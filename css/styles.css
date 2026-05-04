@@ -3070,6 +3070,16 @@ nav {
   flex-shrink: 0;
 }
 
+/* CTA sits above the accordion in the left column — add bottom spacing */
+.photo-cta--left {
+  margin-bottom: clamp(0.8rem, 1.5vw, 1.25rem);
+}
+
+/* In left col the highlight is inline (not block) */
+.photo-cta--left .photo-ai-highlight {
+  display: inline;
+}
+
 /* Centre column: Instagram */
 .photo-col-instagram {
   position: relative;
@@ -3656,13 +3666,13 @@ nav {
   border-top: 1px solid rgba(10, 147, 150, 0.18);
   cursor: pointer;
   text-align: left;
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 300;
-  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(0.8rem, 1.3vw, 1.05rem);
   color: #9B2226;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   line-height: 1;
-  padding: 0.6rem 0;
+  padding: 0.75rem 0;
   transition: color 0.2s ease;
 }
 

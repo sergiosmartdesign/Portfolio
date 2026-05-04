@@ -207,19 +207,22 @@
     padding-inline-start: calc(4ch + 0.8em);
 }
 
-/* Subtitle — centered independently, separated from the title block */
-.illus-gallery-sub {
-    display: block;
-    margin-top: 22px;
-    padding-inline-start: 0;
-    align-self: center;
-    font-size: clamp(0.5rem, 1.3vmin, 0.65rem);
+/* Scroll hint in HUD — stacked word-art below the progress line */
+.illus-hud-scroll {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-block-start: 1.4rem;
+    font-size: 0.62rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
-    opacity: 0.60;
-    white-space: normal;
-    text-align: center;
-    word-break: break-word;
+    letter-spacing: 0.15em;
+    line-height: 1.85;
+    color: var(--illus-muted);
+}
+
+/* Indent lines after the first — same calc as gallery title */
+.illus-hud-scroll-in {
+    padding-inline-start: calc(4ch + 0.8em);
 }
 
 /* ── Click zone — captures clicks on the front-facing cube face ──────────── */
@@ -454,114 +457,12 @@
     scale: 1.8;
 }
 
-/* ── Scroll hint — geometric digital screen ──────────────────────────────── */
-
-@keyframes illus-frame-draw {
-    from { stroke-dashoffset: 400; }
-    to   { stroke-dashoffset: 0; }
-}
-
-@keyframes illus-screen-power-on {
-    from { transform: scaleY(0.02); }
-    to   { transform: scaleY(1); }
-}
-
-@keyframes illus-content-appear {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes illus-scroll-dot-bounce {
-    0%, 100% { transform: translateY(0);   opacity: 1; }
-    60%       { transform: translateY(8px); opacity: 0.25; }
-}
-
-@keyframes illus-scroll-chevron-fade {
-    0%, 100% { opacity: 0.2; }
-    50%       { opacity: 1; }
-}
-
-.illus-scroll-hint {
+/* ── Hint HUD — persistent progress display, vertically centred ─────────── */
+.illus-hint-hud {
     position: absolute;
     top: 50%;
-    translate: 0 -50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #EE9B00;
-    filter:
-        drop-shadow(0 0  4px rgba(238, 155, 0, 0.22))
-        drop-shadow(0 0 16px rgba(238, 155, 0, 0.10));
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease;
-    z-index: 20;
-}
-
-.illus-scroll-hint--left  { left: 13%; }
-.illus-scroll-hint--right { right: 13%; }
-
-.illus-scroll-hint.illus-scroll-visible { opacity: 1; }
-
-.illus-scroll-screen {
+    transform: translateY(-50%);
     width: clamp(9rem, 11vw, 11rem);
-    height: calc(clamp(9rem, 11vw, 11rem) * 1.432);
-    overflow: visible;
-}
-
-/* Default states: everything hidden until .illus-screen-playing is added */
-.illus-frame-border {
-    stroke: #EE9B00;
-    stroke-width: 0.75;
-    stroke-dasharray: 400;
-    stroke-dashoffset: 400;
-    filter:
-        drop-shadow(0 0 2px rgba(238, 155, 0, 1.00))
-        drop-shadow(0 0 7px rgba(238, 155, 0, 0.65));
-}
-
-.illus-frame-corners { opacity: 0; }
-
-.illus-screen-stage {
-    transform: scaleY(0.02);
-    transform-origin: 44px 63px;
-}
-
-.illus-screen-content { opacity: 0; }
-
-/* Sequence — class toggled by JS with void reflow to replay each time */
-.illus-screen-playing .illus-frame-border {
-    animation: illus-frame-draw 0.5s ease-out both;
-}
-
-.illus-screen-playing .illus-frame-corners {
-    animation: illus-content-appear 0.2s ease-out 0.1s both;
-}
-
-.illus-screen-playing .illus-screen-stage {
-    animation: illus-screen-power-on 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
-}
-
-.illus-screen-playing .illus-screen-content {
-    animation: illus-content-appear 0.35s ease-out 0.78s both;
-}
-
-/* Loop animations — run always; content opacity gates visibility */
-.illus-scroll-dot {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: illus-scroll-dot-bounce 1.6s ease-in-out infinite;
-}
-
-.illus-scroll-chevron { animation: illus-scroll-chevron-fade 1.6s ease-in-out infinite; }
-.illus-scroll-chevron:nth-of-type(2) { animation-delay: 0.25s; }
-
-/* ── Hint HUD — persistent progress display anchored above scroll hint SVG ─ */
-.illus-hint-hud {
-    --hud-w: clamp(9rem, 11vw, 11rem);
-    position: absolute;
-    bottom: calc(50% + var(--hud-w) * 0.716 + 0.5rem);
-    width: var(--hud-w);
     z-index: 21;
     pointer-events: none;
     user-select: none;
@@ -986,18 +887,6 @@
                             0 0 16px  rgba(148,210,189, 0.30); }
 }
 
-.illus-idle .illus-section.active .illus-cta {
-    animation: illus-cta-idle-pulse 2s ease-in-out infinite;
-}
-
-.illus-idle .illus-section.active .illus-cta-back {
-    animation: illus-cta-back-idle-pulse 2s ease-in-out 0.4s infinite;
-}
-
-.illus-idle .illus-section.active .illus-cta:hover,
-.illus-idle .illus-section.active .illus-cta-back:hover {
-    animation-play-state: paused;
-}
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (width <= 56.25em) {

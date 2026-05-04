@@ -42,8 +42,8 @@
 
   /* ── Constants ────────────────────────────────────────────────────────────── */
   var TOTAL_CARDS   = 50;
-  var CARDS_PER_ROW = 8;
-  var TOTAL_ROWS    = Math.ceil(TOTAL_CARDS / CARDS_PER_ROW); // 7
+  var CARDS_PER_ROW = 6;
+  var TOTAL_ROWS    = Math.ceil(TOTAL_CARDS / CARDS_PER_ROW); // 9
   var PHASE_START   = 3.0;   // rawProgress when polaroid phase begins
   var PER_CARD      = 0.15;  // rawProgress units dedicated to each card
 
@@ -63,6 +63,7 @@
     this.photoSection = document.getElementById('photo');
     this.camera       = document.querySelector('.photo-camera-deco');
     this.overlay      = document.querySelector('.photo-portfolio-overlay');
+    this.rightCol     = document.querySelector('.photo-col-camera');
 
     if (!this.photoSpacer || !this.photoSection) return;
 
@@ -297,8 +298,15 @@
       if (p > 0) {
         var offset = this._overlayOffset(p);
         this.overlay.style.transform = 'translateY(' + (-offset) + 'px)';
+        /* Counter-translate the right column so it stays fixed in viewport */
+        if (this.rightCol) {
+          this.rightCol.style.transform = 'translateY(' + offset + 'px)';
+        }
       } else {
         this.overlay.style.transform = '';
+        if (this.rightCol) {
+          this.rightCol.style.transform = '';
+        }
       }
     }
 
