@@ -167,8 +167,11 @@
     // Stamp face label + scan line into every face.
     // The gallery-title face (stop 0) gets the section descriptor instead of the expand hint.
     faces.forEach((face, fi) => {
-        const lbl = document.createElement('div');
+        // Only the gallery-title face gets an in-face label (decorative word-art).
+        // The "click to expand" hint is rendered as a flat overlay (see expandHint below)
+        // so it always appears upright at the visual bottom regardless of cube orientation.
         if (fi === INTRO_FACE) {
+            const lbl = document.createElement('div');
             lbl.className = 'illus-face-label illus-face-label--gallery';
             lbl.innerHTML =
                 '<span>[ · I N T E R D I M E N S I O N A L</span>' +
@@ -177,21 +180,16 @@
                 '<span class="illus-gallery-indent">O F</span>' +
                 '<span class="illus-gallery-indent">T I M E L E S S</span>' +
                 '<span class="illus-gallery-indent">A R T · ]</span>';
-        } else {
-            lbl.className   = 'illus-face-label';
-            lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
+            face.appendChild(lbl);
         }
-        face.appendChild(lbl);
 
         const sl = document.createElement('div');
         sl.className = 'illus-scan-line';
         face.appendChild(sl);
     });
 
-    // Cache polar face labels — used every frame to keep them upright (see setCubeTransform).
-    // faces[0] = top, faces[5] = bottom — the only two that need counter-rotation.
-    const topFaceLabel    = faces[0].querySelector('.illus-face-label');
-    const bottomFaceLabel = faces[5].querySelector('.illus-face-label');
+    // Cache gallery label for the top face — counter-rotated in setCubeTransform.
+    const topFaceLabel = faces[INTRO_FACE].querySelector('.illus-face-label');
 
     // Generate additional nav dots
     for (let i = dots.length; i < N; i++) {
@@ -276,6 +274,7 @@
     function restoreGalleryLabel() {
         const lbl = faces[INTRO_FACE]?.querySelector('.illus-face-label');
         if (!lbl) return;
+        lbl.style.opacity = '';
         lbl.className = 'illus-face-label illus-face-label--gallery';
         lbl.innerHTML =
             '<span>[ · I N T E R D I M E N S I O N A L</span>' +
@@ -301,14 +300,10 @@
             return;
         }
 
-        // A non-0 stop is claiming INTRO_FACE: swap title label to "click to expand"
-        // before the image loads so there is never a frame where both are visible.
-        if (faceIdx === INTRO_FACE) {
-            const lbl = faces[INTRO_FACE].querySelector('.illus-face-label');
-            if (lbl) {
-                lbl.className   = 'illus-face-label';
-                lbl.textContent = '[ · c l i c k | t o | e x p a n d · ]';
-            }
+        // A non-0 stop is claiming INTRO_FACE: hide the gallery label so it doesn't
+        // show behind the photo. The "click to expand" hint comes from the 2D overlay.
+        if (faceIdx === INTRO_FACE && topFaceLabel) {
+            topFaceLabel.style.opacity = '0';
         }
 
         const src = IMAGES[imgIdx];
@@ -362,23 +357,13 @@
         cube.style.transform =
             `rotateX(${a.rx + (b.rx - a.rx) * f}deg) rotateY(${curRy}deg)`;
 
-        // Side faces (front/right/back/left) self-correct: their own face Y-transforms
-        // cancel the cube's accumulated ry exactly, so the text always reads upright.
-        //
-        // Top/bottom faces are different — their face transforms are X-axis rotations,
-        // which turn the cube's ry into a net Z-axis spin on the label content:
-        //   top face content rotation  = rotateZ(+curRy)  → counter: rotateZ(-curRy)
-        //   bottom face content rotation = rotateZ(-curRy) → counter: rotateZ(+curRy)
-        //
-        // The gallery label variant (stop 0) carries translateY(-50%) for centering;
-        // we must preserve it when composing the inline transform.
+        // The gallery label lives inside the top face (INTRO_FACE). Its face transform
+        // (rotateX(-90deg)) turns the cube's accumulated ry into a Z-spin on the label,
+        // so we counter-rotate each frame to keep the word-art upright.
+        // The label uses translateY(-50%) for centering — preserve it in the inline transform.
+        // (The click-to-expand hint is a flat 2D overlay and needs no correction.)
         if (topFaceLabel) {
-            const base = topFaceLabel.classList.contains('illus-face-label--gallery')
-                ? 'translateY(-50%) ' : '';
-            topFaceLabel.style.transform = `${base}rotateZ(${-curRy}deg)`;
-        }
-        if (bottomFaceLabel) {
-            bottomFaceLabel.style.transform = `rotateZ(${curRy}deg)`;
+            topFaceLabel.style.transform = `translateY(-50%) rotateZ(${-curRy}deg)`;
         }
     }
 
@@ -409,6 +394,8 @@
         imgGlitchPending = true;
         // Hide the image-name caption on the gallery-title face (stop 0 has no photo)
         tunnel.classList.toggle('illus-stop-zero', stop === 0);
+        // Fire expand-hint glitch once — on the first visit to any photo face
+        if (stop !== 0) initExpandHintGlitch();
         setHintSide(stop);
         allDots.forEach((d, i)      => d.classList.toggle('active', i === stop));
         allSections.forEach((sec, i) => sec.classList.toggle('active', i === stop));
@@ -523,6 +510,32 @@
     hintHud.appendChild(hintHudLabel);
     hintHud.appendChild(hintHudScroll);
     tunnel.appendChild(hintHud);
+
+    // Flat 2D overlay — sits outside the 3D cube context so it is always upright
+    // and always at the viewer-space bottom of the cube. Hidden at stop 0 via CSS
+    // (.illus-stop-zero is toggled by updateUI) so it only shows with an active photo.
+    const expandHint = document.createElement('div');
+    expandHint.className = 'illus-expand-hint glitch-text subtitle-glitch';
+    expandHint.setAttribute('data-splitting', '');
+    expandHint.setAttribute('aria-hidden', 'true');
+    expandHint.textContent = '[ · c l i c k | t o | e x p a n d · ]';
+    tunnel.appendChild(expandHint);
+
+    let expandHintSplit = false;
+    function initExpandHintGlitch() {
+        if (expandHintSplit || !window.Splitting) return;
+        expandHintSplit = true;
+        const results = window.Splitting({ target: expandHint, by: 'chars' });
+        results.forEach(result => {
+            result.chars.forEach(char => {
+                char.style.setProperty('--count', String(Math.random() * 5 + 1));
+                for (let g = 0; g < 10; g++) {
+                    const r = _GLITCH_CHARS[Math.floor(Math.random() * _GLITCH_CHARS.length)];
+                    char.style.setProperty(`--char-${g}`, `"${r}"`);
+                }
+            });
+        });
+    }
 
     function setHintSide(stop) {
         const hintRight = stop % 2 === 0;

@@ -201,6 +201,46 @@
         0 0 56px rgba(238, 155, 0, 0.10);
 }
 
+/* ── Click-to-expand overlay — lives outside the 3D cube so it is always flat ─
+   Positioned at the visual bottom of the cube using the same --s variable.
+   Inherits --s from .illus-cube via the cascade; duplicated here as a fallback calc
+   so the value stays in sync: min(74vw, 74vh, 560px) / 2 = min(37vw, 37vh, 280px). */
+.illus-expand-hint {
+    position: absolute;
+    bottom: calc(50% - min(37vw, 37vh, 280px) + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 20px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.72rem, 1.9vmin, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #EE9B00;
+    background: rgba(0, 18, 25, 0.88);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 22;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+/* Hidden at stop 0 (gallery title — no photo to expand) */
+.illus-tunnel.illus-stop-zero .illus-expand-hint {
+    opacity: 0;
+}
+
+/* Cancel global subtitle-glitch/glitch-text overrides that would break sizing */
+.illus-expand-hint.subtitle-glitch {
+    font-size: clamp(0.72rem, 1.9vmin, 0.95rem);
+    margin-top: 0;
+    text-shadow: none;
+}
+.illus-expand-hint.glitch-text {
+    white-space: nowrap;
+}
+
 /* Indent all lines after the first to align under the content start.
    "[ · " = 4 chars × (1ch each) + 4 × 0.2em letter-spacing = calc(4ch + 0.8em) */
 .illus-gallery-indent {

@@ -776,47 +776,51 @@
         sectionEl.classList.add('reveal');
       }
 
-      // Size canvas bitmap to physical pixels (HiDPI-aware)
-      const dpr  = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      const cssW = rect.width;
-      const cssH = rect.height;
-      if (!cssW || !cssH) return;
+      // Size canvas bitmap to physical pixels (HiDPI-aware).
+      // Deferred to rAF so layout is settled after the overlay becomes visible.
+      requestAnimationFrame(() => {
+        if (!this.inPhase3) return;
 
-      canvas.width  = Math.round(cssW * dpr);
-      canvas.height = Math.round(cssH * dpr);
+        const dpr  = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        const cssW = rect.width;
+        const cssH = rect.height;
+        if (!cssW || !cssH) return;
 
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
+        canvas.width  = Math.round(cssW * dpr);
+        canvas.height = Math.round(cssH * dpr);
 
-      // Fill with dark background — this is what gets "scratched off"
-      ctx.fillStyle = '#001219';
-      ctx.fillRect(0, 0, cssW, cssH);
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
 
-      // Remove any leftover listener from a previous visit
-      if (this._polaroidMoveHandler) {
-        canvas.removeEventListener('mousemove', this._polaroidMoveHandler);
-      }
+        // Fill with dark background — this is what gets "scratched off"
+        ctx.fillStyle = '#001219';
+        ctx.fillRect(0, 0, cssW, cssH);
 
-      // Erase a soft circle wherever the mouse moves (permanent destination-out)
-      this._polaroidMoveHandler = (e) => {
-        const r = canvas.getBoundingClientRect();
-        const x = e.clientX - r.left;
-        const y = e.clientY - r.top;
-        const radius = 44;
-        ctx.globalCompositeOperation = 'destination-out';
-        // Soft gradient brush — solid centre, fades at edges
-        const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-        grad.addColorStop(0,    'rgba(0,0,0,1)');
-        grad.addColorStop(0.6,  'rgba(0,0,0,0.85)');
-        grad.addColorStop(1,    'rgba(0,0,0,0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fill();
-      };
+        // Remove any leftover listener from a previous visit
+        if (this._polaroidMoveHandler) {
+          canvas.removeEventListener('mousemove', this._polaroidMoveHandler);
+        }
 
-      canvas.addEventListener('mousemove', this._polaroidMoveHandler, { passive: true });
+        // Erase a soft circle wherever the mouse moves (permanent destination-out)
+        this._polaroidMoveHandler = (e) => {
+          const r = canvas.getBoundingClientRect();
+          const x = e.clientX - r.left;
+          const y = e.clientY - r.top;
+          const radius = 44;
+          ctx.globalCompositeOperation = 'destination-out';
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+          grad.addColorStop(0,    'rgba(0,0,0,1)');
+          grad.addColorStop(0.6,  'rgba(0,0,0,0.85)');
+          grad.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        canvas.addEventListener('mousemove', this._polaroidMoveHandler, { passive: true });
+      });
     }
 
     _resetPolaroid() {

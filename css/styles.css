@@ -3297,6 +3297,7 @@ nav {
   flex-direction: row;
   align-items: flex-start;
   gap: clamp(0.5rem, 1vw, 1rem);
+  width: 100%;
 }
 
 .photo-polaroid-hint {
