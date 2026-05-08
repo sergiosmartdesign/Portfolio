@@ -394,8 +394,6 @@
         imgGlitchPending = true;
         // Hide the image-name caption on the gallery-title face (stop 0 has no photo)
         tunnel.classList.toggle('illus-stop-zero', stop === 0);
-        // Fire expand-hint glitch once — on the first visit to any photo face
-        if (stop !== 0) initExpandHintGlitch();
         setHintSide(stop);
         allDots.forEach((d, i)      => d.classList.toggle('active', i === stop));
         allSections.forEach((sec, i) => sec.classList.toggle('active', i === stop));
@@ -437,6 +435,9 @@
             }
             return;
         }
+
+        // Re-trigger the expand hint glitch on every new image face landing
+        triggerExpandHintGlitch();
 
         const img = face?.querySelector('img');
         if (!img) return;
@@ -522,19 +523,29 @@
     tunnel.appendChild(expandHint);
 
     let expandHintSplit = false;
-    function initExpandHintGlitch() {
-        if (expandHintSplit || !window.Splitting) return;
-        expandHintSplit = true;
-        const results = window.Splitting({ target: expandHint, by: 'chars' });
-        results.forEach(result => {
-            result.chars.forEach(char => {
-                char.style.setProperty('--count', String(Math.random() * 5 + 1));
-                for (let g = 0; g < 10; g++) {
-                    const r = _GLITCH_CHARS[Math.floor(Math.random() * _GLITCH_CHARS.length)];
-                    char.style.setProperty(`--char-${g}`, `"${r}"`);
-                }
+    function triggerExpandHintGlitch() {
+        if (!window.Splitting) return;
+        if (!expandHintSplit) {
+            // First call: run Splitting.js once and let the animation start naturally.
+            expandHintSplit = true;
+            const results = window.Splitting({ target: expandHint, by: 'chars' });
+            results.forEach(result => {
+                result.chars.forEach(char => {
+                    char.style.setProperty('--count', String(Math.random() * 5 + 1));
+                    for (let g = 0; g < 10; g++) {
+                        const r = _GLITCH_CHARS[Math.floor(Math.random() * _GLITCH_CHARS.length)];
+                        char.style.setProperty(`--char-${g}`, `"${r}"`);
+                    }
+                });
             });
-        });
+            return;
+        }
+        // Subsequent calls: restart the CSS animation on [data-char]:after pseudo-elements.
+        // Can't set inline styles on pseudo-elements directly — toggle a class on the parent
+        // to suppress animation-name, force a reflow, then remove it to re-fire the animation.
+        expandHint.classList.add('illus-glitch-reset');
+        void expandHint.offsetWidth;
+        expandHint.classList.remove('illus-glitch-reset');
     }
 
     function setHintSide(stop) {

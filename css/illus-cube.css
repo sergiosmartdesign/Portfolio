@@ -231,6 +231,11 @@
     opacity: 0;
 }
 
+/* Animation restart helper — toggled in JS to re-fire the glitch-switch animation */
+.illus-expand-hint.illus-glitch-reset [data-char]:after {
+    animation-name: none !important;
+}
+
 /* Cancel global subtitle-glitch/glitch-text overrides that would break sizing */
 .illus-expand-hint.subtitle-glitch {
     font-size: clamp(0.72rem, 1.9vmin, 0.95rem);
