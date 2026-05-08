@@ -42,6 +42,8 @@
       // Intro animation guard — hover is disabled while the sequential intro plays
       this.introAnimating = false;
 
+      this._titlePalette = ['#005F73','#0A9396','#94D2BD','#E9D8A6','#EE9B00','#CA6702','#BB3E03','#AE2012','#9B2226'];
+
       // Electric border: count of in-flight animations (open + close + chain).
       // RAF only runs while _borderCount > 0 — zero CPU when idle.
       this.accordion          = document.querySelector('.photo-accordion');
@@ -129,12 +131,20 @@
     }
 
     // ── Forward chain: intro → sequential category reveal → bounce-close → tail ──
+    _randomTitleColor() {
+      const color = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
+      document.querySelectorAll('.pgallery-title, .photo-polaroids-subtitle').forEach(el => {
+        el.style.color = color;
+      });
+    }
+
     _triggerChain() {
       if (this.chainActive) return;
       this.chainActive = true;
       this.introAnimating = true;
       this._borderStart();
       this._initPolaroid();
+      this._randomTitleColor();
 
       const categoryBtnArray = Array.from(this.categoryBtns);
       const btnSet = new Set(categoryBtnArray);
@@ -938,16 +948,8 @@
 
     // ── Polaroids title: pick a new random palette colour on each hover ────────
     _setupTitleColorCycle() {
-      const title = document.querySelector('.pgallery-title');
-      if (!title) return;
-
-      const palette = [
-        '#005F73', '#0A9396', '#94D2BD', '#E9D8A6',
-        '#EE9B00', '#CA6702', '#BB3E03', '#AE2012', '#9B2226'
-      ];
-
-      title.addEventListener('mouseenter', () => {
-        title.style.color = palette[Math.floor(Math.random() * palette.length)];
+      document.querySelectorAll('.pgallery-title, .photo-polaroids-subtitle').forEach(el => {
+        el.addEventListener('mouseenter', () => this._randomTitleColor());
       });
     }
   }

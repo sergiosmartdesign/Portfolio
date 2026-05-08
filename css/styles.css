@@ -3081,6 +3081,68 @@ nav {
   display: inline;
 }
 
+/* Polaroid intro block — sits below the accordion in the left column */
+.photo-polaroids-intro {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+  padding-top: clamp(0.9rem, 1.8vw, 1.5rem);
+  border-top: 1px solid rgba(10, 147, 150, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1vw, 0.85rem);
+}
+
+.photo-polaroids-subtitle {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: #001219;
+  letter-spacing: 0.06em;
+  margin: 0;
+  position: relative;
+  z-index: 0;
+}
+
+.photo-polaroids-desc {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  color: #001219;
+  line-height: 1.6;
+  margin: 0;
+  position: relative;
+  z-index: 0;
+}
+
+.photo-polaroids-cta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  color: #001219;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  margin: 0;
+  position: relative;
+  z-index: 0;
+}
+
+/* Amber sweep — constrained to text width, same mechanism as .photo-cta--left */
+.photo-polaroids-cta.photo-ai-highlight {
+  width: fit-content;
+  padding: 0 4px;
+  background-image: linear-gradient(#E9D8A6, #E9D8A6);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 88%;
+  transition: background-size 0.8s ease-out;
+}
+
+.photo-polaroids-cta.photo-ai-highlight::before {
+  display: none;
+}
+
+.photo-polaroids-cta.photo-ai-highlight.photo-ai-highlight--animate {
+  background-size: 100% 88%;
+}
+
 /* Centre column: Instagram */
 .photo-col-instagram {
   position: relative;
@@ -3219,7 +3281,9 @@ nav {
 
 /* Right column: polaroid unit stacked above editorial text */
 .photo-col-camera {
-  position: relative;
+  position: sticky;
+  top: 0;
+  align-self: start;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

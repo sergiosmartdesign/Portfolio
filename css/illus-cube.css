@@ -213,11 +213,23 @@
     flex-direction: column;
     text-align: left;
     margin-block-start: 1.4rem;
-    font-size: 0.62rem;
-    font-weight: 700;
+    font-size: 0.76rem;
+    font-weight: 800;
     letter-spacing: 0.15em;
     line-height: 1.85;
     color: var(--illus-muted);
+}
+
+/* Cancel .glitch-text white-space:pre so the stacked flex layout still works */
+.illus-hud-scroll.glitch-text {
+    white-space: normal;
+}
+
+/* Cancel .subtitle-glitch overrides — keep only the glitch-switch animation */
+.illus-hud-scroll.subtitle-glitch {
+    font-size: 0.76rem;
+    margin-top: 0;
+    text-shadow: none;
 }
 
 /* Indent lines after the first — same calc as gallery title */
@@ -462,7 +474,7 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: clamp(9rem, 11vw, 11rem);
+    width: clamp(10rem, 12vw, 12rem);
     z-index: 21;
     pointer-events: none;
     user-select: none;

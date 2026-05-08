@@ -188,6 +188,11 @@
         face.appendChild(sl);
     });
 
+    // Cache polar face labels — used every frame to keep them upright (see setCubeTransform).
+    // faces[0] = top, faces[5] = bottom — the only two that need counter-rotation.
+    const topFaceLabel    = faces[0].querySelector('.illus-face-label');
+    const bottomFaceLabel = faces[5].querySelector('.illus-face-label');
+
     // Generate additional nav dots
     for (let i = dots.length; i < N; i++) {
         const btn = document.createElement('button');
@@ -353,8 +358,28 @@
         const i = Math.min(Math.floor(t), N - 2);
         const f = easeIO(t - i);
         const a = STOPS[i], b = STOPS[i + 1];
+        const curRy = a.ry + (b.ry - a.ry) * f;
         cube.style.transform =
-            `rotateX(${a.rx + (b.rx - a.rx) * f}deg) rotateY(${a.ry + (b.ry - a.ry) * f}deg)`;
+            `rotateX(${a.rx + (b.rx - a.rx) * f}deg) rotateY(${curRy}deg)`;
+
+        // Side faces (front/right/back/left) self-correct: their own face Y-transforms
+        // cancel the cube's accumulated ry exactly, so the text always reads upright.
+        //
+        // Top/bottom faces are different — their face transforms are X-axis rotations,
+        // which turn the cube's ry into a net Z-axis spin on the label content:
+        //   top face content rotation  = rotateZ(+curRy)  → counter: rotateZ(-curRy)
+        //   bottom face content rotation = rotateZ(-curRy) → counter: rotateZ(+curRy)
+        //
+        // The gallery label variant (stop 0) carries translateY(-50%) for centering;
+        // we must preserve it when composing the inline transform.
+        if (topFaceLabel) {
+            const base = topFaceLabel.classList.contains('illus-face-label--gallery')
+                ? 'translateY(-50%) ' : '';
+            topFaceLabel.style.transform = `${base}rotateZ(${-curRy}deg)`;
+        }
+        if (bottomFaceLabel) {
+            bottomFaceLabel.style.transform = `rotateZ(${curRy}deg)`;
+        }
     }
 
     let lastStop = -1;
@@ -482,7 +507,8 @@
     hintHudLabel.textContent = 'TIMELESS';
 
     const hintHudScroll = document.createElement('div');
-    hintHudScroll.className = 'illus-hud-scroll';
+    hintHudScroll.className = 'illus-hud-scroll glitch-text subtitle-glitch';
+    hintHudScroll.setAttribute('data-splitting', '');
     hintHudScroll.innerHTML =
         '<span>[ · s c r o l l</span>' +
         '<span class="illus-hud-scroll-in">o r</span>' +
@@ -504,6 +530,26 @@
         hintHud.classList.toggle('illus-hint-hud--left',  !hintRight);
     }
 
+    // ── Scroll-hint glitch intro — fires once, after the cube enters ─────────
+    // Kept isolated so it doesn't reach into GlitchSystem in script.js.
+    const _GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+    let   scrollHintSplit = false;
+
+    function initScrollHintGlitch() {
+        if (scrollHintSplit || !window.Splitting) return;
+        scrollHintSplit = true;
+        const results = window.Splitting({ target: hintHudScroll, by: 'chars' });
+        results.forEach(result => {
+            result.chars.forEach(char => {
+                char.style.setProperty('--count', String(Math.random() * 5 + 1));
+                for (let g = 0; g < 10; g++) {
+                    const r = _GLITCH_CHARS[Math.floor(Math.random() * _GLITCH_CHARS.length)];
+                    char.style.setProperty(`--char-${g}`, `"${r}"`);
+                }
+            });
+        });
+    }
+
     function resetIntro() {
         if (introTimer) { clearTimeout(introTimer); introTimer = null; }
         elecActive = false;
@@ -523,6 +569,9 @@
         if (introSeenOnce) return;
         introSeenOnce = true;
         illus.classList.add('illus-entering');
+        // 580ms: cube scale-in finishes at 80ms delay + 480ms duration = 560ms;
+        // glitch fires just after so it overlaps the hint-hud fade-in (starts 300ms).
+        setTimeout(initScrollHintGlitch, 580);
         introTimer = setTimeout(() => {
             illus.classList.remove('illus-entering');
             introTimer = null;
