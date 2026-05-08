@@ -160,6 +160,7 @@
     const captionName = illus.querySelector('.illus-caption-name');
     const dots        = [...illus.querySelectorAll('.illus-dot')];
     const sectionsEl  = illus.querySelector('.illus-sections');
+    const lustEl      = illus.querySelector('.illus-lust-accent');
 
     // Scale section height to number of images (100vh per stop)
     illus.style.height = (N * 100) + 'vh';
@@ -367,7 +368,8 @@
         }
     }
 
-    let lastStop = -1;
+    let lastStop         = -1;
+    let lastLustColorIdx = -1;
 
     function updateUI(s) {
         const pct  = Math.round(s * 100);
@@ -379,6 +381,16 @@
         const stop = Math.min(N - 1, Math.round(s * (N - 1)));
         if (stop === lastStop) return;
         lastStop = stop;
+
+        // Randomise "LUST" accent color on every stop change — pick from palette,
+        // never repeat the same color twice in a row.
+        if (lustEl) {
+            let idx;
+            do { idx = Math.floor(Math.random() * FACE_COLORS.length); }
+            while (idx === lastLustColorIdx);
+            lastLustColorIdx = idx;
+            illus.style.setProperty('--illus-lust-accent', FACE_COLORS[idx].hex);
+        }
 
         const name   = FACE_NAMES[stop] ?? '';
         const spaced = name.split('').join(' ');
@@ -394,6 +406,13 @@
         imgGlitchPending = true;
         // Hide the image-name caption on the gallery-title face (stop 0 has no photo)
         tunnel.classList.toggle('illus-stop-zero', stop === 0);
+        // Float title: entry animation on first reveal from stop 0; hide on return.
+        if (stop === 0) {
+            titleFloat.classList.remove('illus-title-float--visible');
+        } else if (!titleFloat.classList.contains('illus-title-float--visible')) {
+            void titleFloat.offsetWidth;
+            titleFloat.classList.add('illus-title-float--visible');
+        }
         setHintSide(stop);
         allDots.forEach((d, i)      => d.classList.toggle('active', i === stop));
         allSections.forEach((sec, i) => sec.classList.toggle('active', i === stop));
@@ -522,6 +541,18 @@
     expandHint.textContent = '[ · c l i c k | t o | e x p a n d · ]';
     tunnel.appendChild(expandHint);
 
+    // Mini floating title — behind cube (z:1), synced with hint HUD side.
+    // Inherits --illus-lust-accent from #illustration via illus.style.setProperty.
+    const titleFloat = document.createElement('div');
+    titleFloat.className = 'illus-title-float illus-title-float--right';
+    titleFloat.setAttribute('aria-hidden', 'true');
+    titleFloat.innerHTML =
+        '<span class="illus-title-float-line">[ · I L</span>' +
+        '<span class="illus-title-float-line illus-title-float-lust">L U S T</span>' +
+        '<span class="illus-title-float-line illus-title-float-in">R A T</span>' +
+        '<span class="illus-title-float-line illus-title-float-in">I O N · ]</span>';
+    tunnel.appendChild(titleFloat);
+
     let expandHintSplit = false;
     function triggerExpandHintGlitch() {
         if (!window.Splitting) return;
@@ -552,6 +583,20 @@
         const hintRight = stop % 2 === 0;
         hintHud.classList.toggle('illus-hint-hud--right', hintRight);
         hintHud.classList.toggle('illus-hint-hud--left',  !hintRight);
+        const isVisible = titleFloat.classList.contains('illus-title-float--visible');
+        const wasRight  = titleFloat.classList.contains('illus-title-float--right');
+        if (isVisible && wasRight !== hintRight) {
+            // Side switch while visible — brief crossfade then reposition
+            titleFloat.style.cssText = 'opacity:0;transition:opacity 0.15s ease';
+            setTimeout(() => {
+                titleFloat.classList.toggle('illus-title-float--right', hintRight);
+                titleFloat.classList.toggle('illus-title-float--left',  !hintRight);
+                titleFloat.style.cssText = '';
+            }, 150);
+        } else {
+            titleFloat.classList.toggle('illus-title-float--right', hintRight);
+            titleFloat.classList.toggle('illus-title-float--left',  !hintRight);
+        }
     }
 
     // ── Scroll-hint glitch intro — fires once, after the cube enters ─────────

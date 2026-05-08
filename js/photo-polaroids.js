@@ -61,16 +61,19 @@
   function PolaroidGridManager() {
     this.photoSpacer  = document.querySelector('.photo-scroll-spacer');
     this.photoSection = document.getElementById('photo');
+    this.photoColLeft = document.querySelector('.photo-col-left');
     this.camera       = document.querySelector('.photo-camera-deco');
     this.overlay      = document.querySelector('.photo-portfolio-overlay');
     this.rightCol     = document.querySelector('.photo-col-camera');
 
-    if (!this.photoSpacer || !this.photoSection) return;
+    if (!this.photoSpacer || !this.photoSection || !this.photoColLeft) return;
 
     this.cards           = [];
     this.container       = null;
     this.winW            = 0;
     this.winH            = 0;
+    this.colW            = 0;
+    this.colLeft         = 0;
     this.cardW           = 0;
     this.cardH           = 0;
     this.colGap          = 0;
@@ -159,19 +162,26 @@
     this.winW = window.innerWidth;
     this.winH = window.innerHeight;
 
-    this.cardW  = this.winW * 0.11;
-    this.cardH  = this.cardW * (43 / 35);
-    this.colGap = this.winW * 0.005;
-    this.rowGap = this.winH * 0.015;
+    /* Measure left column — colLeft stays accurate (overlay only translates vertically) */
+    var colRect    = this.photoColLeft.getBoundingClientRect();
+    this.colW      = colRect.width;
+    this.colLeft   = colRect.left;
+
+    /* Card sizing: 6 cards + 5 gaps fill the column exactly */
+    this.colGap    = this.colW * 0.012;
+    this.cardW     = (this.colW - (CARDS_PER_ROW - 1) * this.colGap) / CARDS_PER_ROW;
+    this.cardH     = this.cardW * (43 / 35);
+    this.rowGap    = this.winH * 0.015;
     this.rowHeight = this.cardH + this.rowGap;
 
     for (var i = 0; i < this.cards.length; i++) {
       this.cards[i].style.width = this.cardW + 'px';
     }
 
+    /* Row alignment within column */
     var totalRowW  = CARDS_PER_ROW * this.cardW + (CARDS_PER_ROW - 1) * this.colGap;
-    this.rowStartX = (this.winW - totalRowW) / 2;
-    this.centerX   = this.winW / 2 - this.cardW / 2;
+    this.rowStartX = this.colLeft + (this.colW - totalRowW) / 2;
+    this.centerX   = this.colLeft + this.colW / 2 - this.cardW / 2;
 
     this.activeRowY = this.winH * 0.60 - this.cardH / 2;
     this.shutterY   = this.winH * 0.80 - this.cardH / 2;
@@ -279,7 +289,7 @@
   PolaroidGridManager.prototype._rowStartXForRow = function (row, cardsInRow) {
     if (cardsInRow === CARDS_PER_ROW) return this.rowStartX;
     var partialWidth = cardsInRow * this.cardW + (cardsInRow - 1) * this.colGap;
-    return (this.winW - partialWidth) / 2;
+    return this.colLeft + (this.colW - partialWidth) / 2;
   };
 
   /* ── Main update ──────────────────────────────────────────────────────────── */

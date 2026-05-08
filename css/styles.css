@@ -2813,26 +2813,28 @@ nav {
 }
 
 .photo-camera-deco {
-  display: block;
+  position: sticky;
+  bottom: 0;
   align-self: center;
-  margin-top: clamp(1.5rem, 3vh, 3rem);
-  width: clamp(200px, 55%, 460px);
+  display: block;
+  width: 520px;
+  margin-top: auto;
   pointer-events: none;
   user-select: none;
   opacity: 0;
-  transform: rotate(180deg) translateY(-40px);
+  transform: translateY(100%) rotate(180deg);
   transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
               transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .photo-camera-deco.visible {
   opacity: 1;
-  transform: rotate(180deg) translateY(0);
+  transform: translateY(50%) rotate(180deg);
 }
 
 .photo-camera-deco.polaroid-active {
   opacity: 1;
-  transform: rotate(180deg) translateY(0);
+  transform: translateY(50%) rotate(180deg);
 }
 
 .photo-static-line {
@@ -2982,7 +2984,7 @@ nav {
   grid-template-columns: 2.4fr 1fr;
   gap: clamp(1.5rem, 3vw, 3rem);
   align-items: stretch;
-  flex-shrink: 0;
+  flex: 1 0 auto;
 }
 
 /* Left column: accordion categories */

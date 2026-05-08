@@ -246,6 +246,51 @@
     white-space: nowrap;
 }
 
+/* ── Floating ILLUSTRATION title — behind cube (z:1), synced with hint HUD ── */
+@keyframes illus-title-float-enter {
+    from { opacity: 0; transform: scale(4.5) translateY(2.5rem); filter: blur(3px); }
+    to   { opacity: 0.72; transform: none; filter: blur(0); }
+}
+
+.illus-title-float {
+    position: absolute;
+    bottom: calc(50% + 4.5rem);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(0.42rem, 1.0vw, 0.60rem);
+    letter-spacing: 0.14em;
+    line-height: 1.9;
+    color: var(--illus-fg);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.illus-title-float--left  { left: 13%;  text-align: left; }
+.illus-title-float--right { right: 13%; text-align: right; }
+
+.illus-title-float--visible {
+    animation: illus-title-float-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1 both;
+}
+
+.illus-title-float-in {
+    padding-inline-start: 1.5ch;
+}
+
+.illus-title-float-lust {
+    color: var(--illus-lust-accent, var(--illus-fg));
+    transition: color 0.55s ease;
+    padding-inline-start: 1.5ch;
+}
+
+@media (width <= 56.25em) {
+    .illus-title-float { display: none; }
+}
+
 /* Indent all lines after the first to align under the content start.
    "[ · " = 4 chars × (1ch each) + 4 × 0.2em letter-spacing = calc(4ch + 0.8em) */
 .illus-gallery-indent {
@@ -720,6 +765,15 @@
 
 #illustration .illus-section.active .illus-word-art [data-char]:after {
     animation-name: glitch-switch;
+}
+
+/* "LUST" accent — color driven by --illus-lust-accent, updated by JS on every stop change.
+   Specificity (1,5,1) beats the base word-art rule (1,4,1) to override color only here.
+   The transition fires from --illus-fg to the new color each time the section becomes .active,
+   giving a smooth chromatic reveal that coincides with the card fade-in. */
+#illustration .illus-section.active .illus-word-art .illus-lust-accent [data-char]:after {
+    color: var(--illus-lust-accent, var(--illus-fg));
+    transition: color 0.55s ease;
 }
 
 .illus-h2 {
