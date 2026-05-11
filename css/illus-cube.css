@@ -254,15 +254,15 @@
 
 .illus-title-float {
     position: absolute;
-    bottom: calc(50% + 4.5rem);
+    bottom: calc(50% + 8rem);
     z-index: 1;
     display: flex;
     flex-direction: column;
     font-family: 'Funnel Display', sans-serif;
     font-weight: 800;
-    font-size: clamp(0.42rem, 1.0vw, 0.60rem);
+    font-size: clamp(1.3rem, 2.8vw, 1.76rem);
     letter-spacing: 0.14em;
-    line-height: 1.9;
+    line-height: 1.85;
     color: var(--illus-fg);
     pointer-events: none;
     user-select: none;
@@ -285,6 +285,27 @@
     color: var(--illus-lust-accent, var(--illus-fg));
     transition: color 0.55s ease;
     padding-inline-start: 1.5ch;
+}
+
+/* Glitch-switch animation — enabled on [data-char]:after once splitting is done */
+.illus-title-float [data-char]:after {
+    color: var(--illus-fg);
+    font-weight: 800;
+    animation-name: none;
+}
+
+.illus-title-float--visible [data-char]:after {
+    animation-name: glitch-switch;
+}
+
+.illus-title-float-lust [data-char]:after {
+    color: var(--illus-lust-accent, var(--illus-fg));
+    transition: color 0.55s ease;
+}
+
+/* Reset helper — suppress animation-name then remove to re-fire */
+.illus-title-float.illus-glitch-reset [data-char]:after {
+    animation-name: none !important;
 }
 
 @media (width <= 56.25em) {

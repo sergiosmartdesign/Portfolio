@@ -2822,6 +2822,7 @@ nav {
   pointer-events: none;
   user-select: none;
   opacity: 0;
+  z-index: 4; /* within overlay stacking context, above polaroid grid (z:3) */
   transform: translateY(100%) rotate(180deg);
   transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
               transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -2961,7 +2962,7 @@ nav {
   padding: 180px var(--spacing-xl) var(--spacing-xl);
   opacity: 0;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Section label above the 3-column grid */
@@ -2989,8 +2990,18 @@ nav {
 
 /* Left column: accordion categories */
 .photo-col-left {
+  position: relative;
   display: flex;
   flex-direction: column;
+  padding: clamp(0.5rem, 1vw, 1rem) clamp(1rem, 1.5vw, 1.5rem);
+}
+
+.photo-col-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid #EE9B00;
+  pointer-events: none;
 }
 
 /* Intro paragraph + CTA */
@@ -4003,14 +4014,17 @@ nav {
    via transform:translate(x,y) — no top/left changes after init.
    ============================================================================ */
 
-/* Full-section overlay, pointer-events off so accordion stays clickable
-   when the grid is visible but no card is under the cursor. */
+/* Grid sits inside the overlay as a direct sibling of .photo-content-scroll.
+   left/width are set by JS to exactly cover .photo-col-left.
+   overflow: visible so cards can enter from below the overlay's box. */
 .photo-polaroid-grid {
   position: absolute;
-  inset: 0;
-  z-index: 3; /* above overlay (z:2), below camera (z:4) */
+  top: 0;
+  height: 100%;
+  /* left & width set by JS */
+  z-index: 3; /* within overlay stacking context, below camera (z:4) */
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Individual card — true Polaroid 600 proportions (35:43).

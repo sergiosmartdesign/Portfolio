@@ -101,7 +101,10 @@
     var container = document.createElement('div');
     container.className = 'photo-polaroid-grid';
     container.setAttribute('aria-hidden', 'true');
-    this.photoSection.appendChild(container);
+    /* Append to overlay (direct sibling of content-scroll) so the grid
+       sits in the overlay's stacking context and is not clipped by the
+       scroll container.  Left/width are set by JS in _updateDimensions(). */
+    this.overlay.appendChild(container);
     this.container = container;
 
     /* 50 card elements */
@@ -162,12 +165,23 @@
     this.winW = window.innerWidth;
     this.winH = window.innerHeight;
 
-    /* Measure left column — colLeft stays accurate (overlay only translates vertically) */
-    var colRect    = this.photoColLeft.getBoundingClientRect();
-    this.colW      = colRect.width;
-    this.colLeft   = colRect.left;
+    /* Temporarily clear overlay transform so getBoundingClientRect
+       returns the untranslated column position. */
+    var savedTx = this.overlay ? this.overlay.style.transform : '';
+    if (this.overlay) this.overlay.style.transform = '';
+    var colRect = this.photoColLeft.getBoundingClientRect();
+    if (this.overlay) this.overlay.style.transform = savedTx;
 
-    /* Card sizing: 6 cards + 5 gaps fill the column exactly */
+    this.colW    = colRect.width;
+    this.colLeft = colRect.left; /* viewport X — used for expand/collapse offset */
+
+    /* Position the grid container to exactly cover the left column */
+    if (this.container) {
+      this.container.style.left  = this.colLeft + 'px';
+      this.container.style.width = this.colW + 'px';
+    }
+
+    /* Card sizing: CARDS_PER_ROW cards + gaps fill the column exactly */
     this.colGap    = this.colW * 0.012;
     this.cardW     = (this.colW - (CARDS_PER_ROW - 1) * this.colGap) / CARDS_PER_ROW;
     this.cardH     = this.cardW * (43 / 35);
@@ -178,10 +192,10 @@
       this.cards[i].style.width = this.cardW + 'px';
     }
 
-    /* Row alignment within column */
+    /* Column-relative row coordinates (0 = left edge of column) */
     var totalRowW  = CARDS_PER_ROW * this.cardW + (CARDS_PER_ROW - 1) * this.colGap;
-    this.rowStartX = this.colLeft + (this.colW - totalRowW) / 2;
-    this.centerX   = this.colLeft + this.colW / 2 - this.cardW / 2;
+    this.rowStartX = (this.colW - totalRowW) / 2;
+    this.centerX   = this.colW / 2 - this.cardW / 2;
 
     this.activeRowY = this.winH * 0.60 - this.cardH / 2;
     this.shutterY   = this.winH * 0.80 - this.cardH / 2;
@@ -289,7 +303,7 @@
   PolaroidGridManager.prototype._rowStartXForRow = function (row, cardsInRow) {
     if (cardsInRow === CARDS_PER_ROW) return this.rowStartX;
     var partialWidth = cardsInRow * this.cardW + (cardsInRow - 1) * this.colGap;
-    return this.colLeft + (this.colW - partialWidth) / 2;
+    return (this.colW - partialWidth) / 2;
   };
 
   /* ── Main update ──────────────────────────────────────────────────────────── */
@@ -308,15 +322,17 @@
       if (p > 0) {
         var offset = this._overlayOffset(p);
         this.overlay.style.transform = 'translateY(' + (-offset) + 'px)';
-        /* Counter-translate the right column so it stays fixed in viewport */
+        /* Counter-translate right column and grid so both stay fixed in viewport */
         if (this.rightCol) {
           this.rightCol.style.transform = 'translateY(' + offset + 'px)';
         }
+        this.container.style.transform = 'translateY(' + offset + 'px)';
       } else {
         this.overlay.style.transform = '';
         if (this.rightCol) {
           this.rightCol.style.transform = '';
         }
+        this.container.style.transform = '';
       }
     }
 
@@ -435,13 +451,16 @@
     this.expandedIndex = index;
     this.expandedCard  = card;
 
-    /* Capture current transform before reparenting */
+    /* Capture column-relative transform before reparenting */
     var currentTransform = card.style.transform;
+    var tMatch  = currentTransform.match(/translate\(([-.0-9e]+)px,([-.0-9e]+)px\)/);
+    var cx_col  = tMatch ? parseFloat(tMatch[1]) : 0;
+    var cy_col  = tMatch ? parseFloat(tMatch[2]) : 0;
 
-    /* Move card to #photo root — escapes grid's z-index stacking context
-       and overflow:hidden.  Coordinate space is identical (both start 0,0). */
+    /* Move card to #photo root (viewport coordinate space).
+       Grid sits at colLeft in viewport, so add colLeft to convert. */
     this.photoSection.appendChild(card);
-    card.style.transform    = currentTransform;
+    card.style.transform    = 'translate(' + (this.colLeft + cx_col) + 'px,' + cy_col + 'px)';
     card.style.zIndex       = '12';
     card.style.pointerEvents = 'none'; /* disable during flight */
     card.style.cursor       = '';
@@ -483,17 +502,20 @@
     this.backdrop.classList.remove('active');
     this.closeBtn.classList.remove('active');
 
-    /* Animate card back to its grid slot */
+    /* Animate card back to its grid slot — card is in #photo (viewport) space,
+       so add colLeft to convert column-relative finalX to viewport X. */
     card.style.transition = 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
-    card.style.transform  = 'translate(' + finalX + 'px,' + finalY + 'px)';
+    card.style.transform  = 'translate(' + (this.colLeft + finalX) + 'px,' + finalY + 'px)';
 
-    /* After animation: return card to grid, restore state */
+    /* After animation: return card to grid, restore column-relative transform */
     setTimeout(function () {
       card.style.transition    = '';
       card.style.zIndex        = '';
       card.style.pointerEvents = 'auto';
       card.style.cursor        = 'pointer';
       self.container.appendChild(card);
+      /* Coordinate space is now column-relative — strip the colLeft offset */
+      card.style.transform = 'translate(' + finalX + 'px,' + finalY + 'px)';
       self.expandedCard  = null;
       self.expandedIndex = -1;
     }, 400);

@@ -455,8 +455,9 @@
             return;
         }
 
-        // Re-trigger the expand hint glitch on every new image face landing
+        // Re-trigger the expand hint and float title glitch on every new image face landing
         triggerExpandHintGlitch();
+        triggerTitleFloatGlitch();
 
         const img = face?.querySelector('img');
         if (!img) return;
@@ -547,11 +548,35 @@
     titleFloat.className = 'illus-title-float illus-title-float--right';
     titleFloat.setAttribute('aria-hidden', 'true');
     titleFloat.innerHTML =
-        '<span class="illus-title-float-line">[ · I L</span>' +
-        '<span class="illus-title-float-line illus-title-float-lust">L U S T</span>' +
-        '<span class="illus-title-float-line illus-title-float-in">R A T</span>' +
-        '<span class="illus-title-float-line illus-title-float-in">I O N · ]</span>';
+        '<span class="illus-title-float-line" data-splitting>[ · I L</span>' +
+        '<span class="illus-title-float-line illus-title-float-lust" data-splitting>L U S T</span>' +
+        '<span class="illus-title-float-line illus-title-float-in" data-splitting>R A T</span>' +
+        '<span class="illus-title-float-line illus-title-float-in" data-splitting>I O N · ]</span>';
     tunnel.appendChild(titleFloat);
+
+    let titleFloatSplit = false;
+    function triggerTitleFloatGlitch() {
+        if (!window.Splitting) return;
+        if (!titleFloatSplit) {
+            titleFloatSplit = true;
+            titleFloat.querySelectorAll('[data-splitting]').forEach(span => {
+                const results = window.Splitting({ target: span, by: 'chars' });
+                results.forEach(result => {
+                    result.chars.forEach(char => {
+                        char.style.setProperty('--count', String(Math.random() * 5 + 1));
+                        for (let g = 0; g < 10; g++) {
+                            const r = _GLITCH_CHARS[Math.floor(Math.random() * _GLITCH_CHARS.length)];
+                            char.style.setProperty(`--char-${g}`, `"${r}"`);
+                        }
+                    });
+                });
+            });
+            return;
+        }
+        titleFloat.classList.add('illus-glitch-reset');
+        void titleFloat.offsetWidth;
+        titleFloat.classList.remove('illus-glitch-reset');
+    }
 
     let expandHintSplit = false;
     function triggerExpandHintGlitch() {
