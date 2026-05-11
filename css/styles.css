@@ -641,6 +641,47 @@ nav {
   text-shadow: var(--text-shadow-dark);
 }
 
+/* --- Intro: Dual Affordance CTAs --- */
+.intro-otw-link {
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  position: relative;
+  z-index: var(--z-layer-5);
+}
+
+.intro-otw-link .subtitle-glitch {
+  transition: color var(--transition-base), text-shadow var(--transition-base);
+}
+
+.intro-otw-link:hover .subtitle-glitch {
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.intro-otw-link:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+.intro-work-cta {
+  margin-top: var(--spacing-lg);
+  position: relative;
+  z-index: var(--z-layer-5);
+  text-shadow: var(--text-shadow-dark);
+}
+
+.intro-work-cta:hover {
+  text-shadow: none;
+}
+
+.intro-work-cta:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
 /* --- Particle System Canvas --- */
 #particleCanvas {
   position: absolute;
@@ -1513,9 +1554,18 @@ nav {
 .seal-cta-wrapper {
   grid-column: 1 / -1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 32px;
   padding: 70px 0 30px;
+}
+
+.about-social-icons {
+  position: static;
+  opacity: 1;
+  transform: none;
+  animation: none;
 }
 
 #seal-cta {
@@ -2812,32 +2862,6 @@ nav {
   clip-path: inset(0 0 100% 0);
 }
 
-.photo-camera-deco {
-  position: sticky;
-  bottom: 0;
-  align-self: center;
-  display: block;
-  width: 520px;
-  margin-top: auto;
-  pointer-events: none;
-  user-select: none;
-  opacity: 0;
-  z-index: 4; /* within overlay stacking context, above polaroid grid (z:3) */
-  transform: translateY(100%) rotate(180deg);
-  transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
-              transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.photo-camera-deco.visible {
-  opacity: 1;
-  transform: translateY(50%) rotate(180deg);
-}
-
-.photo-camera-deco.polaroid-active {
-  opacity: 1;
-  transform: translateY(50%) rotate(180deg);
-}
-
 .photo-static-line {
   position: fixed;
   left: 0;
@@ -2877,7 +2901,7 @@ nav {
 
 .photo-scroll-spacer {
   position: relative;
-  height: 1400vh; /* 300vh existing phases + 7 rows × 150vh (ROW_PHASE=1.5) polaroid gallery */
+  height: 300vh;
   z-index: var(--z-layer-1);
 }
 
@@ -3093,68 +3117,6 @@ nav {
 /* In left col the highlight is inline (not block) */
 .photo-cta--left .photo-ai-highlight {
   display: inline;
-}
-
-/* Polaroid intro block — sits below the accordion in the left column */
-.photo-polaroids-intro {
-  margin-top: clamp(1.25rem, 2.5vw, 2rem);
-  padding-top: clamp(0.9rem, 1.8vw, 1.5rem);
-  border-top: 1px solid rgba(10, 147, 150, 0.18);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.55rem, 1vw, 0.85rem);
-}
-
-.photo-polaroids-subtitle {
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 700;
-  font-size: clamp(1rem, 1.6vw, 1.3rem);
-  color: #001219;
-  letter-spacing: 0.06em;
-  margin: 0;
-  position: relative;
-  z-index: 0;
-}
-
-.photo-polaroids-desc {
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 300;
-  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
-  color: #001219;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 0;
-}
-
-.photo-polaroids-cta {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.7rem, 1vw, 0.85rem);
-  color: #001219;
-  letter-spacing: 0.1em;
-  line-height: 1.4;
-  margin: 0;
-  position: relative;
-  z-index: 0;
-}
-
-/* Amber sweep — constrained to text width, same mechanism as .photo-cta--left */
-.photo-polaroids-cta.photo-ai-highlight {
-  width: fit-content;
-  padding: 0 4px;
-  background-image: linear-gradient(#E9D8A6, #E9D8A6);
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: 0% 88%;
-  transition: background-size 0.8s ease-out;
-}
-
-.photo-polaroids-cta.photo-ai-highlight::before {
-  display: none;
-}
-
-.photo-polaroids-cta.photo-ai-highlight.photo-ai-highlight--animate {
-  background-size: 100% 88%;
 }
 
 /* Centre column: Instagram */
@@ -4005,347 +3967,6 @@ nav {
 
 .photo-glitch-load {
   animation: photo-glitch-in 0.5s steps(1, end) both;
-}
-
-/* ============================================================================
-   PHOTO SECTION — POLAROID GALLERY GRID
-   50 border-only polaroid cards animated by photo-polaroids.js.
-   Cards are position:absolute inside this container and moved exclusively
-   via transform:translate(x,y) — no top/left changes after init.
-   ============================================================================ */
-
-/* Grid sits inside the overlay as a direct sibling of .photo-content-scroll.
-   left/width are set by JS to exactly cover .photo-col-left.
-   overflow: visible so cards can enter from below the overlay's box. */
-.photo-polaroid-grid {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  /* left & width set by JS */
-  z-index: 3; /* within overlay stacking context, below camera (z:4) */
-  pointer-events: none;
-  overflow: visible;
-}
-
-/* Individual card — true Polaroid 600 proportions (35:43).
-   No photo, no canvas — just the amber border frame. */
-.polaroid-card {
-  position: absolute;
-  top: 0;
-  left: 0;
-  /* Width set by JS (11vw). Height = aspect-ratio CSS fallback. */
-  aspect-ratio: 35 / 43;
-  border: 2px solid #EE9B00;
-  border-radius: 3px;
-  background: #001219;
-  box-shadow:
-    0 0 8px  rgba(238, 155, 0, 0.25),
-    0 0 20px rgba(238, 155, 0, 0.08),
-    inset 0 0 6px rgba(238, 155, 0, 0.05);
-  overflow: hidden;
-  will-change: transform, opacity;
-  pointer-events: none;
-  user-select: none;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-/* Caption strip — matches the real Polaroid 600 bottom (22.4 % of total height).
-   Uses border-top to keep it minimal with no extra markup. */
-.polaroid-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 22.4%;
-  border-top: 1px solid rgba(238, 155, 0, 0.35);
-  border-radius: 0 0 2px 2px;
-  background: rgba(0, 18, 25, 0.6);
-}
-
-/* "Shutter open" moment — amber glow pulse when card is at the shutter position.
-   Toggled by JS with the .at-shutter class (localT ≈ 0.5). */
-.polaroid-card.at-shutter {
-  box-shadow:
-    0 0 20px rgba(238, 155, 0, 0.85),
-    0 0 50px rgba(238, 155, 0, 0.45),
-    0 0 90px rgba(238, 155, 0, 0.18),
-    inset 0 0 12px rgba(238, 155, 0, 0.15);
-  border-color: #F5C842;
-}
-
-/* ── Polaroid card — hover retrofuturistic HUD effect ───────────────────────
-   "Targeting acquisition" sequence: corner brackets lock in, a scan beam
-   sweeps top→bottom, a crosshair grows from center, a teal grid materialises,
-   and a one-shot lock-on flash confirms acquisition.
-
-   Layer map (::before + 4 child .polaroid-gl divs from photo-polaroids.js):
-     .polaroid-card::before     → corner targeting brackets  (amber)
-     .polaroid-gl:nth-child(1)  → scan beam  (amber+cyan sweep, loops)
-     .polaroid-gl:nth-child(2)  → crosshair  (cyan, ::before/::after)
-     .polaroid-gl:nth-child(3)  → grid texture  (teal, fades in)
-     .polaroid-gl:nth-child(4)  → lock-on acquisition flash  (one-shot)
-
-   The ::after caption strip stacks above all children (pseudo-element order).
-   Effect only fires on placed cards (pointer-events:auto set by JS).     */
-
-/* ── Hover: card border brightens ────────────────────────────────────────── */
-.polaroid-card:hover {
-  border-color: #F5C842;
-  box-shadow:
-    0 0 14px rgba(238, 155, 0, 0.65),
-    0 0 36px rgba(238, 155, 0, 0.22),
-    0 0 80px rgba(238, 155, 0, 0.07),
-    inset 0 0 10px rgba(238, 155, 0, 0.10);
-}
-
-/* ── Corner targeting brackets (::before, currently unused) ──────────────── */
-.polaroid-card::before {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  border: 1px solid rgba(238, 155, 0, 0.9);
-  border-radius: 1px;
-  pointer-events: none;
-  opacity: 0;
-  /* Show only the 4 corner L-shapes by clipping a full border */
-  clip-path: polygon(
-    0% 0%,   22% 0%,  22% 6%,  6% 6%,  6% 22%,  0% 22%,
-    0% 78%,  6%  78%, 6%  94%, 22% 94%, 22% 100%, 0% 100%,
-    78% 100%, 78% 94%, 94% 94%, 94% 78%, 100% 78%, 100% 100%,
-    100% 22%, 94% 22%, 94% 6%,  78% 6%,  78% 0%,  100% 0%
-  );
-}
-
-.polaroid-card:hover::before {
-  animation: hud-brackets 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes hud-brackets {
-  from {
-    opacity: 0;
-    clip-path: polygon(
-      0%  0%,  10% 0%,  10% 3%,  3%  3%,  3%  10%, 0%  10%,
-      0%  90%, 3%  90%, 3%  97%, 10% 97%, 10% 100%, 0% 100%,
-      90% 100%, 90% 97%, 97% 97%, 97% 90%, 100% 90%, 100% 100%,
-      100% 10%, 97% 10%, 97% 3%,  90% 3%,  90% 0%,  100% 0%
-    );
-  }
-  to {
-    opacity: 1;
-    clip-path: polygon(
-      0%  0%,   22% 0%,  22% 6%,  6%  6%,  6%  22%, 0%  22%,
-      0%  78%,  6%  78%, 6%  94%, 22% 94%, 22% 100%, 0% 100%,
-      78% 100%, 78% 94%, 94% 94%, 94% 78%, 100% 78%, 100% 100%,
-      100% 22%, 94% 22%, 94% 6%,  78% 6%,  78% 0%,  100% 0%
-    );
-  }
-}
-
-/* ── Glitch layer base ───────────────────────────────────────────────────── */
-.polaroid-gl {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0;
-  pointer-events: none;
-  border-radius: 2px;
-  will-change: transform, opacity;
-}
-
-/* ── Layer 1: scan beam — amber+cyan line sweeps top→bottom, loops ────────
-   Element is 200% tall, starts at top:-100% so translateY(50%) = 1 card-h  */
-.polaroid-card:hover .polaroid-gl:nth-child(1) {
-  top: -100%;
-  bottom: auto;
-  height: 200%;
-  background: linear-gradient(
-    to bottom,
-    transparent       46%,
-    rgba(238,155,0,0.08) 47.5%,
-    rgba(238,155,0,0.60) 49%,
-    rgba(0,255,255,0.95) 50%,
-    rgba(238,155,0,0.50) 51%,
-    rgba(238,155,0,0.08) 52.5%,
-    transparent       54%
-  );
-  mix-blend-mode: screen;
-  opacity: 1;
-  animation: hud-scan 1.8s linear infinite;
-}
-
-@keyframes hud-scan {
-  from { transform: translateY(0); }
-  to   { transform: translateY(50%); }
-}
-
-/* ── Layer 2: crosshair — cyan lines grow from center ────────────────────── */
-.polaroid-card:hover .polaroid-gl:nth-child(2) {
-  opacity: 1;
-}
-
-.polaroid-gl:nth-child(2)::before,
-.polaroid-gl:nth-child(2)::after {
-  content: '';
-  position: absolute;
-  background: rgba(0, 255, 255, 0.52);
-  opacity: 0;
-}
-
-.polaroid-gl:nth-child(2)::before {
-  /* horizontal bar — centered in image area (above 22 % caption) */
-  top: 38%;
-  left: 8%;
-  right: 8%;
-  height: 1px;
-  transform-origin: center;
-}
-
-.polaroid-gl:nth-child(2)::after {
-  /* vertical bar */
-  left: 50%;
-  top: 6%;
-  bottom: 28%;
-  width: 1px;
-  transform-origin: top center;
-}
-
-.polaroid-card:hover .polaroid-gl:nth-child(2)::before {
-  animation: hud-ch-h 0.28s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
-}
-
-.polaroid-card:hover .polaroid-gl:nth-child(2)::after {
-  animation: hud-ch-v 0.28s cubic-bezier(0.22, 1, 0.36, 1) 0.20s both;
-}
-
-@keyframes hud-ch-h {
-  from { transform: scaleX(0); opacity: 0; }
-  to   { transform: scaleX(1); opacity: 1; }
-}
-
-@keyframes hud-ch-v {
-  from { transform: scaleY(0); opacity: 0; }
-  to   { transform: scaleY(1); opacity: 1; }
-}
-
-/* ── Layer 3: teal grid texture — fades in ───────────────────────────────── */
-.polaroid-card:hover .polaroid-gl:nth-child(3) {
-  background-image:
-    linear-gradient(to right,  rgba(10, 147, 150, 0.10) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(10, 147, 150, 0.10) 1px, transparent 1px);
-  background-size: 20% 16%;
-  animation: hud-grid 0.35s ease-out 0.06s both;
-}
-
-@keyframes hud-grid {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-/* ── Layer 4: lock-on flash — one-shot acquisition sequence ──────────────── */
-.polaroid-card:hover .polaroid-gl:nth-child(4) {
-  background: rgba(238, 155, 0, 0.14);
-  box-shadow: inset 0 0 0 3px rgba(238, 155, 0, 0.9);
-  mix-blend-mode: screen;
-  animation: hud-lock 1.3s ease-out forwards;
-}
-
-@keyframes hud-lock {
-  0%   { opacity: 0;   box-shadow: inset 0 0 0 12px rgba(238, 155, 0, 0.35); }
-  12%  { opacity: 1;   box-shadow: inset 0 0 0  3px rgba(238, 155, 0, 1.00); }
-  35%  { opacity: 0.6; }
-  55%  { opacity: 0; }
-  68%  { opacity: 0.45; box-shadow: inset 0 0 0 1px rgba(238, 155, 0, 0.65); }
-  82%  { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-/* Camera recoil — fires when a card ejects.  The camera is upside-down so the
-   ejection force pushes it downward.  Uses CSS `translate` to compose on top
-   of the JS-managed `transform` without conflict. */
-@keyframes camera-bump {
-  0%   { translate: 0 0; }
-  20%  { translate: 0 10px; }
-  45%  { translate: 0 4px; }
-  68%  { translate: 0 7px; }
-  88%  { translate: 0 2px; }
-  100% { translate: 0 0; }
-}
-
-.photo-camera-deco.camera-eject-anim {
-  animation: camera-bump 0.65s cubic-bezier(0.34, 1.1, 0.64, 1);
-}
-
-/* Ejection bobble — fires once when card clears the camera shutter.
-   Uses the CSS `translate` property (independent from JS-managed `transform`)
-   so both compose without conflict.  Fired via .polaroid-eject-anim class. */
-@keyframes polaroid-eject {
-  0%   { translate: 0 0; }
-  22%  { translate: 0 -16px; }
-  44%  { translate: 0 -5px; }
-  64%  { translate: 0 -11px; }
-  82%  { translate: 0 -3px; }
-  100% { translate: 0 0; }
-}
-
-.polaroid-card.polaroid-eject-anim {
-  animation: polaroid-eject 0.7s cubic-bezier(0.34, 1.15, 0.64, 1);
-}
-
-/* ── Polaroid card expand / collapse ──────────────────────────────────────────
-   Clicking a placed card moves it to #photo root and scales it to viewport
-   center.  A dark backdrop fades in behind; an amber [X] closes the expand.
-   ─────────────────────────────────────────────────────────────────────────── */
-
-.polaroid-expand-backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 8; /* above camera (z:4), below expanded card (z:12) */
-  background: rgba(0, 18, 25, 0.92);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  pointer-events: none;
-  cursor: pointer;
-}
-
-.polaroid-expand-backdrop.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.polaroid-expand-close {
-  position: absolute;
-  top: clamp(1rem, 2.5vh, 1.5rem);
-  right: clamp(1rem, 2.5vw, 2rem);
-  z-index: 16; /* above expanded card (z:12) */
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.85rem, 1.3vw, 1.1rem);
-  letter-spacing: 0.1em;
-  color: #EE9B00;
-  background: transparent;
-  border: none;
-  padding: 0.4em 0.6em;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease 0.2s, color 0.15s ease, text-shadow 0.15s ease;
-  text-shadow: 0 0 12px rgba(238, 155, 0, 0.55);
-}
-
-.polaroid-expand-close.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.polaroid-expand-close:hover {
-  color: #fff;
-  text-shadow: 0 0 18px rgba(255, 255, 255, 0.75);
 }
 
 /* ============================================================================

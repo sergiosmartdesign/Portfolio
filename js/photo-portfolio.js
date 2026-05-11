@@ -133,7 +133,7 @@
     // ── Forward chain: intro → sequential category reveal → bounce-close → tail ──
     _randomTitleColor() {
       const color = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
-      document.querySelectorAll('.pgallery-title, .photo-polaroids-subtitle').forEach(el => {
+      document.querySelectorAll('.pgallery-title').forEach(el => {
         el.style.color = color;
       });
     }
@@ -312,11 +312,6 @@
         this.chainTimers.push(t);
       }
 
-      const camera = document.querySelector('.photo-camera-deco');
-      if (camera) {
-        const t = setTimeout(() => camera.classList.add('visible'), tailStart + 400);
-        this.chainTimers.push(t);
-      }
     }
 
     _cancelChain() {
@@ -355,7 +350,6 @@
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
-      document.querySelector('.photo-camera-deco')?.classList.remove('visible');
       // Stop any in-flight scroll animation and reset position
       if (this.contentScroll) {
         gsap.killTweensOf(this.contentScroll);
@@ -430,7 +424,6 @@
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
-      document.querySelector('.photo-camera-deco')?.classList.remove('visible');
       if (this.contentScroll) {
         gsap.killTweensOf(this.contentScroll);
         this.contentScroll.scrollTop = 0;
@@ -952,7 +945,7 @@
 
     // ── Polaroids title: pick a new random palette colour on each hover ────────
     _setupTitleColorCycle() {
-      document.querySelectorAll('.pgallery-title, .photo-polaroids-subtitle').forEach(el => {
+      document.querySelectorAll('.pgallery-title').forEach(el => {
         el.addEventListener('mouseenter', () => this._randomTitleColor());
       });
     }
