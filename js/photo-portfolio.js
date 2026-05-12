@@ -55,8 +55,16 @@
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
-      // Ghost stream
-      this._stream = null;
+      // Ghost stream — hybrid intro (time-based) + scroll-scrub
+      this._stream              = null;
+      this._streamCards         = [];
+      this._streamRotations     = [];
+      this._streamPhase         = 'idle';   // 'idle' | 'intro' | 'interactive'
+      this._masterT             = 0;        // single source of truth for card positions
+      this._introRaf            = null;
+      this._introStartTime      = 0;
+      this._handoffOffset       = 0;        // blends intro→scroll at handoff
+      this._lastRawForScroll    = undefined;
 
       // Photo bg electric border
       this._photoBorderTurbulence  = null;
@@ -89,7 +97,11 @@
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       this._borderTurbulence      = document.getElementById('accordion-electric-turbulence');
       this._photoBorderTurbulence = document.getElementById('photo-bg-turbulence');
-      this._stream = document.querySelector('.photo-ghost-stream');
+      this._stream      = document.querySelector('.photo-ghost-stream');
+      this._streamCards = Array.from(document.querySelectorAll('.photo-ghost-card'));
+      this._streamRotations = this._streamCards.map(card =>
+        parseFloat(getComputedStyle(card).getPropertyValue('--ghost-rotate').trim()) || 0
+      );
       this._updateStreamWidth();
 
       window.addEventListener('resize', () => {
@@ -146,8 +158,11 @@
     _updateScroll() {
       const spacerTop   = this.spacerDocTop - window.scrollY;
       const rawProgress = 1 - (spacerTop / this.winH);
-      const nowInPhase3 = rawProgress > 2;
 
+      // Stream is scroll-scrubbed — update on every tick before the phase guard
+      this._updateStream(rawProgress);
+
+      const nowInPhase3 = rawProgress > 2;
       if (nowInPhase3 === this.inPhase3) return;
       this.inPhase3 = nowInPhase3;
 
@@ -155,10 +170,11 @@
         this._cancelReverse();
         this.overlay.style.opacity       = '1';
         this.overlay.style.pointerEvents = 'auto';
-        // Tell the nav to mark photo as active immediately (no scroll-debounce lag)
+        this._stream?.classList.add('stream-active');
         document.dispatchEvent(new CustomEvent('photoPhase3Active'));
         this._triggerChain();
       } else {
+        this._stream?.classList.remove('stream-active');
         this._cancelChain();
         this._triggerReverseChain();
       }
@@ -312,9 +328,7 @@
       const tIntroEnd = setTimeout(() => { this.introAnimating = false; this._borderDone(); }, cursor + 150);
       this.chainTimers.push(tIntroEnd);
 
-      // Start the ghost stream after the chain fully settles
-      const tStream = setTimeout(() => { this._stream?.classList.add('stream-active'); }, cursor + 200);
-      this.chainTimers.push(tStream);
+      // (stream-active is set immediately at phase-3 entry in _updateScroll)
 
       // 5. Secondary effects
 
@@ -522,6 +536,59 @@
       if (this._stream) {
         this._stream.style.setProperty('--ghost-stream-w', this._stream.offsetWidth + 'px');
       }
+    }
+
+    // Scroll-scrubbed: called on every scroll tick. Cards travel left → right
+    // as rawProgress increases; reversing scroll moves them back.
+    // SPEED: how many card-lengths of scroll map to rawProgress 1 unit.
+    // CARD_SPACING: masterT gap between consecutive card starts (>1 = gap after each card).
+    _updateStream(rawProgress) {
+      if (!this._stream || !this._streamCards.length) return;
+
+      const STREAM_START  = 2;    // rawProgress at which the stream begins
+      const SPEED         = 6;    // masterT units per rawProgress unit
+      const CARD_SPACING  = 1.5;  // masterT units between card starts (0.5 = 33% gap)
+      const CARD_W        = 232;
+      const streamW       = parseFloat(
+        this._stream.style.getPropertyValue('--ghost-stream-w')
+      ) || 500;
+
+      const masterT = Math.max(0, (rawProgress - STREAM_START) * SPEED);
+
+      this._streamCards.forEach((card, i) => {
+        const t = Math.min(Math.max(masterT - i * CARD_SPACING, 0), 1);
+
+        if (t === 0) {
+          card.style.opacity   = '0';
+          card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
+          return;
+        }
+
+        const finalRot = this._streamRotations[i] || 0;
+        let x, rot;
+
+        if (t < 0.22) {
+          // Eject phase: flat, exits camera slot
+          const p = t / 0.22;
+          x   = p * (streamW * 0.22 - 51);
+          rot = -90;
+        } else if (t < 0.75) {
+          // Rotation phase: upright by 75%
+          const p = (t - 0.22) / 0.53;
+          x   = (streamW * 0.22 - 51) + p * ((streamW * 0.75 - 174) - (streamW * 0.22 - 51));
+          rot = -90 + p * (finalRot + 90);
+        } else {
+          // Coast phase: settled at final tilt, drifts to right edge
+          const p = (t - 0.75) / 0.25;
+          x   = (streamW * 0.75 - 174) + p * ((streamW - CARD_W) - (streamW * 0.75 - 174));
+          rot = finalRot;
+        }
+
+        // Fade in quickly once the card clears the camera (matches mask edge)
+        const opacity = t < 0.03 ? t / 0.03 : 1;
+        card.style.opacity   = String(opacity);
+        card.style.transform = `translateX(${x}px) translateY(-50%) rotate(${rot}deg)`;
+      });
     }
 
     // ── Electric border helpers ──────────────────────────────────────────────

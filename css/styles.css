@@ -3815,17 +3815,19 @@ nav {
   opacity: 1;
 }
 
-/* Each mockup polaroid card — outline only, no photo content */
+/* Each mockup polaroid card — position/opacity driven by JS on every scroll tick */
 .photo-ghost-card {
   position: absolute;
   top: 50%;
   left: 0;
   width: 232px;
   height: 280px;
-  transform: translateY(-50%);
+  opacity: 0;
+  transform: translateX(0) translateY(-50%) rotate(-90deg);
   border: 2px solid rgba(233, 216, 166, 0.9);
   background: rgba(233, 216, 166, 0.07);
   box-sizing: border-box;
+  will-change: transform, opacity;
   --ghost-rotate: 0deg;
 }
 
@@ -3847,72 +3849,8 @@ nav {
 .photo-ghost-card:nth-child(4n+3) { --ghost-rotate: -2deg; }
 .photo-ghost-card:nth-child(4n)   { --ghost-rotate:  5deg; }
 
-/* Animation only fires while stream-active is set (adding/removing the class
-   restarts from scratch — no paused-state residue) */
-.photo-ghost-stream.stream-active .photo-ghost-card {
-  animation: photo-ghost-fly 8s linear infinite;
-}
-
-/* 4 s gap between cards — matches the ~4 s visible window so at most one
-   card is visible at a time (no overlap). 30 cards × 4 s = 120 s stagger. */
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(1)  { animation-delay:   0s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(2)  { animation-delay:   4s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(3)  { animation-delay:   8s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(4)  { animation-delay:  12s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(5)  { animation-delay:  16s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(6)  { animation-delay:  20s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(7)  { animation-delay:  24s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(8)  { animation-delay:  28s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(9)  { animation-delay:  32s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(10) { animation-delay:  36s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(11) { animation-delay:  40s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(12) { animation-delay:  44s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(13) { animation-delay:  48s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(14) { animation-delay:  52s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(15) { animation-delay:  56s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(16) { animation-delay:  60s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(17) { animation-delay:  64s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(18) { animation-delay:  68s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(19) { animation-delay:  72s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(20) { animation-delay:  76s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(21) { animation-delay:  80s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(22) { animation-delay:  84s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(23) { animation-delay:  88s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(24) { animation-delay:  92s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(25) { animation-delay:  96s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(26) { animation-delay: 100s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(27) { animation-delay: 104s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(28) { animation-delay: 108s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(29) { animation-delay: 112s; }
-.photo-ghost-stream.stream-active .photo-ghost-card:nth-child(30) { animation-delay: 116s; }
-
-/* Card ejects flat (–90 °) from the camera slot, holds flat while it
-   clears the camera body (~22 % of travel), then rotates upright so it
-   arrives at its final tilt by ~75 % — already settled before the mask
-   fades it out near the right edge. */
-@keyframes photo-ghost-fly {
-  0% {
-    transform: translateX(0) translateY(-50%) rotate(-90deg);
-  }
-  22% {
-    transform:
-      translateX(calc(var(--ghost-stream-w, 500px) * 0.22 - 51px))
-      translateY(-50%)
-      rotate(-90deg);
-  }
-  75% {
-    transform:
-      translateX(calc(var(--ghost-stream-w, 500px) * 0.75 - 174px))
-      translateY(-50%)
-      rotate(var(--ghost-rotate));
-  }
-  100% {
-    transform:
-      translateX(calc(var(--ghost-stream-w, 500px) - 232px))
-      translateY(-50%)
-      rotate(var(--ghost-rotate));
-  }
-}
+/* Card transforms and opacity are set entirely by JS (_updateStream).
+   No CSS animation — position is scroll-scrubbed. */
 
 .photo-category-btn {
   display: flex;
