@@ -518,12 +518,12 @@
     hintHudScroll.className = 'illus-hud-scroll glitch-text subtitle-glitch';
     hintHudScroll.setAttribute('data-splitting', '');
     hintHudScroll.innerHTML =
-        '<span>[ · s c r o l l</span>' +
+        '<span>· s c r o l l</span>' +
         '<span class="illus-hud-scroll-in">o r</span>' +
         '<span class="illus-hud-scroll-in">c l I c k</span>' +
         '<span class="illus-hud-scroll-in">- E N T E R -</span>' +
         '<span class="illus-hud-scroll-in">t o</span>' +
-        '<span class="illus-hud-scroll-in">v I e w · ]</span>';
+        '<span class="illus-hud-scroll-in">v I e w ·</span>';
 
     hintHudBar.appendChild(hintHudFill);
     hintHud.appendChild(hintHudPct);

@@ -788,6 +788,21 @@
     animation-name: glitch-switch;
 }
 
+/* Body glitch — same gate pattern, light weight */
+.illus-body .glitch-text {
+    display: block;
+}
+
+#illustration .illus-body [data-char]:after {
+    animation-name: none;
+    color: var(--illus-fg);
+    font-weight: 300;
+}
+
+#illustration .illus-section.active .illus-body [data-char]:after {
+    animation-name: glitch-switch;
+}
+
 /* "LUST" accent — color driven by --illus-lust-accent, updated by JS on every stop change.
    Specificity (1,5,1) beats the base word-art rule (1,4,1) to override color only here.
    The transition fires from --illus-fg to the new color each time the section becomes .active,
