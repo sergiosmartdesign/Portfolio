@@ -161,10 +161,22 @@
             <h1 id="main-title" class="glitch-text reveal--0" data-splitting aria-label="Sergio Ayala | Creative Design">· S e r g i o  A y a l a | C r e a t i v e D e s i g n ·</h1>
 
             <a href="#contact" class="intro-otw-link" aria-label="Open to work — get in touch">
-                <h2 class="glitch-text subtitle-glitch" data-splitting aria-label="Open To Work">[ · O p e n   T o   W o r k · ]</h2>
+                <h2 class="glitch-text subtitle-glitch" data-splitting data-i18n-split="intro.otw" aria-label="Open To Work">[ · O p e n   T o   W o r k · ]</h2>
             </a>
 
-            <a href="#art-direction" class="intro-work-cta nav-btn glitch-text" data-splitting aria-label="See my work">[ · s e e · m y · w o r k · ]</a>
+            <a href="#art-direction" class="intro-work-cta nav-btn glitch-text" data-splitting data-i18n-split="intro.cta" aria-label="See my work">[ · s e e · m y · w o r k · ]</a>
+
+            <!-- Scroll hint — inline, below CTAs -->
+            <div class="intro-scroll-hint" aria-hidden="true">
+                <svg class="sc-icon" viewBox="0 0 36 62" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+                    <rect x="8" y="1" width="20" height="34" rx="10" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="18" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+                    <rect class="sc-wheel" x="15.5" y="7" width="5" height="9" rx="2.5" fill="currentColor"/>
+                    <polyline class="sc-chevron-1" points="11,42 18,50 25,42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline class="sc-chevron-2" points="11,51 18,59 25,51" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p class="sc-text">[ · s c r o l l · ]</p>
+            </div>
 
             <!-- Cyberpunk panel - slides in after 2 seconds -->
             <div class="cyber-panel" id="introCyberPanel">
@@ -1187,12 +1199,27 @@
                         <p class="photo-intro" data-i18n-html="photo.intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em></p>
 
                         <aside class="photo-col-instagram" aria-label="Sergio Ayala Photography on Instagram">
-                            <span class="photo-ig-label" aria-hidden="true" data-i18n="photo.ig.label">[ · o n &nbsp; i n s t a g r a m · ]</span>
+                            <div class="photo-ig-header">
+                            <ul class="social-media-icons about-social-icons" aria-label="Instagram">
+                                <li>
+                                    <a class="instagram" href="https://www.instagram.com/sersh01/" target="_blank" rel="noopener noreferrer" aria-label="Sergio Ayala on Instagram">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <svg class="social-icon" viewBox="0 0 448 512" aria-hidden="true">
+                                            <path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                            <span class="photo-ig-label" aria-hidden="true" data-i18n="photo.ig.label">· i n s t a g r a m ·</span>
+                            </div>
                             <a href="https://www.instagram.com/sersh01/" class="photo-ig-handle" target="_blank" rel="noopener noreferrer" aria-label="Sergio Ayala on Instagram — @sersh01">@sersh01</a>
                             <p class="photo-ig-desc" data-i18n="photo.ig.desc">Want to see more? I post regularly on Instagram — more variety, more places, less structure. Everything that doesn't fit in a portfolio but is still worth sharing.</p>
                             <a href="https://www.instagram.com/sersh01/" class="photo-ig-link" target="_blank" rel="noopener noreferrer" aria-label="Follow Sergio Ayala on Instagram — @sersh01">
                                 <svg class="photo-ig-icon" viewBox="0 0 448 512" aria-hidden="true"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
-                                <span class="photo-ig-cta" data-i18n="photo.ig.cta">[ · f o l l o w · ]</span>
+                                <span class="photo-ig-cta" data-i18n="photo.ig.cta">· f o l l o w ·</span>
                             </a>
                         </aside>
 
@@ -1286,7 +1313,7 @@
                                 <span class="glitch-text illus-word-in" data-splitting>R A T</span>
                                 <span class="glitch-text illus-word-in" data-splitting>I O N · ]</span>
                             </div>
-                            <p class="illus-body">These are illustrations built on a single principle: the concept outlives the medium. Each piece begins with an inversion — of scale, expectation, or logic — and stops only when the idea can't be reduced further. Scroll to move through the work.</p>
+                            <p class="illus-body">[ · s c r o l l<br>o r<br>c l I c k<br>- E N T E R -<br>t o<br>v I e w · ]</p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta" data-goto="1">
                                     Enter

@@ -20,6 +20,10 @@
   // ── TRANSLATIONS ────────────────────────────────────────────────────────────
   const TRANSLATIONS = {
     en: {
+      // ── Intro CTAs ────────────────────────────────────────────────────────
+      'intro.otw': '[ · O p e n   T o   W o r k · ]',
+      'intro.cta': '[ · s e e · m y · w o r k · ]',
+
       // ── Navigation ────────────────────────────────────────────────────────
       'nav.about':        '[ · a b o u t · ]',
       'nav.photography':  '[ · p h o t o g r a p h y · ]',
@@ -47,9 +51,9 @@
       'photo.cat.street':     '· s t r e e t \u00a0 p h o t o ·',
       'photo.cat.animals':    '· a n i m a l s ·',
       'photo.cat.travel':     '· t r a v e l ·',
-      'photo.ig.label':       '[ · o n \u00a0 i n s t a g r a m · ]',
+      'photo.ig.label':       '· i n s t a g r a m ·',
       'photo.ig.desc':        'Want to see more? I post regularly on Instagram — more variety, more places, less structure. Everything that doesn\'t fit in a portfolio but is still worth sharing.',
-      'photo.ig.cta':         '[ · f o l l o w · ]',
+      'photo.ig.cta':         '· f o l l o w ·',
       'photo.intro':          'Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em>',
 
       // ── Photo titles — Landscapes ──────────────────────────────────────────
@@ -151,6 +155,10 @@
     },
 
     es: {
+      // ── Intro CTAs ────────────────────────────────────────────────────────
+      'intro.otw': '[ · T r a b a j e m o s   J u n t o s · ]',
+      'intro.cta': '[ · v e r · m i · t r a b a j o · ]',
+
       // ── Navigation ────────────────────────────────────────────────────────
       'nav.about':        '[ · s o b r e · ]',
       'nav.photography':  '[ · f o t o g r a f í a · ]',
@@ -178,9 +186,9 @@
       'photo.cat.street':     '· f o t o \u00a0 u r b a n a ·',
       'photo.cat.animals':    '· a n i m a l e s ·',
       'photo.cat.travel':     '· v i a j e s ·',
-      'photo.ig.label':       '[ · e n \u00a0 i n s t a g r a m · ]',
+      'photo.ig.label':       '· i n s t a g r a m ·',
       'photo.ig.desc':        '¿Quieres ver más? Publico regularmente en Instagram — más variedad, más lugares, menos estructura. Todo lo que no cabe en un portfolio pero vale la pena compartir.',
-      'photo.ig.cta':         '[ · s e g u i r · ]',
+      'photo.ig.cta':         '· s e g u i r ·',
       'photo.intro':          'La fotografía ha sido parte de mi trabajo profesional y personal durante años — desde proyectos comerciales y editoriales hasta trabajo callejero y de viaje en cuatro continentes. Es una de mis pasiones, una disciplina donde la composición se traduce en imágenes visualmente atractivas. <em><span class="photo-ai-highlight">Cada foto en este archivo lleva <strong><em>metadatos generados por IA</em></strong>,</span> haciendo que el portfolio sea completamente buscable por personas, motores de búsqueda y sistemas de IA.</em>',
 
       // ── Photo titles — Landscapes ──────────────────────────────────────────

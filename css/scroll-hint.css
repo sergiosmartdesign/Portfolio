@@ -94,6 +94,38 @@
   50%      { opacity: 0.55; }
 }
 
+/* ── Intro section inline scroll hint ────────────────────────────────────── */
+.intro-scroll-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2.5rem;
+  position: relative;
+  z-index: var(--z-layer-5);
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity   0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.intro-scroll-hint.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.intro-scroll-hint .sc-icon {
+  width: 40px;
+  height: 70px;
+}
+
+.intro-scroll-hint .sc-text {
+  font-size: 0.75rem;
+}
+
 /* ── Photo section scroll hint — same layout, crimson palette ─────────────── */
 #photo-scroll-hint {
   position: fixed;

@@ -11,93 +11,127 @@
   const AUTO_HIDE      = 3000; // ms hint stays visible
   const FRAME_INTERVAL = 110;  // ms between typewriter frames
 
-  let hint            = null;
-  let scrollText      = null;
-  let idleTimer       = null;
-  let autoHideTimer   = null;
-  let typewriterTimer = null;
-  let isVisible       = false;
-  let aboutActive     = false;
-  let primed          = false;
-
   const SCROLL_FRAMES = [
     '[ ]', '[ · · ]', '[ · s · ]', '[ · s c · ]',
     '[ · s c r · ]', '[ · s c r o · ]', '[ · s c r o l · ]', '[ · s c r o l l · ]',
   ];
 
-  function typewriter() {
-    if (!scrollText) return;
-    clearTimeout(typewriterTimer);
-    let frame = 0;
-    scrollText.textContent = SCROLL_FRAMES[0];
-    function next() {
-      frame++;
-      if (frame < SCROLL_FRAMES.length) {
-        scrollText.textContent = SCROLL_FRAMES[frame];
-        typewriterTimer = setTimeout(next, FRAME_INTERVAL);
+  /* ── Generic hint controller ─────────────────────────────────────────────── */
+  function makeHintController(hintEl, textEl) {
+    let idleTimer       = null;
+    let autoHideTimer   = null;
+    let typewriterTimer = null;
+    let isVisible       = false;
+    let sectionActive   = false;
+    let primed          = false;
+
+    function typewriter() {
+      if (!textEl) return;
+      clearTimeout(typewriterTimer);
+      let frame = 0;
+      textEl.textContent = SCROLL_FRAMES[0];
+      function next() {
+        frame++;
+        if (frame < SCROLL_FRAMES.length) {
+          textEl.textContent = SCROLL_FRAMES[frame];
+          typewriterTimer = setTimeout(next, FRAME_INTERVAL);
+        }
+      }
+      typewriterTimer = setTimeout(next, FRAME_INTERVAL);
+    }
+
+    function show() {
+      if (isVisible || !sectionActive) return;
+      isVisible = true;
+      hintEl.removeAttribute('aria-hidden');
+      hintEl.classList.add('visible');
+      typewriter();
+      clearTimeout(autoHideTimer);
+      autoHideTimer = setTimeout(() => { hide(); scheduleShow(); }, AUTO_HIDE);
+    }
+
+    function hide() {
+      if (!isVisible) return;
+      isVisible = false;
+      clearTimeout(autoHideTimer);
+      clearTimeout(typewriterTimer);
+      hintEl.setAttribute('aria-hidden', 'true');
+      hintEl.classList.remove('visible');
+    }
+
+    function scheduleShow() {
+      clearTimeout(idleTimer);
+      if (sectionActive && primed) idleTimer = setTimeout(show, IDLE_DELAY);
+    }
+
+    function onActivity() {
+      if (isVisible) hide();
+      if (sectionActive) primed = true;
+      scheduleShow();
+    }
+
+    function setSectionActive(active) {
+      sectionActive = active;
+      if (!active) {
+        hide();
+        clearTimeout(idleTimer);
+        primed = false;
+      } else {
+        primed = true;
+        scheduleShow();
       }
     }
-    typewriterTimer = setTimeout(next, FRAME_INTERVAL);
+
+    function reset() { hide(); primed = false; }
+
+    return { onActivity, setSectionActive, reset };
   }
 
-  function show() {
-    if (isVisible || !aboutActive) return;
-    isVisible = true;
-    hint.removeAttribute('aria-hidden');
-    hint.classList.add('visible');
-    typewriter();
-    clearTimeout(autoHideTimer);
-    autoHideTimer = setTimeout(() => { hide(); scheduleShow(); }, AUTO_HIDE);
-  }
-
-  function hide() {
-    if (!isVisible) return;
-    isVisible = false;
-    clearTimeout(autoHideTimer);
-    clearTimeout(typewriterTimer);
-    hint.setAttribute('aria-hidden', 'true');
-    hint.classList.remove('visible');
-  }
-
-  function scheduleShow() {
-    clearTimeout(idleTimer);
-    if (aboutActive && primed) idleTimer = setTimeout(show, IDLE_DELAY);
-  }
-
-  function onActivity() {
-    if (isVisible) return;
-    if (aboutActive) primed = true;
-    scheduleShow();
-  }
-
+  /* ── Init ────────────────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
-    hint = document.getElementById('scroll-hint');
-    if (!hint) return;
 
-    scrollText = document.querySelector('.sc-text');
+    /* About section — fixed overlay */
+    const aboutHintEl = document.getElementById('scroll-hint');
+    const aboutTextEl = aboutHintEl && aboutHintEl.querySelector('.sc-text');
+    const aboutCtrl   = aboutHintEl ? makeHintController(aboutHintEl, aboutTextEl) : null;
 
-    ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'].forEach(evt => {
-      window.addEventListener(evt, onActivity, { passive: true });
+    /* Intro section — inline element */
+    const introHintEl = document.querySelector('.intro-scroll-hint');
+    const introTextEl = introHintEl && introHintEl.querySelector('.sc-text');
+    const introCtrl   = introHintEl ? makeHintController(introHintEl, introTextEl) : null;
+
+    const EVENTS = ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'];
+    EVENTS.forEach(evt => {
+      window.addEventListener(evt, () => {
+        aboutCtrl && aboutCtrl.onActivity();
+        introCtrl && introCtrl.onActivity();
+      }, { passive: true });
     });
 
-    const about = document.getElementById('about');
-    if (!about) return;
+    /* Observe about section */
+    if (aboutCtrl) {
+      const about = document.getElementById('about');
+      if (about) {
+        new IntersectionObserver(entries => {
+          entries.forEach(e => aboutCtrl.setSectionActive(e.isIntersecting));
+        }, { threshold: 0.05 }).observe(about);
+      }
+    }
 
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        aboutActive = entry.isIntersecting;
-        if (!aboutActive) {
-          hide();
-          clearTimeout(idleTimer);
-          primed = false;
-        }
-      });
-    }, { threshold: 0.05 });
-
-    observer.observe(about);
+    /* Observe intro section */
+    if (introCtrl) {
+      const intro = document.getElementById('intro');
+      if (intro) {
+        new IntersectionObserver(entries => {
+          entries.forEach(e => introCtrl.setSectionActive(e.isIntersecting));
+        }, { threshold: 0.05 }).observe(intro);
+      }
+    }
 
     window.addEventListener('pageshow', (e) => {
-      if (e.persisted) { hide(); primed = false; }
+      if (!e.persisted) return;
+      aboutCtrl && aboutCtrl.reset();
+      introCtrl && introCtrl.reset();
     });
   });
 })();

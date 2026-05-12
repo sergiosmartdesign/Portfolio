@@ -651,6 +651,7 @@ nav {
 }
 
 .intro-otw-link .subtitle-glitch {
+  color: var(--white);
   transition: color var(--transition-base), text-shadow var(--transition-base);
 }
 
@@ -1566,6 +1567,18 @@ nav {
   opacity: 1;
   transform: none;
   animation: none;
+}
+
+.about-social-icons li a {
+  color: #001219;
+}
+
+.about-social-icons li a span:nth-child(1),
+.about-social-icons li a span:nth-child(3),
+.about-social-icons li a span:nth-child(2),
+.about-social-icons li a span:nth-child(4) {
+  background: #001219;
+  box-shadow: none;
 }
 
 #seal-cta {
@@ -3170,6 +3183,13 @@ nav {
   8%   { opacity: 1; }
   75%  { opacity: 1; }
   100% { top: 100%; opacity: 0; }
+}
+
+.photo-ig-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 
 .photo-ig-label {

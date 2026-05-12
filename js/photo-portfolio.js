@@ -301,14 +301,17 @@
         this.chainTimers.push(t);
       }
 
-      // Polaroid hint + camera reveal after revert finishes
+      // Polaroid hint fires right after the camera column appears
       const hint = document.querySelector('.photo-polaroid-hint');
       if (hint) {
+        const cameraEl  = this.overlay.querySelector('.photo-col-camera');
+        const cameraIdx = introEls.indexOf(cameraEl);
+        const hintDelay = (cameraIdx >= 0 ? cameraIdx : 4) * INTRO_STEP + 300;
         const t = setTimeout(() => {
           hint.classList.remove('reveal');
           void hint.offsetWidth;
           hint.classList.add('reveal');
-        }, tailStart + 200);
+        }, hintDelay);
         this.chainTimers.push(t);
       }
 
