@@ -88,6 +88,14 @@
   display: flex;
   overflow: hidden;
   border-radius: 2px;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+/* Leaving state — fires before DOM swap on discipline change */
+#art-direction .ad-acc-track.is-leaving {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
 }
 
 /* ── Individual slides ── */
