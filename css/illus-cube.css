@@ -329,6 +329,48 @@
     letter-spacing: 0.15em;
     line-height: 1.85;
     color: var(--illus-muted);
+    text-shadow:
+        0 0 4px  rgba(148, 210, 189, 0.90),
+        0 0 12px rgba(148, 210, 189, 0.55),
+        0 0 28px rgba(148, 210, 189, 0.25);
+    animation: illus-neon-flicker 22s linear 2.5s infinite;
+}
+
+@keyframes illus-neon-flicker {
+    /* Long stable open */
+    0%, 8.8%   { opacity: 1;    }
+    /* Quick double blink */
+    9%         { opacity: 0.1;  }
+    9.3%       { opacity: 1;    }
+    9.6%       { opacity: 0;    }
+    9.9%       { opacity: 1;    }
+    /* Long stable */
+    10.5%, 34.8% { opacity: 1; }
+    /* Single dim */
+    35%        { opacity: 0.35; }
+    35.5%      { opacity: 1;    }
+    /* Long stable */
+    36%, 54.8% { opacity: 1;    }
+    /* Triple rapid flicker */
+    55%        { opacity: 0;    }
+    55.2%      { opacity: 1;    }
+    55.5%      { opacity: 0.15; }
+    55.8%      { opacity: 1;    }
+    56.1%      { opacity: 0;    }
+    56.4%      { opacity: 1;    }
+    /* Long stable */
+    57%, 74.8% { opacity: 1;    }
+    /* Single off */
+    75%        { opacity: 0;    }
+    75.4%      { opacity: 1;    }
+    /* Long stable */
+    76%, 89.8% { opacity: 1;    }
+    /* Dim then stutter */
+    90%        { opacity: 0.4;  }
+    90.4%      { opacity: 0;    }
+    90.8%      { opacity: 1;    }
+    /* Stable to end */
+    91.5%, 100% { opacity: 1;   }
 }
 
 /* Cancel .glitch-text white-space:pre so the stacked flex layout still works */
@@ -788,19 +830,63 @@
     animation-name: glitch-switch;
 }
 
-/* Body glitch — same gate pattern, light weight */
+/* Body glitch — display helper for line spans */
 .illus-body .glitch-text {
     display: block;
 }
 
+/* Restore correct text colors when glitch-text class is added to card elements
+   (global glitch-text may override color; these rules win by specificity) */
+#illustration .illus-tag.glitch-text,
+#illustration .illus-tag .glitch-text {
+    color: #E9D8A6;
+}
+
+#illustration .illus-h2.glitch-text {
+    color: var(--illus-fg);
+    font-weight: 800;
+}
+
+#illustration .illus-body.glitch-text,
+#illustration .illus-body .glitch-text {
+    color: var(--illus-fg);
+    font-weight: 300;
+    white-space: normal;
+}
+
+#illustration .illus-body [data-word] {
+    display: inline;
+    white-space: normal;
+}
+
+#illustration .illus-body [data-char] {
+    display: inline;
+}
+
+/* Gate all card text glitch off by default inside #illustration */
+#illustration .illus-tag [data-char]:after,
+#illustration .illus-h2 [data-char]:after,
 #illustration .illus-body [data-char]:after {
     animation-name: none;
     color: var(--illus-fg);
-    font-weight: 300;
+}
+
+/* Fire each element's glitch AFTER its own slide-in transition finishes.
+   Delays match: transition-delay + transition-duration per element.
+   Per-char stagger via --count keeps characters from firing all at once. */
+#illustration .illus-section.active .illus-tag [data-char]:after {
+    animation-name: glitch-switch;
+    animation-delay: calc(0.5s + var(--count, 1) * 0.06s);
+}
+
+#illustration .illus-section.active .illus-h2 [data-char]:after {
+    animation-name: glitch-switch;
+    animation-delay: calc(0.6s + var(--count, 1) * 0.06s);
 }
 
 #illustration .illus-section.active .illus-body [data-char]:after {
     animation-name: glitch-switch;
+    animation-delay: calc(0.75s + var(--count, 1) * 0.05s);
 }
 
 /* "LUST" accent — color driven by --illus-lust-accent, updated by JS on every stop change.
@@ -819,6 +905,11 @@
     letter-spacing: 0.02em;
     line-height: 0.92;
     color: var(--illus-fg);
+    word-break: break-word;
+}
+
+.illus-h2 [data-char] {
+    display: inline;
 }
 
 .illus-body {

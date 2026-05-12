@@ -2986,6 +2986,25 @@ nav {
   pointer-events: none;
 }
 
+.photo-bg-border {
+  position: absolute;
+  inset: -5px;
+  border: 2px solid #94D2BD;
+  box-shadow:
+    0 0  8px rgba(148, 210, 189, 0.85),
+    0 0 24px rgba(148, 210, 189, 0.40),
+    0 0 52px rgba(238, 155,   0, 0.18);
+  filter: url(#photo-bg-electric);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.photo-bg-image.photo-bg-elec-active .photo-bg-border {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
 /* Content overlay — text + accordion, scroll together, z:2 */
 .photo-portfolio-overlay {
   position: absolute;
@@ -3718,6 +3737,48 @@ nav {
 }
 
 /* Category button */
+.photo-polaroids-label {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin: 2rem 0 0;
+  padding: 0;
+  cursor: default;
+  color: #EE9B00;
+  opacity: 0;
+}
+
+.photo-polaroids-desc {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.7rem, 1.05vw, 0.9rem);
+  color: #001219;
+  line-height: 1.6;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.photo-polaroids-camera {
+  display: block;
+  width: 50%;
+  margin: calc(25% - 50px) 0 -25%;
+  transform: rotate(-90deg);
+  transform-origin: left center;
+  opacity: 0;
+}
+
+@keyframes photo-camera-bounce-left {
+  0%   { opacity: 0; transform: rotate(-90deg) translateY(-80px); }
+  100% { opacity: 1; transform: rotate(-90deg) translateY(0); }
+}
+
+.photo-polaroids-camera.photo-camera-reveal {
+  animation: photo-camera-bounce-left 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 .photo-category-btn {
   display: flex;
   align-items: center;

@@ -55,6 +55,14 @@
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
+      // Photo bg electric border
+      this._photoBorderTurbulence  = null;
+      this._photoBorderActive      = false;
+      this._photoBorderRaf         = null;
+      this._photoBorderFrame       = 0;
+      this._photoBorderSettleTimer = null;
+      this._photoBorderStopTimer   = null;
+
       // Flying caption clone
       this._flyClone         = null;
       this._flySource        = null;
@@ -76,17 +84,21 @@
     init() {
       this.winH         = window.innerHeight;
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
-      this._borderTurbulence = document.getElementById('accordion-electric-turbulence');
+      this._borderTurbulence      = document.getElementById('accordion-electric-turbulence');
+      this._photoBorderTurbulence = document.getElementById('photo-bg-turbulence');
 
       window.addEventListener('resize', () => {
         this.winH         = window.innerHeight;
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       }, { passive: true });
 
-      // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids title → polaroids desc → scroll hint
-      const pgalleryTitle = document.querySelector('.pgallery-title');
-      const pgalleryDesc  = document.querySelector('.pgallery-desc');
-      const pgalleryHint  = document.querySelector('.pgallery-hint');
+      // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids label → pgallery title → desc → scroll hint
+      const pgalleryTitle  = document.querySelector('.pgallery-title');
+      const pgalleryDesc   = document.querySelector('.pgallery-desc');
+      const pgalleryHint   = document.querySelector('.pgallery-hint');
+      const polLabel       = document.querySelector('.photo-polaroids-label');
+      const polDesc        = document.querySelector('.photo-polaroids-desc');
+      const polCamera      = document.querySelector('.photo-polaroids-camera');
       this.staticEls = [
         this.overlay.querySelector('.photo-section-label'),
         this.overlay.querySelector('.photo-intro'),
@@ -94,10 +106,20 @@
         this.overlay.querySelector('.photo-cta'),
         this.overlay.querySelector('.photo-col-camera'),
         ...this.categoryBtns,
+        polLabel,
+        polDesc,
+        polCamera,
         pgalleryTitle,
         pgalleryDesc,
         pgalleryHint
       ].filter(Boolean);
+
+      // Set random palette colour on label reveal and on hover
+      if (polLabel) {
+        polLabel.addEventListener('mouseenter', () => {
+          polLabel.style.color = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
+        });
+      }
 
       // Start all chain elements hidden
       this.staticEls.forEach(el => gsap.set(el, { opacity: 0 }));
@@ -151,6 +173,8 @@
       this._borderStart();
       this._initPolaroid();
       this._randomTitleColor();
+      const polLabel = document.querySelector('.photo-polaroids-label');
+      if (polLabel) polLabel.style.color = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
 
       const categoryBtnArray = Array.from(this.categoryBtns);
       const btnSet = new Set(categoryBtnArray);
@@ -338,6 +362,7 @@
         gsap.killTweensOf(el);
         gsap.set(el, { y: 0 });
         el.classList.remove('photo-glitch-load');
+        el.classList.remove('photo-camera-reveal');
         el.classList.remove('glitch-ready');
       });
 
@@ -432,6 +457,7 @@
         });
       });
       this.bgImage.style.opacity = '0';
+      this._bgElecOff();
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
@@ -471,6 +497,7 @@
         el.classList.remove('glitch-ready');
       });
       this.bgImage.style.opacity = '0';
+      this._bgElecOff();
       if (this.contentScroll) {
         gsap.killTweensOf(this.contentScroll);
         this.contentScroll.scrollTop = 0;
@@ -576,6 +603,13 @@
 
     // ── Glitch flash animations ──────────────────────────────────────────────
     _revealItem(item, batchIndex) {
+      if (item.classList.contains('photo-polaroids-camera')) {
+        item.classList.remove('photo-camera-reveal');
+        void item.offsetWidth;
+        item.classList.add('photo-camera-reveal');
+        return;
+      }
+
       gsap.killTweensOf(item);
       gsap.to(item, {
         delay: batchIndex * 0.04,
@@ -733,11 +767,13 @@
           this.bgImage.style.transform  = 'translate(-50%, -50%) scale(1.0)';
         });
       });
+      this._bgElecOn();
     }
 
     hideBackgroundImage() {
       this.bgImage.style.opacity = '0';
       if (this.photoSection) this.photoSection.style.zIndex = '';
+      this._bgElecOff();
     }
 
     // ── Polaroids title: random colour cycle on hover ────────────────────────
@@ -963,6 +999,55 @@
       document.querySelectorAll('.pgallery-title').forEach(el => {
         el.addEventListener('mouseenter', () => this._randomTitleColor());
       });
+    }
+
+    // ── Photo bg electric border ─────────────────────────────────────────────
+
+    _bgElecOn() {
+      // Clear any in-flight settle / stop timers so repeated hovers restart cleanly
+      if (this._photoBorderSettleTimer) { clearTimeout(this._photoBorderSettleTimer); this._photoBorderSettleTimer = null; }
+      if (this._photoBorderStopTimer)   { clearTimeout(this._photoBorderStopTimer);   this._photoBorderStopTimer   = null; }
+
+      // Snap on — same reflow trick as the illustration lightbox
+      this.bgImage.classList.remove('photo-bg-elec-active');
+      void this.bgImage.offsetWidth;
+      this.bgImage.classList.add('photo-bg-elec-active');
+
+      // Start seed cycling if not already running
+      if (!this._photoBorderActive) {
+        this._photoBorderActive = true;
+        this._photoBorderFrame  = 0;
+        this._photoBorderRaf    = requestAnimationFrame(() => this._photoBorderTick());
+      }
+
+      // After settle window: remove class → CSS fades border out over 0.4s
+      const SETTLE_MS = 620;
+      const FADE_MS   = 400;
+      this._photoBorderSettleTimer = setTimeout(() => {
+        this._photoBorderSettleTimer = null;
+        this.bgImage.classList.remove('photo-bg-elec-active');
+        // Stop the RAF once the fade is complete — zero CPU after that
+        this._photoBorderStopTimer = setTimeout(() => {
+          this._photoBorderStopTimer  = null;
+          this._photoBorderActive     = false;
+        }, FADE_MS);
+      }, SETTLE_MS);
+    }
+
+    _bgElecOff() {
+      if (this._photoBorderSettleTimer) { clearTimeout(this._photoBorderSettleTimer); this._photoBorderSettleTimer = null; }
+      if (this._photoBorderStopTimer)   { clearTimeout(this._photoBorderStopTimer);   this._photoBorderStopTimer   = null; }
+      this.bgImage.classList.remove('photo-bg-elec-active');
+      this._photoBorderActive = false;
+    }
+
+    _photoBorderTick() {
+      if (!this._photoBorderActive) { this._photoBorderRaf = null; return; }
+      this._photoBorderFrame++;
+      if (this._photoBorderFrame % 3 === 0 && this._photoBorderTurbulence) {
+        this._photoBorderTurbulence.setAttribute('seed', (Math.random() * 500 | 0) + 1);
+      }
+      this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
     }
 
     // ── Flying caption clone ─────────────────────────────────────────────────

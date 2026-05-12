@@ -738,12 +738,16 @@
         <section id="photo" aria-label="Photography Portfolio">
             <canvas class="photo-static-line"></canvas>
 
-            <!-- SVG filter for accordion electric border — seed cycled by JS RAF, never runs idle -->
+            <!-- SVG filters — seeds cycled by JS RAF, never run idle -->
             <svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
                 <defs>
                     <filter id="accordion-electric" colorInterpolationFilters="sRGB" x="-4%" y="-4%" width="108%" height="108%">
                         <feTurbulence id="accordion-electric-turbulence" type="turbulence" baseFrequency="0.04" numOctaves="2" seed="1" result="noise" />
                         <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
+                    </filter>
+                    <filter id="photo-bg-electric" colorInterpolationFilters="sRGB" x="-2%" y="-2%" width="104%" height="104%">
+                        <feTurbulence id="photo-bg-turbulence" type="turbulence" baseFrequency="0.035" numOctaves="2" seed="1" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" />
                     </filter>
                 </defs>
             </svg>
@@ -1176,6 +1180,9 @@
                             </div>
                             <div class="accordion-electric-border" aria-hidden="true"></div>
                         </div>
+                        <p class="photo-polaroids-label">[ &middot; p o l a r o i d s &middot; ]</p>
+                        <p class="photo-polaroids-desc">A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.</p>
+                        <img src="images/polaroid camera.webp" alt="Polaroid camera" class="photo-polaroids-camera" draggable="false" aria-hidden="true">
                     </div>
 
                     <!-- Right: polaroid unit + editorial text -->
@@ -1229,7 +1236,9 @@
                 </div>
                 </div>
                 <!-- Background hover image — z:1 inside overlay, sits above text (z:0) but below accordion (z:2) -->
-                <div class="photo-bg-image" id="photoBgImage" aria-hidden="true"></div>
+                <div class="photo-bg-image" id="photoBgImage" aria-hidden="true">
+                    <div class="photo-bg-border" aria-hidden="true"></div>
+                </div>
             </div>
         </section>
         <div class="photo-scroll-spacer"></div>
@@ -1306,7 +1315,7 @@
                     <!-- 0: Intro -->
                     <div class="illus-section" data-idx="0">
                         <div class="illus-card">
-                            <div class="illus-tag">· scroll to navigate · or click — E N T E R — to view ·</div>
+                            <div class="illus-tag illus-tag--hero" data-i18n="illus.nav.hint">Scroll to navigate or click Enter to view</div>
                             <div class="illus-h1 illus-word-art" role="heading" aria-level="2" aria-label="Illustration">
                                 <span class="glitch-text" data-splitting>[ · I L</span>
                                 <span class="glitch-text illus-word-in illus-lust-accent" data-splitting>L U S T</span>
@@ -1314,14 +1323,14 @@
                                 <span class="glitch-text illus-word-in" data-splitting>I O N · ]</span>
                             </div>
                             <p class="illus-body">
-                                <span class="glitch-text" data-splitting>Digital, hand-drawn and</span>
-                                <span class="glitch-text" data-splitting>mixed media illustrations.</span>
-                                <span class="glitch-text" data-splitting>3 series applied across editorial,</span>
-                                <span class="glitch-text" data-splitting>brand, and personal projects.</span>
+                                <span class="glitch-text" data-splitting data-i18n-split="illus.intro.body1">Digital, hand-drawn and</span>
+                                <span class="glitch-text" data-splitting data-i18n-split="illus.intro.body2">mixed media illustrations.</span>
+                                <span class="glitch-text" data-splitting data-i18n-split="illus.intro.body3">3 series applied across editorial,</span>
+                                <span class="glitch-text" data-splitting data-i18n-split="illus.intro.body4">brand, and personal projects.</span>
                             </p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta" data-goto="1">
-                                    Enter
+                                    <span data-i18n="illus.cta.enter">Enter</span>
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
                                 </button>
                             </div>
@@ -1332,17 +1341,16 @@
                     <div class="illus-section" data-idx="1">
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
-                            <div class="illus-tag">Mar — 2024 &nbsp;·&nbsp; 01 — Art Rebellion</div>
-                            <h2 class="illus-h2 glitch-text" data-splitting>FLIP<br>THE<br>PROMPT</h2>
-                            <p class="illus-body">A cow walking a monster instead of a monster walking a cow. That inversion is enough to break template thinking. The cape ends up on the wrong body.</p>
-                            <span class="illus-technique">Digital illustration &nbsp;·&nbsp; Conceptual inversion</span>
+                            <div class="illus-tag glitch-text" data-splitting>Mar — 2024 &nbsp;·&nbsp; 01 — Art Rebellion</div>
+                            <h2 class="illus-h2 glitch-text" data-splitting data-i18n-split="illus.cat.digital">DIGITAL</h2>
+                            <p class="illus-body glitch-text" data-splitting data-i18n-split="illus.s1.body">A cow walking a monster instead of a monster walking a cow. That inversion is enough to break template thinking. The cape ends up on the wrong body.</p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta-back" data-goto="0">
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
-                                    Back
+                                    <span data-i18n="illus.cta.back">Back</span>
                                 </button>
                                 <button class="illus-cta" data-goto="2">
-                                    Next
+                                    <span data-i18n="illus.cta.next">Next</span>
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
                                 </button>
                             </div>
@@ -1353,17 +1361,16 @@
                     <div class="illus-section" data-idx="2">
                         <div class="illus-card">
                             <div class="illus-h-line"></div>
-                            <div class="illus-tag">Jun — 2024 &nbsp;·&nbsp; 02 — Moo Walk</div>
-                            <h2 class="illus-h2 glitch-text" data-splitting>NEITHER<br>LEADS</h2>
-                            <p class="illus-body">Clashing colors. No balance. A dance with no choreography. When the model works against itself something more genuine surfaces.</p>
-                            <span class="illus-technique">Mixed media &nbsp;·&nbsp; Color theory subversion</span>
+                            <div class="illus-tag glitch-text" data-splitting>Jun — 2024 &nbsp;·&nbsp; 02 — Moo Walk</div>
+                            <h2 class="illus-h2 glitch-text" data-splitting data-i18n-split="illus.cat.mixed">MIXED MEDIA</h2>
+                            <p class="illus-body glitch-text" data-splitting data-i18n-split="illus.s2.body">Clashing colors. No balance. A dance with no choreography. When the model works against itself something more genuine surfaces.</p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta-back" data-goto="1">
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
-                                    Back
+                                    <span data-i18n="illus.cta.back">Back</span>
                                 </button>
                                 <button class="illus-cta" data-goto="3">
-                                    Next
+                                    <span data-i18n="illus.cta.next">Next</span>
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
                                 </button>
                             </div>
@@ -1374,10 +1381,9 @@
                     <div class="illus-section" data-idx="3">
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
-                            <div class="illus-tag">Sep — 2024 &nbsp;·&nbsp; 03 — Bad Art</div>
-                            <h2 class="illus-h2 glitch-text" data-splitting>REVERSE<br>CREATIVITY</h2>
-                            <p class="illus-body">AI is trained to polish and regularize. The harder direction is unlearning that. A television for a head is not an error. It is the point.</p>
-                            <span class="illus-technique">AI-assisted &nbsp;·&nbsp; Deliberate imperfection</span>
+                            <div class="illus-tag glitch-text" data-splitting>Sep — 2024 &nbsp;·&nbsp; 03 — Bad Art</div>
+                            <h2 class="illus-h2 glitch-text" data-splitting data-i18n-split="illus.cat.digital">DIGITAL</h2>
+                            <p class="illus-body glitch-text" data-splitting data-i18n-split="illus.s3.body">AI is trained to polish and regularize. The harder direction is unlearning that. A television for a head is not an error. It is the point.</p>
                             <div class="illus-stat-row">
                                 <div class="illus-stat">
                                     <span class="illus-stat-num">6</span>
@@ -1395,10 +1401,10 @@
                             <div class="illus-cta-row">
                                 <button class="illus-cta-back" data-goto="2">
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
-                                    Back
+                                    <span data-i18n="illus.cta.back">Back</span>
                                 </button>
                                 <button class="illus-cta" data-goto="4">
-                                    Next
+                                    <span data-i18n="illus.cta.next">Next</span>
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
                                 </button>
                             </div>
@@ -1409,17 +1415,16 @@
                     <div class="illus-section" data-idx="4">
                         <div class="illus-card">
                             <div class="illus-h-line"></div>
-                            <div class="illus-tag">Dec — 2024 &nbsp;·&nbsp; 04 — No Rules</div>
-                            <h2 class="illus-h2 glitch-text" data-splitting>NONSENSE<br>AT THE<br>CENTER</h2>
-                            <p class="illus-body">Dada and the surrealists knew this. Put the absurd at the center and the edges stop pretending. Nine heads in the branches. The sun has a face and it approves.</p>
-                            <span class="illus-technique">Surrealist collage &nbsp;·&nbsp; Narrative inversion</span>
+                            <div class="illus-tag glitch-text" data-splitting>Dec — 2024 &nbsp;·&nbsp; 04 — No Rules</div>
+                            <h2 class="illus-h2 glitch-text" data-splitting data-i18n-split="illus.cat.mixed">MIXED MEDIA</h2>
+                            <p class="illus-body glitch-text" data-splitting data-i18n-split="illus.s4.body">Dada and the surrealists knew this. Put the absurd at the center and the edges stop pretending. Nine heads in the branches. The sun has a face and it approves.</p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta-back" data-goto="3">
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
-                                    Back
+                                    <span data-i18n="illus.cta.back">Back</span>
                                 </button>
                                 <button class="illus-cta" data-goto="5">
-                                    Next
+                                    <span data-i18n="illus.cta.next">Next</span>
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
                                 </button>
                             </div>
@@ -1430,17 +1435,16 @@
                     <div class="illus-section" data-idx="5">
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
-                            <div class="illus-tag">Feb — 2025 &nbsp;·&nbsp; 05 — Super Monsters</div>
-                            <h2 class="illus-h2 glitch-text" data-splitting>RAW<br>NOT<br>POLISHED</h2>
-                            <p class="illus-body">Forward creativity takes a sketch and makes it real. This goes the other way. Imperfection left in place is closer to something honest.</p>
-                            <span class="illus-technique">Hand-drawn &nbsp;·&nbsp; Process as product</span>
+                            <div class="illus-tag glitch-text" data-splitting>Feb — 2025 &nbsp;·&nbsp; 05 — Super Monsters</div>
+                            <h2 class="illus-h2 glitch-text" data-splitting data-i18n-split="illus.cat.traditional">TRADITIONAL</h2>
+                            <p class="illus-body glitch-text" data-splitting data-i18n-split="illus.s5.body">Forward creativity takes a sketch and makes it real. This goes the other way. Imperfection left in place is closer to something honest.</p>
                             <div class="illus-cta-row">
                                 <button class="illus-cta-back" data-goto="4">
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>
-                                    Back
+                                    <span data-i18n="illus.cta.back">Back</span>
                                 </button>
                                 <button class="illus-cta" data-goto="0">
-                                    Begin again
+                                    <span data-i18n="illus.cta.again">Begin again</span>
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>
                                 </button>
                             </div>

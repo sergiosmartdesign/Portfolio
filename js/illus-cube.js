@@ -220,11 +220,10 @@
                 <div class="illus-h-line"></div>
                 <div class="illus-tag glitch-text" data-splitting>${card.date} &nbsp;·&nbsp; ${card.num} — ${card.theme}</div>
                 <h2 class="illus-h2 glitch-text" data-splitting>${h2Lines}</h2>
-                <span class="illus-technique">${card.technique}</span>
                 <div class="illus-cta-row">
-                    <button class="illus-cta-back" data-goto="${i - 1}">${arrowL} Back</button>
+                    <button class="illus-cta-back" data-goto="${i - 1}">${arrowL} <span data-i18n="illus.cta.back">Back</span></button>
                     <button class="illus-cta" data-goto="${nextIdx}">
-                        ${nextIdx === 0 ? 'Begin again' : 'Next'} ${arrowR}
+                        <span data-i18n="${nextIdx === 0 ? 'illus.cta.again' : 'illus.cta.next'}">${nextIdx === 0 ? 'Begin again' : 'Next'}</span> ${arrowR}
                     </button>
                 </div>
             </div>`;
@@ -629,6 +628,41 @@
     const _GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
     let   scrollHintSplit = false;
 
+    const ILLUS_TEXTS = {
+        en: {
+            hud:    ['· s c r o l l', 'o r', 'c l I c k', '- E N T E R -', 't o', 'v I e w ·'],
+            expand: '[ · c l i c k | t o | e x p a n d · ]',
+        },
+        es: {
+            hud:    ['· d e s l i z a r', 'o', 'c l i c', '- E N T R A R -', 'p a r a', 'v e r ·'],
+            expand: '[ · c l i c | p a r a | e x p a n d i r · ]',
+        },
+    };
+
+    function buildHudScrollHTML(lang) {
+        const t = ILLUS_TEXTS[lang] || ILLUS_TEXTS.en;
+        return '<span>' + t.hud[0] + '</span>' +
+            t.hud.slice(1).map(s => '<span class="illus-hud-scroll-in">' + s + '</span>').join('');
+    }
+
+    function applyIllusLang(lang) {
+        const t = ILLUS_TEXTS[lang] || ILLUS_TEXTS.en;
+
+        const wasSplit = scrollHintSplit;
+        hintHudScroll.innerHTML = buildHudScrollHTML(lang);
+        scrollHintSplit = false;
+        if (wasSplit) initScrollHintGlitch();
+
+        const wasExpandSplit = expandHintSplit;
+        expandHint.textContent = t.expand;
+        expandHintSplit = false;
+        if (wasExpandSplit) triggerExpandHintGlitch();
+    }
+
+    document.addEventListener('languagechanged', e => {
+        applyIllusLang(e.detail.lang);
+    });
+
     function initScrollHintGlitch() {
         if (scrollHintSplit || !window.Splitting) return;
         scrollHintSplit = true;
@@ -641,6 +675,27 @@
                     char.style.setProperty(`--char-${g}`, `"${r}"`);
                 }
             });
+        });
+    }
+
+    function startIntroElecFlicker() {
+        const steps = [];
+        let elapsed = 80; // start after cube scale-in begins
+        while (elapsed < 1400) {
+            steps.push(elapsed);
+            elapsed += 55 + Math.random() * 130;
+        }
+        steps.push(elapsed); // final step — always ends off
+
+        steps.forEach((delay, i) => {
+            const isLast = i === steps.length - 1;
+            const on     = isLast ? false : Math.random() > 0.4;
+            setTimeout(() => {
+                tunnel.classList.toggle('illus-electric-active', on);
+                if (on && electricNoise) {
+                    electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
+                }
+            }, delay);
         });
     }
 
@@ -663,6 +718,7 @@
         if (introSeenOnce) return;
         introSeenOnce = true;
         illus.classList.add('illus-entering');
+        startIntroElecFlicker();
         // 580ms: cube scale-in finishes at 80ms delay + 480ms duration = 560ms;
         // glitch fires just after so it overlaps the hint-hud fade-in (starts 300ms).
         setTimeout(initScrollHintGlitch, 580);
