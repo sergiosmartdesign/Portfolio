@@ -55,6 +55,9 @@
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
+      // Ghost stream
+      this._stream = null;
+
       // Photo bg electric border
       this._photoBorderTurbulence  = null;
       this._photoBorderActive      = false;
@@ -86,10 +89,13 @@
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       this._borderTurbulence      = document.getElementById('accordion-electric-turbulence');
       this._photoBorderTurbulence = document.getElementById('photo-bg-turbulence');
+      this._stream = document.querySelector('.photo-ghost-stream');
+      this._updateStreamWidth();
 
       window.addEventListener('resize', () => {
         this.winH         = window.innerHeight;
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+        this._updateStreamWidth();
       }, { passive: true });
 
       // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids label → pgallery title → desc → scroll hint
@@ -306,6 +312,10 @@
       const tIntroEnd = setTimeout(() => { this.introAnimating = false; this._borderDone(); }, cursor + 150);
       this.chainTimers.push(tIntroEnd);
 
+      // Start the ghost stream after the chain fully settles
+      const tStream = setTimeout(() => { this._stream?.classList.add('stream-active'); }, cursor + 200);
+      this.chainTimers.push(tStream);
+
       // 5. Secondary effects
 
       // Marker-draw on col-text highlights (fires 700 ms after chain start — col-text is
@@ -356,6 +366,7 @@
       this._borderCount = 0;
       if (this._borderRaf) { cancelAnimationFrame(this._borderRaf); this._borderRaf = null; }
       if (this.accordion) this.accordion.classList.remove('accordion-animating');
+      this._stream?.classList.remove('stream-active');
 
       // Kill tweens and reset transforms on all chain elements
       this.staticEls.forEach(el => {
@@ -466,6 +477,7 @@
         this.contentScroll.scrollTop = 0;
       }
       this._resetPolaroid();
+      this._stream?.classList.remove('stream-active');
     }
 
     // ── Immediate hard reset (e.g. resize, bfcache) ──────────────────────────
@@ -503,6 +515,13 @@
         this.contentScroll.scrollTop = 0;
       }
       this._resetPolaroid();
+    }
+
+    // ── Ghost stream ─────────────────────────────────────────────────────────
+    _updateStreamWidth() {
+      if (this._stream) {
+        this._stream.style.setProperty('--ghost-stream-w', this._stream.offsetWidth + 'px');
+      }
     }
 
     // ── Electric border helpers ──────────────────────────────────────────────
