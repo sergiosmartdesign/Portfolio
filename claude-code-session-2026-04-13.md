@@ -2,6 +2,8 @@
 
 Este archivo resume **lo que quedó implementado / modificado** durante una sesión de trabajo en Claude Code para el sitio de portafolio en `Portfolio/web`.
 
+> **Seguimiento en Cursor (2026-05-12):** el mismo contexto de producto aplica; las siguientes notas describen **cómo trabajo ahora en Cursor** respecto al agente (“bot”) y las **secciones de terminal activas**, para alinear expectativas entre tú y el agente.
+
 ## Objetivo general
 
 - Mejorar la **experiencia del bloque de Fotografía** (`#photo`) y su narrativa en scroll: entrada (intro) → interacción (accordion + hover preview) → transición hacia la galería de polaroids.
@@ -56,6 +58,15 @@ En `js/script.js` se ajustó el fallback para que el botón/estado activo de `ph
   - se limpian estados (categorías cerradas, opacidades y desplazamientos reseteados),
   - el overlay vuelve a estar inactivo.
 - La navegación marca `photo` como activo mientras el spacer esté en progreso.
+
+## Cursor: agente y terminales (configuración actual)
+
+- **Ventana del agente y terminal:** En Cursor 3.x la experiencia del agente comparte espacio con la ejecución de comandos (shell integrado, aprobaciones, overlays). En la rama **3.3** del [changelog público de Cursor](https://cursor.com/changelog) se mencionan correcciones a **bugs de interacción con la terminal dentro de la ventana del agente** (atajos al editar, casos borde de aprobación/overlay). Si algo “no responde” al escribir en terminal mientras el agente está activo, conviene actualizar Cursor o revisar que no quede un overlay de aprobación a medias.
+- **Dos sitios donde “vive” la terminal:**
+  1. **Panel Terminal clásico** del editor (pestañas por sesión: servidor dev, builds, etc.).
+  2. **Bloques de shell en el hilo del agente** (comandos lanzados desde el chat), que el agente puede correlacionar con el estado del workspace.
+- **Lo que el agente lee como fuente de verdad:** Cursor inyecta la ruta a la carpeta de terminales del proyecto (p. ej. `~/.cursor/projects/<id-del-workspace>/terminals/`; en este repo suele ser `~/.cursor/projects/Users-sersh-Portfolio-web/terminals/`), con **un archivo `.txt` por sesión**. Cada archivo incluye metadatos en cabecera (`pid`, `cwd`, último comando, `last_exit_code`, si sigue corriendo un comando) y el cuerpo con la salida capturada. Así el agente distingue **terminal activa** (proceso en curso / salida reciente) sin adivinar el estado del shell.
+- **Paralelismo:** Desde ~3.3 hay flujos tipo **Build in Parallel** / multitarea con subagentes async; los jobs largos pueden quedar en segundo plano y conviene usar la carpeta `terminals/` o `Await`/notificaciones en lugar de asumir que una sola terminal refleja todo.
 
 ## Notas / supuestos
 

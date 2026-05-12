@@ -845,6 +845,12 @@
 #illustration .illus-h2.glitch-text {
     color: var(--illus-fg);
     font-weight: 800;
+    white-space: normal;
+}
+
+#illustration .illus-h2 [data-word] {
+    display: inline;
+    white-space: normal;
 }
 
 #illustration .illus-body.glitch-text,
