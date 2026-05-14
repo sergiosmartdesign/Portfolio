@@ -904,6 +904,15 @@
     transition: color 0.55s ease;
 }
 
+.illus-piece-title {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+    line-height: 1.25;
+    color: var(--illus-fg);
+    margin-block-end: 0.5rem;
+}
+
 .illus-h2 {
     font-family: 'Funnel Display', sans-serif;
     font-weight: 800;
@@ -912,6 +921,13 @@
     line-height: 0.92;
     color: var(--illus-fg);
     word-break: break-word;
+}
+
+.illus-h2--category {
+    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+    letter-spacing: 0.28em;
+    color: #BB3E03;
+    margin-block-end: 1rem;
 }
 
 .illus-h2 [data-char] {
@@ -945,6 +961,31 @@
     margin-block-end: 1.2rem;
     transform-origin: left;
 }
+
+.illus-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block-start: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.illus-meta-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--illus-muted);
+    opacity: 0.8;
+}
+
+.illus-meta-sep {
+    color: var(--illus-accent);
+    font-size: 0.65rem;
+    opacity: 0.5;
+}
+
+.illus-card--right .illus-meta-row { justify-content: flex-end; }
 
 .illus-stat-row {
     display: flex;
@@ -1052,9 +1093,11 @@
 .illus-tag,
 .illus-h1,
 .illus-h2,
+.illus-piece-title,
 .illus-body,
 .illus-technique,
 .illus-stat-row,
+.illus-meta-row,
 .illus-cta,
 .illus-cta-back {
     opacity: 0;
@@ -1068,8 +1111,10 @@
 }
 
 .illus-tag          { transition: opacity 0.5s ease 0s,    translate 0.5s ease 0s; }
+.illus-piece-title  { transition: opacity 0.5s ease 0.08s, translate 0.5s ease 0.08s; }
 .illus-body         { transition: opacity 0.5s ease 0.2s,  translate 0.5s ease 0.2s; }
 .illus-technique    { transition: opacity 0.5s ease 0.28s, translate 0.5s ease 0.28s; }
+.illus-meta-row     { transition: opacity 0.5s ease 0.28s, translate 0.5s ease 0.28s; }
 .illus-stat-row     { transition: opacity 0.5s ease 0.3s,  translate 0.5s ease 0.3s; }
 
 .illus-cta,
@@ -1094,9 +1139,11 @@
 .illus-section.active .illus-tag,
 .illus-section.active .illus-h1,
 .illus-section.active .illus-h2,
+.illus-section.active .illus-piece-title,
 .illus-section.active .illus-body,
 .illus-section.active .illus-technique,
 .illus-section.active .illus-stat-row,
+.illus-section.active .illus-meta-row,
 .illus-section.active .illus-cta,
 .illus-section.active .illus-cta-back {
     opacity: 1;

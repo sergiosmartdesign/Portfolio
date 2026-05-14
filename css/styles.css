@@ -1,4 +1,17 @@
 
+/* ─── Accessibility / SEO utility ──────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ─── Houdini property for art-direction conic blink animation ─────────────── */
 @property --p {
   syntax: "<percentage>";
@@ -3851,6 +3864,55 @@ nav {
 
 /* Card transforms and opacity are set entirely by JS (_updateStream).
    No CSS animation — position is scroll-scrubbed. */
+
+/* ── Stream navigation controls ────────────────────────────────────── */
+.photo-stream-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 10px;
+  opacity: 0;          /* revealed by the chain via GSAP, same as other tail elements */
+}
+
+.photo-stream-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 30px;
+  background: #EE9B00;
+  border: 1px solid #EE9B00;
+  color: #001219;
+  font-family: monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.photo-stream-btn:hover {
+  /* background and border-color overridden by JS random palette on mouseenter */
+  color: #001219;
+}
+
+.photo-stream-btn.active {
+  background: #EE9B00;
+  border-color: #EE9B00;
+  color: #001219;
+}
+
+.photo-stream-hint {
+  flex: 1;
+  text-align: center;
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #001219;
+  user-select: none;
+  padding: 0 8px;
+  white-space: nowrap;
+}
 
 .photo-category-btn {
   display: flex;

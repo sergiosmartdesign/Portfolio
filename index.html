@@ -109,6 +109,80 @@
           "description": "Get in touch with Sergio Ayala for freelance art direction, photography, UX/UI design, and creative projects. Available worldwide.",
           "url": "https://sergioayala.design/#contact",
           "mainEntity": { "@id": "https://sergioayala.design/#person" }
+        },
+        {
+          "@type": "ImageGallery",
+          "@id": "https://sergioayala.design/#illustration-gallery",
+          "name": "Illustration Portfolio — Sergio Ayala",
+          "description": "Digital illustration portfolio by Senior Art Director Sergio Ayala. Fantasy concept art, dark fantasy illustration, D&D character art, and digital painting created in Procreate.",
+          "url": "https://sergioayala.design/#illustration",
+          "author": { "@id": "https://sergioayala.design/#person" },
+          "genre": [
+            "Fantasy concept art",
+            "Dark fantasy illustration",
+            "D&D fan art",
+            "Character concept art",
+            "Digital painting"
+          ],
+          "keywords": "fantasy concept art, dark fantasy illustration, D&D fan art, Dungeons and Dragons art, character concept art, digital painting, Procreate illustration, Sergio Ayala illustration",
+          "inLanguage": "en",
+          "copyrightHolder": { "@id": "https://sergioayala.design/#person" },
+          "license": "https://sergioayala.design/#contact",
+          "hasPart": [
+            { "@id": "https://sergioayala.design/#themberchaud-concept-art" }
+          ]
+        },
+        {
+          "@type": "VisualArtwork",
+          "@id": "https://sergioayala.design/#themberchaud-concept-art",
+          "name": "The Fat Dragon — Themberchaud Concept Art",
+          "description": "Digital concept art depicting Themberchaud, the infamous red dragon of Gracklstugh from Dungeons & Dragons, lying furiously atop a golden hoard while glaring at the viewer. The dragon's name is lettered below in Gothic-style typography. Inspired by Alexander Ostrowski's character design work for D&D. Created in Procreate using a smoldering infernal palette — deep indigo shadows, burnt amber highlights, and crimson tones that evoke hellfire and greed.",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://sergioayala.design/images/illustration/the-fat-dragon-themberchaud-concept-art.jpg",
+            "name": "The Fat Dragon — Themberchaud Concept Art by Sergio Ayala",
+            "description": "Themberchaud the red dragon lying on a pile of gold, furious, concept art in dark fantasy style. Digital illustration by Sergio Ayala.",
+            "encodingFormat": "image/jpeg",
+            "creator": { "@id": "https://sergioayala.design/#person" },
+            "copyrightHolder": { "@id": "https://sergioayala.design/#person" },
+            "copyrightYear": 2025,
+            "license": "https://sergioayala.design/#contact",
+            "acquireLicensePage": "https://sergioayala.design/#contact",
+            "creditText": "© 2025 Sergio Ayala — All rights reserved",
+            "keywords": "Themberchaud, D&D concept art, red dragon, Gracklstugh, dark fantasy illustration, D&D fan art, Dungeons and Dragons, character concept art, digital painting, Procreate, fantasy art, Alexander Ostrowski inspired"
+          },
+          "creator": { "@id": "https://sergioayala.design/#person" },
+          "dateCreated": "2025",
+          "medium": "Digital illustration",
+          "artMedium": "Procreate",
+          "artForm": "Digital painting",
+          "genre": "Fantasy concept art",
+          "keywords": "Themberchaud, D&D concept art, red dragon, Gracklstugh, Wyrmsmith, dark fantasy illustration, D&D fan art, Dungeons and Dragons, character concept art, digital painting, Procreate, fantasy art, Alexander Ostrowski inspired, infernal palette, gothic typography",
+          "copyrightYear": 2025,
+          "copyrightHolder": { "@id": "https://sergioayala.design/#person" },
+          "license": "https://sergioayala.design/#contact",
+          "acquireLicensePage": "https://sergioayala.design/#contact",
+          "creditText": "© 2025 Sergio Ayala — All rights reserved",
+          "isPartOf": { "@id": "https://sergioayala.design/#illustration-gallery" },
+          "sameAs": [
+            "https://www.instagram.com/sersh01/"
+            /* TODO: add Instagram post URL here once published, e.g.:
+               "https://www.instagram.com/p/XXXXXXXXXXX/"  */
+          ]
+        },
+        {
+          "@type": "BlogPosting",
+          "@id": "https://sergioayala.design/#post-themberchaud",
+          /* TODO: replace "#" with the actual post URL (Instagram, blog, or external) once published */
+          "url": "#",
+          "headline": "The Fat Dragon — Themberchaud Concept Art",
+          "description": "Process and inspiration behind my Procreate concept art of Themberchaud, the infamous red dragon of Gracklstugh from Dungeons & Dragons. Inspired by Alexander Ostrowski's character design work, painted with a smoldering infernal palette of deep indigo, burnt amber, and crimson.",
+          "image": "https://sergioayala.design/images/illustration/the-fat-dragon-themberchaud-concept-art.jpg",
+          "author": { "@id": "https://sergioayala.design/#person" },
+          "datePublished": "2025",
+          "keywords": "Themberchaud, D&D concept art, red dragon, dark fantasy, digital painting, Procreate, fantasy art, Dungeons and Dragons, character design, art process",
+          "mainEntity": { "@id": "https://sergioayala.design/#themberchaud-concept-art" },
+          "isPartOf": { "@id": "https://sergioayala.design/#website" }
         }
       ]
     }
@@ -1077,6 +1151,11 @@
                         </div>
                         <p class="photo-polaroids-label">[ &middot; p o l a r o i d s &middot; ]</p>
                         <p class="photo-polaroids-desc">A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.</p>
+                        <div class="photo-stream-controls">
+                            <button class="photo-stream-btn photo-stream-btn--prev" aria-label="Browse polaroids backward">←</button>
+                            <span class="photo-stream-hint">use arrows to browse</span>
+                            <button class="photo-stream-btn photo-stream-btn--next" aria-label="Browse polaroids forward">→</button>
+                        </div>
                         <img src="images/polaroid camera.webp" alt="Polaroid camera" class="photo-polaroids-camera" draggable="false" aria-hidden="true">
                         <div class="photo-ghost-stream" aria-hidden="true">
                             <div class="photo-ghost-card"></div>
@@ -1170,7 +1249,33 @@
         </section>
         <div class="photo-scroll-spacer"></div>
 
-        <section id="illustration" aria-label="Illustration Portfolio — Interdimensional Gallery on Timeless Art">
+        <section id="illustration" aria-label="Illustration Portfolio — Fantasy Concept Art and Dark Fantasy Digital Illustration by Sergio Ayala">
+
+            <!-- SEO/AI-crawlable artwork index — visually hidden, semantically rich -->
+            <div class="sr-only" aria-hidden="false">
+                <h2>Illustration Portfolio</h2>
+                <p>Digital illustration portfolio by Sergio Ayala. Fantasy concept art, dark fantasy illustration, D&D fan art, and character concept art created in Procreate.</p>
+                <figure itemscope itemtype="https://schema.org/VisualArtwork">
+                    <img
+                        src="images/illustration/the-fat-dragon-themberchaud-concept-art.jpg"
+                        alt="Themberchaud the red dragon lying furiously on a pile of gold — D&D dark fantasy concept art by Sergio Ayala, 2025. Gothic lettering below reads Themberchaud. Inspired by Alexander Ostrowski's character design work."
+                        itemprop="image"
+                        width="1920"
+                        height="1080"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                    <figcaption itemprop="name">The Fat Dragon — Themberchaud Concept Art</figcaption>
+                    <meta itemprop="creator" content="Sergio Ayala">
+                    <meta itemprop="dateCreated" content="2025">
+                    <meta itemprop="artMedium" content="Procreate">
+                    <meta itemprop="genre" content="Fantasy concept art">
+                    <meta itemprop="keywords" content="Themberchaud, D&D concept art, red dragon, Gracklstugh, dark fantasy, character concept art, digital painting, Procreate">
+                    <meta itemprop="copyrightYear" content="2025">
+                    <meta itemprop="creditText" content="© 2025 Sergio Ayala — All rights reserved">
+                </figure>
+            </div>
+
             <div class="illus-tunnel">
 
                 <!-- WebGL shader background -->
@@ -1264,13 +1369,21 @@
                         </div>
                     </div>
 
-                    <!-- 1 -->
+                    <!-- 1 — The Fat Dragon / Themberchaud -->
                     <div class="illus-section" data-idx="1">
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
-                            <div class="illus-tag glitch-text" data-splitting>Mar — 2024 &nbsp;·&nbsp; 01 — Art Rebellion</div>
-                            <h2 class="illus-h2 glitch-text" data-splitting data-i18n-split="illus.cat.digital">DIGITAL</h2>
-                            <p class="illus-body glitch-text" data-splitting data-i18n-split="illus.s1.body">A cow walking a monster instead of a monster walking a cow. That inversion is enough to break template thinking. The cape ends up on the wrong body.</p>
+                            <div class="illus-tag glitch-text" data-splitting>2025</div>
+                            <p class="illus-piece-title">The Fat Dragon — Themberchaud Concept Art</p>
+                            <h2 class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</h2>
+                            <p class="illus-body glitch-text" data-splitting>Themberchaud, Wyrmsmith of Gracklstugh — lying furious on his hoard. Concept art inspired by Alexander Ostrowski's D&amp;D character design. Procreate. Infernal palette: deep indigo, burnt amber, crimson.</p>
+                            <div class="illus-meta-row">
+                                <span class="illus-meta-item">Procreate</span>
+                                <span class="illus-meta-sep" aria-hidden="true">·</span>
+                                <span class="illus-meta-item">D&amp;D Fan Art</span>
+                                <span class="illus-meta-sep" aria-hidden="true">·</span>
+                                <span class="illus-meta-item">© 2025</span>
+                            </div>
                             <div class="illus-cta-row">
                                 <button class="illus-cta-back" data-goto="0">
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>

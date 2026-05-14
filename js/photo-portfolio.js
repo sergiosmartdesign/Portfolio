@@ -55,16 +55,22 @@
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
-      // Ghost stream — hybrid intro (time-based) + scroll-scrub
+      // Ghost stream — hybrid intro (time-based) + scroll-scrub + button control
       this._stream              = null;
       this._streamCards         = [];
       this._streamRotations     = [];
       this._streamPhase         = 'idle';   // 'idle' | 'intro' | 'interactive'
       this._masterT             = 0;        // single source of truth for card positions
       this._introRaf            = null;
-      this._introStartTime      = 0;
-      this._handoffOffset       = 0;        // blends intro→scroll at handoff
+      this._introActiveTime     = 0;        // timestamp when stream was first allowed to play
+      this._streamCanPlay       = false;    // set true by _triggerChain after camera lands
       this._lastRawForScroll    = undefined;
+      // Button controls
+      this._btnPrev             = null;
+      this._btnNext             = null;
+      this._buttonVelocity      = 0;        // -1 | 0 | +1
+      this._buttonRaf           = null;
+      this._buttonLastTs        = 0;
 
       // Photo bg electric border
       this._photoBorderTurbulence  = null;
@@ -104,6 +110,24 @@
       );
       this._updateStreamWidth();
 
+      this._btnPrev = document.querySelector('.photo-stream-btn--prev');
+      this._btnNext = document.querySelector('.photo-stream-btn--next');
+      this._btnPrev?.addEventListener('click', () => this._handleStreamBtn(-1));
+      this._btnNext?.addEventListener('click', () => this._handleStreamBtn(+1));
+
+      [this._btnPrev, this._btnNext].forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('mouseenter', () => {
+          const c = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
+          btn.style.background = c;
+          btn.style.borderColor = c;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        });
+      });
+
       window.addEventListener('resize', () => {
         this.winH         = window.innerHeight;
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
@@ -111,12 +135,13 @@
       }, { passive: true });
 
       // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids label → pgallery title → desc → scroll hint
-      const pgalleryTitle  = document.querySelector('.pgallery-title');
-      const pgalleryDesc   = document.querySelector('.pgallery-desc');
-      const pgalleryHint   = document.querySelector('.pgallery-hint');
-      const polLabel       = document.querySelector('.photo-polaroids-label');
-      const polDesc        = document.querySelector('.photo-polaroids-desc');
-      const polCamera      = document.querySelector('.photo-polaroids-camera');
+      const pgalleryTitle    = document.querySelector('.pgallery-title');
+      const pgalleryDesc     = document.querySelector('.pgallery-desc');
+      const pgalleryHint     = document.querySelector('.pgallery-hint');
+      const polLabel         = document.querySelector('.photo-polaroids-label');
+      const polDesc          = document.querySelector('.photo-polaroids-desc');
+      const polCamera        = document.querySelector('.photo-polaroids-camera');
+      const streamControls   = document.querySelector('.photo-stream-controls');
       this.staticEls = [
         this.overlay.querySelector('.photo-section-label'),
         this.overlay.querySelector('.photo-intro'),
@@ -129,7 +154,8 @@
         polCamera,
         pgalleryTitle,
         pgalleryDesc,
-        pgalleryHint
+        pgalleryHint,
+        streamControls
       ].filter(Boolean);
 
       // Set random palette colour on label reveal and on hover
@@ -159,8 +185,8 @@
       const spacerTop   = this.spacerDocTop - window.scrollY;
       const rawProgress = 1 - (spacerTop / this.winH);
 
-      // Stream is scroll-scrubbed — update on every tick before the phase guard
-      this._updateStream(rawProgress);
+      // Stream state machine — runs every tick, before the phase-change guard
+      this._tickStream(rawProgress);
 
       const nowInPhase3 = rawProgress > 2;
       if (nowInPhase3 === this.inPhase3) return;
@@ -170,11 +196,9 @@
         this._cancelReverse();
         this.overlay.style.opacity       = '1';
         this.overlay.style.pointerEvents = 'auto';
-        this._stream?.classList.add('stream-active');
         document.dispatchEvent(new CustomEvent('photoPhase3Active'));
         this._triggerChain();
       } else {
-        this._stream?.classList.remove('stream-active');
         this._cancelChain();
         this._triggerReverseChain();
       }
@@ -316,7 +340,7 @@
         cursor = closeAt + REV_GAP;
       });
 
-      // 4. Tail elements: pgallery title → desc → hint
+      // 4. Tail elements: polaroids label → desc → camera → pgallery title → desc → hint
       const tailStart = cursor;
       tailEls.forEach((el, i) => {
         const t = setTimeout(() => this._revealItem(el, 0), tailStart + i * TAIL_STEP);
@@ -324,11 +348,19 @@
       });
       cursor = tailStart + tailEls.length * TAIL_STEP;
 
+      // Signal the ghost stream to start once the camera slide-in finishes.
+      // polCamera is inside tailEls — find its index so the delay is always exact.
+      const polCameraEl     = document.querySelector('.photo-polaroids-camera');
+      const cameraInTailIdx = tailEls.indexOf(polCameraEl);
+      const cameraRevealAt  = tailStart + (cameraInTailIdx >= 0 ? cameraInTailIdx : 2) * TAIL_STEP;
+      const tStreamReady    = setTimeout(() => { this._streamCanPlay = true; }, cameraRevealAt + 720);
+      this.chainTimers.push(tStreamReady);
+
       // Lift the hover guard once the full intro sequence has settled
       const tIntroEnd = setTimeout(() => { this.introAnimating = false; this._borderDone(); }, cursor + 150);
       this.chainTimers.push(tIntroEnd);
 
-      // (stream-active is set immediately at phase-3 entry in _updateScroll)
+      // (stream-active is managed by _enterStreamIntro / _resetStream)
 
       // 5. Secondary effects
 
@@ -538,55 +570,204 @@
       }
     }
 
-    // Scroll-scrubbed: called on every scroll tick. Cards travel left → right
-    // as rawProgress increases; reversing scroll moves them back.
-    // SPEED: how many card-lengths of scroll map to rawProgress 1 unit.
-    // CARD_SPACING: masterT gap between consecutive card starts (>1 = gap after each card).
-    _updateStream(rawProgress) {
+    // ── Ghost stream state machine ───────────────────────────────────────────
+    //
+    //   IDLE ──(rawProgress≥2)──▶ INTRO ──(first scroll)──▶ INTERACTIVE
+    //     ◀──────────────────────────────(rawProgress<2)──────────────────
+    //
+    // _masterT is the single value that drives all card rendering.
+    // In INTRO it grows via RAF; in INTERACTIVE it derives from rawProgress.
+    // A decaying offset at handoff prevents any visible jump.
+
+    // Called every scroll tick — owns all stream state transitions.
+    _tickStream(rawProgress) {
+      if (rawProgress < 2) {
+        if (this._streamPhase !== 'idle') this._resetStream();
+        return;
+      }
+
+      if (this._streamPhase === 'idle') {
+        this._enterStreamIntro();
+        return;
+      }
+
+      if (this._streamPhase === 'intro') {
+        // Detect the first real user scroll (rawProgress moved since last tick)
+        if (this._lastRawForScroll !== undefined &&
+            rawProgress !== this._lastRawForScroll) {
+          this._enterStreamInteractive(rawProgress);
+        } else {
+          this._lastRawForScroll = rawProgress;
+        }
+        return; // rendering is handled by the intro RAF loop
+      }
+
+      if (this._streamPhase === 'interactive') {
+        // Buttons are the only driver — scroll just keeps phase detection alive
+      }
+    }
+
+    _enterStreamIntro() {
+      this._streamPhase      = 'intro';
+      this._masterT          = 0;
+      this._introActiveTime  = 0;
+      this._streamCanPlay    = false;
+      this._lastRawForScroll = undefined;
+      this._stream?.classList.add('stream-active');
+      this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
+    }
+
+    _introLoop(timestamp) {
+      if (this._streamPhase !== 'intro') return;
+
+      const INTRO_SPEED = 0.27; // masterT units/s → ~3.7 s per card crossing, ~4.1 s between starts
+
+      if (this._streamCanPlay) {
+        // Latch the start time on the first frame after permission is granted
+        if (!this._introActiveTime) this._introActiveTime = timestamp;
+        this._masterT = ((timestamp - this._introActiveTime) / 1000) * INTRO_SPEED;
+        this._renderStream(this._masterT);
+      }
+
+      this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
+    }
+
+    _enterStreamInteractive(rawProgress) {
+      this._streamPhase = 'interactive';
+      if (this._introRaf) {
+        cancelAnimationFrame(this._introRaf);
+        this._introRaf = null;
+      }
+      if (!this._stream?.classList.contains('stream-active')) {
+        this._stream?.classList.add('stream-active');
+      }
+      // masterT stays at its current value — delta tracking starts from here, so no jump
+      this._lastRawForScroll = rawProgress;
+    }
+
+    _resetStream() {
+      this._streamPhase      = 'idle';
+      this._masterT          = 0;
+      this._introActiveTime  = 0;
+      this._streamCanPlay    = false;
+      this._lastRawForScroll = undefined;
+      if (this._introRaf) {
+        cancelAnimationFrame(this._introRaf);
+        this._introRaf = null;
+      }
+      this._stopButtonRaf();
+      this._buttonVelocity = 0;
+      this._updateBtnState();
+      this._stream?.classList.remove('stream-active');
+      this._streamCards.forEach(card => {
+        card.style.opacity   = '0';
+        card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
+      });
+    }
+
+    // ── Button controls ──────────────────────────────────────────────────────
+    // Toggle-direction model: click active direction = pause; click opposite = reverse.
+    // Scroll and buttons are additive — both drivers write to _masterT concurrently.
+    _handleStreamBtn(dir) {
+      if (this._streamPhase === 'intro') {
+        // Button press during intro triggers immediate handoff
+        this._streamPhase = 'interactive';
+        if (this._introRaf) { cancelAnimationFrame(this._introRaf); this._introRaf = null; }
+        if (!this._stream?.classList.contains('stream-active')) {
+          this._stream?.classList.add('stream-active');
+        }
+        this._lastRawForScroll = undefined;
+      }
+      if (this._streamPhase !== 'interactive') return;
+
+      this._buttonVelocity = (this._buttonVelocity === dir) ? 0 : dir;
+      this._updateBtnState();
+
+      if (this._buttonVelocity !== 0) {
+        this._startButtonRaf();
+      } else {
+        this._stopButtonRaf();
+      }
+    }
+
+    _startButtonRaf() {
+      if (this._buttonRaf) return;
+      this._buttonLastTs = performance.now();
+      this._buttonRaf = requestAnimationFrame(ts => this._buttonRafLoop(ts));
+    }
+
+    _stopButtonRaf() {
+      if (this._buttonRaf) {
+        cancelAnimationFrame(this._buttonRaf);
+        this._buttonRaf = null;
+      }
+    }
+
+    _buttonRafLoop(timestamp) {
+      if (this._streamPhase !== 'interactive' || this._buttonVelocity === 0) {
+        this._stopButtonRaf();
+        return;
+      }
+      const BUTTON_SPEED = 0.27; // matches INTRO_SPEED — natural, consistent pace
+      const dt = Math.min((timestamp - this._buttonLastTs) / 1000, 0.1); // cap avoids tab-sleep jump
+      this._buttonLastTs = timestamp;
+      this._masterT += this._buttonVelocity * BUTTON_SPEED * dt;
+      this._renderStream(this._masterT);
+      this._buttonRaf = requestAnimationFrame(ts => this._buttonRafLoop(ts));
+    }
+
+    _updateBtnState() {
+      this._btnPrev?.classList.toggle('active', this._buttonVelocity === -1);
+      this._btnNext?.classList.toggle('active', this._buttonVelocity === +1);
+    }
+
+    // Pure renderer — same function regardless of which driver owns masterT.
+    // Uses modulo so the stream loops: after the last card exits, card 0 re-enters.
+    // Works in both directions: increasing masterT = forward, decreasing = backward.
+    _renderStream(masterT) {
       if (!this._stream || !this._streamCards.length) return;
 
-      const STREAM_START  = 2;    // rawProgress at which the stream begins
-      const SPEED         = 6;    // masterT units per rawProgress unit
-      const CARD_SPACING  = 1.5;  // masterT units between card starts (0.5 = 33% gap)
-      const CARD_W        = 232;
-      const streamW       = parseFloat(
+      const N            = this._streamCards.length;
+      const CARD_SPACING = 1.1;           // masterT units between card starts (0.1 = ~10% gap)
+      const LOOP_LENGTH  = N * CARD_SPACING; // full cycle length (e.g. 30 × 1.5 = 45)
+      const CARD_W       = 232;
+      const streamW      = parseFloat(
         this._stream.style.getPropertyValue('--ghost-stream-w')
       ) || 500;
 
-      const masterT = Math.max(0, (rawProgress - STREAM_START) * SPEED);
+      // Normalise masterT to [0, LOOP_LENGTH) — handles backward scroll (negatives)
+      const phase = ((masterT % LOOP_LENGTH) + LOOP_LENGTH) % LOOP_LENGTH;
 
       this._streamCards.forEach((card, i) => {
-        const t = Math.min(Math.max(masterT - i * CARD_SPACING, 0), 1);
+        // How far card i is into its current crossing [0, LOOP_LENGTH)
+        const offset = ((phase - i * CARD_SPACING) % LOOP_LENGTH + LOOP_LENGTH) % LOOP_LENGTH;
 
-        if (t === 0) {
+        // Card is "in flight" only when offset ∈ [0, 1]; otherwise it is in its gap
+        if (offset > 1) {
           card.style.opacity   = '0';
           card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
           return;
         }
 
+        const t        = offset;
         const finalRot = this._streamRotations[i] || 0;
         let x, rot;
 
         if (t < 0.22) {
-          // Eject phase: flat, exits camera slot
           const p = t / 0.22;
           x   = p * (streamW * 0.22 - 51);
           rot = -90;
         } else if (t < 0.75) {
-          // Rotation phase: upright by 75%
           const p = (t - 0.22) / 0.53;
           x   = (streamW * 0.22 - 51) + p * ((streamW * 0.75 - 174) - (streamW * 0.22 - 51));
           rot = -90 + p * (finalRot + 90);
         } else {
-          // Coast phase: settled at final tilt, drifts to right edge
           const p = (t - 0.75) / 0.25;
           x   = (streamW * 0.75 - 174) + p * ((streamW - CARD_W) - (streamW * 0.75 - 174));
           rot = finalRot;
         }
 
-        // Fade in quickly once the card clears the camera (matches mask edge)
-        const opacity = t < 0.03 ? t / 0.03 : 1;
-        card.style.opacity   = String(opacity);
+        card.style.opacity   = t < 0.03 ? String(t / 0.03) : '1';
         card.style.transform = `translateX(${x}px) translateY(-50%) rotate(${rot}deg)`;
       });
     }

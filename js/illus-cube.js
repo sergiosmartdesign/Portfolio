@@ -3,6 +3,7 @@
 
     const IMAGES = [
         'images/photo/Isla en Uyuni.jpg',
+        'images/illustration/the-fat-dragon-themberchaud-concept-art.jpg',
         'images/photo/Fairy woods.jpg',
         'images/photo/Dali Desert.jpg',
         'images/photo/Attack of the Titan.jpg',
