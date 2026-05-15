@@ -111,23 +111,22 @@ class GlitchSystem {
     const logo = document.querySelector('.logo');
     if (!logo) return;
 
-    logo.addEventListener('mouseenter', function() {
-      const chars = this.querySelectorAll('[data-char]');
-      chars.forEach((char, index) => {
-        char.style.animation = 'none';
-        void char.offsetWidth;  // Force reflow
-        char.style.animation = `glitch-switch 0.2s steps(1) ${index * 0.05}s ${10} backwards`;
-      });
-    });
+    // After page-load reveal animation finishes (~2.7s max), suppress the base
+    // animation-name so the hover toggle can change it none → glitch-switch.
+    // Chrome only restarts animations when animation-name itself changes.
+    setTimeout(() => logo.classList.add('logo-reveal-done'), 3000);
 
-    logo.addEventListener('mouseleave', function() {
-      const chars = this.querySelectorAll('[data-char]');
-      chars.forEach((char) => {
-        char.style.animation = 'none';
-        void char.offsetWidth;  // Force reflow
-        char.style.animation = '';
-      });
-    });
+    const triggerGlitch = () => {
+      // If hovered before timeout fires, add the class immediately so the
+      // name-change trick works on first interaction too.
+      logo.classList.add('logo-reveal-done');
+      logo.classList.remove('logo-glitch-active');
+      void logo.getBoundingClientRect(); // flush styles — forces name change to register
+      logo.classList.add('logo-glitch-active');
+    };
+
+    logo.addEventListener('mouseenter', triggerGlitch);
+    logo.addEventListener('mouseleave', () => logo.classList.remove('logo-glitch-active'));
   }
 
   initSealGlitch() {
@@ -1432,27 +1431,74 @@ function initInfoInterfaceHints() {
     lang:   Array.from(document.querySelectorAll('.lang-btn')),
   };
 
-  let activeHint = null;
+  // Elements with [data-char] children that can play the glitch animation.
+  // Marked with .info-hint-suppress after their base page-load animations finish
+  // so the hover toggle can change animation-name: none → glitch-switch (the
+  // name change is what forces Chrome to restart — same pattern as the logo).
+  const glitchEls = [...targets.nav, ...targets.cta, ...targets.lang];
+  setTimeout(() => glitchEls.forEach(el => el.classList.add('info-hint-suppress')), 3000);
 
-  const clearGlow = (hint) => {
-    targets[hint]?.forEach(el => el.classList.remove('info-glow'));
+  const triggerGlitch = (els) => {
+    const ready = els.filter(el => el.classList.contains('info-hint-suppress'));
+    if (!ready.length) return;
+    ready.forEach(el => el.classList.remove('info-hint-glitch'));
+    void ready[0].getBoundingClientRect(); // one flush for the whole batch
+    ready.forEach(el => el.classList.add('info-hint-glitch'));
   };
 
-  const applyGlow = (hint) => {
-    targets[hint]?.forEach(el => el.classList.add('info-glow'));
+  // ── Sound button: scrambling char replaces the icon on hover ──────────────
+  const soundBtn = targets.sound[0] ?? null;
+  const soundGlitchChars = '!@#$%^&*<>?/|\\[]{}~±§¶•∆∑∏√∞≠≈∫◊ΦΨΩλβγδ'.split('');
+  let soundScrambleId = null;
+
+  const soundGlitchSpan = document.createElement('span');
+  soundGlitchSpan.className = 'sound-glitch-char';
+  soundGlitchSpan.setAttribute('aria-hidden', 'true');
+  soundBtn?.appendChild(soundGlitchSpan);
+
+  const startSoundScramble = () => {
+    if (!soundBtn) return;
+    soundBtn.classList.add('sound-glitching');
+    soundGlitchSpan.textContent = soundGlitchChars[Math.floor(Math.random() * soundGlitchChars.length)];
+    soundScrambleId = setInterval(() => {
+      soundGlitchSpan.textContent = soundGlitchChars[Math.floor(Math.random() * soundGlitchChars.length)];
+    }, 80);
+  };
+
+  const stopSoundScramble = () => {
+    clearInterval(soundScrambleId);
+    soundScrambleId = null;
+    soundBtn?.classList.remove('sound-glitching');
+  };
+  // ─────────────────────────────────────────────────────────────────────────
+
+  let activeHint = null;
+
+  const clearHint = (hint) => {
+    targets[hint]?.forEach(el => {
+      el.classList.remove('info-glow', 'info-hint-glitch');
+    });
+    if (hint === 'sound') stopSoundScramble();
+  };
+
+  const applyHint = (hint) => {
+    const els = targets[hint] ?? [];
+    els.forEach(el => el.classList.add('info-glow'));
+    triggerGlitch(els);
+    if (hint === 'sound') startSoundScramble();
   };
 
   badge.addEventListener('mouseover', (e) => {
     const hotspot = e.target.closest('.inf-hotspot[data-hint]');
     const hint = hotspot?.dataset.hint ?? null;
     if (hint === activeHint) return;
-    clearGlow(activeHint);
+    clearHint(activeHint);
     activeHint = hint;
-    applyGlow(activeHint);
+    applyHint(activeHint);
   });
 
   badge.addEventListener('mouseleave', () => {
-    clearGlow(activeHint);
+    clearHint(activeHint);
     activeHint = null;
   });
 }

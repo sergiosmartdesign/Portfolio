@@ -523,24 +523,28 @@
     illusInfoPanel.className = 'illus-info-panel';
     illusInfoPanel.setAttribute('aria-hidden', 'true');
     illusInfoPanel.innerHTML =
-        '<svg class="illus-info-interface-svg" viewBox="0 0 564.09 336" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
+        '<svg class="illus-info-interface-svg" viewBox="0 0 564.09 406.8" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
         '<defs><clipPath id="illus-inf-bg-clip">' +
-        '<path d="M10.47,195c0,29.7,0,59.4,0,88.9,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v160l9.47,13.68Z"/>' +
+        '<path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z"/>' +
         '</clipPath></defs>' +
-        '<rect x="0" y="0" width="564.09" height="336" fill="#001219" fill-opacity="0.35" clip-path="url(#illus-inf-bg-clip)"/>' +
-        '<path d="M10.47,195c0,29.7,0,59.4,0,88.9,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v160l9.47,13.68Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>' +
-        '<polygon points="158.13 324 169.28 336 365.68 336 378.21 324 158.13 324" fill="#EE9B00"/>' +
-        '<polygon points="545.41 130 564.09 117 564.09 16.17 545.28 1 545.41 130" fill="#EE9B00"/>' +
+        '<rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.35" clip-path="url(#illus-inf-bg-clip)"/>' +
+        '<path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>' +
+        '<polygon points="158.13 394.69 169.28 406.8 365.68 406.8 378.21 394.69 158.13 394.69" fill="#EE9B00"/>' +
+        '<polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#EE9B00"/>' +
         '<text class="info-line" style="--i:0" x="30" y="42" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00" letter-spacing="1">[ \xb7 HOW TO USE \xb7 ]</text>' +
         '<line class="info-line info-line--rule" style="--i:1" x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
-        '<text class="info-line" style="--i:2" x="30" y="90" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 01 \xb7 SCROLL</text>' +
-        '<text class="info-line" style="--i:3" x="30" y="112" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       move between images</text>' +
-        '<text class="info-line" style="--i:4" x="30" y="152" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 02 \xb7 DOT BUTTONS</text>' +
-        '<text class="info-line" style="--i:5" x="30" y="174" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       jump to any image</text>' +
-        '<text class="info-line" style="--i:6" x="30" y="214" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 03 \xb7 CLICK IMAGE</text>' +
-        '<text class="info-line" style="--i:7" x="30" y="236" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       view full size</text>' +
-        '<line class="info-line info-line--rule" style="--i:8" x1="14" y1="272" x2="530" y2="272" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
-        '<text class="info-line" style="--i:9" x="30" y="298" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">  enter your way \xb7</text>' +
+        '<text class="info-line" style="--i:2" x="30" y="84" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 01 \xb7 SCROLL</text>' +
+        '<text class="info-line" style="--i:3" x="30" y="106" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       browse between images</text>' +
+        '<text class="info-line" style="--i:4" x="30" y="140" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 02 \xb7 ENTER</text>' +
+        '<text class="info-line" style="--i:5" x="30" y="162" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       start the gallery</text>' +
+        '<text class="info-line" style="--i:6" x="30" y="196" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 03 \xb7 BACK / NEXT</text>' +
+        '<text class="info-line" style="--i:7" x="30" y="218" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       navigate pieces</text>' +
+        '<text class="info-line" style="--i:8" x="30" y="252" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 04 \xb7 ● ● ● DOTS</text>' +
+        '<text class="info-line" style="--i:9" x="30" y="274" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       jump to any image</text>' +
+        '<text class="info-line" style="--i:10" x="30" y="308" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 05 \xb7 CLICK IMAGE</text>' +
+        '<text class="info-line" style="--i:11" x="30" y="330" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       view full size</text>' +
+        '<line class="info-line info-line--rule" style="--i:12" x1="14" y1="352" x2="530" y2="352" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
+        '<text class="info-line" style="--i:13" x="30" y="376" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">  navigate your way \xb7</text>' +
         '</svg>';
 
     hintHudBar.appendChild(hintHudFill);

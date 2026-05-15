@@ -488,13 +488,20 @@ nav {
   text-shadow: var(--glow-cyan-intense);
 }
 
-/* Logo glitch on hover */
-.logo:hover[data-splitting] [data-char]:after {
-  animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-timing-function: steps(1);
-  animation-iteration-count: 10;
-  animation-delay: 0s;
+/* Logo glitch on hover — Chrome-safe restart via animation-name change.
+   Once the page-load reveal completes (JS adds .logo-reveal-done), the base
+   animation-name is suppressed to 'none'. On mouseenter the class toggle
+   changes the name none → glitch-switch, which Chrome always restarts on. */
+.logo-reveal-done [data-char]::after {
+  animation-name: none !important;
+}
+.logo-reveal-done.logo-glitch-active [data-char]::after {
+  animation-name: glitch-switch !important;
+  animation-duration: var(--transition-fast) !important;
+  animation-timing-function: steps(1) !important;
+  animation-iteration-count: 10 !important;
+  animation-delay: calc(var(--char-index) * 0.05s) !important;
+  animation-fill-mode: backwards !important;
 }
 
 /* --- Navigation Buttons --- */
@@ -1105,6 +1112,22 @@ nav {
   fill: rgba(255, 60, 0, 0.07);
 }
 
+/* ── Info-hint glitch — same name-change restart trick as the logo ───────
+   JS adds .info-hint-suppress after base animations finish (suppresses name
+   to 'none'). On hotspot hover JS toggles .info-hint-glitch so Chrome sees
+   the name change none → glitch-switch and always restarts the animation. */
+.info-hint-suppress [data-char]::after {
+  animation-name: none !important;
+}
+.info-hint-suppress.info-hint-glitch [data-char]::after {
+  animation-name: glitch-switch !important;
+  animation-duration: var(--transition-fast) !important;
+  animation-timing-function: steps(1) !important;
+  animation-iteration-count: 8 !important;
+  animation-delay: calc(var(--char-index) * 0.04s) !important;
+  animation-fill-mode: backwards !important;
+}
+
 /* ── Target glow applied by JS (.info-glow) — matches logo hover cyan ── */
 .nav-btn.info-glow,
 .lang-btn.info-glow,
@@ -1118,6 +1141,20 @@ nav {
 .intro-work-cta.info-glow [data-char]::after {
   color: var(--cyan) !important;
 }
+/* Sound toggle: icon replaced by scrambling char when info hotspot is hovered */
+.sound-glitch-char {
+  display: none;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: var(--cyan);
+}
+#sound-toggle.sound-glitching .sound-icon { display: none; }
+#sound-toggle.sound-glitching .sound-glitch-char { display: block; }
+
 #sound-toggle.info-glow {
   filter: drop-shadow(0 0 8px var(--cyan)) drop-shadow(0 0 20px var(--cyan)) !important;
   transition: filter 0.25s ease !important;
