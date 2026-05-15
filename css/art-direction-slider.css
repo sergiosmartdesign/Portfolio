@@ -7,8 +7,8 @@
 /* ── Intro guide card — shown on first load, dismissed on discipline select ── */
 #art-direction .ad-intro-card {
   position: absolute;
-  left: calc(min(100vh, 100vw) + 2vw);
-  width: min(calc(100% - min(100vh, 100vw) - 4vw), 560px);
+  left: calc(min(75vh, 75vw) + 2vw + 30px);
+  width: min(calc(100% - min(75vh, 75vw) - 4vw - 30px), 560px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
@@ -23,8 +23,8 @@
   animation: ad-intro-entrance 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Works panel suppressed while intro is active */
-#art-direction.ad-intro-active .ad-works-panel {
+/* Works zone suppressed while intro is active */
+#art-direction.ad-intro-active .ad-works-zone {
   opacity: 0 !important;
   pointer-events: none;
 }
@@ -64,48 +64,39 @@
 #art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-4  { animation: iad-text-in 0.4s ease-out 1.45s forwards; }
 #art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-footer  { animation: iad-text-in 0.4s ease-out 1.65s forwards; }
 
-/* ── Projects vertical label — left edge of works panel ── */
-#art-direction .ad-projects-label {
+
+/* ── Works zone — wrapper that positions label + panel together ── */
+#art-direction .ad-works-zone {
   position: absolute;
-  left: calc(min(100vh, 100vw) + 2vw - 28px);
+  left: calc(min(75vh, 75vw) + 2vw + 30px);
   top: 50%;
   transform: translateY(-50%);
-  width: 22px;
-  height: clamp(340px, 74vh, 680px);
+  width: min(calc(100% - min(75vh, 75vw) - 4vw - 30px), 700px);
+  max-height: clamp(380px, 82vh, 780px);
   z-index: 5;
-  opacity: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* ── Projects vertical label ── */
+#art-direction .ad-projects-label {
+  flex-shrink: 0;
+  width: 32px;
+  height: clamp(260px, 60vh, 480px);
   pointer-events: none;
+  object-fit: fill;
 }
 
 #art-direction.ad-intro-active .ad-projects-label {
-  opacity: 0 !important;
+  opacity: 0;
 }
 
-#art-direction .ad-projects-label.ad-label-animating {
-  animation: ad-label-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes ad-label-in {
-  0%   { opacity: 0;    clip-path: inset(100% 0 0 0); }
-  12%  { opacity: 0.4;  clip-path: inset(72% 0 0 0); }
-  14%  { opacity: 0.2;  clip-path: inset(75% 0 2% 0); }
-  16%  { opacity: 0.5;  clip-path: inset(68% 0 0 0); }
-  55%  { opacity: 0.85; clip-path: inset(18% 0 0 0); }
-  58%  { opacity: 0.65; clip-path: inset(20% 0 3% 0); }
-  60%  { opacity: 0.9;  clip-path: inset(14% 0 0 0); }
-  85%  { opacity: 0.97; clip-path: inset(2%  0 0 0); }
-  100% { opacity: 1;    clip-path: inset(0   0 0 0); }
-}
-
-/* ── Outer container — positioned after the letter grid ── */
+/* ── Works list panel ── */
 #art-direction .ad-works-panel {
-  position: absolute;
-  left: calc(min(100vh, 100vw) + 2vw);
-  width: min(calc(100% - min(100vh, 100vw) - 4vw), 560px);
-  top: 50%;
-  transform: translateY(-50%);
-  max-height: clamp(340px, 74vh, 680px);
-  z-index: 5;
+  flex: 1;
+  min-width: 0;
+  max-height: clamp(380px, 82vh, 780px);
   display: flex;
   flex-direction: column;
   opacity: 0;
@@ -203,6 +194,33 @@
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+}
+
+/* ── HOW TO EXPLORE card — bottom-right zone, below project list, next to N ── */
+#art-direction .ad-explore-card {
+  position: absolute;
+  left: calc(min(75vh, 75vw) + 2vw + 330px);
+  bottom: clamp(16px, 3vh, 36px);
+  width: clamp(140px, 18vw, 220px);
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#art-direction .ad-explore-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  width: clamp(260px, 36vw, 442px);
+}
+
+#art-direction .ad-explore-card img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ── Individual project row ── */

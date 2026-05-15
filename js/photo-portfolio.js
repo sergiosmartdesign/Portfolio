@@ -938,6 +938,20 @@
         const els = item.querySelectorAll('.hover-text');
         this.originalTexts.set(item, Array.from(els).map(el => el.textContent));
       });
+
+      // Re-translate static prose elements that sit outside the hover/highlight systems
+      const tm = window.LanguageManager;
+      if (tm) {
+        [
+          ['.photo-polaroids-desc',  'photo.ui.polaroidsDesc'],
+          ['.photo-polaroids-label', 'photo.ui.polaroids'],
+        ].forEach(([sel, key]) => {
+          const el  = document.querySelector(sel);
+          const val = tm.translate(key);
+          if (el && val !== undefined) el.textContent = val;
+        });
+      }
+
       // If the section is visible, re-trigger highlights on the new innerHTML span
       if (this.inPhase3) {
         document.querySelectorAll('.photo-ai-highlight').forEach(hl => {

@@ -125,9 +125,9 @@ class ArtWorksPanel {
 
         this.table         = this.panel.querySelector('.ad-works-table');
         this.discName      = this.panel.querySelector('.ad-works-disc-name');
+        this.exploreCard   = document.querySelector('#art-direction .ad-explore-card');
         this.section       = document.getElementById('art-direction');
-        this.projectsLabel = document.querySelector('#art-direction .ad-projects-label');
-        this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
+this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
 
         this.activeDiscipline = null;
         this._transitioning   = false;
@@ -173,13 +173,7 @@ class ArtWorksPanel {
         this._transitioning   = true;
         this.activeDiscipline = key;
 
-        if (this.projectsLabel) {
-            this.projectsLabel.classList.remove('ad-label-animating');
-            void this.projectsLabel.offsetWidth;
-            this.projectsLabel.classList.add('ad-label-animating');
-        }
-
-        this.listItems.forEach(li =>
+this.listItems.forEach(li =>
             li.classList.toggle('is-active', li.dataset.discipline === key)
         );
 
@@ -193,6 +187,7 @@ class ArtWorksPanel {
             this._renderRows(key);
             this._animateRowsIn();
             if (this.discName) this.discName.textContent = label;
+            this._showExploreCard(true);
             return;
         }
 
@@ -220,6 +215,18 @@ class ArtWorksPanel {
         });
 
         if (this.discName) this._scrambleText(this.discName, null, label);
+        this._showExploreCard();
+    }
+
+    _showExploreCard(immediate = false) {
+        if (!this.exploreCard) return;
+        if (this.section?.classList.contains('ad-intro-active')) return;
+        if (immediate) {
+            this.exploreCard.classList.add('is-visible');
+            return;
+        }
+        this.exploreCard.classList.remove('is-visible');
+        setTimeout(() => this.exploreCard.classList.add('is-visible'), 200);
     }
 
     // ── Scramble animation ────────────────────────────────────────────────────

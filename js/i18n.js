@@ -46,8 +46,10 @@
       'photo.ui.cta':         'Click a category to expand its list — then hover over any photo title to preview the image.',
       'photo.ui.infoSub':     'use the arrows to navigate the photos · click the one you like to full view',
       'photo.ui.polaroids':     '[ · p o l a r o i d s · ]',
-      'photo.ui.polaroidsDesc': 'Ten years of personal photography around the world, fifty frames selected so far. At one hundred, this archive becomes a printed book.',
+      'photo.ui.polaroidsDesc': 'A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.',
       'photo.ui.scrollHint':   '[ \u00b7 s c r o l l \u00a0 t o \u00a0 r e v e a l \u00a0 / \u00a0 c l i c k \u00a0 t o \u00a0 e x p a n d \u00a0 \u00b7 ]',
+      'photo.ui.revealHint1':  'hover a title to',
+      'photo.ui.revealHint2':  'reveal the photo',
       'photo.cat.landscapes': '· l a n d s c a p e s ·',
       'photo.cat.street':     '· s t r e e t \u00a0 p h o t o ·',
       'photo.cat.animals':    '· a n i m a l s ·',
@@ -208,7 +210,9 @@
       'photo.ui.cta':         'Haz clic en una categoría para expandir su lista — luego pasa el cursor sobre cualquier título para previsualizar la imagen.',
       'photo.ui.infoSub':     'usa las flechas para navegar las fotos · haz clic en la que quieras para verla en pantalla completa',
       'photo.ui.polaroids':     '[ · p o l a r o i d s · ]',
-      'photo.ui.polaroidsDesc': 'Diez años de fotografía personal por el mundo, cincuenta tomas seleccionadas hasta ahora. Al llegar a cien, este archivo se convierte en un libro impreso.',
+      'photo.ui.polaroidsDesc': 'Una colección en crecimiento de polaroids de viaje. Cada polaroid es una fotografía extraída de años de trabajo entre paisajes, ciudades y encuentros por todo el mundo. Cuando el archivo alcance las 100 fotografías, la colección completa se imprime como un photobook de edición limitada.',
+      'photo.ui.revealHint1':  'pasa el cursor',
+      'photo.ui.revealHint2':  'para revelar la foto',
       'photo.ui.scrollHint':   '[ \u00b7 d e s l i z a \u00a0 p a r a \u00a0 r e v e l a r \u00a0 / \u00a0 c l i c \u00a0 p a r a \u00a0 e x p a n d i r \u00a0 \u00b7 ]',
       'photo.cat.landscapes': '· p a i s a j e s ·',
       'photo.cat.street':     '· f o t o \u00a0 u r b a n a ·',
@@ -367,6 +371,10 @@
     setLanguage(lang) {
       if (lang === this.current) return;
       this._apply(lang, true);
+    },
+
+    translate(key) {
+      return TRANSLATIONS[this.current]?.[key];
     },
 
     // ── Private ──────────────────────────────────────────────────────────────

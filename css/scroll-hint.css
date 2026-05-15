@@ -130,6 +130,33 @@
   text-shadow: var(--glow-cyan-intense);
 }
 
+/* ── Scroll hint clone docked at top of info interface on hover ──────────── */
+.intro-scroll-hint--on-info {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -120%);
+  margin-top: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity   0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.info-interface:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-hint--on-info {
+  opacity: 1;
+  transform: translate(-50%, -124%);
+}
+
+/* Hide the original scroll hint only when the scroll hotspot is hovered */
+#intro:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-hint:not(.intro-scroll-hint--on-info) {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  visibility: hidden;
+}
+
 /* ── Photo section scroll hint — same layout, crimson palette ─────────────── */
 #photo-scroll-hint {
   position: fixed;

@@ -1505,7 +1505,7 @@ function initInfoInterfaceHints() {
 
   const targets = {
     nav:    Array.from(document.querySelectorAll('.main-nav .nav-btn:not(.lang-btn):not(.sound-btn)')),
-    scroll: Array.from(document.querySelectorAll('.intro-scroll-hint')),
+    scroll: Array.from(document.querySelectorAll('.intro-scroll-hint--on-info')),
     cta:    Array.from(document.querySelectorAll('.intro-work-cta')),
     sound:  [document.getElementById('sound-toggle')].filter(Boolean),
     lang:   Array.from(document.querySelectorAll('.lang-btn')),

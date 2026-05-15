@@ -161,7 +161,7 @@
     });
     section.appendChild(glCanvas);
 
-    const gl = glCanvas.getContext('webgl', { alpha: false, antialias: false });
+    const gl = glCanvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false });
     if (!gl) { console.warn('[PhotoVFX] WebGL not supported'); return; }
 
     const prog = makeProgram(gl);
@@ -193,11 +193,10 @@
     gl.uniform1f(U.rb, CONFIG.rainbowIntensity);
     gl.uniform1f(U.dt, CONFIG.ditherAmount);
     gl.uniform1i(U.tex, 0);
-    gl.uniform3f(U.tc, 1.0, 1.0, 1.0); // start white
+    gl.uniform3f(U.tc, CONFIG.bgColor[0] / 255, CONFIG.bgColor[1] / 255, CONFIG.bgColor[2] / 255);
     gl.uniform3f(U.lc, ...CONFIG.lightColor);
 
-    const [br, bg, bb] = CONFIG.bgColor;
-    gl.clearColor(br / 255, bg / 255, bb / 255, 1);
+    gl.clearColor(0, 0, 0, 0);
 
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -375,15 +374,11 @@
       }
 
       if (needsDraw) {
-        // Lerp text color white → bg color driven by phase-2 progress
         const [br, bg, bb] = CONFIG.bgColor;
-        const tr = 1.0 + (br / 255 - 1.0) * scrollProgress2;
-        const tg = 1.0 + (bg / 255 - 1.0) * scrollProgress2;
-        const tb = 1.0 + (bb / 255 - 1.0) * scrollProgress2;
 
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform2f(U.mouse, mouse.x, mouse.y);
-        gl.uniform3f(U.tc, tr, tg, tb);
+        gl.uniform3f(U.tc, br / 255, bg / 255, bb / 255);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         needsDraw = false;
       }

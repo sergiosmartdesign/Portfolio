@@ -400,6 +400,7 @@
     <link rel="stylesheet" href="css/blog.css">
     <link rel="stylesheet" href="css/art-direction-list.css">
     <link rel="stylesheet" href="css/art-direction-slider.css">
+    <link rel="stylesheet" href="css/inf-bracket.css">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -498,6 +499,17 @@
 
             <!-- Info Interface Badge — bottom-left navigation guide, appears with cyber-panel -->
             <div class="info-interface" id="infoInterface" aria-label="Navigation guide: use the top menu to jump to any section, scroll to explore in sequence, or press See My Work to begin">
+                <!-- Scroll hint clone — appears at top of card on hover -->
+                <div class="intro-scroll-hint intro-scroll-hint--on-info" aria-hidden="true">
+                    <svg class="sc-icon" viewBox="0 0 36 62" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+                        <rect x="8" y="1" width="20" height="34" rx="10" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="18" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+                        <rect class="sc-wheel" x="15.5" y="7" width="5" height="9" rx="2.5" fill="currentColor"/>
+                        <polyline class="sc-chevron-1" points="11,42 18,50 25,42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline class="sc-chevron-2" points="11,51 18,59 25,51" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <p class="sc-text">[ · s c r o l l · ]</p>
+                </div>
                 <svg class="info-interface-svg" viewBox="0 0 564.09 406.8" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                     <defs>
                         <clipPath id="inf-bg-clip">
@@ -987,15 +999,13 @@
               </g>
             </svg>
 
-            <!-- Projects vertical label — left of works panel -->
-            <svg class="ad-projects-label" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 380">
-              <rect width="22" height="380" fill="#001219"/>
-              <line x1="20" y1="3" x2="20" y2="377" stroke="#EE9B00" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
-              <text transform="translate(13 368) rotate(-90)" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#EE9B00" letter-spacing="1.8">[ · p r o j e c t s · ]</text>
-            </svg>
+            <!-- Works zone: label + list, top-aligned via flex -->
+            <div class="ad-works-zone">
 
-            <!-- Works list — right zone, z:5, below scanlines/vhs/vignette -->
-            <div class="ad-works-panel" role="region" aria-label="Selected work by discipline">
+              <img class="ad-projects-label" src="images/art-dir-projects.svg" alt="" role="presentation" aria-hidden="true">
+
+              <!-- Works list -->
+              <div class="ad-works-panel" role="region" aria-label="Selected work by discipline">
 
                 <div class="ad-works-header">
                     <span class="ad-works-pulse"></span>
@@ -1014,6 +1024,15 @@
                 <div class="ad-works-table" role="list">
                     <!-- Populated by ArtWorksPanel from WORKS_DATA -->
                 </div>
+
+                </div>
+            </div>
+
+            </div><!-- /.ad-works-zone -->
+
+            <!-- HOW TO EXPLORE card — bottom-right zone, next to N, below project list -->
+            <div class="ad-explore-card" aria-hidden="true">
+                <img src="images/intro-art-direction.svg" alt="">
             </div>
 
             <!-- Discipline list — left rail, z:10, above all section layers -->
@@ -1496,8 +1515,8 @@
                             <div class="accordion-electric-border" aria-hidden="true"></div>
                         </div>
                         <img class="photo-col-bar1" src="images/bar1.svg" alt="" role="presentation" aria-hidden="true" draggable="false">
-                        <p class="photo-polaroids-label">[ &middot; p o l a r o i d s &middot; ]</p>
-                        <p class="photo-polaroids-desc">A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.</p>
+                        <p class="photo-polaroids-label" data-i18n="photo.ui.polaroids">[ · p o l a r o i d s · ]</p>
+                        <p class="photo-polaroids-desc" data-i18n="photo.ui.polaroidsDesc">A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.</p>
                         <div class="pgallery-info" role="group" aria-label="Polaroid stream controls">
                             <svg class="pgallery-info-svg" viewBox="0 0 800 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <defs>
@@ -1570,40 +1589,78 @@
                                 <div class="photo-polaroid-border"></div>
                             </div>
                             <div class="photo-polaroid-hint" aria-hidden="true">
-                                <svg id="photo-reveal-guide" class="photo-hint-svg" viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                <svg id="photo-reveal-guide" class="photo-hint-svg" viewBox="0 0 290 300" xmlns="http://www.w3.org/2000/svg" focusable="false">
                                     <defs>
                                         <clipPath id="phint-clip">
-                                            <path d="M1,15 L14,1 L259,1 L259,299 L1,299 Z"/>
+                                            <path d="M1,15 L14,1 L276,1 L289,14 L289,286 L276,299 L14,299 L1,286 Z"/>
                                         </clipPath>
                                     </defs>
+
                                     <!-- Dark backdrop -->
-                                    <rect x="0" y="0" width="260" height="300" fill="#001219" fill-opacity="0.28" clip-path="url(#phint-clip)"/>
-                                    <!-- Border -->
-                                    <path d="M1,15 L14,1 L259,1 L259,299 L1,299 Z" fill="none" stroke="#EE9B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <!-- Bottom tab accent -->
-                                    <polygon points="97,290 106,300 154,300 163,290" fill="#EE9B00"/>
-                                    <!-- Top-right accent -->
-                                    <polygon points="249,1 259,1 259,52 249,44" fill="#EE9B00"/>
-                                    <!-- Header -->
-                                    <text x="18" y="27" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00" letter-spacing="1">[ · HOW TO REVEAL · ]</text>
-                                    <!-- Divider -->
-                                    <line x1="10" y1="36" x2="250" y2="36" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
-                                    <!-- Step 01 -->
-                                    <text x="18" y="57" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 01 · MOUSE OVER</text>
-                                    <text x="18" y="72" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       scratch the dark veil</text>
-                                    <!-- Step 02 -->
-                                    <text x="18" y="96" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 02 · CLICK</text>
-                                    <text x="18" y="111" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       fully expose the photo</text>
-                                    <!-- Step 03 -->
-                                    <text x="18" y="135" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 03 · HOVER ROWS</text>
-                                    <text x="18" y="150" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       preview any image</text>
-                                    <!-- Step 04 -->
-                                    <text x="18" y="174" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 04 · EXPLORE</text>
-                                    <text x="18" y="189" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       find your favourites</text>
-                                    <!-- Bottom divider -->
-                                    <line x1="10" y1="208" x2="250" y2="208" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
-                                    <!-- Footer -->
-                                    <text x="18" y="226" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">  uncover your image ·</text>
+                                    <rect x="0" y="0" width="290" height="300" fill="#001219" fill-opacity="0.15" clip-path="url(#phint-clip)"/>
+
+                                    <!-- Scan lines -->
+                                    <line x1="14" y1="44"  x2="276" y2="44"  stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="64"  x2="276" y2="64"  stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="84"  x2="276" y2="84"  stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="104" x2="276" y2="104" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="124" x2="276" y2="124" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="144" x2="276" y2="144" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="164" x2="276" y2="164" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="184" x2="276" y2="184" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="204" x2="276" y2="204" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="224" x2="276" y2="224" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="244" x2="276" y2="244" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+                                    <line x1="14" y1="264" x2="276" y2="264" stroke="#AE2012" stroke-width="0.5" opacity="0.09"/>
+
+                                    <!-- Main border — all 4 corners chamfered -->
+                                    <path d="M1,15 L14,1 L276,1 L289,14 L289,286 L276,299 L14,299 L1,286 Z" fill="none" stroke="#AE2012" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+                                    <!-- Corner fills -->
+                                    <polygon points="1,1 14,1 1,15"           fill="#AE2012"/>
+                                    <polygon points="276,1 289,1 289,14"       fill="#AE2012"/>
+                                    <polygon points="289,286 289,299 276,299"  fill="#AE2012"/>
+                                    <polygon points="1,286 14,299 1,299"       fill="#AE2012"/>
+
+                                    <!-- Header bar -->
+                                    <line x1="14" y1="22" x2="276" y2="22" stroke="#AE2012" stroke-width="1" opacity="0.7"/>
+                                    <!-- LED status squares -->
+                                    <rect x="18" y="9" width="5" height="5" fill="#AE2012"/>
+                                    <rect x="27" y="9" width="5" height="5" fill="#AE2012" opacity="0.5"/>
+                                    <rect x="36" y="9" width="5" height="5" fill="#AE2012" opacity="0.2"/>
+                                    <!-- Header label -->
+                                    <text x="50" y="16" font-family="'Courier New', monospace" font-size="8" fill="#AE2012" opacity="0.65">· REVEAL·SYS ·</text>
+
+                                    <!-- Left track -->
+                                    <line x1="8" y1="24" x2="8" y2="276" stroke="#AE2012" stroke-width="1" opacity="0.3"/>
+                                    <circle cx="8" cy="60"  r="2.5" fill="none" stroke="#AE2012" stroke-width="1" opacity="0.45"/>
+                                    <circle cx="8" cy="150" r="2.5" fill="#AE2012" opacity="0.75"/>
+                                    <circle cx="8" cy="240" r="2.5" fill="none" stroke="#AE2012" stroke-width="1" opacity="0.45"/>
+
+                                    <!-- Right bracket + tick marks -->
+                                    <path d="M278,35 L285,35 L285,265 L278,265" fill="none" stroke="#AE2012" stroke-width="1" opacity="0.35"/>
+                                    <line x1="282" y1="90"  x2="285" y2="90"  stroke="#AE2012" stroke-width="1" opacity="0.5"/>
+                                    <line x1="282" y1="150" x2="285" y2="150" stroke="#AE2012" stroke-width="1" opacity="0.5"/>
+                                    <line x1="282" y1="210" x2="285" y2="210" stroke="#AE2012" stroke-width="1" opacity="0.5"/>
+
+                                    <!-- Bracket wrapping the text block -->
+                                    <path d="M87,128 L81,128 L81,188 L87,188" fill="none" stroke="#AE2012" stroke-width="1" opacity="0.6"/>
+                                    <!-- Circuit node connecting < to text bracket -->
+                                    <line x1="72" y1="158" x2="81" y2="158" stroke="#AE2012" stroke-width="1" opacity="0.5"/>
+                                    <circle cx="83" cy="158" r="3" fill="#AE2012" opacity="0.85"/>
+                                    <line x1="83" y1="148" x2="83" y2="128" stroke="#AE2012" stroke-width="1" opacity="0.4"/>
+                                    <line x1="83" y1="168" x2="83" y2="188" stroke="#AE2012" stroke-width="1" opacity="0.4"/>
+
+                                    <!-- Big < -->
+                                    <text x="15" y="190" font-family="'Courier New', monospace" font-size="90" font-weight="bold" fill="#001219">&lt;</text>
+
+                                    <!-- Text lines -->
+                                    <text x="90" y="147" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#001219" data-i18n="photo.ui.revealHint1">hover a title to</text>
+                                    <text x="90" y="172" font-family="'Courier New', monospace" font-size="15" font-weight="bold" fill="#001219" data-i18n="photo.ui.revealHint2">reveal the photo</text>
+
+                                    <!-- Bottom bar -->
+                                    <line x1="14" y1="278" x2="276" y2="278" stroke="#AE2012" stroke-width="1" opacity="0.7"/>
+                                    <text x="18" y="291" font-family="'Courier New', monospace" font-size="8" fill="#AE2012" opacity="0.55">· img.reveal // v0.1 ·</text>
                                 </svg>
                             </div>
                         </div>
@@ -1645,6 +1702,8 @@
                     <div class="photo-bg-border" aria-hidden="true"></div>
                 </div>
             </div>
+            <div class="scanlines" aria-hidden="true"></div>
+            <div class="vhs-static" aria-hidden="true"></div>
         </section>
         <div class="photo-scroll-spacer"></div>
 
@@ -2411,5 +2470,16 @@
     <script src="js/illustration-ink-cursor.js"></script>
     <script src="js/illus-shader-bg.js"></script>
     <script src="js/illus-cube.js"></script>
+
+    <!-- Info bracket overlay — contextual { indicator for info-interface hotspots -->
+    <div id="inf-bracket" aria-hidden="true">
+      <svg id="inf-bracket-svg" xmlns="http://www.w3.org/2000/svg" fill="none" overflow="visible">
+        <path id="inf-bracket-path" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline id="inf-bracket-chev1" class="inf-bracket-chevron" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <polyline id="inf-bracket-chev2" class="inf-bracket-chevron inf-bracket-chevron--2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+
+    <script src="js/inf-bracket.js"></script>
 </body>
 </html>

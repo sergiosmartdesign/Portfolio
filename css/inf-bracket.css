@@ -1,0 +1,49 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   INFO BRACKET — contextual { indicator tied to info-interface hotspots
+   Position: fixed, above header (z:1001). JS measures targets via
+   getBoundingClientRect() and sets left/top/width at runtime.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+#inf-bracket {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#inf-bracket.visible {
+  opacity: 1;
+}
+
+/* Glow applied to the whole SVG so chevrons share it */
+#inf-bracket-svg {
+  filter:
+    drop-shadow(0 0 4px rgba(255, 60, 0, 0.7))
+    drop-shadow(0 0 10px rgba(255, 60, 0, 0.3));
+  overflow: visible;
+}
+
+#inf-bracket-path {
+  stroke: #ff3c00;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+/* Chevrons at nub tip — same cascade animation as scroll hint */
+.inf-bracket-chevron {
+  stroke: #ff3c00;
+  stroke-width: 2.5;
+  fill: none;
+  animation: inf-chev-fade 2s ease-in-out infinite;
+}
+
+.inf-bracket-chevron--2 {
+  animation-delay: 0.28s;
+}
+
+@keyframes inf-chev-fade {
+  0%, 25% { opacity: 0.1; }
+  65%     { opacity: 1;   }
+  100%    { opacity: 0.1; }
+}

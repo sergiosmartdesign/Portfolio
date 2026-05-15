@@ -264,7 +264,9 @@ body {
 #about.paused-animations .scanlines,
 #about.paused-animations .vhs-static,
 #art-direction.paused-animations .scanlines,
-#art-direction.paused-animations .vhs-static {
+#art-direction.paused-animations .vhs-static,
+#photo.paused-animations .scanlines,
+#photo.paused-animations .vhs-static {
   animation-play-state: paused !important;
 }
 
@@ -1163,7 +1165,7 @@ nav {
   stroke: var(--cyan);
   transition: stroke 0.25s ease;
 }
-.intro-scroll-hint.info-glow {
+.intro-scroll-hint--on-info.info-glow {
   opacity: 1 !important;
   filter: drop-shadow(0 0 10px rgba(255, 60, 0, 0.9)) !important;
   transition: opacity 0.25s ease, filter 0.25s ease !important;
@@ -3072,7 +3074,7 @@ nav {
    PHOTO SECTION
    ============================================================================ */
 #photo {
-  background: #001219;
+  background: url('../images/photo background.jpeg') center/cover no-repeat;
   position: fixed;
   top: 0;
   left: 0;
@@ -3082,6 +3084,25 @@ nav {
   visibility: hidden;
   clip-path: inset(0 0 100% 0);
   contain: layout;
+}
+
+/* VHS effect layers — drape over entire photo section (above camera z:4) */
+#photo .scanlines,
+#photo .vhs-static {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#photo .scanlines {
+  z-index: 5;
+}
+
+#photo .vhs-static {
+  z-index: 6;
 }
 
 .photo-static-line {
@@ -3554,9 +3575,9 @@ nav {
 
 @keyframes hint-svg-reveal {
   0%   { filter: none; }
-  20%  { filter: drop-shadow(0 0 5px rgba(238,155,0,0.9)) drop-shadow(0 0 14px rgba(238,155,0,0.4)); }
+  20%  { filter: drop-shadow(0 0 5px rgba(174,32,18,0.9)) drop-shadow(0 0 14px rgba(174,32,18,0.4)); }
   45%  { filter: none; }
-  65%  { filter: drop-shadow(0 0 3px rgba(238,155,0,0.55)); }
+  65%  { filter: drop-shadow(0 0 3px rgba(174,32,18,0.55)); }
   100% { filter: none; }
 }
 
