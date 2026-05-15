@@ -4,6 +4,10 @@
     const IMAGES = [
         'images/photo/Isla en Uyuni.jpg',
         'images/illustration/the-fat-dragon-themberchaud-concept-art.jpg',
+        'images/illustration/Hada de los Andes.jpg',
+        'images/illustration/Meninas_Canido.jpg',
+        'images/illustration/Rocker Ghost Geisha.jpg',
+        'images/illustration/Prueba grafitti.jpg',
         'images/photo/Fairy woods.jpg',
         'images/photo/Dali Desert.jpg',
         'images/photo/Attack of the Titan.jpg',
@@ -514,22 +518,36 @@
     hintHudPct.textContent   = '000%';
     hintHudLabel.textContent = 'TIMELESS';
 
-    const hintHudScroll = document.createElement('div');
-    hintHudScroll.className = 'illus-hud-scroll glitch-text subtitle-glitch';
-    hintHudScroll.setAttribute('data-splitting', '');
-    hintHudScroll.innerHTML =
-        '<span>· s c r o l l</span>' +
-        '<span class="illus-hud-scroll-in">o r</span>' +
-        '<span class="illus-hud-scroll-in">c l I c k</span>' +
-        '<span class="illus-hud-scroll-in">- E N T E R -</span>' +
-        '<span class="illus-hud-scroll-in">t o</span>' +
-        '<span class="illus-hud-scroll-in">v I e w ·</span>';
+    // How-to-use SVG panel — organized inside the hint hud, below the % bar
+    const illusInfoPanel = document.createElement('div');
+    illusInfoPanel.className = 'illus-info-panel';
+    illusInfoPanel.setAttribute('aria-hidden', 'true');
+    illusInfoPanel.innerHTML =
+        '<svg class="illus-info-interface-svg" viewBox="0 0 564.09 336" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
+        '<defs><clipPath id="illus-inf-bg-clip">' +
+        '<path d="M10.47,195c0,29.7,0,59.4,0,88.9,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v160l9.47,13.68Z"/>' +
+        '</clipPath></defs>' +
+        '<rect x="0" y="0" width="564.09" height="336" fill="#001219" fill-opacity="0.35" clip-path="url(#illus-inf-bg-clip)"/>' +
+        '<path d="M10.47,195c0,29.7,0,59.4,0,88.9,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v160l9.47,13.68Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>' +
+        '<polygon points="158.13 324 169.28 336 365.68 336 378.21 324 158.13 324" fill="#EE9B00"/>' +
+        '<polygon points="545.41 130 564.09 117 564.09 16.17 545.28 1 545.41 130" fill="#EE9B00"/>' +
+        '<text class="info-line" style="--i:0" x="30" y="42" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00" letter-spacing="1">[ \xb7 HOW TO USE \xb7 ]</text>' +
+        '<line class="info-line info-line--rule" style="--i:1" x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
+        '<text class="info-line" style="--i:2" x="30" y="90" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 01 \xb7 SCROLL</text>' +
+        '<text class="info-line" style="--i:3" x="30" y="112" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       move between images</text>' +
+        '<text class="info-line" style="--i:4" x="30" y="152" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 02 \xb7 DOT BUTTONS</text>' +
+        '<text class="info-line" style="--i:5" x="30" y="174" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       jump to any image</text>' +
+        '<text class="info-line" style="--i:6" x="30" y="214" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 03 \xb7 CLICK IMAGE</text>' +
+        '<text class="info-line" style="--i:7" x="30" y="236" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       view full size</text>' +
+        '<line class="info-line info-line--rule" style="--i:8" x1="14" y1="272" x2="530" y2="272" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
+        '<text class="info-line" style="--i:9" x="30" y="298" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">  enter your way \xb7</text>' +
+        '</svg>';
 
     hintHudBar.appendChild(hintHudFill);
     hintHud.appendChild(hintHudPct);
     hintHud.appendChild(hintHudBar);
     hintHud.appendChild(hintHudLabel);
-    hintHud.appendChild(hintHudScroll);
+    hintHud.appendChild(illusInfoPanel);
     tunnel.appendChild(hintHud);
 
     // Flat 2D overlay — sits outside the 3D cube context so it is always upright

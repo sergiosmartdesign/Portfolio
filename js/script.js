@@ -522,6 +522,13 @@ class AnimationCoordinator {
 
     setTimeout(() => {
       panel.classList.add('active');
+
+      // Info interface container slides in last — fires after social icons (~1500ms).
+      // Content line animations are handled separately by initInfoInterfaceLangLoop().
+      const infoInterface = document.getElementById('infoInterface');
+      if (infoInterface) {
+        setTimeout(() => infoInterface.classList.add('active'), 2000);
+      }
     }, delay);
   }
 
@@ -1313,10 +1320,33 @@ class AnimationCoordinator {
     }
 
     // SVG Decorations observers
-    createClassObserver('.decoration-bar1');
-    createClassObserver('.decoration-bar2');
-    createClassObserver('.decoration-certs1');
-    createClassObserver('.decoration-vtv1');
+    // Use a looser threshold (0.1) and no negative rootMargin so decorations within
+    // #about's sticky viewport reliably trigger on short laptop screens (768–900px height).
+    // The generic elementObserverOptions uses -20% bottom margin which pushes bar1 (at
+    // top:750px inside #about) below the trigger zone on screens shorter than ~1000px.
+    const decorationObserverOptions = { threshold: 0.1, rootMargin: '0px' };
+    const createDecorationObserver = (className) => {
+      document.querySelectorAll(className).forEach(el => {
+        let hasEntered = false;
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              hasEntered = true;
+              el.classList.remove('element-exit');
+              el.classList.add('element-visible');
+            } else if (hasEntered) {
+              el.classList.remove('element-visible');
+              el.classList.add('element-exit');
+            }
+          });
+        }, decorationObserverOptions);
+        obs.observe(el);
+      });
+    };
+    createDecorationObserver('.decoration-bar1');
+    createDecorationObserver('.decoration-bar2');
+    createDecorationObserver('.decoration-certs1');
+    createDecorationObserver('.decoration-vtv1');
     // .decoration-skills:
     // Entry — triggered 800ms after #aboutp2 enters viewport (matching its 0.8s animation).
     // Exit  — triggered when the SVG itself leaves the viewport.
@@ -1384,6 +1414,118 @@ function updateDate() {
 }
 
 // ============================================================================
+// INFO INTERFACE — HOTSPOT HINTS
+// Hovering a step row adds .info-glow to the corresponding header target.
+// Transparent <rect> hit areas sit on top of the SVG; pointer-events enabled
+// only when badge is .active, so scroll is never blocked during entrance.
+// ============================================================================
+
+function initInfoInterfaceHints() {
+  const badge = document.getElementById('infoInterface');
+  if (!badge) return;
+
+  const targets = {
+    nav:    Array.from(document.querySelectorAll('.main-nav .nav-btn:not(.lang-btn):not(.sound-btn)')),
+    scroll: Array.from(document.querySelectorAll('.intro-scroll-hint')),
+    cta:    Array.from(document.querySelectorAll('.intro-work-cta')),
+    sound:  [document.getElementById('sound-toggle')].filter(Boolean),
+    lang:   Array.from(document.querySelectorAll('.lang-btn')),
+  };
+
+  let activeHint = null;
+
+  const clearGlow = (hint) => {
+    targets[hint]?.forEach(el => el.classList.remove('info-glow'));
+  };
+
+  const applyGlow = (hint) => {
+    targets[hint]?.forEach(el => el.classList.add('info-glow'));
+  };
+
+  badge.addEventListener('mouseover', (e) => {
+    const hotspot = e.target.closest('.inf-hotspot[data-hint]');
+    const hint = hotspot?.dataset.hint ?? null;
+    if (hint === activeHint) return;
+    clearGlow(activeHint);
+    activeHint = hint;
+    applyGlow(activeHint);
+  });
+
+  badge.addEventListener('mouseleave', () => {
+    clearGlow(activeHint);
+    activeHint = null;
+  });
+}
+
+// ============================================================================
+// INFO INTERFACE — BILINGUAL LOOP
+// EN → flicker → ES → flicker → EN … forever.
+// Content lines re-animate (staggered entrance) on every language change.
+// ============================================================================
+
+function initInfoInterfaceLangLoop() {
+  const badge  = document.getElementById('infoInterface');
+  if (!badge) return;
+
+  const enGroup = badge.querySelector('#inf-en');
+  const esGroup = badge.querySelector('#inf-es');
+  if (!enGroup || !esGroup) return;
+
+  const DISPLAY_MS = 6500;   // how long each language stays visible
+  const EXIT_MS    = 450;    // duration of the flicker-out animation (must match CSS)
+
+  let currentGroup = enGroup;
+  let nextGroup    = esGroup;
+
+  // Restart line animations on a group.
+  // --line-offset controls the initial delay before stagger begins.
+  function enterGroup(group, lineOffset = '0s') {
+    group.style.setProperty('--line-offset', lineOffset);
+    group.style.display = '';
+    // Force animation restart: remove class → reflow → re-add
+    group.classList.remove('inf-lang--entering');
+    void group.getBoundingClientRect();
+    group.classList.add('inf-lang--entering');
+  }
+
+  function doSwitch() {
+    const outgoing = currentGroup;
+    const incoming = nextGroup;
+
+    // Flicker out the old group
+    outgoing.classList.remove('inf-lang--entering');
+    outgoing.classList.add('inf-lang--exiting');
+
+    setTimeout(() => {
+      // Hide old, reveal new with content entrance
+      outgoing.style.display = 'none';
+      outgoing.classList.remove('inf-lang--exiting');
+
+      enterGroup(incoming, '0s');
+
+      currentGroup = incoming;
+      nextGroup    = outgoing;
+
+      // Schedule the next switch
+      setTimeout(doSwitch, DISPLAY_MS);
+    }, EXIT_MS);
+  }
+
+  // Observe the badge becoming active (set by initCyberPanel)
+  const mo = new MutationObserver(() => {
+    if (!badge.classList.contains('active')) return;
+    mo.disconnect();
+
+    // Trigger EN entrance after the container slides in (0.75s = infoEntrance duration)
+    enterGroup(enGroup, '0.75s');
+
+    // Schedule first switch after EN has been visible long enough
+    setTimeout(doSwitch, DISPLAY_MS);
+  });
+  mo.observe(badge, { attributes: true, attributeFilter: ['class'] });
+}
+
+// ============================================================================
 // ID1 SVG INLINE CONVERTER - Converts img to inline SVG for element animations
 // ============================================================================
 
@@ -1399,60 +1541,76 @@ function convertID1SvgToInline() {
   fetch(imgURL)
     .then(response => response.text())
     .then(data => {
-      // Parse SVG data
       const parser = new DOMParser();
       const svgDoc = parser.parseFromString(data, 'image/svg+xml');
       const svgElement = svgDoc.documentElement;
 
-      // Copy attributes from img to svg
-      const imgWidth = imgElement.getAttribute('width');
-      const imgStyle = imgElement.style.cssText;
+      // --- Chrome fix: prefix all internal IDs to prevent conflicts with existing
+      // document IDs (e.g. id="Layer_1-2" is shared with the DNA capsule SVG).
+      // Duplicate IDs make Chrome mis-resolve url(#...) gradient/clip references.
+      const ID_PREFIX = 'id1-';
+      const idMap = {};
+      svgElement.querySelectorAll('[id]').forEach(el => {
+        const oldId = el.getAttribute('id');
+        const newId = ID_PREFIX + oldId;
+        idMap[oldId] = newId;
+        el.setAttribute('id', newId);
+      });
+
+      // Update url(#...) references in presentation attributes
+      const rewriteUrlAttr = (el, attrName) => {
+        const val = el.getAttribute(attrName);
+        if (!val) return;
+        const next = val.replace(/url\(#([^)]+)\)/g, (_, id) =>
+          `url(#${idMap[id] || id})`
+        );
+        if (next !== val) el.setAttribute(attrName, next);
+      };
+      svgElement.querySelectorAll('[fill]').forEach(el => rewriteUrlAttr(el, 'fill'));
+      svgElement.querySelectorAll('[stroke]').forEach(el => rewriteUrlAttr(el, 'stroke'));
+      svgElement.querySelectorAll('[clip-path]').forEach(el => rewriteUrlAttr(el, 'clip-path'));
+      svgElement.querySelectorAll('[filter]').forEach(el => rewriteUrlAttr(el, 'filter'));
+      svgElement.querySelectorAll('[mask]').forEach(el => rewriteUrlAttr(el, 'mask'));
+
+      // --- Chrome fix: convert deprecated xlink:href → href for gradient inheritance.
+      // Chrome 79+ moved away from the xlink namespace; inlined SVGs with xlink:href
+      // on <radialGradient xlink:href="#other-gradient"> fail to inherit stops in Chrome.
+      const XLINK_NS = 'http://www.w3.org/1999/xlink';
+      svgElement.querySelectorAll('*').forEach(el => {
+        const xlinkHref = el.getAttributeNS(XLINK_NS, 'href');
+        if (xlinkHref !== null) {
+          const refId = xlinkHref.startsWith('#') ? xlinkHref.slice(1) : null;
+          const resolved = refId && idMap[refId] ? `#${idMap[refId]}` : xlinkHref;
+          el.setAttribute('href', resolved);
+          el.removeAttributeNS(XLINK_NS, 'href');
+        }
+      });
+
+      // Copy identity attributes from the original <img>
       const imgClass = imgElement.className;
       const imgId = imgElement.id;
-
-      // Set SVG attributes
       svgElement.setAttribute('id', imgId);
       if (imgClass) svgElement.setAttribute('class', imgClass);
-      if (imgWidth) svgElement.setAttribute('width', imgWidth);
-      if (imgStyle) svgElement.style.cssText = imgStyle;
 
-      // Add animation classes to internal elements
-      const border = svgElement.querySelector('#border');
-      const face = svgElement.querySelector('#face');
-      const hexagons = svgElement.querySelectorAll('polygon[points*="39.43"], polygon[points*="77.83"], polygon[points*="116.41"], polygon[points*="154.28"]');
-      const circles = svgElement.querySelectorAll('circle[cx="27.6"], circle[cx="66"], circle[cx="104.57"]');
-      const sideCircles = svgElement.querySelectorAll('circle[cx="49.26"]');
-      const stars = svgElement.querySelectorAll('polygon[points*="442.2"], polygon[points*="410.07"], polygon[points*="377.94"], polygon[points*="345.32"], polygon[points*="506.54"], polygon[points*="474.82"]');
-      const rects = svgElement.querySelectorAll('rect');
+      // Add animation classes to internal elements (selectors use prefixed IDs where needed)
+      const border = svgElement.querySelector(`#${ID_PREFIX}border`);
+      const face   = svgElement.querySelector(`#${ID_PREFIX}face`);
+      const hexagons   = svgElement.querySelectorAll('polygon[points*="39.43"], polygon[points*="77.83"], polygon[points*="116.41"], polygon[points*="154.28"]');
+      const circles    = svgElement.querySelectorAll('circle[cx="27.6"], circle[cx="66"], circle[cx="104.57"]');
+      const sideCircles= svgElement.querySelectorAll('circle[cx="49.26"]');
+      const stars      = svgElement.querySelectorAll('polygon[points*="442.2"], polygon[points*="410.07"], polygon[points*="377.94"], polygon[points*="345.32"], polygon[points*="506.54"], polygon[points*="474.82"]');
+      const rects      = svgElement.querySelectorAll('rect');
 
-      // Apply classes
       if (border) border.classList.add('id1-border');
-      if (face) face.classList.add('id1-face');
-      hexagons.forEach((hex, i) => {
-        hex.classList.add('id1-hexagon');
-        hex.style.setProperty('--hex-index', i);
-      });
-      circles.forEach((circle, i) => {
-        circle.classList.add('id1-circle');
-        circle.style.setProperty('--circle-index', i);
-      });
-      sideCircles.forEach((circle, i) => {
-        circle.classList.add('id1-side-circle');
-        circle.style.setProperty('--side-circle-index', i);
-      });
-      stars.forEach((star, i) => {
-        star.classList.add('id1-star');
-        star.style.setProperty('--star-index', i);
-      });
-      rects.forEach((rect, i) => {
-        rect.classList.add('id1-rect');
-        rect.style.setProperty('--rect-index', i);
-      });
+      if (face)   face.classList.add('id1-face');
+      hexagons.forEach((hex, i) => { hex.classList.add('id1-hexagon'); hex.style.setProperty('--hex-index', i); });
+      circles.forEach((c, i) => { c.classList.add('id1-circle'); c.style.setProperty('--circle-index', i); });
+      sideCircles.forEach((c, i) => { c.classList.add('id1-side-circle'); c.style.setProperty('--side-circle-index', i); });
+      stars.forEach((s, i) => { s.classList.add('id1-star'); s.style.setProperty('--star-index', i); });
+      rects.forEach((r, i) => { r.classList.add('id1-rect'); r.style.setProperty('--rect-index', i); });
 
-      // Replace img with inline SVG
       imgElement.parentNode.replaceChild(svgElement, imgElement);
 
-      // Set up observer for ID1 SVG AFTER conversion completes
       setupID1Observer();
     })
     .catch(error => console.error('[ID1 SVG] Error loading SVG:', error));
@@ -1463,28 +1621,33 @@ function convertID1SvgToInline() {
  */
 function setupID1Observer() {
   const id1svg = document.getElementById('id1svg');
-  if (id1svg) {
-    let id1Entered = false;
-    const elementObserverOptions = {
-      threshold: 0.3,
-      rootMargin: '0px 0px -20% 0px'
-    };
+  if (!id1svg) return;
 
-    const id1Observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          id1Entered = true;
-          id1svg.classList.remove('element-exit');
-          id1svg.classList.add('element-visible');
-        } else if (id1Entered) {
-          id1svg.classList.remove('element-visible');
-          id1svg.classList.add('element-exit');
-        }
-      });
-    }, elementObserverOptions);
+  // #id1svg is positioned with `position: relative; left: 980px; top: -464px`, placing
+  // it well outside #about's layout bounds. Because #about has `overflow: clip`, Chrome's
+  // IntersectionObserver treats the clip boundary as the intersection root — the element
+  // never intersects and stays invisible. Fix: observe a stable in-flow proxy element
+  // (#about-availability) and mirror its visibility state onto id1svg.
+  const proxyEl =
+    document.getElementById('about-availability') ||
+    document.getElementById('about');
+  if (!proxyEl) return;
 
-    id1Observer.observe(id1svg);
-  }
+  let id1Entered = false;
+  const id1Observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        id1Entered = true;
+        id1svg.classList.remove('element-exit');
+        id1svg.classList.add('element-visible');
+      } else if (id1Entered) {
+        id1svg.classList.remove('element-visible');
+        id1svg.classList.add('element-exit');
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
+
+  id1Observer.observe(proxyEl);
 }
 
 // Disable browser scroll restoration
@@ -1501,6 +1664,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Convert ID1 SVG to inline for animations
   convertID1SvgToInline();
+
+  // Info interface: bilingual loop + hotspot hover hints
+  initInfoInterfaceLangLoop();
+  initInfoInterfaceHints();
 
   // Ensure intro section is in view
   const introSection = document.getElementById('intro');

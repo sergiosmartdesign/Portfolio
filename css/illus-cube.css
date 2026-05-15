@@ -848,6 +848,10 @@
     white-space: normal;
 }
 
+#illustration .illus-h2--category.glitch-text {
+    color: #CA6702;
+}
+
 #illustration .illus-h2 [data-word] {
     display: inline;
     white-space: normal;
@@ -875,6 +879,11 @@
 #illustration .illus-body [data-char]:after {
     animation-name: none;
     color: var(--illus-fg);
+}
+
+/* Category label keeps its own colour — must come after the gate rule above */
+#illustration .illus-h2--category [data-char]:after {
+    color: #CA6702;
 }
 
 /* Fire each element's glitch AFTER its own slide-in transition finishes.
@@ -926,7 +935,7 @@
 .illus-h2--category {
     font-size: clamp(0.65rem, 1.2vw, 0.85rem);
     letter-spacing: 0.28em;
-    color: #BB3E03;
+    color: #CA6702;
     margin-block-end: 1rem;
 }
 
@@ -986,6 +995,22 @@
 }
 
 .illus-card--right .illus-meta-row { justify-content: flex-end; }
+
+.illus-ig-link {
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0 0;
+    --icon-size: 36px;
+    /* override global .social-media-icons defaults */
+    position: static;
+    bottom: auto;
+    right: auto;
+    transform: none;
+    gap: 0;
+    z-index: auto;
+}
+
+.illus-card--right .illus-ig-link { justify-content: flex-end; display: flex; }
 
 .illus-stat-row {
     display: flex;
@@ -1098,6 +1123,7 @@
 .illus-technique,
 .illus-stat-row,
 .illus-meta-row,
+.illus-ig-link,
 .illus-cta,
 .illus-cta-back {
     opacity: 0;
@@ -1115,6 +1141,7 @@
 .illus-body         { transition: opacity 0.5s ease 0.2s,  translate 0.5s ease 0.2s; }
 .illus-technique    { transition: opacity 0.5s ease 0.28s, translate 0.5s ease 0.28s; }
 .illus-meta-row     { transition: opacity 0.5s ease 0.28s, translate 0.5s ease 0.28s; }
+.illus-ig-link      { transition: opacity 0.5s ease 0.32s, translate 0.5s ease 0.32s; }
 .illus-stat-row     { transition: opacity 0.5s ease 0.3s,  translate 0.5s ease 0.3s; }
 
 .illus-cta,
@@ -1144,6 +1171,7 @@
 .illus-section.active .illus-technique,
 .illus-section.active .illus-stat-row,
 .illus-section.active .illus-meta-row,
+.illus-section.active .illus-ig-link,
 .illus-section.active .illus-cta,
 .illus-section.active .illus-cta-back {
     opacity: 1;
@@ -1291,6 +1319,61 @@
 /* Card wrapper — delay the opacity:0→1 transition so it lands after the cube */
 #illustration.illus-entering .illus-section[data-idx="0"] {
     transition-delay: 0.18s;
+}
+
+/* ── Illustration how-to-use SVG panel (inside hint hud) ────────────────── */
+.illus-hint-hud {
+    width: clamp(14rem, 20vw, 18rem);
+}
+
+.illus-hint-hud--right .illus-info-panel {
+    text-align: left;
+}
+
+.illus-info-panel {
+    margin-block-start: 1rem;
+    opacity: 0;
+    transition: opacity 0s;
+}
+
+.illus-tunnel.illus-stop-zero .illus-info-panel {
+    opacity: 1;
+    transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+}
+
+.illus-info-interface-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter:
+        drop-shadow(0 0 5px rgba(238, 155, 0, 0.5))
+        drop-shadow(0 0 16px rgba(238, 155, 0, 0.2));
+    animation: illus-neon-flicker 22s linear 3s infinite;
+}
+
+.illus-info-panel .info-line {
+    opacity: 0;
+    transform: translateX(-14px);
+}
+
+.illus-info-panel .info-line--rule {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transform-box: fill-box;
+}
+
+.illus-tunnel.illus-stop-zero .illus-info-panel .info-line {
+    animation: infoLineIn 0.4s cubic-bezier(0.22, 1, 0.36, 1)
+        calc(1.15s + var(--i, 0) * 0.07s) forwards;
+}
+
+.illus-tunnel.illus-stop-zero .illus-info-panel .info-line--rule {
+    animation: infoRuleDraw 0.5s cubic-bezier(0.22, 1, 0.36, 1)
+        calc(1.15s + var(--i, 0) * 0.07s) forwards;
+}
+
+@media (max-height: 680px) {
+    .illus-info-panel { display: none; }
 }
 
 /* Card inner elements — extended stagger on first entry */

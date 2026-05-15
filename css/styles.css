@@ -1008,6 +1008,130 @@ nav {
   }
 }
 
+/* --- Info Interface Badge --- */
+.info-interface {
+  position: absolute;
+  bottom: 40px;
+  left: 70px;
+  width: 308px;
+  z-index: var(--z-layer-10);
+  opacity: 0;
+  transform: translateY(-60px);
+  pointer-events: none;
+  /* Pre-promote to its own compositing layer so the entrance doesn't trigger repaints */
+  will-change: transform, opacity;
+}
+
+.info-interface.active {
+  /* Single keyframe owns both transform and opacity — no property-conflict jank */
+  animation: infoEntrance 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes infoEntrance {
+  0%   { opacity: 0;   transform: translateY(-60px); }
+  100% { opacity: 1;   transform: translateY(0);     }
+}
+
+/* Shimmer runs on the SVG child after entrance finishes (delay = entrance duration).
+   Keeping it on a separate element avoids conflicting with the parent's transform. */
+.info-interface.active .info-interface-svg {
+  animation: id1Shimmer 3s ease-in-out 0.75s infinite;
+}
+
+/* ── Content lines: always start hidden ───────────────────────── */
+.inf-lang .info-line {
+  opacity: 0;
+  transform: translateX(-14px);
+}
+.inf-lang .info-line--rule {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transform-box: fill-box;
+}
+
+/* ── Entrance: JS adds .inf-lang--entering to trigger stagger ──── */
+/* delay var(--line-offset) is set by JS: 0.75s on first load, 0s on language switch */
+.inf-lang--entering .info-line {
+  animation: infoLineIn 0.4s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--line-offset, 0s) + var(--i) * 0.07s) forwards;
+}
+.inf-lang--entering .info-line--rule {
+  animation: infoRuleDraw 0.5s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--line-offset, 0s) + var(--i) * 0.07s) forwards;
+}
+
+@keyframes infoLineIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes infoRuleDraw {
+  to { opacity: 0.35; transform: scaleX(1); }
+}
+
+/* ── Exit: JS adds .inf-lang--exiting to the outgoing group ────── */
+.inf-lang--exiting {
+  animation: infoLangFlickerOut 0.45s ease-in forwards;
+}
+@keyframes infoLangFlickerOut {
+  0%   { opacity: 1;   transform: translateX(0);   }
+  18%  { opacity: 0.1; transform: translateX(4px);  }
+  35%  { opacity: 0.7; transform: translateX(-3px); }
+  55%  { opacity: 0;   transform: translateX(2px);  }
+  100% { opacity: 0;   transform: translateX(0);    }
+}
+
+.info-interface-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Static glow — not animated, so no per-frame filter repaint during entrance */
+  filter:
+    drop-shadow(0 0 5px rgba(255, 60, 0, 0.5))
+    drop-shadow(0 0 16px rgba(255, 60, 0, 0.2));
+}
+
+@media (max-height: 680px) {
+  .info-interface { display: none; }
+}
+
+/* ── Info-interface interactive hotspots ─────────────────────────────── */
+.info-interface.active #inf-hotspots { pointer-events: all; }
+
+.inf-hotspot {
+  cursor: pointer;
+  fill: transparent;
+  transition: fill 0.2s ease;
+}
+.inf-hotspot:hover {
+  fill: rgba(255, 60, 0, 0.07);
+}
+
+/* ── Target glow applied by JS (.info-glow) — matches logo hover cyan ── */
+.nav-btn.info-glow,
+.lang-btn.info-glow,
+.intro-work-cta.info-glow {
+  color: var(--cyan) !important;
+  text-shadow: var(--glow-cyan-intense) !important;
+  transition: color 0.25s ease, text-shadow 0.25s ease !important;
+}
+.nav-btn.info-glow [data-char]::after,
+.lang-btn.info-glow [data-char]::after,
+.intro-work-cta.info-glow [data-char]::after {
+  color: var(--cyan) !important;
+}
+#sound-toggle.info-glow {
+  filter: drop-shadow(0 0 8px var(--cyan)) drop-shadow(0 0 20px var(--cyan)) !important;
+  transition: filter 0.25s ease !important;
+}
+#sound-toggle.info-glow .sound-icon {
+  stroke: var(--cyan);
+  transition: stroke 0.25s ease;
+}
+.intro-scroll-hint.info-glow {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(255, 60, 0, 0.9)) !important;
+  transition: opacity 0.25s ease, filter 0.25s ease !important;
+}
+
 /* --- Social Media Icons --- */
 .social-media-icons {
   position: absolute;

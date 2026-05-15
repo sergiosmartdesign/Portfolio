@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="info-interface" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 564.09 406.8">
+  <defs>
+    <clipPath id="inf-bg-clip">
+      <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Dark backdrop clipped to card silhouette -->
+  <rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.25" clip-path="url(#inf-bg-clip)"/>
+
+  <!-- Border — orange, stroke only -->
+  <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#ff3c00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <!-- Bottom tab accent -->
+  <polygon points="158.13 394.69 169.28 406.8 365.68 406.8 378.21 394.69 158.13 394.69" fill="#ff3c00"/>
+  <!-- Right side accent -->
+  <polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#ff3c00"/>
+
+  <!-- Header -->
+  <text x="30" y="42" font-family="'Courier New', monospace" font-size="25" fill="#ff3c00" letter-spacing="1">[ · HOW TO NAVIGATE · ]</text>
+  <!-- Divider -->
+  <line x1="14" y1="54" x2="530" y2="54" stroke="#ff3c00" stroke-width="1" opacity="0.35"/>
+
+  <!-- Step 01 -->
+  <text x="30" y="84" font-family="'Courier New', monospace" font-size="25" fill="#ff3c00">· 01 · TOP MENU</text>
+  <text x="30" y="106" font-family="'Courier New', monospace" font-size="20" fill="#ff3c00" opacity="0.65">       jump to any section</text>
+
+  <!-- Step 02 -->
+  <text x="30" y="140" font-family="'Courier New', monospace" font-size="25" fill="#ff3c00">· 02 · SCROLL</text>
+  <text x="30" y="162" font-family="'Courier New', monospace" font-size="20" fill="#ff3c00" opacity="0.65">       explore in sequence</text>
+
+  <!-- Step 03 -->
+  <text x="30" y="196" font-family="'Courier New', monospace" font-size="25" fill="#ff3c00">· 03 · see my work →</text>
+  <text x="30" y="218" font-family="'Courier New', monospace" font-size="20" fill="#ff3c00" opacity="0.65">       curated entry point</text>
+
+  <!-- Step 04 -->
+  <text x="30" y="252" font-family="'Courier New', monospace" font-size="25" fill="#ff3c00">· 04 · SOUND</text>
+  <text x="30" y="274" font-family="'Courier New', monospace" font-size="20" fill="#ff3c00" opacity="0.65">       mute / unmute top right</text>
+
+  <!-- Step 05 -->
+  <text x="30" y="308" font-family="'Courier New', monospace" font-size="25" fill="#ff3c00">· 05 · LANGUAGE</text>
+  <text x="30" y="330" font-family="'Courier New', monospace" font-size="20" fill="#ff3c00" opacity="0.65">       switch EN / ES top right</text>
+
+  <!-- Bottom divider -->
+  <line x1="14" y1="350" x2="530" y2="350" stroke="#ff3c00" stroke-width="1" opacity="0.35"/>
+  <!-- Footer -->
+  <text x="30" y="374" font-family="'Courier New', monospace" font-size="20" fill="#ff3c00" opacity="0.65">  choose your path ·</text>
+</svg>
