@@ -944,15 +944,25 @@
                 </div>
             </div>
 
-            <!-- Accordion work slider — right zone, z:5, below scanlines/vhs/vignette -->
-            <div class="ad-accordion" role="region" aria-label="Selected work by discipline">
+            <!-- Works list — right zone, z:5, below scanlines/vhs/vignette -->
+            <div class="ad-works-panel" role="region" aria-label="Selected work by discipline">
 
-                <span class="ad-acc-header">· S e l e c t e d  W o r k ·</span>
-                <button class="ad-acc-nav ad-acc-prev" aria-label="Previous discipline">‹</button>
-                <button class="ad-acc-nav ad-acc-next" aria-label="Next discipline">›</button>
+                <div class="ad-works-header">
+                    <span class="ad-works-pulse"></span>
+                    <span class="ad-works-label">· S e l e c t e d  W o r k ·</span>
+                    <span class="ad-works-disc-name"></span>
+                </div>
 
-                <div class="ad-acc-track">
-                    <!-- Populated by ArtAccordionSlider from WORKS_DATA -->
+                <div class="ad-works-cols" aria-hidden="true">
+                    <span></span>
+                    <span class="ad-works-col-label">Project</span>
+                    <span class="ad-works-col-label">Scope</span>
+                    <span class="ad-works-col-label">Tools</span>
+                    <span class="ad-works-col-label ad-col-right">Year</span>
+                </div>
+
+                <div class="ad-works-table" role="list">
+                    <!-- Populated by ArtWorksPanel from WORKS_DATA -->
                 </div>
             </div>
 
@@ -966,6 +976,25 @@
                     <li data-discipline="motion"><span class="ad-text-link" role="button" tabindex="0" data-content="· M o t i o n ·">· M o t i o n ·</span></li>
                 </ol>
             </nav>
+
+            <!-- Project detail modal — fixed overlay, populated by ArtWorksPanel -->
+            <div class="ad-project-modal" role="dialog" aria-modal="true" aria-label="Project details" aria-hidden="true">
+                <div class="ad-pm-backdrop"></div>
+                <div class="ad-pm-frame">
+                    <div class="ad-pm-bg"></div>
+                    <div class="ad-pm-gradient"></div>
+                    <div class="ad-pm-scanlines"></div>
+                    <div class="ad-pm-content">
+                        <span class="ad-pm-num"></span>
+                        <span class="ad-pm-cat"></span>
+                        <h2 class="ad-pm-title"></h2>
+                        <p class="ad-pm-sub"></p>
+                        <div class="ad-pm-specs"></div>
+                        <div class="ad-pm-tags"></div>
+                    </div>
+                    <button class="ad-pm-close" aria-label="Close project">[ × ]</button>
+                </div>
+            </div>
         </section>
 
         <section id="photo" aria-label="Photography Portfolio">
@@ -1415,10 +1444,10 @@
                         </div>
                         <p class="photo-polaroids-label">[ &middot; p o l a r o i d s &middot; ]</p>
                         <p class="photo-polaroids-desc">A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.</p>
-                        <div class="photo-stream-controls">
-                            <button class="photo-stream-btn photo-stream-btn--prev" aria-label="Browse polaroids backward">←</button>
-                            <span class="photo-stream-hint">use arrows to browse</span>
-                            <button class="photo-stream-btn photo-stream-btn--next" aria-label="Browse polaroids forward">→</button>
+                        <div class="pgallery-info" role="group" aria-label="Polaroid stream controls">
+                            <span class="pgallery-info-left"  role="button" tabindex="0" aria-label="Reverse polaroid stream"></span>
+                            <span class="pgallery-info-text">· click left or right to reverse · click any card · fullscreen ·</span>
+                            <span class="pgallery-info-right" role="button" tabindex="0" aria-label="Play polaroid stream forward"></span>
                         </div>
                         <img src="images/polaroid camera.webp" alt="Polaroid camera" class="photo-polaroids-camera" draggable="false" aria-hidden="true">
                         <div class="photo-ghost-stream" aria-hidden="true">

@@ -55,22 +55,17 @@
       // Polaroid reveal state
       this._polaroidMoveHandler = null;
 
-      // Ghost stream — hybrid intro (time-based) + scroll-scrub + button control
+      // Ghost stream
       this._stream              = null;
       this._streamCards         = [];
       this._streamRotations     = [];
-      this._streamPhase         = 'idle';   // 'idle' | 'intro' | 'interactive'
-      this._masterT             = 0;        // single source of truth for card positions
+      this._streamPhase         = 'idle';   // 'idle' | 'active'
+      this._masterT             = 0;
       this._introRaf            = null;
-      this._introActiveTime     = 0;        // timestamp when stream was first allowed to play
+      this._introLastTs         = 0;        // previous frame timestamp for delta calc
       this._streamCanPlay       = false;    // set true by _triggerChain after camera lands
-      this._lastRawForScroll    = undefined;
-      // Button controls
-      this._btnPrev             = null;
-      this._btnNext             = null;
-      this._buttonVelocity      = 0;        // -1 | 0 | +1
-      this._buttonRaf           = null;
-      this._buttonLastTs        = 0;
+      this._streamVelocity      = 1;        // +1 forward, -1 reverse
+      this._infoAnimInterval    = null;
 
       // Photo bg electric border
       this._photoBorderTurbulence  = null;
@@ -110,24 +105,6 @@
       );
       this._updateStreamWidth();
 
-      this._btnPrev = document.querySelector('.photo-stream-btn--prev');
-      this._btnNext = document.querySelector('.photo-stream-btn--next');
-      this._btnPrev?.addEventListener('click', () => this._handleStreamBtn(-1));
-      this._btnNext?.addEventListener('click', () => this._handleStreamBtn(+1));
-
-      [this._btnPrev, this._btnNext].forEach(btn => {
-        if (!btn) return;
-        btn.addEventListener('mouseenter', () => {
-          const c = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
-          btn.style.background = c;
-          btn.style.borderColor = c;
-        });
-        btn.addEventListener('mouseleave', () => {
-          btn.style.background = '';
-          btn.style.borderColor = '';
-        });
-      });
-
       window.addEventListener('resize', () => {
         this.winH         = window.innerHeight;
         this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
@@ -141,7 +118,7 @@
       const polLabel         = document.querySelector('.photo-polaroids-label');
       const polDesc          = document.querySelector('.photo-polaroids-desc');
       const polCamera        = document.querySelector('.photo-polaroids-camera');
-      const streamControls   = document.querySelector('.photo-stream-controls');
+      const pgalleryInfo     = document.querySelector('.pgallery-info');
       this.staticEls = [
         this.overlay.querySelector('.photo-section-label'),
         this.overlay.querySelector('.photo-intro'),
@@ -151,12 +128,18 @@
         ...this.categoryBtns,
         polLabel,
         polDesc,
+        pgalleryInfo,
         polCamera,
         pgalleryTitle,
         pgalleryDesc,
         pgalleryHint,
-        streamControls
       ].filter(Boolean);
+
+      // Info strip click handlers — left reverses stream, right plays forward
+      const infoLeft  = document.querySelector('.pgallery-info-left');
+      const infoRight = document.querySelector('.pgallery-info-right');
+      if (infoLeft)  infoLeft.addEventListener('click',  () => { this._streamVelocity = this._streamVelocity === -1 ? 1 : -1; });
+      if (infoRight) infoRight.addEventListener('click', () => { this._streamVelocity = this._streamVelocity ===  1 ? -1 : 1; });
 
       // Set random palette colour on label reveal and on hover
       if (polLabel) {
@@ -354,7 +337,7 @@
       const polCameraEl     = document.querySelector('.photo-polaroids-camera');
       const cameraInTailIdx = tailEls.indexOf(polCameraEl);
       const cameraRevealAt  = tailStart + (cameraInTailIdx >= 0 ? cameraInTailIdx : 2) * TAIL_STEP;
-      const tStreamReady    = setTimeout(() => { this._streamCanPlay = true; }, cameraRevealAt + 720);
+      const tStreamReady    = setTimeout(() => { this._streamCanPlay = true; this._startInfoAnim(); }, cameraRevealAt + 720);
       this.chainTimers.push(tStreamReady);
 
       // Lift the hover guard once the full intro sequence has settled
@@ -413,6 +396,7 @@
       this._borderCount = 0;
       if (this._borderRaf) { cancelAnimationFrame(this._borderRaf); this._borderRaf = null; }
       if (this.accordion) this.accordion.classList.remove('accordion-animating');
+      this._stopInfoAnim();
       this._stream?.classList.remove('stream-active');
 
       // Kill tweens and reset transforms on all chain elements
@@ -586,127 +570,51 @@
         if (this._streamPhase !== 'idle') this._resetStream();
         return;
       }
-
-      if (this._streamPhase === 'idle') {
-        this._enterStreamIntro();
-      }
-      // intro: auto-play RAF handles rendering — no scroll handoff
-      // interactive: buttons are the only driver
+      if (this._streamPhase === 'idle') this._enterStreamIntro();
     }
 
     _enterStreamIntro() {
-      this._streamPhase      = 'intro';
-      this._masterT          = 0;
-      this._introActiveTime  = 0;
-      this._streamCanPlay    = false;
-      this._lastRawForScroll = undefined;
+      this._streamPhase     = 'active';
+      this._masterT         = 0;
+      this._introLastTs     = 0;
+      this._streamCanPlay   = false;
+      this._streamVelocity  = 1;
       this._stream?.classList.add('stream-active');
       this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
     }
 
     _introLoop(timestamp) {
-      if (this._streamPhase !== 'intro') return;
+      if (this._streamPhase !== 'active') return;
 
-      const INTRO_SPEED = 0.09; // masterT units/s — ~11 s per crossing, enough to read each photo
+      const INTRO_SPEED = 0.09; // masterT units/s — ~11 s per crossing
 
       if (this._streamCanPlay) {
-        // Latch the start time on the first frame after permission is granted
-        if (!this._introActiveTime) this._introActiveTime = timestamp;
-        this._masterT = ((timestamp - this._introActiveTime) / 1000) * INTRO_SPEED;
+        const dt      = this._introLastTs ? Math.min((timestamp - this._introLastTs) / 1000, 0.1) : 0;
+        this._introLastTs = timestamp;
+        this._masterT += this._streamVelocity * INTRO_SPEED * dt;
         this._renderStream(this._masterT);
       }
 
       this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
     }
 
-    _enterStreamInteractive(rawProgress) {
-      this._streamPhase = 'interactive';
-      if (this._introRaf) {
-        cancelAnimationFrame(this._introRaf);
-        this._introRaf = null;
-      }
-      if (!this._stream?.classList.contains('stream-active')) {
-        this._stream?.classList.add('stream-active');
-      }
-      // masterT stays at its current value — delta tracking starts from here, so no jump
-      this._lastRawForScroll = rawProgress;
-    }
-
     _resetStream() {
-      this._streamPhase      = 'idle';
-      this._masterT          = 0;
-      this._introActiveTime  = 0;
-      this._streamCanPlay    = false;
-      this._lastRawForScroll = undefined;
+      this._streamPhase    = 'idle';
+      this._masterT        = 0;
+      this._introLastTs    = 0;
+      this._streamCanPlay  = false;
+      this._streamVelocity = 1;
       if (this._introRaf) {
         cancelAnimationFrame(this._introRaf);
         this._introRaf = null;
       }
-      this._stopButtonRaf();
-      this._buttonVelocity = 0;
-      this._updateBtnState();
+      this._stopInfoAnim();
       this._stream?.classList.remove('stream-active');
       this._streamCards.forEach(card => {
         card.style.opacity   = '0';
         card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
       });
       if (this._streamLbOpen) this._streamLbHide?.();
-    }
-
-    // ── Button controls ──────────────────────────────────────────────────────
-    // Toggle-direction model: click active direction = pause; click opposite = reverse.
-    // Scroll and buttons are additive — both drivers write to _masterT concurrently.
-    _handleStreamBtn(dir) {
-      if (this._streamPhase === 'intro') {
-        // Button press during intro triggers immediate handoff
-        this._streamPhase = 'interactive';
-        if (this._introRaf) { cancelAnimationFrame(this._introRaf); this._introRaf = null; }
-        if (!this._stream?.classList.contains('stream-active')) {
-          this._stream?.classList.add('stream-active');
-        }
-        this._lastRawForScroll = undefined;
-      }
-      if (this._streamPhase !== 'interactive') return;
-
-      this._buttonVelocity = (this._buttonVelocity === dir) ? 0 : dir;
-      this._updateBtnState();
-
-      if (this._buttonVelocity !== 0) {
-        this._startButtonRaf();
-      } else {
-        this._stopButtonRaf();
-      }
-    }
-
-    _startButtonRaf() {
-      if (this._buttonRaf) return;
-      this._buttonLastTs = performance.now();
-      this._buttonRaf = requestAnimationFrame(ts => this._buttonRafLoop(ts));
-    }
-
-    _stopButtonRaf() {
-      if (this._buttonRaf) {
-        cancelAnimationFrame(this._buttonRaf);
-        this._buttonRaf = null;
-      }
-    }
-
-    _buttonRafLoop(timestamp) {
-      if (this._streamPhase !== 'interactive' || this._buttonVelocity === 0) {
-        this._stopButtonRaf();
-        return;
-      }
-      const BUTTON_SPEED = 0.09; // matches INTRO_SPEED
-      const dt = Math.min((timestamp - this._buttonLastTs) / 1000, 0.1); // cap avoids tab-sleep jump
-      this._buttonLastTs = timestamp;
-      this._masterT += this._buttonVelocity * BUTTON_SPEED * dt;
-      this._renderStream(this._masterT);
-      this._buttonRaf = requestAnimationFrame(ts => this._buttonRafLoop(ts));
-    }
-
-    _updateBtnState() {
-      this._btnPrev?.classList.toggle('active', this._buttonVelocity === -1);
-      this._btnNext?.classList.toggle('active', this._buttonVelocity === +1);
     }
 
     // Pure renderer — same function regardless of which driver owns masterT.
@@ -1423,6 +1331,37 @@
       if (this._flyReturnTween)   { this._flyReturnTween.kill(); this._flyReturnTween = null; }
       if (this._flyClone)         { this._flyClone.remove(); this._flyClone = null; }
       if (this._flySource)        { this._flySource.style.opacity = ''; this._flySource.style.zIndex = ''; this._flySource = null; }
+    }
+
+    // ── Info strip animation ─────────────────────────────────────────────────
+    _startInfoAnim() {
+      const rightEl = document.querySelector('.pgallery-info-right');
+      const leftEl  = document.querySelector('.pgallery-info-left');
+      if (!rightEl || !leftEl) return;
+
+      const rightStates = ['', '·', '··', '···', '···>'];
+      const leftStates  = ['', '·', '··', '···', '<···'];
+      let step = 0;
+
+      const tick = () => {
+        step = (step + 1) % rightStates.length;
+        rightEl.textContent = rightStates[step];
+        leftEl.textContent  = leftStates[step];
+      };
+
+      tick();
+      this._infoAnimInterval = setInterval(tick, 500);
+    }
+
+    _stopInfoAnim() {
+      if (this._infoAnimInterval) {
+        clearInterval(this._infoAnimInterval);
+        this._infoAnimInterval = null;
+      }
+      const rightEl = document.querySelector('.pgallery-info-right');
+      const leftEl  = document.querySelector('.pgallery-info-left');
+      if (rightEl) rightEl.textContent = '';
+      if (leftEl)  leftEl.textContent  = '';
     }
 
     // ── Ghost stream lightbox ────────────────────────────────────────────────

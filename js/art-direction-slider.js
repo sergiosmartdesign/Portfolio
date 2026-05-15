@@ -1,6 +1,6 @@
-/* ── Art Direction — discipline selector + accordion slider ──────────────────
+/* ── Art Direction — discipline selector + works list ────────────────────────
    Data-driven: WORKS_DATA is the source of truth.
-   DOM slides are always generated from it — never authored in HTML.
+   DOM rows are always generated from it — never authored in HTML.
    ─────────────────────────────────────────────────────────────────────────── */
 
 const WORKS_DATA = {
@@ -118,31 +118,26 @@ const WORKS_DATA = {
   ]
 };
 
-class ArtAccordionSlider {
+class ArtWorksPanel {
     constructor() {
-        this.container  = document.querySelector('#art-direction .ad-accordion');
-        if (!this.container) return;
+        this.panel    = document.querySelector('#art-direction .ad-works-panel');
+        if (!this.panel) return;
 
-        this.track      = this.container.querySelector('.ad-acc-track');
-        this.prevBtn    = this.container.querySelector('.ad-acc-prev');
-        this.nextBtn    = this.container.querySelector('.ad-acc-next');
-        this.section    = document.getElementById('art-direction');
-        this.listItems  = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
+        this.table    = this.panel.querySelector('.ad-works-table');
+        this.discName = this.panel.querySelector('.ad-works-disc-name');
+        this.section  = document.getElementById('art-direction');
+        this.listItems = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
 
-        this.current          = -1;
         this.activeDiscipline = null;
         this._transitioning   = false;
 
-        this._onKey = this._onKey.bind(this);
         this.init();
     }
 
     init() {
         this.listItems.forEach(li => {
             const span = li.querySelector('.ad-text-link');
-
             li.addEventListener('click', () => this.selectDiscipline(li.dataset.discipline));
-
             if (span) {
                 span.addEventListener('keydown', e => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -153,12 +148,13 @@ class ArtAccordionSlider {
             }
         });
 
-        this.prevBtn.addEventListener('click', () => this.previous());
-        this.nextBtn.addEventListener('click', () => this.next());
-        document.addEventListener('keydown', this._onKey);
-
+        document.querySelector('#art-direction .ad-list')?.classList.add('ad-list-ready');
+        this.panel.classList.add('ad-works-ready');
+        this._initModal();
         this.selectDiscipline('branding', true);
     }
+
+    // ── Discipline selection ──────────────────────────────────────────────────
 
     selectDiscipline(key, immediate = false) {
         if (this._transitioning || key === this.activeDiscipline) return;
@@ -166,59 +162,61 @@ class ArtAccordionSlider {
 
         this._transitioning   = true;
         this.activeDiscipline = key;
-        this.current          = -1;
 
-        this.listItems.forEach(li => li.classList.toggle('is-active', li.dataset.discipline === key));
+        this.listItems.forEach(li =>
+            li.classList.toggle('is-active', li.dataset.discipline === key)
+        );
 
-        const activeSpan = this.listItems.find(li => li.dataset.discipline === key)
-                               ?.querySelector('.ad-text-link');
+        const activeSpan = this.listItems
+            .find(li => li.dataset.discipline === key)
+            ?.querySelector('.ad-text-link');
+
+        const label = `· ${key.charAt(0).toUpperCase() + key.slice(1)} ·`;
 
         if (immediate) {
-            this._renderSlides(key);
-            this._animateIn();
+            this._renderRows(key);
+            this._animateRowsIn();
+            if (this.discName) this.discName.textContent = label;
             return;
         }
 
-        // Two-flag gate: slides must be in DOM AND scramble must be done before _animateIn fires
-        let slidesReady  = false;
+        let tableReady   = false;
         let scrambleDone = false;
 
         const tryAnimate = () => {
-            if (!slidesReady || !scrambleDone) return;
-            this.track.style.opacity = '';   // CSS transition on .ad-acc-track fades it back in
-            this._animateIn();
+            if (!tableReady || !scrambleDone) return;
+            this.table.style.opacity = '';
+            this._animateRowsIn();
         };
 
-        // 1. Track fades out → swap DOM → hide slides invisibly → hold
-        this.track.classList.add('is-leaving');
+        this.table.classList.add('is-leaving');
         setTimeout(() => {
-            this._renderSlides(key);
-            this.slides.forEach(s => { s.style.clipPath = 'inset(0 100% 0 0)'; s.style.transition = 'none'; });
-            this.track.classList.remove('is-leaving');
-            this.track.style.opacity = '0';
-            slidesReady = true;
+            this._renderRows(key);
+            this.table.classList.remove('is-leaving');
+            this.table.style.opacity = '0';
+            tableReady = true;
             tryAnimate();
         }, 160);
 
-        // 2. Scramble the active list item — slides reveal only after this resolves
         this._scrambleText(activeSpan, () => {
             scrambleDone = true;
             tryAnimate();
         });
+
+        if (this.discName) this._scrambleText(this.discName, null, label);
     }
 
-    _scrambleText(el, onDone) {
-        if (!el) { onDone?.(); return; }
+    // ── Scramble animation ────────────────────────────────────────────────────
 
+    _scrambleText(el, onDone, overrideTarget) {
+        if (!el) { onDone?.(); return; }
         const CHARS     = '!<>-_\\/[]{}—=+*^?#∆◊§øΩ†‡';
-        const STEP_MS   = 38;
         const FRAME_MS  = 38;
-        const finalText = el.getAttribute('data-content') || el.textContent;
+        const finalText = overrideTarget || el.getAttribute('data-content') || el.textContent;
         const chars     = [...finalText];
         const n         = chars.length;
-        const resolveAt = i => i * STEP_MS;
+        const resolveAt = i => i * FRAME_MS;
         const maxResolve = resolveAt(n - 1);
-
         let elapsed = 0;
         const tick = () => {
             let out = '';
@@ -239,98 +237,127 @@ class ArtAccordionSlider {
         tick();
     }
 
-    _renderSlides(key) {
+    // ── Row rendering ─────────────────────────────────────────────────────────
+
+    _renderRows(key) {
         const works = WORKS_DATA[key];
-        this.track.innerHTML = works.map(work => `
-            <div class="ad-acc-slide" data-discipline="${key}" style="background-image: url('${work.bg}')">
-                <div class="ad-acc-content">
-                    <div class="ad-acc-num">${work.num}</div>
-                    <div class="ad-acc-cat">${work.cat}</div>
-                    <div class="ad-acc-title">${work.title}</div>
-                    <div class="ad-acc-sub">${work.sub}</div>
-                    <div class="ad-acc-specs">
-                        ${work.specs.map(([k, v]) => `<div class="ad-acc-row"><span class="ad-acc-key">${k}:</span><span class="ad-acc-val">${v}</span></div>`).join('')}
-                    </div>
-                    <div class="ad-acc-tags">
-                        ${work.tags.map(t => `<span class="ad-acc-tag"><span class="ad-acc-dot"></span>${t}</span>`).join('')}
-                    </div>
-                </div>
-                <div class="ad-acc-open" aria-label="Expand ${work.cat}" role="button" tabindex="0"></div>
-            </div>
-        `).join('');
+        this.table.innerHTML = works.map(w => {
+            const scope = w.specs.find(s => s[0] === 'Scope')?.[1] ?? '—';
+            const tools = w.specs.find(s => s[0] === 'Tools')?.[1] ?? '—';
+            const year  = w.specs.find(s => s[0] === 'Year')?.[1]  ?? '—';
+            return `
+            <div class="ad-work-item" role="listitem" tabindex="0" aria-label="Open ${w.title}">
+                <span class="ad-work-data ad-work-title">${w.title}</span>
+                <span class="ad-work-data ad-work-scope">${scope}</span>
+                <span class="ad-work-data ad-work-tools">${tools}</span>
+                <span class="ad-work-data ad-work-year">${year}</span>
+            </div>`;
+        }).join('');
 
-        this.slides.forEach((slide, i) => {
-            slide.addEventListener('click', () => this.setActive(i));
-            const openBtn = slide.querySelector('.ad-acc-open');
-            if (openBtn) openBtn.addEventListener('click', e => { e.stopPropagation(); this.setActive(i); });
-        });
-    }
-
-    _animateIn() {
-        const slides = this.slides;
-        if (!slides.length) { this._transitioning = false; return; }
-
-        // Initial hidden state is already set in selectDiscipline before the scramble.
-        // Force reflow so the browser registers clip-path before we start animating.
-        void this.track.offsetWidth;
-
-        slides.forEach((s, i) => {
-            setTimeout(() => {
-                s.style.transition = 'clip-path 0.32s ease-out, flex 0.8s cubic-bezier(0.4,0,0.2,1), filter 0.6s ease';
-                s.style.clipPath   = 'inset(0 0% 0 0)';
-
-                if (i === slides.length - 1) {
-                    setTimeout(() => {
-                        slides.forEach(sl => { sl.style.transition = ''; sl.style.clipPath = ''; });
-                        this._transitioning = false;
-                    }, 360);
+        this.table.querySelectorAll('.ad-work-item').forEach((row, i) => {
+            row.addEventListener('click', () => this._openModal(works[i]));
+            row.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._openModal(works[i]);
                 }
-            }, i * 65);
+            });
         });
     }
 
-    get slides() {
-        return [...this.track.querySelectorAll('.ad-acc-slide')];
+    _animateRowsIn() {
+        const rows = [...this.table.querySelectorAll('.ad-work-item')];
+        if (!rows.length) { this._transitioning = false; return; }
+        void this.table.offsetWidth;
+
+        rows.forEach((row, i) => {
+            row.style.opacity    = '0';
+            row.style.transform  = 'translateY(10px)';
+            row.style.transition = 'none';
+            setTimeout(() => {
+                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                row.style.opacity    = '1';
+                row.style.transform  = 'translateY(0)';
+                if (i === rows.length - 1) {
+                    setTimeout(() => {
+                        rows.forEach(r => {
+                            r.style.transition = '';
+                            r.style.transform  = '';
+                            r.style.opacity    = '';
+                        });
+                        this._transitioning = false;
+                    }, 340);
+                }
+            }, 20 + i * 60);
+        });
+
+        this.table.style.opacity = '1';
     }
 
-    setActive(index) {
-        const slides = this.slides;
-        if (this.current === index) {
-            slides[index].classList.remove('active');
-            this.current = -1;
-        } else {
-            slides.forEach(s => s.classList.remove('active'));
-            slides[index].classList.add('active');
-            this.current = index;
+    // ── Modal ─────────────────────────────────────────────────────────────────
+
+    _initModal() {
+        this.modal     = document.querySelector('#art-direction .ad-project-modal');
+        if (!this.modal) return;
+
+        this.modalBg    = this.modal.querySelector('.ad-pm-bg');
+        this.modalNum   = this.modal.querySelector('.ad-pm-num');
+        this.modalCat   = this.modal.querySelector('.ad-pm-cat');
+        this.modalTitle = this.modal.querySelector('.ad-pm-title');
+        this.modalSub   = this.modal.querySelector('.ad-pm-sub');
+        this.modalSpecs = this.modal.querySelector('.ad-pm-specs');
+        this.modalTags  = this.modal.querySelector('.ad-pm-tags');
+        this.modalClose = this.modal.querySelector('.ad-pm-close');
+
+        this.modalClose.addEventListener('click', () => this._closeModal());
+
+        this.modal.addEventListener('click', e => {
+            if (e.target === this.modal || e.target.classList.contains('ad-pm-backdrop')) {
+                this._closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && this.modal.classList.contains('is-open')) {
+                this._closeModal();
+            }
+        });
+    }
+
+    _openModal(work) {
+        if (!this.modal) return;
+
+        if (this.modalBg) {
+            this.modalBg.style.backgroundImage = work.bg ? `url('${work.bg}')` : 'none';
         }
+
+        this.modalNum.textContent   = work.num;
+        this.modalCat.textContent   = `· ${work.cat.toUpperCase()} ·`;
+        this.modalTitle.textContent = work.title;
+        this.modalSub.textContent   = work.sub;
+
+        this.modalSpecs.innerHTML = work.specs.map(([k, v]) => `
+            <div class="ad-pm-spec-row">
+                <span class="ad-pm-spec-key">${k}</span>
+                <span class="ad-pm-spec-val">${v}</span>
+            </div>`).join('');
+
+        this.modalTags.innerHTML = work.tags.map(t => `
+            <span class="ad-pm-tag"><span class="ad-pm-dot"></span>${t}</span>`).join('');
+
+        this.modal.setAttribute('aria-hidden', 'false');
+        this.modal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
     }
 
-    next() {
-        const slides = this.slides;
-        const next   = this.current === -1 ? 0 : (this.current + 1) % slides.length;
-        this.setActive(next);
-    }
-
-    previous() {
-        const slides = this.slides;
-        const prev   = this.current === -1
-            ? slides.length - 1
-            : (this.current - 1 + slides.length) % slides.length;
-        this.setActive(prev);
-    }
-
-    _onKey(e) {
-        if (!this._sectionVisible()) return;
-        if (e.key === 'ArrowLeft')  this.previous();
-        if (e.key === 'ArrowRight') this.next();
-    }
-
-    _sectionVisible() {
-        const r = this.section.getBoundingClientRect();
-        return r.top < window.innerHeight * 0.8 && r.bottom > window.innerHeight * 0.2;
+    _closeModal() {
+        if (!this.modal) return;
+        this.modal.classList.remove('is-open');
+        this.modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new ArtAccordionSlider();
+    new ArtWorksPanel();
 });
