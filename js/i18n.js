@@ -44,6 +44,7 @@
 
       // ── Photo section — UI ─────────────────────────────────────────────────
       'photo.ui.cta':         'Click a category to expand its list — then hover over any photo title to preview the image.',
+      'photo.ui.infoSub':     'use the arrows to navigate the photos · click the one you like to full view',
       'photo.ui.polaroids':     '[ · p o l a r o i d s · ]',
       'photo.ui.polaroidsDesc': 'Ten years of personal photography around the world, fifty frames selected so far. At one hundred, this archive becomes a printed book.',
       'photo.ui.scrollHint':   '[ \u00b7 s c r o l l \u00a0 t o \u00a0 r e v e a l \u00a0 / \u00a0 c l i c k \u00a0 t o \u00a0 e x p a n d \u00a0 \u00b7 ]',
@@ -205,6 +206,7 @@
 
       // ── Photo section — UI ─────────────────────────────────────────────────
       'photo.ui.cta':         'Haz clic en una categoría para expandir su lista — luego pasa el cursor sobre cualquier título para previsualizar la imagen.',
+      'photo.ui.infoSub':     'usa las flechas para navegar las fotos · haz clic en la que quieras para verla en pantalla completa',
       'photo.ui.polaroids':     '[ · p o l a r o i d s · ]',
       'photo.ui.polaroidsDesc': 'Diez años de fotografía personal por el mundo, cincuenta tomas seleccionadas hasta ahora. Al llegar a cien, este archivo se convierte en un libro impreso.',
       'photo.ui.scrollHint':   '[ \u00b7 d e s l i z a \u00a0 p a r a \u00a0 r e v e l a r \u00a0 / \u00a0 c l i c \u00a0 p a r a \u00a0 e x p a n d i r \u00a0 \u00b7 ]',

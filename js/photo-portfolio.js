@@ -31,6 +31,9 @@
       this.winH           = 0;
       this.spacerDocTop   = 0;
 
+      // Left-edge bar element — animated separately from staticEls (slide-in vs fade)
+      this._barEl        = null;
+
       // Chain-reveal elements: intro → cta → 4 buttons → polaroids title
       // Populated in init() once DOM is confirmed ready
       this.staticEls     = [];
@@ -119,6 +122,7 @@
       const polDesc          = document.querySelector('.photo-polaroids-desc');
       const polCamera        = document.querySelector('.photo-polaroids-camera');
       const pgalleryInfo     = document.querySelector('.pgallery-info');
+      const polBar1          = document.querySelector('.photo-col-bar1');
       this.staticEls = [
         this.overlay.querySelector('.photo-section-label'),
         this.overlay.querySelector('.photo-intro'),
@@ -126,6 +130,7 @@
         this.overlay.querySelector('.photo-cta'),
         this.overlay.querySelector('.photo-col-camera'),
         ...this.categoryBtns,
+        polBar1,
         polLabel,
         polDesc,
         pgalleryInfo,
@@ -150,6 +155,10 @@
 
       // Start all chain elements hidden
       this.staticEls.forEach(el => gsap.set(el, { opacity: 0 }));
+
+      // Bar: query and park off-screen to the left
+      this._barEl = document.querySelector('.photo-section-bar-img');
+      if (this._barEl) gsap.set(this._barEl, { opacity: 0, x: -40 });
 
       this.preloadImages();
       this._setupCategoryButtons();
@@ -222,6 +231,14 @@
       const REV_STEP   =  25;  // ms between items on close (faster)
       const REV_GAP    =  80;  // ms between category closes
       const TAIL_STEP  = 300;  // ms between tail elements
+
+      // 0. Bar slides in from the left — fires immediately, before any text element
+      if (this._barEl) {
+        gsap.fromTo(this._barEl,
+          { opacity: 0, x: -40 },
+          { opacity: 1, x: 0, duration: 0.9, ease: 'power3.out' }
+        );
+      }
 
       // 1. Reveal intro elements (section label, left col, instagram, camera col)
       introEls.forEach((el, i) => {
@@ -408,6 +425,11 @@
         el.classList.remove('glitch-ready');
       });
 
+      if (this._barEl) {
+        gsap.killTweensOf(this._barEl);
+        gsap.set(this._barEl, { opacity: 0, x: -40 });
+      }
+
       // Close any categories opened during the sequential intro
       this.openCategories.clear();
       this.categoryBtns.forEach(btn => {
@@ -449,6 +471,11 @@
         });
       }
 
+      // Bar slides back out to the left as elements hide
+      if (this._barEl) {
+        gsap.to(this._barEl, { opacity: 0, x: -40, duration: 0.5, ease: 'power2.in' });
+      }
+
       const reversed  = [...this.staticEls].reverse();
       const lastDelay = (reversed.length - 1) * 300;
 
@@ -485,6 +512,11 @@
 
       this.overlay.style.opacity       = '0';
       this.overlay.style.pointerEvents = 'none';
+
+      if (this._barEl) {
+        gsap.killTweensOf(this._barEl);
+        gsap.set(this._barEl, { opacity: 0, x: -40 });
+      }
 
       this.openCategories.clear();
       this.categoryBtns.forEach(btn => {
@@ -1339,23 +1371,25 @@
       const leftEl  = document.querySelector('.pgallery-info-left');
       if (!rightEl || !leftEl) return;
 
-      const rightStates = ['', '·', '··', '···', '···>'];
-      const leftStates  = ['', '·', '··', '···', '<···'];
+      const rightStates = ['', '>', '>>', '>>>'];
+      const leftStates  = ['', '<', '<<', '<<<'];
+      const STEP_DELAY  = 500;
+      const LOOP_PAUSE  = 2200;
       let step = 0;
 
       const tick = () => {
-        step = (step + 1) % rightStates.length;
         rightEl.textContent = rightStates[step];
         leftEl.textContent  = leftStates[step];
+        step = (step + 1) % rightStates.length;
+        this._infoAnimInterval = setTimeout(tick, step === 0 ? LOOP_PAUSE : STEP_DELAY);
       };
 
       tick();
-      this._infoAnimInterval = setInterval(tick, 500);
     }
 
     _stopInfoAnim() {
       if (this._infoAnimInterval) {
-        clearInterval(this._infoAnimInterval);
+        clearTimeout(this._infoAnimInterval);
         this._infoAnimInterval = null;
       }
       const rightEl = document.querySelector('.pgallery-info-right');

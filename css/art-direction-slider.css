@@ -4,6 +4,47 @@
    Palette: amber #EE9B00 · teal #0A9396 · cream #E9D8A6 · bg #001219
    ─────────────────────────────────────────────────────────────────────────── */
 
+/* ── Intro guide card — shown on first load, dismissed on discipline select ── */
+#art-direction .ad-intro-card {
+  position: absolute;
+  left: calc(min(100vh, 100vw) + 2vw);
+  width: min(calc(100% - min(100vh, 100vw) - 4vw), 560px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+/* Both classes required: intro is active AND entrance has fired */
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card {
+  opacity: 1;
+  animation: ad-intro-entrance 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  filter:
+    drop-shadow(0 0 8px #EE9B00)
+    drop-shadow(0 0 24px rgba(238, 155, 0, 0.55))
+    drop-shadow(0 0 48px rgba(238, 155, 0, 0.25));
+}
+
+/* Works panel suppressed while intro is active */
+#art-direction.ad-intro-active .ad-works-panel {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+@keyframes ad-intro-entrance {
+  0%   { opacity: 0; transform: translateY(calc(-50% + 18px)); clip-path: inset(0 100% 0 0); }
+  12%  { opacity: 0.4; transform: translateY(calc(-50% + 16px)); clip-path: inset(0 72% 0 0); }
+  14%  { opacity: 0.2; transform: translateY(calc(-50% + 17px)) skewX(-2deg); clip-path: inset(20% 68% 15% 0); }
+  16%  { opacity: 0.5; transform: translateY(calc(-50% + 15px)); clip-path: inset(0 68% 0 0); }
+  55%  { opacity: 0.85; transform: translateY(calc(-50% + 4px)); clip-path: inset(0 12% 0 0); }
+  58%  { opacity: 0.7; transform: translateY(calc(-50% + 5px)) skewX(1.5deg); clip-path: inset(25% 8% 5% 0); }
+  60%  { opacity: 0.88; transform: translateY(calc(-50% + 3px)); clip-path: inset(0 6% 0 0); }
+  85%  { opacity: 0.97; transform: translateY(calc(-50% + 1px)); clip-path: inset(0 0 0 0); }
+  100% { opacity: 1;    transform: translateY(-50%);             clip-path: inset(0 0 0 0); }
+}
+
 /* ── Outer container — positioned after the letter grid ── */
 #art-direction .ad-works-panel {
   position: absolute;
@@ -426,19 +467,20 @@
   position: absolute;
   top: 20px;
   right: 24px;
-  background: transparent;
-  border: 1px solid rgba(238, 155, 0, 0.35);
+  background: rgba(0, 18, 25, 0.55);
+  border: 1px solid rgba(238, 155, 0, 0.45);
   color: #EE9B00;
   font-family: 'Share Tech Mono', monospace;
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0.18em;
   cursor: pointer;
-  padding: 6px 12px;
+  padding: 7px 14px;
   z-index: 3;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   opacity: 0;
-  transition: opacity 0.3s ease 0.55s, background 0.2s ease, border-color 0.2s ease;
+  transition: opacity 0.3s ease 0.55s, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .ad-project-modal.is-open .ad-pm-close {
@@ -446,7 +488,7 @@
 }
 
 .ad-pm-close:hover {
-  background: rgba(238, 155, 0, 0.1);
+  background: rgba(238, 155, 0, 0.12);
   border-color: #EE9B00;
   color: #E9D8A6;
 }

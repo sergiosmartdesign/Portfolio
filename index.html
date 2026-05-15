@@ -899,6 +899,7 @@
 
             <!-- Background layer: static-line canvas, SVG filters, VHS overlay -->
             <div class="background">
+                <div class="art-bg-image" aria-hidden="true"></div>
                 <canvas class="art-direction-bottom-static-line"></canvas>
 
                 <!-- RGB channel-split SVG filters for letter glitch hover effect -->
@@ -943,6 +944,9 @@
                     <div class="art-cell" data-letter="N"><div class="left"></div><div class="right"></div><div class="glitch-r" aria-hidden="true"></div><div class="glitch-g" aria-hidden="true"></div><div class="glitch-b" aria-hidden="true"></div></div>
                 </div>
             </div>
+
+            <!-- Intro guide card — visible on first load, replaced by works panel on discipline select -->
+            <img class="ad-intro-card" src="images/intro-art-direction.svg" aria-label="How to explore this section" alt="" aria-hidden="true">
 
             <!-- Works list — right zone, z:5, below scanlines/vhs/vignette -->
             <div class="ad-works-panel" role="region" aria-label="Selected work by discipline">
@@ -1013,6 +1017,9 @@
                     </filter>
                 </defs>
             </svg>
+
+            <!-- Left-edge bar — fixed within the section, never scrolls -->
+            <img class="photo-section-bar-img" src="images/photo-section-bar.svg" alt="" role="presentation" aria-hidden="true" draggable="false">
 
             <!-- Portfolio overlay — text + accordion, scroll together, z:2 -->
             <div class="photo-portfolio-overlay">
@@ -1442,12 +1449,29 @@
                             </div>
                             <div class="accordion-electric-border" aria-hidden="true"></div>
                         </div>
+                        <img class="photo-col-bar1" src="images/bar1.svg" alt="" role="presentation" aria-hidden="true" draggable="false">
                         <p class="photo-polaroids-label">[ &middot; p o l a r o i d s &middot; ]</p>
                         <p class="photo-polaroids-desc">A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.</p>
                         <div class="pgallery-info" role="group" aria-label="Polaroid stream controls">
-                            <span class="pgallery-info-left"  role="button" tabindex="0" aria-label="Reverse polaroid stream"></span>
-                            <span class="pgallery-info-text">· click left or right to reverse · click any card · fullscreen ·</span>
-                            <span class="pgallery-info-right" role="button" tabindex="0" aria-label="Play polaroid stream forward"></span>
+                            <svg class="pgallery-info-svg" viewBox="0 0 800 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <defs>
+                                    <clipPath id="pginfo-clip">
+                                        <path d="M1,18 L18,1 L799,1 L799,82 L782,99 L1,99 Z"/>
+                                    </clipPath>
+                                </defs>
+                                <rect x="0" y="0" width="800" height="100" fill="#BB3E03" fill-opacity="0.13" clip-path="url(#pginfo-clip)"/>
+                                <path d="M1,18 L18,1 L799,1 L799,82 L782,99 L1,99 Z" fill="none" stroke="#BB3E03" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                                <polygon points="782,1 800,1 800,40 782,30" fill="#BB3E03"/>
+                                <polygon points="308,93 320,100 480,100 492,93 308,93" fill="#BB3E03"/>
+                                <line x1="14" y1="50" x2="786" y2="50" stroke="#BB3E03" stroke-width="1" opacity="0.35" vector-effect="non-scaling-stroke"/>
+                            </svg>
+                            <div class="pgallery-info-content">
+                                <span class="pgallery-info-left"  role="button" tabindex="0" aria-label="Reverse polaroid stream"></span>
+                                <div class="pgallery-info-text">
+                                    <span class="pgallery-info-sub" data-i18n="photo.ui.infoSub">use the arrows to navigate the photos · click the one you like to full view</span>
+                                </div>
+                                <span class="pgallery-info-right" role="button" tabindex="0" aria-label="Play polaroid stream forward"></span>
+                            </div>
                         </div>
                         <img src="images/polaroid camera.webp" alt="Polaroid camera" class="photo-polaroids-camera" draggable="false" aria-hidden="true">
                         <div class="photo-ghost-stream" aria-hidden="true">

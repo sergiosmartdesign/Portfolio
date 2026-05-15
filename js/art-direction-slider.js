@@ -137,21 +137,30 @@ class ArtWorksPanel {
     init() {
         this.listItems.forEach(li => {
             const span = li.querySelector('.ad-text-link');
-            li.addEventListener('click', () => this.selectDiscipline(li.dataset.discipline));
+            li.addEventListener('click', () => {
+                this._dismissIntro();
+                this.selectDiscipline(li.dataset.discipline);
+            });
             if (span) {
                 span.addEventListener('keydown', e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
+                        this._dismissIntro();
                         this.selectDiscipline(li.dataset.discipline);
                     }
                 });
             }
         });
 
-        document.querySelector('#art-direction .ad-list')?.classList.add('ad-list-ready');
+        // Show intro card; pre-populate branding data silently so first click is instant
+        if (this.section) this.section.classList.add('ad-intro-active');
         this.panel.classList.add('ad-works-ready');
         this._initModal();
         this.selectDiscipline('branding', true);
+    }
+
+    _dismissIntro() {
+        if (this.section) this.section.classList.remove('ad-intro-active');
     }
 
     // ── Discipline selection ──────────────────────────────────────────────────

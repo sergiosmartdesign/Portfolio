@@ -2788,8 +2788,42 @@ nav {
 }
 
 #art-direction {
-  background: #001219;
+  background-color: #001219;
   overflow: hidden;
+}
+
+/* ── Background image — animated entrance ───────────────────────────────── */
+#art-direction .art-bg-image {
+  position: absolute;
+  inset: 0;
+  background-image: url('../images/robot art direction background.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 0;
+  clip-path: inset(0 0 0 100%);
+  transform: translateX(-80px);
+  will-change: transform, clip-path, opacity;
+}
+
+#art-direction .art-bg-image.art-bg-animate {
+  animation: art-bg-entrance 1.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes art-bg-entrance {
+  0%   { transform: translateX(-80px);              clip-path: inset(0 0 0 100%);      opacity: 0;    }
+  10%  { transform: translateX(-68px);              clip-path: inset(0 0 0 74%);       opacity: 0.5;  }
+  12%  { transform: translateX(-74px) skewX(-5deg); clip-path: inset(18% 0 22% 68%);  opacity: 0.25; }
+  14%  { transform: translateX(-65px);              clip-path: inset(0 0 0 70%);       opacity: 0.6;  }
+  35%  { transform: translateX(-44px);              clip-path: inset(0 0 0 40%);       opacity: 0.78; }
+  56%  { transform: translateX(-20px);              clip-path: inset(0 0 0 18%);       opacity: 0.86; }
+  58%  { transform: translateX(-25px) skewX(2.5deg);clip-path: inset(28% 0 6% 15%);   opacity: 0.6;  }
+  60%  { transform: translateX(-18px);              clip-path: inset(0 0 0 12%);       opacity: 0.9;  }
+  82%  { transform: translateX(-4px);               clip-path: inset(0 0 0 2%);        opacity: 0.97; }
+  88%  { transform: translateX(5px) skewX(-1deg);   clip-path: inset(0 0 0 0);        opacity: 1;    }
+  94%  { transform: translateX(-2px);               clip-path: inset(0 0 0 0);        opacity: 1;    }
+  100% { transform: translateX(0);                  clip-path: inset(0 0 0 0);        opacity: 1;    }
 }
 
 #illustration,
@@ -3226,11 +3260,13 @@ nav {
   padding: clamp(0.5rem, 1vw, 1rem) clamp(1rem, 1.5vw, 1.5rem);
 }
 
-.photo-col-left::before {
-  content: '';
+.photo-section-bar-img {
   position: absolute;
-  inset: 0;
-  border: 2px solid #EE9B00;
+  left: 0;
+  top: 180px;
+  width: 37.5px;
+  height: auto;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -3911,13 +3947,21 @@ nav {
 }
 
 /* Category button */
+.photo-col-bar1 {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  margin-top: 2rem;
+}
+
 .photo-polaroids-label {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 700;
   font-size: clamp(0.95rem, 1.6vw, 1.25rem);
   letter-spacing: 0.12em;
   line-height: 1;
-  margin: 2rem 0 0;
+  margin: 0.4rem 0 0;
   padding: 0;
   cursor: default;
   color: #EE9B00;
@@ -4033,55 +4077,90 @@ nav {
 
 /* ── Polaroid stream info strip ─────────────────────────────────────────── */
 .pgallery-info {
-  display: flex;
-  align-items: center;
+  position: relative;
   width: 100%;
   height: 100px;
   opacity: 0;
   margin: 0.75rem 0 0;
   box-sizing: border-box;
-  border: 2px solid #BB3E03;
-  box-shadow:
-    0 0  6px rgba(187, 62,  3, 0.70),
-    0 0 18px rgba(187, 62,  3, 0.40),
-    0 0 36px rgba(187, 62,  3, 0.18),
-    inset 0 0 10px rgba(187, 62, 3, 0.08);
+}
+
+.pgallery-info-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 5px rgba(187, 62, 3, 0.85))
+    drop-shadow(0 0 14px rgba(187, 62, 3, 0.45))
+    drop-shadow(0 0 28px rgba(187, 62, 3, 0.20));
+}
+
+.pgallery-info-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  overflow: hidden;
 }
 
 .pgallery-info-left,
 .pgallery-info-right {
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.8rem, 1.2vw, 1rem);
-  color: #BB3E03;
-  letter-spacing: 0.04em;
-  min-width: 5ch;
+  font-size: 80px;
+  font-weight: 900;
+  color: #001219;
+  letter-spacing: -0.05em;
+  min-width: 4ch;
   cursor: pointer;
   user-select: none;
-  padding: 0 0.5rem;
+  padding: 0 0.25rem;
   transition: color 0.2s, text-shadow 0.2s;
   flex-shrink: 0;
+  line-height: 1;
 }
 
-.pgallery-info-left  { text-align: left; }
-.pgallery-info-right { text-align: right; }
+.pgallery-info-left  { text-align: right; }
+.pgallery-info-right { text-align: left; }
 
 .pgallery-info-left:hover,
 .pgallery-info-right:hover {
-  color: #EE9B00;
-  text-shadow: 0 0 8px rgba(238, 155, 0, 0.7);
+  color: #BB3E03;
+  text-shadow: 0 0 16px rgba(187, 62, 3, 0.9);
 }
 
 .pgallery-info-text {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+  user-select: none;
+}
+
+.pgallery-info-title {
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.5rem, 0.75vw, 0.65rem);
-  color: #BB3E03;
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  font-weight: 700;
+  color: #001219;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.pgallery-info-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 600;
+  color: #001219;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-align: center;
-  line-height: 1.7;
-  padding: 0 0.75rem;
-  user-select: none;
+  opacity: 0.75;
 }
 
 /* ── Photo stream lightbox ──────────────────────────────────────────────── */

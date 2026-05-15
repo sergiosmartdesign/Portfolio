@@ -1203,6 +1203,47 @@ class AnimationCoordinator {
       updateArtEntrance();
     }
 
+    // Background image — slide-in glitch entrance, synced with letter reveal
+    const artBgImage = artEntranceSection ? artEntranceSection.querySelector('.art-bg-image') : null;
+    if (artBgImage) {
+      let bgAnimPlayed = false;
+
+      const triggerBgAnim = () => {
+        if (bgAnimPlayed) return;
+        bgAnimPlayed = true;
+        artBgImage.classList.add('art-bg-animate');
+      };
+
+      const resetBgAnim = () => {
+        bgAnimPlayed = false;
+        artBgImage.classList.remove('art-bg-animate');
+      };
+
+      // Scroll: fire when section starts entering viewport
+      const onScrollBg = () => {
+        if (bgAnimPlayed) return;
+        const rect = artEntranceSection.getBoundingClientRect();
+        const progress = Math.max(0, (window.innerHeight - rect.top) / window.innerHeight);
+        if (progress > 0.05) triggerBgAnim();
+      };
+      window.addEventListener('scroll', onScrollBg, { passive: true });
+
+      // Nav click: wrap playArtEntranceAnimation to reset + retrigger
+      if (window.playArtEntranceAnimation) {
+        const _origPlayForBg = window.playArtEntranceAnimation;
+        window.playArtEntranceAnimation = () => {
+          resetBgAnim();
+          _origPlayForBg();
+          requestAnimationFrame(triggerBgAnim);
+        };
+      }
+
+      // Reset when section leaves viewport so it replays on next visit
+      new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (!e.isIntersecting) resetBgAnim(); });
+      }, { threshold: 0 }).observe(artEntranceSection);
+    }
+
     // Art Direction list — sequenced after letter animation
     const adList      = artEntranceSection ? artEntranceSection.querySelector('.ad-list') : null;
     const adListLinks = artEntranceSection ? [...artEntranceSection.querySelectorAll('.ad-text-link')] : [];
@@ -1248,12 +1289,15 @@ class AnimationCoordinator {
       const triggerAdListGlitch = () => {
         adListDone = true;
         adList.classList.add('ad-list-ready');
+        artEntranceSection.classList.add('ad-intro-animate');
         adListLinks.forEach((link, i) => scrambleItem(link, i * 120));
       };
 
       const resetAdList = () => {
         adListDone = false;
         adList.classList.remove('ad-list-ready');
+        artEntranceSection.classList.remove('ad-intro-animate');
+        artEntranceSection.classList.add('ad-intro-active');
         adListLinks.forEach(link => {
           link.textContent = link.getAttribute('data-content');
         });
