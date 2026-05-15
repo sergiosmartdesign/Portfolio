@@ -501,6 +501,41 @@
         }, 500);
     }
 
+    const _MONO = "'Courier New', monospace";
+
+    const ILLUS_TEXTS = {
+        en: {
+            hud:    ['· s c r o l l', 'o r', 'c l I c k', '- E N T E R -', 't o', 'v I e w ·'],
+            expand: '[ · c l i c k | t o | e x p a n d · ]',
+            info: {
+                header: '[ \xb7 HOW TO USE \xb7 ]',
+                steps: [
+                    { num: '01', action: 'SCROLL',     desc: 'browse images'   },
+                    { num: '02', action: 'ENTER',       desc: 'start gallery'   },
+                    { num: '03', action: 'BACK / NEXT', desc: 'navigate pieces' },
+                    { num: '04', action: '●●● DOTS',    desc: 'jump to any'    },
+                    { num: '05', action: 'CLICK IMAGE', desc: 'view full size'  },
+                ],
+                footer: 'navigate your way \xb7',
+            },
+        },
+        es: {
+            hud:    ['· d e s l i z a r', 'o', 'c l i c', '- E N T R A R -', 'p a r a', 'v e r ·'],
+            expand: '[ · c l i c | p a r a | e x p a n d i r · ]',
+            info: {
+                header: '[ \xb7 CÓMO USAR \xb7 ]',
+                steps: [
+                    { num: '01', action: 'DESPLAZA',    desc: 'navega imágenes' },
+                    { num: '02', action: 'ENTRAR',      desc: 'inicia galería'  },
+                    { num: '03', action: 'ATRÁS / SIG', desc: 'navega piezas'   },
+                    { num: '04', action: '●●● PUNTOS',  desc: 'salta a imagen'  },
+                    { num: '05', action: 'CLIC IMAGEN', desc: 'ver tamaño real' },
+                ],
+                footer: 'navega a tu manera \xb7',
+            },
+        },
+    };
+
     // ── Scroll hint — opposite side of active card, after 3.5 s idle ─────────
     const hintHud      = document.createElement('div');
     const hintHudPct   = document.createElement('div');
@@ -518,39 +553,16 @@
     hintHudPct.textContent   = '000%';
     hintHudLabel.textContent = 'TIMELESS';
 
-    // How-to-use SVG panel — organized inside the hint hud, below the % bar
+    // How-to-use SVG panel — horizontal bar, centered below the cube
     const illusInfoPanel = document.createElement('div');
     illusInfoPanel.className = 'illus-info-panel';
     illusInfoPanel.setAttribute('aria-hidden', 'true');
-    illusInfoPanel.innerHTML =
-        '<svg class="illus-info-interface-svg" viewBox="0 0 564.09 406.8" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
-        '<defs><clipPath id="illus-inf-bg-clip">' +
-        '<path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z"/>' +
-        '</clipPath></defs>' +
-        '<rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.35" clip-path="url(#illus-inf-bg-clip)"/>' +
-        '<path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>' +
-        '<polygon points="158.13 394.69 169.28 406.8 365.68 406.8 378.21 394.69 158.13 394.69" fill="#EE9B00"/>' +
-        '<polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#EE9B00"/>' +
-        '<text class="info-line" style="--i:0" x="30" y="42" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00" letter-spacing="1">[ \xb7 HOW TO USE \xb7 ]</text>' +
-        '<line class="info-line info-line--rule" style="--i:1" x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
-        '<text class="info-line" style="--i:2" x="30" y="84" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 01 \xb7 SCROLL</text>' +
-        '<text class="info-line" style="--i:3" x="30" y="106" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       browse between images</text>' +
-        '<text class="info-line" style="--i:4" x="30" y="140" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 02 \xb7 ENTER</text>' +
-        '<text class="info-line" style="--i:5" x="30" y="162" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       start the gallery</text>' +
-        '<text class="info-line" style="--i:6" x="30" y="196" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 03 \xb7 BACK / NEXT</text>' +
-        '<text class="info-line" style="--i:7" x="30" y="218" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       navigate pieces</text>' +
-        '<text class="info-line" style="--i:8" x="30" y="252" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 04 \xb7 ● ● ● DOTS</text>' +
-        '<text class="info-line" style="--i:9" x="30" y="274" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       jump to any image</text>' +
-        '<text class="info-line" style="--i:10" x="30" y="308" font-family="\'Courier New\', monospace" font-size="25" fill="#EE9B00">\xb7 05 \xb7 CLICK IMAGE</text>' +
-        '<text class="info-line" style="--i:11" x="30" y="330" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">       view full size</text>' +
-        '<line class="info-line info-line--rule" style="--i:12" x1="14" y1="352" x2="530" y2="352" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
-        '<text class="info-line" style="--i:13" x="30" y="376" font-family="\'Courier New\', monospace" font-size="20" fill="#EE9B00" opacity="0.65">  navigate your way \xb7</text>' +
-        '</svg>';
+    illusInfoPanel.innerHTML = buildInfoPanelSVG('en');
 
     hintHudBar.appendChild(hintHudFill);
+    hintHud.appendChild(hintHudLabel);
     hintHud.appendChild(hintHudPct);
     hintHud.appendChild(hintHudBar);
-    hintHud.appendChild(hintHudLabel);
     hintHud.appendChild(illusInfoPanel);
     tunnel.appendChild(hintHud);
 
@@ -651,16 +663,34 @@
     const _GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
     let   scrollHintSplit = false;
 
-    const ILLUS_TEXTS = {
-        en: {
-            hud:    ['· s c r o l l', 'o r', 'c l I c k', '- E N T E R -', 't o', 'v I e w ·'],
-            expand: '[ · c l i c k | t o | e x p a n d · ]',
-        },
-        es: {
-            hud:    ['· d e s l i z a r', 'o', 'c l i c', '- E N T R A R -', 'p a r a', 'v e r ·'],
-            expand: '[ · c l i c | p a r a | e x p a n d i r · ]',
-        },
-    };
+    function buildInfoPanelSVG(lang) {
+        const t = (ILLUS_TEXTS[lang] || ILLUS_TEXTS.en).info;
+        return (
+            '<svg class="illus-info-interface-svg" viewBox="0 0 564.09 406.8" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
+            '<defs><clipPath id="illus-inf-bg-clip">' +
+            '<path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z"/>' +
+            '</clipPath></defs>' +
+            '<rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.35" clip-path="url(#illus-inf-bg-clip)"/>' +
+            '<path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>' +
+            '<polygon points="158.13 394.69 169.28 406.8 365.68 406.8 378.21 394.69 158.13 394.69" fill="#EE9B00"/>' +
+            '<polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#EE9B00"/>' +
+            '<text x="30" y="42" font-family="' + _MONO + '" font-size="25" fill="#EE9B00" letter-spacing="1">' + t.header + '</text>' +
+            '<line x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
+            '<text x="30" y="84" font-family="' + _MONO + '" font-size="25" fill="#EE9B00">\xb7 01 \xb7 ' + t.steps[0].action + '</text>' +
+            '<text x="30" y="106" font-family="' + _MONO + '" font-size="20" fill="#EE9B00" opacity="0.65">       ' + t.steps[0].desc + '</text>' +
+            '<text x="30" y="140" font-family="' + _MONO + '" font-size="25" fill="#EE9B00">\xb7 02 \xb7 ' + t.steps[1].action + '</text>' +
+            '<text x="30" y="162" font-family="' + _MONO + '" font-size="20" fill="#EE9B00" opacity="0.65">       ' + t.steps[1].desc + '</text>' +
+            '<text x="30" y="196" font-family="' + _MONO + '" font-size="25" fill="#EE9B00">\xb7 03 \xb7 ' + t.steps[2].action + '</text>' +
+            '<text x="30" y="218" font-family="' + _MONO + '" font-size="20" fill="#EE9B00" opacity="0.65">       ' + t.steps[2].desc + '</text>' +
+            '<text x="30" y="252" font-family="' + _MONO + '" font-size="25" fill="#EE9B00">\xb7 04 \xb7 ' + t.steps[3].action + '</text>' +
+            '<text x="30" y="274" font-family="' + _MONO + '" font-size="20" fill="#EE9B00" opacity="0.65">       ' + t.steps[3].desc + '</text>' +
+            '<text x="30" y="308" font-family="' + _MONO + '" font-size="25" fill="#EE9B00">\xb7 05 \xb7 ' + t.steps[4].action + '</text>' +
+            '<text x="30" y="330" font-family="' + _MONO + '" font-size="20" fill="#EE9B00" opacity="0.65">       ' + t.steps[4].desc + '</text>' +
+            '<line x1="14" y1="352" x2="530" y2="352" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>' +
+            '<text x="30" y="376" font-family="' + _MONO + '" font-size="20" fill="#EE9B00" opacity="0.65">  ' + t.footer + '</text>' +
+            '</svg>'
+        );
+    }
 
     function buildHudScrollHTML(lang) {
         const t = ILLUS_TEXTS[lang] || ILLUS_TEXTS.en;
@@ -680,6 +710,8 @@
         expandHint.textContent = t.expand;
         expandHintSplit = false;
         if (wasExpandSplit) triggerExpandHintGlitch();
+
+        illusInfoPanel.innerHTML = buildInfoPanelSVG(lang);
     }
 
     document.addEventListener('languagechanged', e => {

@@ -488,20 +488,28 @@ nav {
   text-shadow: var(--glow-cyan-intense);
 }
 
-/* Logo glitch on hover — Chrome-safe restart via animation-name change.
-   Once the page-load reveal completes (JS adds .logo-reveal-done), the base
-   animation-name is suppressed to 'none'. On mouseenter the class toggle
-   changes the name none → glitch-switch, which Chrome always restarts on. */
-.logo-reveal-done [data-char]::after {
+/* ── Unified programmatic glitch restart ──────────────────────────────────
+   .glitch-suppressed  — JS sets this to quiesce the base page-load animation
+                         (animation-name → none so Chrome sees a name change on
+                         the next trigger, which is the only cross-browser
+                         reliable restart mechanism).
+   .glitch-firing      — JS toggles this with a getBoundingClientRect() flush
+                         between remove and add; Chrome sees none → glitch-switch
+                         and always starts a fresh animation.
+   Both classes live on the element that CONTAINS [data-char] children.
+   Per-element tuning via CSS custom properties on the element itself:
+     --glitch-count   (default 10)  — iteration count
+     --glitch-stagger (default .05s) — per-char delay increment             */
+.glitch-suppressed [data-char]::after {
   animation-name: none !important;
 }
-.logo-reveal-done.logo-glitch-active [data-char]::after {
-  animation-name: glitch-switch !important;
-  animation-duration: var(--transition-fast) !important;
+.glitch-suppressed.glitch-firing [data-char]::after {
+  animation-name:            glitch-switch !important;
+  animation-duration:        0.2s !important;
   animation-timing-function: steps(1) !important;
-  animation-iteration-count: 10 !important;
-  animation-delay: calc(var(--char-index) * 0.05s) !important;
-  animation-fill-mode: backwards !important;
+  animation-iteration-count: var(--glitch-count, 10) !important;
+  animation-delay:           calc(var(--char-index) * var(--glitch-stagger, 0.05s)) !important;
+  animation-fill-mode:       backwards !important;
 }
 
 /* --- Navigation Buttons --- */
@@ -1020,7 +1028,7 @@ nav {
   position: absolute;
   bottom: 40px;
   left: 70px;
-  width: 308px;
+  width: 380px;
   z-index: var(--z-layer-10);
   opacity: 0;
   transform: translateY(-60px);
@@ -1112,20 +1120,12 @@ nav {
   fill: rgba(255, 60, 0, 0.07);
 }
 
-/* ── Info-hint glitch — same name-change restart trick as the logo ───────
-   JS adds .info-hint-suppress after base animations finish (suppresses name
-   to 'none'). On hotspot hover JS toggles .info-hint-glitch so Chrome sees
-   the name change none → glitch-switch and always restarts the animation. */
-.info-hint-suppress [data-char]::after {
-  animation-name: none !important;
-}
-.info-hint-suppress.info-hint-glitch [data-char]::after {
-  animation-name: glitch-switch !important;
-  animation-duration: var(--transition-fast) !important;
-  animation-timing-function: steps(1) !important;
-  animation-iteration-count: 8 !important;
-  animation-delay: calc(var(--char-index) * 0.04s) !important;
-  animation-fill-mode: backwards !important;
+/* Info-hint targets use a tighter stagger to feel snappier across many chars */
+.main-nav .nav-btn,
+.lang-btn,
+.intro-work-cta {
+  --glitch-stagger: 0.04s;
+  --glitch-count: 8;
 }
 
 /* ── Target glow applied by JS (.info-glow) — matches logo hover cyan ── */

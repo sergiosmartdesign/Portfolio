@@ -105,28 +105,48 @@ class GlitchSystem {
   }
 
   /**
-   * Add glitch animation to logo on hover
+   * Add glitch animation to logo on hover.
+   * Delegates to GlitchSystem.triggerGlitch() — same mechanism as info-hints.
    */
   initLogoGlitch() {
     const logo = document.querySelector('.logo');
     if (!logo) return;
 
-    // After page-load reveal animation finishes (~2.7s max), suppress the base
-    // animation-name so the hover toggle can change it none → glitch-switch.
-    // Chrome only restarts animations when animation-name itself changes.
-    setTimeout(() => logo.classList.add('logo-reveal-done'), 3000);
+    // Suppress the page-load reveal after it finishes so the first hover gets
+    // a clean name-change restart (none → glitch-switch). If the user hovers
+    // before the timeout, triggerGlitch() adds glitch-suppressed on-demand.
+    setTimeout(() => logo.classList.add('glitch-suppressed'), 3000);
 
-    const triggerGlitch = () => {
-      // If hovered before timeout fires, add the class immediately so the
-      // name-change trick works on first interaction too.
-      logo.classList.add('logo-reveal-done');
-      logo.classList.remove('logo-glitch-active');
-      void logo.getBoundingClientRect(); // flush styles — forces name change to register
-      logo.classList.add('logo-glitch-active');
-    };
+    logo.addEventListener('mouseenter', () => GlitchSystem.triggerGlitch(logo));
+    logo.addEventListener('mouseleave', () => logo.classList.remove('glitch-firing'));
+  }
 
-    logo.addEventListener('mouseenter', triggerGlitch);
-    logo.addEventListener('mouseleave', () => logo.classList.remove('logo-glitch-active'));
+  /**
+   * Trigger a fresh glitch animation on a single element.
+   * Adds glitch-suppressed (animation-name: none) if absent, then does a
+   * remove → getBoundingClientRect() flush → add of glitch-firing so Chrome
+   * always sees the animation-name change from none → glitch-switch.
+   */
+  static triggerGlitch(el) {
+    el.classList.add('glitch-suppressed');
+    el.classList.remove('glitch-firing');
+    void el.getBoundingClientRect();
+    el.classList.add('glitch-firing');
+  }
+
+  /**
+   * Trigger glitch on multiple elements with a single reflow flush.
+   * Filters to elements that actually contain [data-char] children.
+   */
+  static triggerGlitchBatch(els) {
+    const capable = els.filter(el => el.querySelector('[data-char]'));
+    if (!capable.length) return;
+    capable.forEach(el => {
+      el.classList.add('glitch-suppressed');
+      el.classList.remove('glitch-firing');
+    });
+    void capable[0].getBoundingClientRect();
+    capable.forEach(el => el.classList.add('glitch-firing'));
   }
 
   initSealGlitch() {
@@ -1431,21 +1451,6 @@ function initInfoInterfaceHints() {
     lang:   Array.from(document.querySelectorAll('.lang-btn')),
   };
 
-  // Elements with [data-char] children that can play the glitch animation.
-  // Marked with .info-hint-suppress after their base page-load animations finish
-  // so the hover toggle can change animation-name: none → glitch-switch (the
-  // name change is what forces Chrome to restart — same pattern as the logo).
-  const glitchEls = [...targets.nav, ...targets.cta, ...targets.lang];
-  setTimeout(() => glitchEls.forEach(el => el.classList.add('info-hint-suppress')), 3000);
-
-  const triggerGlitch = (els) => {
-    const ready = els.filter(el => el.classList.contains('info-hint-suppress'));
-    if (!ready.length) return;
-    ready.forEach(el => el.classList.remove('info-hint-glitch'));
-    void ready[0].getBoundingClientRect(); // one flush for the whole batch
-    ready.forEach(el => el.classList.add('info-hint-glitch'));
-  };
-
   // ── Sound button: scrambling char replaces the icon on hover ──────────────
   const soundBtn = targets.sound[0] ?? null;
   const soundGlitchChars = '!@#$%^&*<>?/|\\[]{}~±§¶•∆∑∏√∞≠≈∫◊ΦΨΩλβγδ'.split('');
@@ -1475,16 +1480,16 @@ function initInfoInterfaceHints() {
   let activeHint = null;
 
   const clearHint = (hint) => {
-    targets[hint]?.forEach(el => {
-      el.classList.remove('info-glow', 'info-hint-glitch');
-    });
+    targets[hint]?.forEach(el => el.classList.remove('info-glow', 'glitch-firing'));
     if (hint === 'sound') stopSoundScramble();
   };
 
   const applyHint = (hint) => {
     const els = targets[hint] ?? [];
     els.forEach(el => el.classList.add('info-glow'));
-    triggerGlitch(els);
+    // GlitchSystem.triggerGlitchBatch adds glitch-suppressed on-demand (no
+    // timeout race) and internally filters to elements with [data-char] children.
+    GlitchSystem.triggerGlitchBatch(els);
     if (hint === 'sound') startSoundScramble();
   };
 

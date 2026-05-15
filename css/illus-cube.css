@@ -22,6 +22,8 @@
     --illus-ui-inset:     2rem;
     --illus-face-color:   #94D2BD;
     --illus-face-rgb:     148, 210, 189;
+    /* Matches .illus-cube --s — used by hintHud to stay outside cube bounds */
+    --cube-s:             min(74vw, 74vh, 560px);
 }
 
 /* ── Sticky viewport wrapper ─────────────────────────────────────────────── */
@@ -627,7 +629,8 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: clamp(10rem, 12vw, 12rem);
+    /* Fill the gap between cube edge and viewport edge, capped at 18rem */
+    width: min(calc((100% - var(--cube-s)) / 2 - 2rem), 18rem);
     z-index: 21;
     pointer-events: none;
     user-select: none;
@@ -638,8 +641,8 @@
     text-transform: uppercase;
 }
 
-.illus-hint-hud--left  { left: 13%;  text-align: left; }
-.illus-hint-hud--right { right: 13%; text-align: right; }
+.illus-hint-hud--left  { left:  3.5rem; text-align: left; }
+.illus-hint-hud--right { right: 1rem;   text-align: right; }
 
 .illus-hint-hud-pct {
     color: var(--illus-accent);
@@ -1322,23 +1325,11 @@
 }
 
 /* ── Illustration how-to-use SVG panel (inside hint hud) ────────────────── */
-.illus-hint-hud {
-    width: clamp(14rem, 20vw, 18rem);
-}
-
-.illus-hint-hud--right .illus-info-panel {
-    text-align: left;
-}
+.illus-hint-hud--right .illus-info-panel { text-align: left; }
 
 .illus-info-panel {
     margin-block-start: 1rem;
-    opacity: 0;
-    transition: opacity 0s;
-}
-
-.illus-tunnel.illus-stop-zero .illus-info-panel {
-    opacity: 1;
-    transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+    width: 100%;
 }
 
 .illus-info-interface-svg {
@@ -1349,27 +1340,6 @@
         drop-shadow(0 0 5px rgba(238, 155, 0, 0.5))
         drop-shadow(0 0 16px rgba(238, 155, 0, 0.2));
     animation: illus-neon-flicker 22s linear 3s infinite;
-}
-
-.illus-info-panel .info-line {
-    opacity: 0;
-    transform: translateX(-14px);
-}
-
-.illus-info-panel .info-line--rule {
-    transform: scaleX(0);
-    transform-origin: left center;
-    transform-box: fill-box;
-}
-
-.illus-tunnel.illus-stop-zero .illus-info-panel .info-line {
-    animation: infoLineIn 0.4s cubic-bezier(0.22, 1, 0.36, 1)
-        calc(1.15s + var(--i, 0) * 0.07s) forwards;
-}
-
-.illus-tunnel.illus-stop-zero .illus-info-panel .info-line--rule {
-    animation: infoRuleDraw 0.5s cubic-bezier(0.22, 1, 0.36, 1)
-        calc(1.15s + var(--i, 0) * 0.07s) forwards;
 }
 
 @media (max-height: 680px) {
