@@ -123,10 +123,11 @@ class ArtWorksPanel {
         this.panel    = document.querySelector('#art-direction .ad-works-panel');
         if (!this.panel) return;
 
-        this.table    = this.panel.querySelector('.ad-works-table');
-        this.discName = this.panel.querySelector('.ad-works-disc-name');
-        this.section  = document.getElementById('art-direction');
-        this.listItems = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
+        this.table         = this.panel.querySelector('.ad-works-table');
+        this.discName      = this.panel.querySelector('.ad-works-disc-name');
+        this.section       = document.getElementById('art-direction');
+        this.projectsLabel = document.querySelector('#art-direction .ad-projects-label');
+        this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
 
         this.activeDiscipline = null;
         this._transitioning   = false;
@@ -171,6 +172,12 @@ class ArtWorksPanel {
 
         this._transitioning   = true;
         this.activeDiscipline = key;
+
+        if (this.projectsLabel) {
+            this.projectsLabel.classList.remove('ad-label-animating');
+            void this.projectsLabel.offsetWidth;
+            this.projectsLabel.classList.add('ad-label-animating');
+        }
 
         this.listItems.forEach(li =>
             li.classList.toggle('is-active', li.dataset.discipline === key)
@@ -270,6 +277,10 @@ class ArtWorksPanel {
                     e.preventDefault();
                     this._openModal(works[i]);
                 }
+            });
+            row.addEventListener('mouseenter', () => {
+                const titleEl = row.querySelector('.ad-work-title');
+                if (titleEl) this._scrambleText(titleEl);
             });
         });
     }

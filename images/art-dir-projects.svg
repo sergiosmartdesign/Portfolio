@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="art-dir-projects" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.6 148">
+  <g>
+    <line x1="17.56" y1="2.63" x2="17.55" y2="147" style="fill:none; stroke:#001219; stroke-linecap:round; stroke-linejoin:round; stroke-width:2px;"/>
+    <rect width="18.6" height="136" style="fill:#001219;"/>
+    <text
+      transform="translate(12.5 128) rotate(-90)"
+      font-family="'Courier New', monospace"
+      font-size="9"
+      font-weight="400"
+      fill="#fff"
+      letter-spacing="1.2">[ · p r o j e c t s · ]</text>
+  </g>
+</svg>

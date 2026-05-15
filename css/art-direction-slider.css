@@ -21,10 +21,6 @@
 #art-direction.ad-intro-active.ad-intro-animate .ad-intro-card {
   opacity: 1;
   animation: ad-intro-entrance 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  filter:
-    drop-shadow(0 0 8px #EE9B00)
-    drop-shadow(0 0 24px rgba(238, 155, 0, 0.55))
-    drop-shadow(0 0 48px rgba(238, 155, 0, 0.25));
 }
 
 /* Works panel suppressed while intro is active */
@@ -43,6 +39,62 @@
   60%  { opacity: 0.88; transform: translateY(calc(-50% + 3px)); clip-path: inset(0 6% 0 0); }
   85%  { opacity: 0.97; transform: translateY(calc(-50% + 1px)); clip-path: inset(0 0 0 0); }
   100% { opacity: 1;    transform: translateY(-50%);             clip-path: inset(0 0 0 0); }
+}
+
+/* ── SVG text group entrance — staggered after card slides in ── */
+@keyframes iad-text-in {
+  0%   { opacity: 0; transform: translateX(-10px); }
+  40%  { opacity: 0.6; transform: translateX(-3px); }
+  65%  { opacity: 0.85; transform: translateX(1px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Default: all text groups hidden */
+#art-direction .ad-intro-card .iad-header,
+#art-direction .ad-intro-card .iad-step,
+#art-direction .ad-intro-card .iad-footer {
+  opacity: 0;
+}
+
+/* Animate in when both trigger classes are present */
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-header  { animation: iad-text-in 0.4s ease-out 0.65s forwards; }
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-1  { animation: iad-text-in 0.4s ease-out 0.85s forwards; }
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-2  { animation: iad-text-in 0.4s ease-out 1.05s forwards; }
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-3  { animation: iad-text-in 0.4s ease-out 1.25s forwards; }
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-4  { animation: iad-text-in 0.4s ease-out 1.45s forwards; }
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-footer  { animation: iad-text-in 0.4s ease-out 1.65s forwards; }
+
+/* ── Projects vertical label — left edge of works panel ── */
+#art-direction .ad-projects-label {
+  position: absolute;
+  left: calc(min(100vh, 100vw) + 2vw - 28px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: clamp(340px, 74vh, 680px);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#art-direction.ad-intro-active .ad-projects-label {
+  opacity: 0 !important;
+}
+
+#art-direction .ad-projects-label.ad-label-animating {
+  animation: ad-label-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes ad-label-in {
+  0%   { opacity: 0;    clip-path: inset(100% 0 0 0); }
+  12%  { opacity: 0.4;  clip-path: inset(72% 0 0 0); }
+  14%  { opacity: 0.2;  clip-path: inset(75% 0 2% 0); }
+  16%  { opacity: 0.5;  clip-path: inset(68% 0 0 0); }
+  55%  { opacity: 0.85; clip-path: inset(18% 0 0 0); }
+  58%  { opacity: 0.65; clip-path: inset(20% 0 3% 0); }
+  60%  { opacity: 0.9;  clip-path: inset(14% 0 0 0); }
+  85%  { opacity: 0.97; clip-path: inset(2%  0 0 0); }
+  100% { opacity: 1;    clip-path: inset(0   0 0 0); }
 }
 
 /* ── Outer container — positioned after the letter grid ── */

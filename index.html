@@ -945,8 +945,54 @@
                 </div>
             </div>
 
-            <!-- Intro guide card — visible on first load, replaced by works panel on discipline select -->
-            <img class="ad-intro-card" src="images/intro-art-direction.svg" aria-label="How to explore this section" alt="" aria-hidden="true">
+            <!-- Intro guide card — inline SVG so internal text elements can be animated -->
+            <svg class="ad-intro-card" role="img" aria-label="How to explore this section" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 564.09 406.8">
+              <defs>
+                <clipPath id="iad-bg-clip">
+                  <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z"/>
+                </clipPath>
+                <filter id="iad-border-glow" x="-8%" y="-8%" width="116%" height="116%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+                  <feColorMatrix in="blur" type="matrix" values="1 0.6 0 0 0  0.6 0.3 0 0 0  0 0 0 0 0  0 0 0 1.8 0" result="amber"/>
+                  <feMerge><feMergeNode in="amber"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.36" clip-path="url(#iad-bg-clip)"/>
+              <path class="iad-border" d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" filter="url(#iad-border-glow)"/>
+              <polygon points="158.13 394.69 169.28 406.8 365.68 406.8 378.21 394.69 158.13 394.69" fill="#EE9B00"/>
+              <polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#EE9B00"/>
+              <g class="iad-header">
+                <text x="30" y="42" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" letter-spacing="1">[ · HOW TO EXPLORE · ]</text>
+                <line x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
+              </g>
+              <g class="iad-step iad-step-1">
+                <text x="30" y="88" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 01 · SELECT A DISCIPLINE</text>
+                <text x="30" y="110" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       pick from the menu on the left</text>
+              </g>
+              <g class="iad-step iad-step-2">
+                <text x="30" y="148" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 02 · BROWSE THE WORK</text>
+                <text x="30" y="170" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       projects load in this panel</text>
+              </g>
+              <g class="iad-step iad-step-3">
+                <text x="30" y="208" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 03 · OPEN A PROJECT</text>
+                <text x="30" y="230" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       click any row for full detail</text>
+              </g>
+              <g class="iad-step iad-step-4">
+                <text x="30" y="268" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 04 · RESET</text>
+                <text x="30" y="290" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       choose another category anytime</text>
+              </g>
+              <g class="iad-footer">
+                <line x1="14" y1="320" x2="530" y2="320" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
+                <text x="30" y="358" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.7">  start by selecting a discipline ·</text>
+              </g>
+            </svg>
+
+            <!-- Projects vertical label — left of works panel -->
+            <svg class="ad-projects-label" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 380">
+              <rect width="22" height="380" fill="#001219"/>
+              <line x1="20" y1="3" x2="20" y2="377" stroke="#EE9B00" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+              <text transform="translate(13 368) rotate(-90)" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#EE9B00" letter-spacing="1.8">[ · p r o j e c t s · ]</text>
+            </svg>
 
             <!-- Works list — right zone, z:5, below scanlines/vhs/vignette -->
             <div class="ad-works-panel" role="region" aria-label="Selected work by discipline">
@@ -1523,7 +1569,43 @@
                                 </div>
                                 <div class="photo-polaroid-border"></div>
                             </div>
-                            <p class="photo-polaroid-hint"><strong>[ ·<br>m o u s e<br>o v e r<br>t o<br>R E V E A L<br>· ]</strong></p>
+                            <div class="photo-polaroid-hint" aria-hidden="true">
+                                <svg id="photo-reveal-guide" class="photo-hint-svg" viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                    <defs>
+                                        <clipPath id="phint-clip">
+                                            <path d="M1,15 L14,1 L259,1 L259,299 L1,299 Z"/>
+                                        </clipPath>
+                                    </defs>
+                                    <!-- Dark backdrop -->
+                                    <rect x="0" y="0" width="260" height="300" fill="#001219" fill-opacity="0.28" clip-path="url(#phint-clip)"/>
+                                    <!-- Border -->
+                                    <path d="M1,15 L14,1 L259,1 L259,299 L1,299 Z" fill="none" stroke="#EE9B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <!-- Bottom tab accent -->
+                                    <polygon points="97,290 106,300 154,300 163,290" fill="#EE9B00"/>
+                                    <!-- Top-right accent -->
+                                    <polygon points="249,1 259,1 259,52 249,44" fill="#EE9B00"/>
+                                    <!-- Header -->
+                                    <text x="18" y="27" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00" letter-spacing="1">[ · HOW TO REVEAL · ]</text>
+                                    <!-- Divider -->
+                                    <line x1="10" y1="36" x2="250" y2="36" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
+                                    <!-- Step 01 -->
+                                    <text x="18" y="57" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 01 · MOUSE OVER</text>
+                                    <text x="18" y="72" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       scratch the dark veil</text>
+                                    <!-- Step 02 -->
+                                    <text x="18" y="96" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 02 · CLICK</text>
+                                    <text x="18" y="111" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       fully expose the photo</text>
+                                    <!-- Step 03 -->
+                                    <text x="18" y="135" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 03 · HOVER ROWS</text>
+                                    <text x="18" y="150" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       preview any image</text>
+                                    <!-- Step 04 -->
+                                    <text x="18" y="174" font-family="'Courier New', monospace" font-size="13" fill="#EE9B00">· 04 · EXPLORE</text>
+                                    <text x="18" y="189" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">       find your favourites</text>
+                                    <!-- Bottom divider -->
+                                    <line x1="10" y1="208" x2="250" y2="208" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
+                                    <!-- Footer -->
+                                    <text x="18" y="226" font-family="'Courier New', monospace" font-size="10.5" fill="#EE9B00" opacity="0.65">  uncover your image ·</text>
+                                </svg>
+                            </div>
                         </div>
 
                         <p class="photo-intro" data-i18n-html="photo.intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em></p>

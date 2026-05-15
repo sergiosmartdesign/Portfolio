@@ -4,41 +4,49 @@
     <clipPath id="iad-bg-clip">
       <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z"/>
     </clipPath>
+    <filter id="iad-border-glow" x="-8%" y="-8%" width="116%" height="116%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0.6 0 0 0  0.6 0.3 0 0 0  0 0 0 0 0  0 0 0 1.8 0" result="amber"/>
+      <feMerge>
+        <feMergeNode in="amber"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
-  <!-- Dark backdrop -->
-  <rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.72" clip-path="url(#iad-bg-clip)"/>
+  <!-- Dark backdrop — 50% more transparent -->
+  <rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.36" clip-path="url(#iad-bg-clip)"/>
 
-  <!-- Border — teal -->
-  <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#0A9396" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-  <!-- Bottom tab accent — amber -->
+  <!-- Border with glow filter -->
+  <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" filter="url(#iad-border-glow)"/>
+  <!-- Bottom tab accent -->
   <polygon points="158.13 394.69 169.28 406.8 365.68 406.8 378.21 394.69 158.13 394.69" fill="#EE9B00"/>
-  <!-- Right side accent — amber -->
+  <!-- Right side accent -->
   <polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#EE9B00"/>
 
   <!-- Header -->
   <text x="30" y="42" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" letter-spacing="1">[ · HOW TO EXPLORE · ]</text>
   <!-- Divider -->
-  <line x1="14" y1="54" x2="530" y2="54" stroke="#0A9396" stroke-width="1" opacity="0.5"/>
+  <line x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
 
   <!-- Step 01 -->
-  <text x="30" y="88" font-family="'Courier New', monospace" font-size="22" fill="#E9D8A6">· 01 · SELECT A DISCIPLINE</text>
-  <text x="30" y="110" font-family="'Courier New', monospace" font-size="17" fill="#94D2BD" opacity="0.75">       pick from the menu on the left</text>
+  <text x="30" y="88" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 01 · SELECT A DISCIPLINE</text>
+  <text x="30" y="110" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       pick from the menu on the left</text>
 
   <!-- Step 02 -->
-  <text x="30" y="148" font-family="'Courier New', monospace" font-size="22" fill="#E9D8A6">· 02 · BROWSE THE WORK</text>
-  <text x="30" y="170" font-family="'Courier New', monospace" font-size="17" fill="#94D2BD" opacity="0.75">       projects load in this panel</text>
+  <text x="30" y="148" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 02 · BROWSE THE WORK</text>
+  <text x="30" y="170" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       projects load in this panel</text>
 
   <!-- Step 03 -->
-  <text x="30" y="208" font-family="'Courier New', monospace" font-size="22" fill="#E9D8A6">· 03 · OPEN A PROJECT</text>
-  <text x="30" y="230" font-family="'Courier New', monospace" font-size="17" fill="#94D2BD" opacity="0.75">       click any row for full detail</text>
+  <text x="30" y="208" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 03 · OPEN A PROJECT</text>
+  <text x="30" y="230" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       click any row for full detail</text>
 
   <!-- Step 04 -->
-  <text x="30" y="268" font-family="'Courier New', monospace" font-size="22" fill="#E9D8A6">· 04 · RESET</text>
-  <text x="30" y="290" font-family="'Courier New', monospace" font-size="17" fill="#94D2BD" opacity="0.75">       choose another category anytime</text>
+  <text x="30" y="268" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00">· 04 · RESET</text>
+  <text x="30" y="290" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.55">       choose another category anytime</text>
 
   <!-- Bottom divider -->
-  <line x1="14" y1="320" x2="530" y2="320" stroke="#0A9396" stroke-width="1" opacity="0.5"/>
+  <line x1="14" y1="320" x2="530" y2="320" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
   <!-- Footer -->
-  <text x="30" y="358" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.8">  start by selecting a discipline ·</text>
+  <text x="30" y="358" font-family="'Courier New', monospace" font-size="17" fill="#EE9B00" opacity="0.7">  start by selecting a discipline ·</text>
 </svg>

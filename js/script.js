@@ -781,56 +781,61 @@ class AnimationCoordinator {
       const ctx = staticLineCanvas.getContext('2d');
       let staticAnimationId = null;
       let scrollTimeout = null;
+      let _staticFrameCount = 0;
 
-      // Size canvas to full width
+      // Debounced canvas resize — avoids layout thrash on every resize pixel
+      let _canvasResizeTimer = null;
       const resizeCanvas = () => {
-        staticLineCanvas.width = window.innerWidth;
-        staticLineCanvas.height = 4;
+        clearTimeout(_canvasResizeTimer);
+        _canvasResizeTimer = setTimeout(() => {
+          staticLineCanvas.width  = window.innerWidth;
+          staticLineCanvas.height = 4;
+        }, 100);
       };
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
+      staticLineCanvas.width  = window.innerWidth;
+      staticLineCanvas.height = 4;
+      window.addEventListener('resize', resizeCanvas, { passive: true });
 
-      // Draw electric static line
+      // Draw electric static line — shadowBlur removed (CSS filter on canvas element handles glow).
+      // Throttled to ~15fps (skip 3 of 4 frames) — noise flicker is imperceptible above 12fps.
       const drawStaticLine = () => {
+        staticAnimationId = requestAnimationFrame(drawStaticLine);
+        _staticFrameCount++;
+        if (_staticFrameCount % 4 !== 0) return;
+
         const w = staticLineCanvas.width;
         const h = staticLineCanvas.height;
         ctx.clearRect(0, 0, w, h);
 
         ctx.beginPath();
         ctx.strokeStyle = '#0ef';
-        ctx.shadowColor = '#0ef';
-        ctx.shadowBlur = 6;
         ctx.lineWidth = 1.5;
-
         ctx.moveTo(0, h / 2);
         for (let x = 0; x < w; x += 3) {
-          const jitter = (Math.random() - 0.5) * h * 2;
-          ctx.lineTo(x, h / 2 + jitter);
+          ctx.lineTo(x, h / 2 + (Math.random() - 0.5) * h * 2);
         }
         ctx.stroke();
 
-        // Add bright white flicker segments
+        // Bright white flicker segments
         ctx.beginPath();
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.shadowColor = '#fff';
-        ctx.shadowBlur = 3;
         ctx.lineWidth = 1;
         for (let x = 0; x < w; x += 3) {
           if (Math.random() > 0.7) {
-            const jitter = (Math.random() - 0.5) * h;
-            ctx.lineTo(x, h / 2 + jitter);
+            ctx.lineTo(x, h / 2 + (Math.random() - 0.5) * h);
           } else {
             ctx.moveTo(x, h / 2);
           }
         }
         ctx.stroke();
-
-        staticAnimationId = requestAnimationFrame(drawStaticLine);
       };
 
       const showStaticLine = () => {
         staticLineCanvas.classList.add('active');
-        if (!staticAnimationId) drawStaticLine();
+        if (!staticAnimationId) {
+          _staticFrameCount = 0;
+          drawStaticLine();
+        }
       };
 
       const hideStaticLine = () => {
@@ -881,7 +886,18 @@ class AnimationCoordinator {
         scrollTimeout = setTimeout(hideStaticLine, 150);
       };
 
-      window.addEventListener('scroll', updatePhotoReveal, { passive: true });
+      // RAF-gate: coalesce multiple scroll events per frame into a single layout read+write
+      let _photoRevealPending = false;
+      const schedulePhotoReveal = () => {
+        if (_photoRevealPending) return;
+        _photoRevealPending = true;
+        requestAnimationFrame(() => {
+          _photoRevealPending = false;
+          updatePhotoReveal();
+        });
+      };
+
+      window.addEventListener('scroll', schedulePhotoReveal, { passive: true });
       updatePhotoReveal();
     }
 
@@ -1289,8 +1305,8 @@ class AnimationCoordinator {
       const triggerAdListGlitch = () => {
         adListDone = true;
         adList.classList.add('ad-list-ready');
-        artEntranceSection.classList.add('ad-intro-animate');
         adListLinks.forEach((link, i) => scrambleItem(link, i * 120));
+        setTimeout(() => artEntranceSection.classList.add('ad-intro-animate'), 1800);
       };
 
       const resetAdList = () => {

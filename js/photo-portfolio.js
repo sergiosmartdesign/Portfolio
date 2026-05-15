@@ -62,6 +62,7 @@
       this._stream              = null;
       this._streamCards         = [];
       this._streamRotations     = [];
+      this._cardHidden          = null;     // per-card boolean cache; true = last write was hidden
       this._streamPhase         = 'idle';   // 'idle' | 'active'
       this._masterT             = 0;
       this._introRaf            = null;
@@ -69,6 +70,11 @@
       this._streamCanPlay       = false;    // set true by _triggerChain after camera lands
       this._streamVelocity      = 1;        // +1 forward, -1 reverse
       this._infoAnimInterval    = null;
+
+      // Visibility pause/resume — RAF loops must not run in background tabs
+      this._introPaused       = false;
+      this._borderPaused      = false;
+      this._photoBorderPaused = false;
 
       // Photo bg electric border
       this._photoBorderTurbulence  = null;
@@ -106,13 +112,28 @@
       this._streamRotations = this._streamCards.map(card =>
         parseFloat(getComputedStyle(card).getPropertyValue('--ghost-rotate').trim()) || 0
       );
+      this._cardHidden = new Array(this._streamCards.length).fill(true);
       this._updateStreamWidth();
 
+      // Debounced resize — getBoundingClientRect forces layout; winH is cheap to update eagerly
+      let _resizeTimer = null;
       window.addEventListener('resize', () => {
-        this.winH         = window.innerHeight;
-        this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+        this.winH = window.innerHeight;
         this._updateStreamWidth();
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(() => {
+          this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+        }, 100);
       }, { passive: true });
+
+      // Pause all RAF loops when the tab is hidden; resume on return
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this._pauseAllRafs();
+        } else {
+          this._resumeAllRafs();
+        }
+      });
 
       // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids label → pgallery title → desc → scroll hint
       const pgalleryTitle    = document.querySelector('.pgallery-title');
@@ -372,6 +393,7 @@
           hl.classList.remove('photo-ai-highlight--animate');
           void hl.offsetWidth;
           hl.classList.add('photo-ai-highlight--animate');
+          this._scrambleText(hl);
         }, 700 + i * 300);
         this.chainTimers.push(t);
       });
@@ -636,6 +658,7 @@
       this._introLastTs    = 0;
       this._streamCanPlay  = false;
       this._streamVelocity = 1;
+      this._introPaused    = false;
       if (this._introRaf) {
         cancelAnimationFrame(this._introRaf);
         this._introRaf = null;
@@ -646,36 +669,44 @@
         card.style.opacity   = '0';
         card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
       });
+      // Sync cache so next _renderStream skips redundant writes for already-hidden cards
+      if (this._cardHidden) this._cardHidden.fill(true);
       if (this._streamLbOpen) this._streamLbHide?.();
     }
 
     // Pure renderer — same function regardless of which driver owns masterT.
     // Uses modulo so the stream loops: after the last card exits, card 0 re-enters.
     // Works in both directions: increasing masterT = forward, decreasing = backward.
+    // _cardHidden cache skips DOM writes for cards that were already set to hidden last frame
+    // (~27 of 30 cards at any moment), cutting style-write overhead by ~90%.
     _renderStream(masterT) {
       if (!this._stream || !this._streamCards.length) return;
 
       const N            = this._streamCards.length;
-      const CARD_SPACING = 0.22;          // next card ejected exactly when current card begins rotating (t=0.22 phase boundary)
-      const LOOP_LENGTH  = N * CARD_SPACING; // full cycle length (e.g. 30 × 1.5 = 45)
+      const CARD_SPACING = 0.22;
+      const LOOP_LENGTH  = N * CARD_SPACING;
       const CARD_W       = 232;
       const streamW      = parseFloat(
         this._stream.style.getPropertyValue('--ghost-stream-w')
       ) || 500;
 
-      // Normalise masterT to [0, LOOP_LENGTH) — handles backward scroll (negatives)
       const phase = ((masterT % LOOP_LENGTH) + LOOP_LENGTH) % LOOP_LENGTH;
 
-      this._streamCards.forEach((card, i) => {
-        // How far card i is into its current crossing [0, LOOP_LENGTH)
+      for (let i = 0; i < N; i++) {
+        const card   = this._streamCards[i];
         const offset = ((phase - i * CARD_SPACING) % LOOP_LENGTH + LOOP_LENGTH) % LOOP_LENGTH;
 
-        // Card is "in flight" only when offset ∈ [0, 1]; otherwise it is in its gap
         if (offset > 1) {
-          card.style.opacity   = '0';
-          card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
-          return;
+          // Skip DOM write if card was already hidden last frame
+          if (!this._cardHidden[i]) {
+            card.style.opacity   = '0';
+            card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
+            this._cardHidden[i]  = true;
+          }
+          continue;
         }
+
+        this._cardHidden[i] = false;
 
         const t        = offset;
         const finalRot = this._streamRotations[i] || 0;
@@ -697,7 +728,43 @@
 
         card.style.opacity   = t < 0.03 ? String(t / 0.03) : '1';
         card.style.transform = `translateX(${x}px) translateY(-50%) rotate(${rot}deg)`;
-      });
+      }
+    }
+
+    // ── RAF visibility pause / resume ────────────────────────────────────────
+    _pauseAllRafs() {
+      if (this._introRaf && this._streamPhase === 'active') {
+        cancelAnimationFrame(this._introRaf);
+        this._introRaf   = null;
+        this._introPaused = true;
+        this._introLastTs = 0; // reset so resumed loop doesn't jump by hidden-tab duration
+      }
+      if (this._borderRaf && this._borderCount > 0) {
+        cancelAnimationFrame(this._borderRaf);
+        this._borderRaf   = null;
+        this._borderPaused = true;
+      }
+      if (this._photoBorderRaf && this._photoBorderActive) {
+        cancelAnimationFrame(this._photoBorderRaf);
+        this._photoBorderRaf   = null;
+        this._photoBorderPaused = true;
+      }
+    }
+
+    _resumeAllRafs() {
+      if (this._introPaused && this._streamPhase === 'active') {
+        this._introPaused = false;
+        this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
+      }
+      if (this._borderPaused && this._borderCount > 0) {
+        this._borderPaused    = false;
+        this._borderFrameTick = 0;
+        this._borderRaf = requestAnimationFrame(() => this._borderAnimTick());
+      }
+      if (this._photoBorderPaused && this._photoBorderActive) {
+        this._photoBorderPaused = false;
+        this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
+      }
     }
 
     // ── Electric border helpers ──────────────────────────────────────────────
@@ -877,6 +944,7 @@
           hl.classList.remove('photo-ai-highlight--animate');
           void hl.offsetWidth;
           hl.classList.add('photo-ai-highlight--animate');
+          this._scrambleText(hl);
         });
       }
     }
@@ -1470,6 +1538,35 @@
           lbShow(card.dataset.image, card.dataset.alt || '');
         });
       });
+    }
+
+    // ── Text scramble — same glitch pattern as art-direction discipline list ──
+    _scrambleText(el) {
+      const CHARS     = '!<>-_\\/[]{}—=+*^?#∆◊§øΩ†‡';
+      const FRAME_MS  = 38;
+      const finalText = el.textContent;
+      if (!finalText.trim()) return;
+      const chars      = [...finalText];
+      const n          = chars.length;
+      const resolveAt  = i => i * FRAME_MS;
+      const maxResolve = resolveAt(n - 1);
+      let elapsed = 0;
+      const tick = () => {
+        let out = '';
+        for (let i = 0; i < n; i++) {
+          out += elapsed >= resolveAt(i)
+            ? chars[i]
+            : CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
+        el.textContent = out;
+        elapsed += FRAME_MS;
+        if (elapsed <= maxResolve + FRAME_MS) {
+          setTimeout(tick, FRAME_MS);
+        } else {
+          el.textContent = finalText;
+        }
+      };
+      tick();
     }
   }
 
