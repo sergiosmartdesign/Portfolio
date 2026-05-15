@@ -4,6 +4,19 @@
  * Original concept by Alex Andrix
  */
 
+// Project color palette — hex converted to {h, s} for HSL; lum varies per particle
+const PARTICLE_PALETTE = [
+  { h: 191, s: 100 }, // #005F73 dark teal
+  { h: 181, s: 88  }, // #0A9396 teal
+  { h: 162, s: 38  }, // #94D2BD mint
+  { h: 43,  s: 62  }, // #E9D8A6 sand
+  { h: 39,  s: 100 }, // #EE9B00 amber
+  { h: 29,  s: 97  }, // #CA6702 burnt orange
+  { h: 20,  s: 95  }, // #BB3E03 rust
+  { h: 5,   s: 81  }, // #AE2012 deep red
+  { h: 358, s: 62  }, // #9B2226 dark red
+];
+
 class ParticleSystem {
   constructor() {
     // Detect Safari for performance optimizations
@@ -21,8 +34,6 @@ class ParticleSystem {
       springConstant: 8,
       viscosity: 0.4,
       zoom: 1.6,
-      hue: 180,  // Cyan for cyberpunk theme
-      saturation: 95,
       targetFPS: isSafari ? 30 : 60  // Throttle to 30fps on Safari
     };
 
@@ -34,6 +45,10 @@ class ParticleSystem {
     this.isRunning = true;
     this.lastFrameTime = 0;
     this.frameInterval = 1000 / this.config.targetFPS;
+
+    // Palette cycling — one color active at a time, advances every N frames
+    this.paletteIndex = 0;
+    this.paletteInterval = 400;
 
     // Color cache for performance
     this.colorCache = new Map();
@@ -141,6 +156,9 @@ class ParticleSystem {
    */
   evolve() {
     this.stepCount++;
+    if (this.stepCount % this.paletteInterval === 0) {
+      this.paletteIndex = (this.paletteIndex + 1) % PARTICLE_PALETTE.length;
+    }
     this.updateGridAges();
 
     // Birth new particles when needed
@@ -178,10 +196,11 @@ class ParticleSystem {
     const gridSpotIndex = Math.floor(Math.random() * this.gridMaxIndex);
     const gridSpot = this.grid[gridSpotIndex];
     const { x, y } = gridSpot;
+    const paletteEntry = PARTICLE_PALETTE[this.paletteIndex];
 
     this.particles.push({
-      hue: this.config.hue,
-      sat: this.config.saturation,
+      hue: paletteEntry.h,
+      sat: paletteEntry.s,
       lum: 20 + Math.floor(40 * Math.random()),
       x,
       y,
@@ -343,7 +362,7 @@ class ParticleSystem {
    * Get cached color string for particle
    */
   getColor(particle) {
-    const h = Math.floor(particle.hue + this.stepCount / 30);
+    const h = particle.hue;
     const s = particle.sat;
     const l = particle.lum;
     const cacheKey = `${h}-${s}-${l}`;

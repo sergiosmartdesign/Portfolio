@@ -2,69 +2,18 @@
     'use strict';
 
     const IMAGES = [
-        'images/photo/Isla en Uyuni.jpg',
+        'images/illustration/the-fat-dragon-themberchaud-concept-art.jpg', // stop 0 — gallery title face; image hidden behind label
         'images/illustration/the-fat-dragon-themberchaud-concept-art.jpg',
         'images/illustration/Hada de los Andes.jpg',
         'images/illustration/Meninas_Canido.jpg',
         'images/illustration/Rocker Ghost Geisha.jpg',
         'images/illustration/Prueba grafitti.jpg',
-        'images/photo/Fairy woods.jpg',
-        'images/photo/Dali Desert.jpg',
-        'images/photo/Attack of the Titan.jpg',
-        'images/photo/Triton de Sintra.jpg',
-        'images/photo/Cappadocia ice cream houses.jpg',
-        'images/photo/Andean Flamingo.jpg',
-        'images/photo/Beduinos.jpg',
-        'images/photo/Cajon del Maipo.jpg',
-        'images/photo/Castillo de las Hadas.jpg',
-        'images/photo/Coming for you.jpg',
-        'images/photo/Crash.jpg',
-        'images/photo/Dog.jpg',
-        'images/photo/Dubrovnik.jpg',
-        'images/photo/Find the Rhombus.jpg',
-        'images/photo/Goreme.jpg',
-        'images/photo/Istanbul ships.jpg',
-        'images/photo/Jewels of Petra.jpg',
-        'images/photo/Kotor landscape.jpg',
-        'images/photo/London Bridge.jpg',
-        'images/photo/Looking to the Sky.jpg',
-        'images/photo/Medieval.jpg',
-        'images/photo/Mt Saint Michel.jpg',
-        'images/photo/Old tombs.jpg',
-        'images/photo/Petra.jpg',
-        'images/photo/Rovinj Croatia.jpg',
-        'images/photo/Sevilla.jpg',
-        'images/photo/Streets of Istanbul.jpg'
     ];
 
     const FACE_NAMES = IMAGES.map(src =>
         src.split('/').pop().replace(/\.[^.]+$/, '').toUpperCase()
     );
 
-    const EXTRA_CARDS = [
-        { date: 'Apr — 2024', num: '06', theme: 'Andean Light',        h2: 'STILL\nWATERS',          technique: 'Landscape photography · Long exposure' },
-        { date: 'May — 2024', num: '07', theme: 'Desert Nomads',       h2: 'SAND\nAND\nSILENCE',     technique: 'Documentary · Available light' },
-        { date: 'Jun — 2024', num: '08', theme: 'Canyon Echo',         h2: 'WALLS\nTHAT\nSPEAK',     technique: 'Landscape · Wide angle' },
-        { date: 'Jul — 2024', num: '09', theme: 'Fairy Castle',        h2: 'STONE\nAND\nMOSS',        technique: 'Architecture · Natural light' },
-        { date: 'Aug — 2024', num: '10', theme: 'Shadow Pursuit',      h2: 'NO\nESCAPE',              technique: 'Street photography · Contrast' },
-        { date: 'Sep — 2024', num: '11', theme: 'Free Fall',           h2: 'GROUND\nLOST',            technique: 'Action · High shutter speed' },
-        { date: 'Oct — 2024', num: '12', theme: 'Faithful Eye',        h2: 'BEFORE\nWORDS',           technique: 'Portrait · Natural light' },
-        { date: 'Nov — 2024', num: '13', theme: 'Adriatic Wall',       h2: 'BUILT\nTO\nLAST',         technique: 'Architecture · Golden hour' },
-        { date: 'Dec — 2024', num: '14', theme: 'Urban Geometry',      h2: 'FIND\nTHE\nGRID',         technique: 'Abstract · Aerial perspective' },
-        { date: 'Jan — 2025', num: '15', theme: 'Cave City',           h2: 'CARVED\nFROM\nEARTH',     technique: 'Landscape · Magic hour' },
-        { date: 'Feb — 2025', num: '16', theme: 'Three Continents',    h2: 'WATER\nBETWEEN\nWORLDS',  technique: 'Travel · Panoramic' },
-        { date: 'Mar — 2025', num: '17', theme: 'Rose City',           h2: 'LIGHT\nON\nSTONE',         technique: 'Architecture · Side light' },
-        { date: 'Apr — 2025', num: '18', theme: 'Bay of Kotor',        h2: 'WATER\nAND\nMOUNTAIN',    technique: 'Landscape · Telephoto' },
-        { date: 'May — 2025', num: '19', theme: 'Tower Bridge',        h2: 'STEEL\nAND\nFOG',          technique: 'Urban · Long exposure' },
-        { date: 'Jun — 2025', num: '20', theme: 'Vertical Longing',    h2: 'EYES\nUP',                 technique: 'Street photography · Perspective' },
-        { date: 'Jul — 2025', num: '21', theme: 'Walled City',         h2: 'TIME\nSTOPPED\nHERE',      technique: 'Architecture · Overcast light' },
-        { date: 'Aug — 2025', num: '22', theme: 'Island Abbey',        h2: 'TIDE\nAND\nFAITH',         technique: 'Landscape · Tidal flats' },
-        { date: 'Sep — 2025', num: '23', theme: 'Ancient Silence',     h2: 'OLDER\nTHAN\nNAMES',       technique: 'Archaeology · Natural light' },
-        { date: 'Oct — 2025', num: '24', theme: 'Carved in Stone',     h2: 'HANDS\nNOW\nGONE',         technique: 'Detail · Macro lens' },
-        { date: 'Nov — 2025', num: '25', theme: 'Venetian Light',      h2: 'SALT\nAND\nGOLD',          technique: 'Travel · Overcast diffusion' },
-        { date: 'Dec — 2025', num: '26', theme: 'Golden Andalucía',    h2: 'ORANGE\nWALLS\nFADE',      technique: 'Urban · Evening light' },
-        { date: 'Jan — 2026', num: '27', theme: 'City on the Strait',  h2: 'EAST\nMEETS\nWEST',        technique: 'Urban · Telephoto compression' }
-    ];
 
     const N            = IMAGES.length;
     const SWAP_RADIUS  = 3;
@@ -164,7 +113,6 @@
     const captionNum  = illus.querySelector('.illus-caption-num');
     const captionName = illus.querySelector('.illus-caption-name');
     const dots        = [...illus.querySelectorAll('.illus-dot')];
-    const sectionsEl  = illus.querySelector('.illus-sections');
     const lustEl      = illus.querySelector('.illus-lust-accent');
 
     // Scale section height to number of images (100vh per stop)
@@ -206,34 +154,6 @@
         illus.querySelector('.illus-strip').appendChild(btn);
     }
     const allDots = [...illus.querySelectorAll('.illus-dot')];
-
-    // Generate content sections for stops 6+
-    const arrowR = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6h10M6 1l5 5-5 5"/></svg>`;
-    const arrowL = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 6H1M6 11L1 6l5-5"/></svg>`;
-
-    EXTRA_CARDS.forEach((card, offset) => {
-        const i      = 6 + offset;
-        const isRight = i % 2 !== 0;
-        const nextIdx = i < N - 1 ? i + 1 : 0;
-        const h2Lines = card.h2.split('\n').join('<br>');
-
-        const sec = document.createElement('div');
-        sec.className      = 'illus-section';
-        sec.dataset.idx    = String(i);
-        sec.innerHTML = `
-            <div class="illus-card${isRight ? ' illus-card--right' : ''}">
-                <div class="illus-h-line"></div>
-                <div class="illus-tag glitch-text" data-splitting>${card.date} &nbsp;·&nbsp; ${card.num} — ${card.theme}</div>
-                <h2 class="illus-h2 glitch-text" data-splitting>${h2Lines}</h2>
-                <div class="illus-cta-row">
-                    <button class="illus-cta-back" data-goto="${i - 1}">${arrowL} <span data-i18n="illus.cta.back">Back</span></button>
-                    <button class="illus-cta" data-goto="${nextIdx}">
-                        <span data-i18n="${nextIdx === 0 ? 'illus.cta.again' : 'illus.cta.next'}">${nextIdx === 0 ? 'Begin again' : 'Next'}</span> ${arrowR}
-                    </button>
-                </div>
-            </div>`;
-        sectionsEl.appendChild(sec);
-    });
 
     const allSections = [...illus.querySelectorAll('.illus-section')];
 
@@ -316,6 +236,9 @@
         if (faceImgIdx[faceIdx] !== imgIdx) return;
         let img = faces[faceIdx].querySelector('img');
         if (!img) { img = new Image(); faces[faceIdx].appendChild(img); }
+        // Release any forwards-fill from a previous scan animation so the per-frame
+        // dot-product opacity can take back control of this face's image.
+        img.classList.remove('illus-img-enter');
         img.alt = FACE_NAMES[imgIdx] ?? '';
         img.src = src;
         img.style.transform = getFaceCorrection(faceIdx, imgIdx);
@@ -352,15 +275,20 @@
         return Math.max(0, Math.min(1, -r.top / total));
     }
 
+    // Current interpolated cube rotation in radians — written by setCubeTransform,
+    // read by updateFaceOpacities to compute per-face viewer-facing dot products.
+    let _rxRad = Math.PI / 2;
+    let _ryRad = 0;
+
     function setCubeTransform(s) {
         if (STOPS.length < 2) return;
         const t = s * (N - 1);
         const i = Math.min(Math.floor(t), N - 2);
         const f = easeIO(t - i);
         const a = STOPS[i], b = STOPS[i + 1];
-        const curRy = a.ry + (b.ry - a.ry) * f;
-        cube.style.transform =
-            `rotateX(${a.rx + (b.rx - a.rx) * f}deg) rotateY(${curRy}deg)`;
+        const curRxDeg = a.rx + (b.rx - a.rx) * f;
+        const curRyDeg = a.ry + (b.ry - a.ry) * f;
+        cube.style.transform = `rotateX(${curRxDeg}deg) rotateY(${curRyDeg}deg)`;
 
         // The gallery label lives inside the top face (INTRO_FACE). Its face transform
         // (rotateX(-90deg)) turns the cube's accumulated ry into a Z-spin on the label,
@@ -368,7 +296,45 @@
         // The label uses translateY(-50%) for centering — preserve it in the inline transform.
         // (The click-to-expand hint is a flat 2D overlay and needs no correction.)
         if (topFaceLabel) {
-            topFaceLabel.style.transform = `translateY(-50%) rotateZ(${-curRy}deg)`;
+            topFaceLabel.style.transform = `translateY(-50%) rotateZ(${-curRyDeg}deg)`;
+        }
+
+        _rxRad = curRxDeg * (Math.PI / 180);
+        _ryRad = curRyDeg * (Math.PI / 180);
+    }
+
+    // ── Per-face viewer dot products ──────────────────────────────────────────
+    // The cube transform is rotateX(rx)·rotateY(ry) ≡ matrix M = Ry·Rx.
+    // The viewer direction is +Z. The dot product of face i's outward normal with
+    // the viewer equals the z-component of M·n_i. Derived analytically per face:
+    //   top    n=(0, 1,0): cos(ry)·sin(rx)
+    //   front  n=(0, 0,1): cos(ry)·cos(rx)
+    //   right  n=(1, 0,0): −sin(ry)
+    //   back   n=(0, 0,−1): −cos(ry)·cos(rx)
+    //   left   n=(−1,0,0): sin(ry)
+    //   bottom n=(0,−1,0): −cos(ry)·sin(rx)
+    // A positive dot means the face is turning toward the viewer; used to drive
+    // image opacity organically during rotation, before the face fully lands.
+    const _FACE_DOT = [
+        (rx, ry) =>  Math.cos(ry) * Math.sin(rx),   // 0: top
+        (rx, ry) =>  Math.cos(ry) * Math.cos(rx),   // 1: front
+        (rx, ry) => -Math.sin(ry),                  // 2: right
+        (rx, ry) => -Math.cos(ry) * Math.cos(rx),   // 3: back
+        (rx, ry) =>  Math.sin(ry),                  // 4: left
+        (rx, ry) => -Math.cos(ry) * Math.sin(rx),   // 5: bottom
+    ];
+
+    function updateFaceOpacities() {
+        const rx = _rxRad, ry = _ryRad;
+        for (let fi = 0; fi < 6; fi++) {
+            const img = faces[fi]?.querySelector('img');
+            // Skip faces with no image or still running the scan-reveal animation
+            // (the animation's fill-mode controls opacity while it is active).
+            if (!img || !img.src || img.classList.contains('illus-img-enter')) continue;
+            const dot = _FACE_DOT[fi](rx, ry);
+            // Power curve: reaches ~76% opacity at dot=0.5 (face at 60° from viewer),
+            // giving the image a snappy early-fade feel during the approach.
+            img.style.opacity = dot > 0 ? String(Math.pow(dot, 0.4)) : '0';
         }
     }
 
@@ -466,11 +432,17 @@
         const img = face?.querySelector('img');
         if (!img) return;
 
-        // Single reflow restarts both animations simultaneously
+        // If the image faded in organically during the approach rotation (opacity > 0.85),
+        // skip the clip-reveal scan — it would clip an already-visible image to black
+        // and sweep it back in, which is jarring. The scan LINE still fires for tactile
+        // landing feedback. For fast button/dot navigation the image is still dark,
+        // so we play the full reveal as before.
+        const alreadyVisible = parseFloat(img.style.opacity) > 0.85;
+
         img.classList.remove('illus-img-enter');
         if (scanLine) scanLine.classList.remove('illus-scan-active');
         void face.offsetWidth;
-        img.classList.add('illus-img-enter');
+        if (!alreadyVisible) img.classList.add('illus-img-enter');
         if (scanLine) scanLine.classList.add('illus-scan-active');
     }
 
@@ -505,7 +477,6 @@
 
     const ILLUS_TEXTS = {
         en: {
-            hud:    ['· s c r o l l', 'o r', 'c l I c k', '- E N T E R -', 't o', 'v I e w ·'],
             expand: '[ · c l i c k | t o | e x p a n d · ]',
             info: {
                 header: '[ \xb7 HOW TO USE \xb7 ]',
@@ -520,7 +491,6 @@
             },
         },
         es: {
-            hud:    ['· d e s l i z a r', 'o', 'c l i c', '- E N T R A R -', 'p a r a', 'v e r ·'],
             expand: '[ · c l i c | p a r a | e x p a n d i r · ]',
             info: {
                 header: '[ \xb7 CÓMO USAR \xb7 ]',
@@ -537,21 +507,21 @@
     };
 
     // ── Scroll hint — opposite side of active card, after 3.5 s idle ─────────
-    const hintHud      = document.createElement('div');
-    const hintHudPct   = document.createElement('div');
-    const hintHudBar   = document.createElement('div');
-    const hintHudFill  = document.createElement('div');
-    const hintHudLabel = document.createElement('div');
+    const hintHud       = document.createElement('div');
+    const hintHudPct    = document.createElement('div');
+    const hintHudBar    = document.createElement('div');
+    const hintHudFill   = document.createElement('div');
+    const hintHudLabel  = document.createElement('div');
 
-    hintHud.className      = 'illus-hint-hud illus-hint-hud--right';
-    hintHudPct.className   = 'illus-hint-hud-pct';
-    hintHudBar.className   = 'illus-hint-hud-bar';
-    hintHudFill.className  = 'illus-hint-hud-fill';
-    hintHudLabel.className = 'illus-hint-hud-label';
+    hintHud.className       = 'illus-hint-hud illus-hint-hud--right';
+    hintHudPct.className    = 'illus-hint-hud-pct';
+    hintHudBar.className    = 'illus-hint-hud-bar';
+    hintHudFill.className   = 'illus-hint-hud-fill';
+    hintHudLabel.className  = 'illus-hint-hud-label';
 
     hintHud.setAttribute('aria-hidden', 'true');
-    hintHudPct.textContent   = '000%';
-    hintHudLabel.textContent = 'TIMELESS';
+    hintHudPct.textContent    = '000%';
+    hintHudLabel.textContent  = 'TIMELESS';
 
     // How-to-use SVG panel — horizontal bar, centered below the cube
     const illusInfoPanel = document.createElement('div');
@@ -658,10 +628,7 @@
         }
     }
 
-    // ── Scroll-hint glitch intro — fires once, after the cube enters ─────────
-    // Kept isolated so it doesn't reach into GlitchSystem in script.js.
     const _GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
-    let   scrollHintSplit = false;
 
     function buildInfoPanelSVG(lang) {
         const t = (ILLUS_TEXTS[lang] || ILLUS_TEXTS.en).info;
@@ -692,19 +659,8 @@
         );
     }
 
-    function buildHudScrollHTML(lang) {
-        const t = ILLUS_TEXTS[lang] || ILLUS_TEXTS.en;
-        return '<span>' + t.hud[0] + '</span>' +
-            t.hud.slice(1).map(s => '<span class="illus-hud-scroll-in">' + s + '</span>').join('');
-    }
-
     function applyIllusLang(lang) {
         const t = ILLUS_TEXTS[lang] || ILLUS_TEXTS.en;
-
-        const wasSplit = scrollHintSplit;
-        hintHudScroll.innerHTML = buildHudScrollHTML(lang);
-        scrollHintSplit = false;
-        if (wasSplit) initScrollHintGlitch();
 
         const wasExpandSplit = expandHintSplit;
         expandHint.textContent = t.expand;
@@ -718,20 +674,6 @@
         applyIllusLang(e.detail.lang);
     });
 
-    function initScrollHintGlitch() {
-        if (scrollHintSplit || !window.Splitting) return;
-        scrollHintSplit = true;
-        const results = window.Splitting({ target: hintHudScroll, by: 'chars' });
-        results.forEach(result => {
-            result.chars.forEach(char => {
-                char.style.setProperty('--count', String(Math.random() * 5 + 1));
-                for (let g = 0; g < 10; g++) {
-                    const r = _GLITCH_CHARS[Math.floor(Math.random() * _GLITCH_CHARS.length)];
-                    char.style.setProperty(`--char-${g}`, `"${r}"`);
-                }
-            });
-        });
-    }
 
     function startIntroElecFlicker() {
         const steps = [];
@@ -774,9 +716,6 @@
         introSeenOnce = true;
         illus.classList.add('illus-entering');
         startIntroElecFlicker();
-        // 580ms: cube scale-in finishes at 80ms delay + 480ms duration = 560ms;
-        // glitch fires just after so it overlaps the hint-hud fade-in (starts 300ms).
-        setTimeout(initScrollHintGlitch, 580);
         introTimer = setTimeout(() => {
             illus.classList.remove('illus-entering');
             introTimer = null;
@@ -902,6 +841,7 @@
         }
 
         setCubeTransform(smooth);
+        updateFaceOpacities();
         checkImageSwaps(smooth);
         updateUI(smooth);
 

@@ -173,6 +173,7 @@
       this._setupHoverListeners();
       this._setupPolaroidClick();
       this._setupTitleColorCycle();
+      this._setupStreamLightbox();
 
       window.addEventListener('scroll', () => this._updateScroll(), { passive: true });
       this._updateScroll();
@@ -588,23 +589,9 @@
 
       if (this._streamPhase === 'idle') {
         this._enterStreamIntro();
-        return;
       }
-
-      if (this._streamPhase === 'intro') {
-        // Detect the first real user scroll (rawProgress moved since last tick)
-        if (this._lastRawForScroll !== undefined &&
-            rawProgress !== this._lastRawForScroll) {
-          this._enterStreamInteractive(rawProgress);
-        } else {
-          this._lastRawForScroll = rawProgress;
-        }
-        return; // rendering is handled by the intro RAF loop
-      }
-
-      if (this._streamPhase === 'interactive') {
-        // Buttons are the only driver — scroll just keeps phase detection alive
-      }
+      // intro: auto-play RAF handles rendering — no scroll handoff
+      // interactive: buttons are the only driver
     }
 
     _enterStreamIntro() {
@@ -620,7 +607,7 @@
     _introLoop(timestamp) {
       if (this._streamPhase !== 'intro') return;
 
-      const INTRO_SPEED = 0.27; // masterT units/s → ~3.7 s per card crossing, ~4.1 s between starts
+      const INTRO_SPEED = 0.09; // masterT units/s — ~11 s per crossing, enough to read each photo
 
       if (this._streamCanPlay) {
         // Latch the start time on the first frame after permission is granted
@@ -663,6 +650,7 @@
         card.style.opacity   = '0';
         card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
       });
+      if (this._streamLbOpen) this._streamLbHide?.();
     }
 
     // ── Button controls ──────────────────────────────────────────────────────
@@ -708,7 +696,7 @@
         this._stopButtonRaf();
         return;
       }
-      const BUTTON_SPEED = 0.27; // matches INTRO_SPEED — natural, consistent pace
+      const BUTTON_SPEED = 0.09; // matches INTRO_SPEED
       const dt = Math.min((timestamp - this._buttonLastTs) / 1000, 0.1); // cap avoids tab-sleep jump
       this._buttonLastTs = timestamp;
       this._masterT += this._buttonVelocity * BUTTON_SPEED * dt;
@@ -728,7 +716,7 @@
       if (!this._stream || !this._streamCards.length) return;
 
       const N            = this._streamCards.length;
-      const CARD_SPACING = 1.1;           // masterT units between card starts (0.1 = ~10% gap)
+      const CARD_SPACING = 0.22;          // next card ejected exactly when current card begins rotating (t=0.22 phase boundary)
       const LOOP_LENGTH  = N * CARD_SPACING; // full cycle length (e.g. 30 × 1.5 = 45)
       const CARD_W       = 232;
       const streamW      = parseFloat(
@@ -1435,6 +1423,80 @@
       if (this._flyReturnTween)   { this._flyReturnTween.kill(); this._flyReturnTween = null; }
       if (this._flyClone)         { this._flyClone.remove(); this._flyClone = null; }
       if (this._flySource)        { this._flySource.style.opacity = ''; this._flySource.style.zIndex = ''; this._flySource = null; }
+    }
+
+    // ── Ghost stream lightbox ────────────────────────────────────────────────
+    _setupStreamLightbox() {
+      // Distribute photo data across cards by cycling through all accordion items
+      const photoItems = Array.from(document.querySelectorAll('.photo-project-item[data-image]'));
+      this._streamCards.forEach((card, i) => {
+        const item = photoItems[i % photoItems.length];
+        if (!item) return;
+        card.dataset.image = item.dataset.image;
+        card.style.backgroundImage    = `url("${item.dataset.image}")`;
+        card.style.backgroundSize     = 'cover';
+        card.style.backgroundPosition = 'center';
+        const titleEl = item.querySelector('.photo-title');
+        card.dataset.alt = titleEl ? titleEl.textContent.trim() : '';
+      });
+
+      // Build lightbox — same structure as illus-lightbox
+      const lb = document.createElement('div');
+      lb.className = 'photo-stream-lightbox';
+      lb.setAttribute('aria-hidden', 'true');
+      lb.setAttribute('role', 'dialog');
+      lb.setAttribute('aria-modal', 'true');
+      lb.innerHTML = `
+        <div class="photo-stream-lb-frame">
+          <img class="photo-stream-lb-img" alt="">
+          <div class="photo-stream-lb-border" aria-hidden="true"></div>
+          <button class="photo-stream-lb-close" aria-label="Close">[ x ]</button>
+        </div>`;
+      document.body.appendChild(lb);
+
+      const lbImg = lb.querySelector('.photo-stream-lb-img');
+      this._streamLbOpen = false;
+      let lbTimer = null;
+      const LB_SETTLE_MS = 620;
+
+      const lbShow = (src, alt) => {
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.setAttribute('aria-hidden', 'false');
+        lb.classList.add('open');
+        this._streamLbOpen = true;
+        document.body.style.overflow = 'hidden';
+
+        if (lbTimer) { clearTimeout(lbTimer); lbTimer = null; }
+        lb.classList.remove('lb-elec-active');
+        void lb.offsetWidth;
+        lb.classList.add('lb-elec-active');
+        lbTimer = setTimeout(() => {
+          lb.classList.remove('lb-elec-active');
+          lbTimer = null;
+        }, LB_SETTLE_MS);
+      };
+
+      this._streamLbHide = () => {
+        if (lbTimer) { clearTimeout(lbTimer); lbTimer = null; }
+        lb.classList.remove('lb-elec-active', 'open');
+        lb.setAttribute('aria-hidden', 'true');
+        this._streamLbOpen = false;
+        document.body.style.overflow = '';
+        setTimeout(() => { if (!this._streamLbOpen) lbImg.src = ''; }, 500);
+      };
+
+      lb.addEventListener('click', e => { if (e.target === lb) this._streamLbHide(); });
+      lb.querySelector('.photo-stream-lb-close').addEventListener('click', this._streamLbHide);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && this._streamLbOpen) this._streamLbHide(); });
+
+      // Wire click on each card
+      this._streamCards.forEach(card => {
+        card.addEventListener('click', () => {
+          if (!card.dataset.image) return;
+          lbShow(card.dataset.image, card.dataset.alt || '');
+        });
+      });
     }
   }
 
