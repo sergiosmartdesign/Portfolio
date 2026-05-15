@@ -9,6 +9,8 @@
     // 'scroll' intentionally omitted — handled by the scroll-hint clone
   };
 
+  const LABELS = { en: 'here', es: 'aquí' };
+
   const topLineEl = document.querySelector('.panel-line--top');
 
   const ARM_H    = 16;  // height of vertical arms
@@ -25,15 +27,37 @@
 
   const NUB_TIP  = ARM_H + NUB_D;
   const SVG_H    = NUB_TIP + CHEV_GAP + CHEV_SP + CHEV_D + 4;
+  const LABEL_Y  = SVG_H + 14; // below second chevron base
 
   const bracket = document.getElementById('inf-bracket');
   const svg     = document.getElementById('inf-bracket-svg');
   const path    = document.getElementById('inf-bracket-path');
   const chev1   = document.getElementById('inf-bracket-chev1');
   const chev2   = document.getElementById('inf-bracket-chev2');
+  const label   = document.getElementById('inf-bracket-label');
 
   if (!bracket || !svg || !path || !chev1 || !chev2) return;
 
+  // ── Language sync — mirrors info SVG lang loop ──────────────────────────
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    if (lang === currentLang || !label) return;
+    currentLang = lang;
+    label.classList.remove('lang-flicker');
+    void label.getBoundingClientRect();
+    label.classList.add('lang-flicker');
+    label.textContent = LABELS[lang];
+  }
+
+  const esGroup = document.getElementById('inf-es');
+  if (esGroup) {
+    new MutationObserver(() => {
+      setLang(esGroup.style.display === 'none' ? 'en' : 'es');
+    }).observe(esGroup, { attributes: true, attributeFilter: ['style'] });
+  }
+
+  // ── SVG path builders ───────────────────────────────────────────────────
   function buildPath(W) {
     const mid = W / 2;
     return [
@@ -56,6 +80,7 @@
     return `${cx - CHEV_HW},${startY + CHEV_D} ${cx},${startY} ${cx + CHEV_HW},${startY + CHEV_D}`;
   }
 
+  // ── Show / hide ─────────────────────────────────────────────────────────
   function show(hint) {
     const config = TARGETS[hint];
     if (!config) return;
@@ -63,8 +88,6 @@
     if (!target) return;
 
     const rect = target.getBoundingClientRect();
-
-    // Don't render if target is off-screen
     if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
     const yEl   = config.yRef === 'topline' && topLineEl ? topLineEl : target;
@@ -81,6 +104,12 @@
     const c2y = c1y + CHEV_SP;
     chev1.setAttribute('points', chevPoints(cx, c1y));
     chev2.setAttribute('points', chevPoints(cx, c2y));
+
+    if (label) {
+      label.setAttribute('x', cx);
+      label.setAttribute('y', LABEL_Y);
+      label.textContent = LABELS[currentLang];
+    }
 
     bracket.style.left = `${Math.round(rect.left)}px`;
     bracket.style.top  = `${Math.round(yRect.bottom + GAP)}px`;

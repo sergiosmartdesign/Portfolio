@@ -217,6 +217,13 @@
   width: clamp(260px, 36vw, 442px);
 }
 
+/* Hide explore card whenever the intro is active (initial load or section re-entry) */
+#art-direction.ad-intro-active .ad-explore-card {
+  opacity: 0 !important;
+  transform: translateY(12px) !important;
+  pointer-events: none;
+}
+
 #art-direction .ad-explore-card img {
   display: block;
   width: 100%;

@@ -329,8 +329,7 @@ class NavigationManager {
   updateHeaderBackground(sectionId) {
     if (!this.header) return;
 
-    // Remove all section classes
-    this.header.classList.remove(
+    const sectionClasses = [
       'section-intro',
       'section-about',
       'section-art-direction',
@@ -338,11 +337,16 @@ class NavigationManager {
       'section-illustration',
       'section-blog',
       'section-contact'
-    );
+    ];
 
-    // Add new section class
+    // Remove all section classes from header and body
+    this.header.classList.remove(...sectionClasses);
+    document.body.classList.remove(...sectionClasses);
+
+    // Add new section class to both
     if (sectionId) {
       this.header.classList.add(`section-${sectionId}`);
+      document.body.classList.add(`section-${sectionId}`);
     }
   }
 

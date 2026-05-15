@@ -47,3 +47,22 @@
   65%     { opacity: 1;   }
   100%    { opacity: 0.1; }
 }
+
+/* Label below chevrons */
+#inf-bracket-label {
+  fill: #ff3c00;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+#inf-bracket-label.lang-flicker {
+  animation: inf-label-flicker 0.45s ease forwards;
+}
+
+@keyframes inf-label-flicker {
+  0%   { opacity: 0.85; }
+  20%  { opacity: 0.05; }
+  40%  { opacity: 0.5;  }
+  60%  { opacity: 0;    }
+  100% { opacity: 0.85; }
+}
