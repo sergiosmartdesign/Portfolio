@@ -14,7 +14,7 @@
   transition: opacity 0.4s ease;
 }
 
-body.section-art-direction #art-direction .ad-list.ad-list-ready {
+body.ad-section-live #art-direction .ad-list.ad-list-ready {
   opacity: 1;
 }
 

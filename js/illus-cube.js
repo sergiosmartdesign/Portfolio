@@ -72,7 +72,10 @@
             const atPole = rx === 90 || rx === -90;
             const valid  = MOVES.filter(m => {
                 const newRx = rx + m.drx;
-                return newRx >= -90 && newRx <= 90 && (!atPole || m.drx !== 0);
+                // newRx !== 90 keeps the top face (INTRO_FACE) reserved for stop 0 only,
+                // preventing stop 2+ from landing on the same physical face and corrupting
+                // the gallery-title label / showing the wrong image on first entry.
+                return newRx >= -90 && newRx <= 90 && newRx !== 90 && (!atPole || m.drx !== 0);
             });
             const move = valid[Math.floor(rand() * valid.length)];
             rx += move.drx;

@@ -1,312 +1,234 @@
-/**
- * Certificate Gallery with Card Carousel
- * Based on GSAP card carousel with customizations
- * Uses capsule glow effect from About section
- */
+(function () {
+    'use strict';
 
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-  // Configuration
-  const config = {
-    cardWidth: 200,
-    cardHeight: 200 * 1.414, // Certificate aspect ratio
-    rotationRange: 15, // degrees
-    spacing: 40, // Increased spacing for larger cards
-    dragEnabled: true,
-  };
+    const CERTS = [
+        { src: 'images/cert/certificadoplatzi1.png', alt: 'Platzi Professional Certificate 1 — Sergio Ayala' },
+        { src: 'images/cert/certificadoplatzi2.png', alt: 'Platzi Professional Certificate 2 — Sergio Ayala' },
+        { src: 'images/cert/certificadoplatzi3.png', alt: 'Platzi Professional Certificate 3 — Sergio Ayala' },
+        { src: 'images/cert/certificadoplatzi4.png', alt: 'Platzi Professional Certificate 4 — Sergio Ayala' },
+        { src: 'images/cert/certificadoplatzi5.png', alt: 'Platzi Professional Certificate 5 — Sergio Ayala' },
+        { src: 'images/cert/certificadoplatzi6.png', alt: 'Platzi Professional Certificate 6 — Sergio Ayala' },
+        { src: 'images/cert/certificadoyoast1.png',  alt: 'Yoast SEO Professional Certificate 1 — Sergio Ayala' },
+        { src: 'images/cert/certificadoyoast2.png',  alt: 'Yoast SEO Professional Certificate 2 — Sergio Ayala' },
+        { src: 'images/cert/certificadoyoast3.png',  alt: 'Yoast SEO Professional Certificate 3 — Sergio Ayala' },
+    ];
 
-  // Get elements - support both embedded and overlay gallery
-  const gallery = document.querySelector('.cert-gallery-embedded') || document.querySelector('.cert-gallery');
-  const cardsContainer = document.querySelector('.cert-gallery-embedded .cards') || document.querySelector('.cert-gallery .cards');
-  const cards = document.querySelectorAll('.cert-gallery-embedded .cards li').length > 0
-    ? document.querySelectorAll('.cert-gallery-embedded .cards li')
-    : document.querySelectorAll('.cert-gallery .cards li');
-  const prevBtn = document.querySelector('.cert-gallery-embedded .prev') || document.querySelector('.cert-gallery .prev');
-  const nextBtn = document.querySelector('.cert-gallery-embedded .next') || document.querySelector('.cert-gallery .next');
-  const closeBtn = document.querySelector('.cert-gallery .close-btn');
+    const N           = CERTS.length;
+    const SWAP_RADIUS = 2;
 
-  // Modal elements
-  const modal = document.getElementById('certModal');
-  const modalImage = document.getElementById('certModalImage');
-  const modalCloseBtn = document.querySelector('.cert-modal-close');
-  const modalBackdrop = document.querySelector('.cert-modal-backdrop');
+    // Same seeded PRNG as illus-cube, different seed so sequences diverge
+    function mulberry32(seed) {
+        return function () {
+            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+            let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+    }
+    const rand = mulberry32(0xC3D4E5F6);
 
-  if (!cardsContainer || cards.length === 0) {
-    console.warn('Certificate gallery elements not found');
-    return;
-  }
+    // Builds N distinct cube orientation stops using random 90-degree moves.
+    // Same algorithm as illus-cube: stays within rx ∈ [-90, 90], never returns
+    // to rx=90 after stop 0 so the top face always maps to the first cert.
+    function buildStops(n) {
+        const MOVES = [
+            { drx: -90, dry:   0 }, { drx: +90, dry:   0 },
+            { drx:   0, dry: -90 }, { drx:   0, dry: +90 },
+            { drx: -90, dry: -90 }, { drx: +90, dry: +90 },
+            { drx: -90, dry: +90 }, { drx: +90, dry: -90 },
+        ];
+        const stops = [{ rx: 90, ry: 0 }];
+        let rx = 90, ry = 0;
+        for (let i = 1; i < n; i++) {
+            const atPole = rx === 90 || rx === -90;
+            const valid  = MOVES.filter(m => {
+                const newRx = rx + m.drx;
+                return newRx >= -90 && newRx <= 90 && newRx !== 90 && (!atPole || m.drx !== 0);
+            });
+            const move = valid[Math.floor(rand() * valid.length)];
+            rx += move.drx;
+            ry += move.dry;
+            stops.push({ rx, ry });
+        }
+        return stops;
+    }
 
-  let currentIndex = 0;
-  let isDragging = false;
-  let startX = 0;
-  let currentX = 0;
+    // Maps each stop index to which of the 6 physical faces (0–5) is front-facing.
+    // Face indices match DOM order: top(0), front(1), right(2), back(3), left(4), bottom(5).
+    function buildFaceMap(stops) {
+        return stops.map(({ rx, ry }) => {
+            const rxN = ((rx % 360) + 360) % 360;
+            if (rxN === 90)  return 0; // top
+            if (rxN === 270) return 5; // bottom
+            const ryN = ((ry % 360) + 360) % 360;
+            if (ryN === 0)   return 1; // front
+            if (ryN === 270) return 2; // right
+            if (ryN === 180) return 3; // back
+            return 4;                  // left
+        });
+    }
 
-  /**
-   * Update card positions and styles
-   */
-  function updateCards() {
-    cards.forEach((card, index) => {
-      const relativeIndex = index - currentIndex;
-      const absIndex = Math.abs(relativeIndex);
+    const STOPS    = buildStops(N);
+    const FACE_MAP = buildFaceMap(STOPS);
 
-      // Calculate position
-      const xOffset = relativeIndex * config.spacing;
-      const zOffset = -absIndex * 50;
-      const rotation = relativeIndex * config.rotationRange;
+    // ── DOM ────────────────────────────────────────────────────────────────────
+    const wrapper = document.querySelector('.cert-cube-wrapper');
+    if (!wrapper) return;
 
-      // Calculate scale and opacity based on distance from center
-      const scale = Math.max(0.7, 1 - absIndex * 0.1);
-      const opacity = absIndex <= 2 ? 1 : 0;
+    const cubeEl    = wrapper.querySelector('.cert-cube');
+    const faces     = [...wrapper.querySelectorAll('.cert-face')];
+    const prevBtn   = wrapper.querySelector('.cert-prev');
+    const nextBtn   = wrapper.querySelector('.cert-next');
+    const counterEl = wrapper.querySelector('.cert-counter');
+    const scene     = wrapper.querySelector('.cert-cube-scene');
 
-      // Apply transforms
-      card.style.transform = `
-        translateX(${xOffset}px)
-        translateZ(${zOffset}px)
-        rotateY(${rotation}deg)
-        scale(${scale})
-      `;
-      card.style.opacity = opacity;
-      card.style.zIndex = cards.length - absIndex;
-      card.style.transition = isDragging ? 'none' : 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    const modal       = document.getElementById('certModal');
+    const modalImage  = document.getElementById('certModalImage');
+    const modalClose  = document.querySelector('.cert-modal-close');
+    const modalBg     = document.querySelector('.cert-modal-backdrop');
 
-      // Remove/add active class
-      if (relativeIndex === 0) {
-        card.classList.add('active');
-      } else {
-        card.classList.remove('active');
-      }
+    // ── Image preloading ───────────────────────────────────────────────────────
+    const imgCache = new Map();
+
+    function preloadImage(src) {
+        if (imgCache.has(src)) return imgCache.get(src);
+        const p = new Promise(resolve => {
+            const img = new Image();
+            img.onload = img.onerror = () => resolve(img);
+            img.src = src;
+        });
+        imgCache.set(src, p);
+        return p;
+    }
+
+    CERTS.forEach(c => preloadImage(c.src));
+
+    const faceImgIdx = new Array(6).fill(-1);
+
+    // Mirrors illus-cube's getFaceCorrection logic:
+    // back face (3) is rotated 180° around Y → image appears flipped → scaleX(-1).
+    // top (0) and bottom (5) accumulate the cube's ry as a Z-spin on the face content
+    // because rotateX(±90deg) folds ry into a roll → counter-rotate to keep certs upright.
+    function getFaceCorrection(faceIdx, stopIdx) {
+        if (faceIdx === 3) return 'scaleX(-1)';
+        if (faceIdx === 0 || faceIdx === 5) {
+            const ryN  = ((STOPS[stopIdx].ry % 360) + 360) % 360;
+            if (ryN === 0) return '';
+            const sign = faceIdx === 0 ? -1 : 1;
+            const deg  = ((sign * ryN) % 360 + 360) % 360;
+            return `rotate(${deg}deg)`;
+        }
+        return '';
+    }
+
+    async function setFaceImage(faceIdx, certIdx) {
+        if (faceImgIdx[faceIdx] === certIdx) return;
+        faceImgIdx[faceIdx] = certIdx;
+
+        const cert = CERTS[certIdx];
+        await preloadImage(cert.src);
+        if (faceImgIdx[faceIdx] !== certIdx) return; // superseded by a later call
+
+        let img = faces[faceIdx].querySelector('img');
+        if (!img) { img = new Image(); faces[faceIdx].appendChild(img); }
+
+        img.classList.remove('cert-img-loaded');
+        img.alt = cert.alt;
+        img.src = cert.src;
+        img.style.transform = getFaceCorrection(faceIdx, certIdx);
+
+        if (img.complete && img.naturalWidth) {
+            img.classList.add('cert-img-loaded');
+        } else {
+            img.onload = () => img.classList.add('cert-img-loaded');
+        }
+    }
+
+    // Assigns images to faces near the given stop so the correct cert is
+    // visible on each face both before and after the cube rotates.
+    function checkImageSwaps(stop) {
+        const assigned = new Set();
+        for (let dist = 0; dist <= SWAP_RADIUS; dist++) {
+            for (const offset of (dist === 0 ? [0] : [-dist, dist])) {
+                const si = stop + offset;
+                if (si < 0 || si >= N) continue;
+                const f = FACE_MAP[si];
+                if (!assigned.has(f)) {
+                    assigned.add(f);
+                    setFaceImage(f, si);
+                }
+            }
+        }
+    }
+
+    // ── Navigation ─────────────────────────────────────────────────────────────
+    let currentStop = 0;
+
+    function gotoStop(idx) {
+        currentStop = ((idx % N) + N) % N;
+        const { rx, ry } = STOPS[currentStop];
+        cubeEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+        checkImageSwaps(currentStop);
+        if (counterEl) {
+            counterEl.textContent =
+                String(currentStop + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
+        }
+    }
+
+    prevBtn?.addEventListener('click', () => gotoStop(currentStop - 1));
+    nextBtn?.addEventListener('click', () => gotoStop(currentStop + 1));
+
+    document.addEventListener('keydown', e => {
+        // Only intercept arrows if the cert area is in viewport
+        if (!wrapper) return;
+        const bcr = wrapper.getBoundingClientRect();
+        if (bcr.bottom < 0 || bcr.top > window.innerHeight) return;
+
+        if (modal && !modal.classList.contains('hidden')) {
+            if (e.key === 'Escape') closeModal();
+            return;
+        }
+        if (e.key === 'ArrowLeft')  gotoStop(currentStop - 1);
+        if (e.key === 'ArrowRight') gotoStop(currentStop + 1);
     });
-  }
 
-  /**
-   * Go to next card
-   */
-  function nextCard() {
-    currentIndex = (currentIndex + 1) % cards.length;
-    updateCards();
-  }
+    // ── Modal ──────────────────────────────────────────────────────────────────
+    function openModal(src, alt) {
+        if (!modal || !modalImage) return;
+        modalImage.src = src;
+        modalImage.alt = alt || '';
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 
-  /**
-   * Go to previous card
-   */
-  function prevCard() {
-    currentIndex = (currentIndex - 1 + cards.length) % cards.length;
-    updateCards();
-  }
+    function closeModal() {
+        if (!modal) return;
+        modal.classList.add('hidden');
+        setTimeout(() => { if (modal.classList.contains('hidden')) modalImage.src = ''; }, 300);
+        document.body.style.overflow = '';
+    }
 
-  /**
-   * Go to specific card index
-   */
-  function goToCard(index) {
-    currentIndex = Math.max(0, Math.min(index, cards.length - 1));
-    updateCards();
-  }
-
-  /**
-   * Handle drag start
-   */
-  function handleDragStart(e) {
-    if (!config.dragEnabled) return;
-
-    isDragging = true;
-    startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-    currentX = startX;
-
-    cardsContainer.style.cursor = 'grabbing';
-    cards.forEach(card => card.classList.add('dragging'));
-  }
-
-  /**
-   * Handle drag move
-   */
-  function handleDragMove(e) {
-    if (!isDragging) return;
-
-    e.preventDefault();
-    currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-    const diff = currentX - startX;
-
-    // Add temporary offset to cards
-    cards.forEach((card, index) => {
-      const relativeIndex = index - currentIndex;
-      const xOffset = relativeIndex * config.spacing + diff;
-      const zOffset = -Math.abs(relativeIndex) * 50;
-      const rotation = relativeIndex * config.rotationRange + (diff / 10);
-      const scale = Math.max(0.7, 1 - Math.abs(relativeIndex) * 0.1);
-
-      card.style.transform = `
-        translateX(${xOffset}px)
-        translateZ(${zOffset}px)
-        rotateY(${rotation}deg)
-        scale(${scale})
-      `;
+    // Click on the cube scene opens the current cert in the modal
+    scene?.addEventListener('click', () => {
+        const img = faces[FACE_MAP[currentStop]]?.querySelector('img');
+        if (img?.src && img.classList.contains('cert-img-loaded')) openModal(img.src, img.alt);
     });
-  }
+    scene?.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scene.click(); }
+    });
 
-  /**
-   * Handle drag end
-   */
-  function handleDragEnd() {
-    if (!isDragging) return;
+    modalClose?.addEventListener('click', closeModal);
+    modalBg?.addEventListener('click', closeModal);
 
-    const diff = currentX - startX;
-    const threshold = 50; // Minimum drag distance to trigger card change
+    // ── Init ───────────────────────────────────────────────────────────────────
+    checkImageSwaps(0);
+    cubeEl.style.transform = `rotateX(${STOPS[0].rx}deg) rotateY(${STOPS[0].ry}deg)`;
+    if (counterEl) counterEl.textContent = '01 / ' + String(N).padStart(2, '0');
 
-    if (diff > threshold) {
-      prevCard();
-    } else if (diff < -threshold) {
-      nextCard();
-    } else {
-      updateCards(); // Reset to current position
-    }
+    window.certCube = {
+        goto: gotoStop,
+        next: () => gotoStop(currentStop + 1),
+        prev: () => gotoStop(currentStop - 1),
+    };
 
-    isDragging = false;
-    cardsContainer.style.cursor = 'grab';
-    cards.forEach(card => card.classList.remove('dragging'));
-  }
-
-  /**
-   * Open modal with enlarged certificate image
-   */
-  function openModal(imageSrc) {
-    if (!modal || !modalImage) return;
-
-    modalImage.src = imageSrc;
-    modal.classList.remove('hidden');
-
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
-  }
-
-  /**
-   * Close modal
-   */
-  function closeModal() {
-    if (!modal) return;
-
-    modal.classList.add('hidden');
-    modalImage.src = '';
-
-    // Restore body scroll
-    document.body.style.overflow = '';
-  }
-
-  /**
-   * Handle card click
-   * Active card (center) = enlarge image
-   * Non-active cards = navigate to that card
-   */
-  function handleCardClick(e) {
-    // Prevent click during drag
-    if (isDragging) return;
-
-    const card = e.currentTarget;
-    const index = Array.from(cards).indexOf(card);
-
-    // If clicking the active/center card, open modal to enlarge
-    if (index === currentIndex) {
-      const imgElement = card.querySelector('img');
-      if (imgElement) {
-        openModal(imgElement.src);
-      }
-    } else {
-      // If clicking a non-active card, navigate to it
-      goToCard(index);
-    }
-  }
-
-  /**
-   * Close gallery
-   */
-  function closeGallery() {
-    if (gallery) {
-      gallery.classList.add('hidden');
-    }
-  }
-
-  /**
-   * Open gallery
-   */
-  function openGallery() {
-    if (gallery) {
-      gallery.classList.remove('hidden');
-      updateCards();
-    }
-  }
-
-  // Event Listeners
-  if (prevBtn) {
-    prevBtn.addEventListener('click', prevCard);
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', nextCard);
-  }
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', closeGallery);
-  }
-
-  // Drag events on container
-  cardsContainer.addEventListener('mousedown', handleDragStart);
-  cardsContainer.addEventListener('mousemove', handleDragMove);
-  cardsContainer.addEventListener('mouseup', handleDragEnd);
-  cardsContainer.addEventListener('mouseleave', handleDragEnd);
-
-  // Touch events
-  cardsContainer.addEventListener('touchstart', handleDragStart, { passive: false });
-  cardsContainer.addEventListener('touchmove', handleDragMove, { passive: false });
-  cardsContainer.addEventListener('touchend', handleDragEnd);
-
-  // Click events on cards
-  cards.forEach(card => {
-    card.addEventListener('click', handleCardClick);
-  });
-
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    // If modal is open, ESC closes the modal
-    if (modal && !modal.classList.contains('hidden')) {
-      if (e.key === 'Escape') {
-        closeModal();
-      }
-      return;
-    }
-
-    // Otherwise, handle gallery navigation
-    if (gallery.classList.contains('hidden')) return;
-
-    if (e.key === 'ArrowLeft') {
-      prevCard();
-    } else if (e.key === 'ArrowRight') {
-      nextCard();
-    } else if (e.key === 'Escape') {
-      closeGallery();
-    }
-  });
-
-  // Modal close button event
-  if (modalCloseBtn) {
-    modalCloseBtn.addEventListener('click', closeModal);
-  }
-
-  // Modal backdrop click to close
-  if (modalBackdrop) {
-    modalBackdrop.addEventListener('click', closeModal);
-  }
-
-  // Initialize
-  updateCards();
-
-  // Expose API for external control
-  window.certGallery = {
-    next: nextCard,
-    prev: prevCard,
-    goTo: goToCard,
-    open: openGallery,
-    close: closeGallery,
-    getCurrentIndex: () => currentIndex,
-    openModal: openModal,
-    closeModal: closeModal,
-  };
-});
+}());

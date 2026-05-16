@@ -1,112 +1,115 @@
 /* ============================================================================
    CERTIFICATE GALLERY
-   Independent card gallery layer with customizable positioning
+   Rotating 3D cube gallery — small copy of the illustration section cube
    ============================================================================ */
 
-/* ============================================================================
-   CERTIFICATE GALLERY LAYER - Independent & Movable
-   ============================================================================ */
+/* ── Layer wrapper (scroll-revealed) ─────────────────────────────────────── */
 .cert-gallery-layer {
   position: relative;
   width: 100%;
   height: 500px;
   z-index: 1000;
   pointer-events: auto;
-
-  /* Hidden by default - will animate in when visible */
   opacity: 0;
   transform: translateY(50px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
-/* Visible state - triggered by scroll */
 .cert-gallery-layer.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Inner gallery container — front layer, inside the screen */
-.cert-gallery-embedded {
+/* ── Cert cube wrapper — takes the same position as the old embedded gallery */
+.cert-cube-wrapper {
+  --cs: 240px;
   position: absolute;
-  top: 65px;
-  left: 60px;
-  width: 370px;
-  height: 290px;
-  overflow: visible;
+  top: 95px;
+  left: 120px;
   z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  overflow: visible;
 }
 
-.cert-gallery-embedded .cards {
-  position: absolute;
-  top: 60px;
-  left: 80px;
-  transform: translate(-50%, -50%);
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* ── 3D scene container ───────────────────────────────────────────────────── */
+.cert-cube-scene {
+  position: relative;
+  width: var(--cs);
+  height: var(--cs);
+  perspective: 600px;
+  cursor: pointer;
+}
+
+/* ── The cube itself ─────────────────────────────────────────────────────── */
+.cert-cube {
+  width: var(--cs);
+  height: var(--cs);
+  position: relative;
   transform-style: preserve-3d;
-  perspective: 1000px;
+  transform: rotateX(90deg) rotateY(0deg);
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
-.cert-gallery-embedded .cards li {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* ── Cube faces ───────────────────────────────────────────────────────────── */
+.cert-face {
   position: absolute;
-  top: 0;
-  left: 0;
-  cursor: grab;
-  border-radius: 8px;
-  display: inline-block;
-
-  /* Container adapts to image size */
-  width: auto;
-  height: auto;
-
-  /* Capsule glow effect on the container */
-  box-shadow: 0 0 10px #001219,
-              0 0 20px #001219,
-              0 0 30px #001219;
-
-  border: 2px solid #001219;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cert-gallery-embedded .cards li img {
-  display: block;
-  width: 200px; /* Set width to 200px */
-  height: auto; /* Height adapts to image's natural aspect ratio */
-  border-radius: 6px; /* Slightly smaller to account for container border */
-}
-
-.cert-gallery-embedded .cards li:hover {
-  box-shadow: 0 0 15px #001219,
-              0 0 30px #001219,
-              0 0 45px #001219,
-              0 0 60px #001219;
-  transform: scale(1.02);
-}
-
-.cert-gallery-embedded .cards li.dragging {
-  cursor: grabbing;
-  opacity: 0.8;
-}
-
-.cert-gallery-embedded .actions {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  z-index: 200;
-  width: auto;
+  background: rgba(0, 18, 25, 0.88);
+  border: 1px solid rgba(238, 155, 0, 0.45);
+  box-sizing: border-box;
+  box-shadow:
+    inset 0 0 18px rgba(238, 155, 0, 0.08),
+    0 0 14px 2px rgba(238, 155, 0, 0.18),
+    0 0 34px 6px rgba(238, 155, 0, 0.10);
 }
 
-/* Match header navigation button style */
-.cert-gallery-embedded .actions button {
+.cert-face[data-face="top"]    { transform: rotateX(-90deg) translateZ(calc(var(--cs) / 2)); }
+.cert-face[data-face="front"]  { transform: translateZ(calc(var(--cs) / 2)); }
+.cert-face[data-face="right"]  { transform: rotateY(90deg)  translateZ(calc(var(--cs) / 2)); }
+.cert-face[data-face="back"]   { transform: rotateY(180deg) translateZ(calc(var(--cs) / 2)); }
+.cert-face[data-face="left"]   { transform: rotateY(-90deg) translateZ(calc(var(--cs) / 2)); }
+.cert-face[data-face="bottom"] { transform: rotateX(90deg)  translateZ(calc(var(--cs) / 2)); }
+
+/* Certificate image within a face */
+.cert-face img {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 3px;
+}
+
+.cert-face img.cert-img-loaded {
+  opacity: 1;
+}
+
+/* Glow intensifies when scene is hovered (hover state) */
+.cert-cube-scene:hover .cert-cube {
+  box-shadow: 0 0 40px 8px rgba(238, 155, 0, 0.22);
+}
+
+/* ── Navigation bar ──────────────────────────────────────────────────────── */
+.cert-cube-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Prev / Next — match the about section link style */
+.cert-cube-nav .cert-prev,
+.cert-cube-nav .cert-next {
   background: none;
   border: none;
   cursor: pointer;
@@ -121,27 +124,40 @@
   background-repeat: no-repeat;
   background-position: 100% 0%;
   transition: background-size 0.7s, background-position 0.5s ease-in-out, color 0.3s;
-  animation: lineGrow 1s ease-out;
 }
 
-/* Force glitch text color to match */
-.cert-gallery-embedded .actions button [data-char]:after {
+.cert-cube-nav .cert-prev [data-char]:after,
+.cert-cube-nav .cert-next [data-char]:after {
   color: #e9d8a6 !important;
 }
 
-.cert-gallery-embedded .actions button:hover {
+.cert-cube-nav .cert-prev:hover,
+.cert-cube-nav .cert-next:hover {
   background-size: 100% 100%;
   background-position: 0% 100%;
   color: var(--bg, #000);
   transition: background-position 0.7s, background-size 0.5s ease-in-out, color 0.3s;
 }
 
-.cert-gallery-embedded .actions button:hover [data-char]:after {
-  color: var(--bg, #000);
+.cert-cube-nav .cert-prev:hover [data-char]:after,
+.cert-cube-nav .cert-next:hover [data-char]:after {
+  color: var(--bg, #000) !important;
 }
 
-.cert-gallery-embedded .actions button:active {
+.cert-cube-nav .cert-prev:active,
+.cert-cube-nav .cert-next:active {
   transform: scale(0.98);
+}
+
+/* Counter between Prev / Next */
+.cert-counter {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: rgba(238, 155, 0, 0.65);
+  letter-spacing: 0.12em;
+  user-select: none;
+  min-width: 3.5em;
+  text-align: center;
 }
 
 /* Gallery Container - Customizable positioning */
@@ -462,15 +478,6 @@
 
 .cert-modal-close:hover [data-char]:after {
   color: #ee9b00;
-}
-
-/* Active card cursor indicator */
-.cert-gallery-embedded .cards li.active {
-  cursor: pointer;
-}
-
-.cert-gallery-embedded .cards li:not(.active) {
-  cursor: grab;
 }
 
 /* Responsive adjustments for modal */

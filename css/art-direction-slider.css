@@ -4,22 +4,26 @@
    Palette: amber #EE9B00 · teal #0A9396 · cream #E9D8A6 · bg #001219
    ─────────────────────────────────────────────────────────────────────────── */
 
-/* ── Intro guide card — shown on first load, dismissed on discipline select ── */
-#art-direction .ad-intro-card {
+/* ── Intro text — shown on first load, dismissed on discipline select ── */
+#art-direction .ad-intro-text {
   position: absolute;
-  left: calc(min(75vh, 75vw) + 2vw + 30px);
-  width: min(calc(100% - min(75vh, 75vw) - 4vw - 30px), 560px);
+  left: calc(min(75vh, 75vw) + 2vw + 130px);
+  width: min(calc(100% - min(75vh, 75vw) - 4vw - 130px), 520px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.45s ease;
+  transition: opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-/* Both classes required: intro is active AND entrance has fired */
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card {
+/* Visible only after category list has finished scrambling in */
+#art-direction.ad-intro-active.ad-intro-animate .ad-intro-text {
   opacity: 1;
+  pointer-events: auto;
   animation: ad-intro-entrance 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
@@ -41,28 +45,50 @@
   100% { opacity: 1;    transform: translateY(-50%);             clip-path: inset(0 0 0 0); }
 }
 
-/* ── SVG text group entrance — staggered after card slides in ── */
-@keyframes iad-text-in {
-  0%   { opacity: 0; transform: translateX(-10px); }
-  40%  { opacity: 0.6; transform: translateX(-3px); }
-  65%  { opacity: 0.85; transform: translateX(1px); }
-  100% { opacity: 1; transform: translateX(0); }
+/* ── Type styles — text groups always visible inside their container ── */
+#art-direction .ad-intro-text .iad-header,
+#art-direction .ad-intro-text .iad-body,
+#art-direction .ad-intro-text .iad-footer {
+  margin: 0;
 }
 
-/* Default: all text groups hidden */
-#art-direction .ad-intro-card .iad-header,
-#art-direction .ad-intro-card .iad-step,
-#art-direction .ad-intro-card .iad-footer {
-  opacity: 0;
+#art-direction .ad-intro-text .iad-header {
+  font-family: 'Courier New', monospace;
+  font-size: clamp(13px, 1.3vw, 18px);
+  color: #EE9B00;
+  letter-spacing: 0.1em;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(238, 155, 0, 0.35);
 }
 
-/* Animate in when both trigger classes are present */
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-header  { animation: iad-text-in 0.4s ease-out 0.65s forwards; }
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-1  { animation: iad-text-in 0.4s ease-out 0.85s forwards; }
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-2  { animation: iad-text-in 0.4s ease-out 1.05s forwards; }
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-3  { animation: iad-text-in 0.4s ease-out 1.25s forwards; }
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-step-4  { animation: iad-text-in 0.4s ease-out 1.45s forwards; }
-#art-direction.ad-intro-active.ad-intro-animate .ad-intro-card .iad-footer  { animation: iad-text-in 0.4s ease-out 1.65s forwards; }
+#art-direction .ad-intro-text .iad-body {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
+  font-size: clamp(15px, 1.7vw, 22px);
+  color: #E9D8A6;
+  line-height: 1.55;
+}
+
+#art-direction .ad-intro-text .iad-footer {
+  font-family: 'Courier New', monospace;
+  font-size: clamp(11px, 0.95vw, 14px);
+  color: rgba(238, 155, 0, 0.65);
+  letter-spacing: 0.06em;
+}
+
+/* ── LinkedIn icon — inline below body text, in flex flow ── */
+#art-direction .ad-social-icons {
+  position: static;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  padding: 0;
+  margin: 0;
+}
+
+#art-direction .ad-social-icons li a {
+  color: #EE9B00;
+}
 
 
 /* ── Works zone — wrapper that positions label + panel together ── */
@@ -168,7 +194,7 @@
   font-weight: 600;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(10, 147, 150, 0.6);
+  color: rgba(255, 255, 255, 0.6);
   white-space: nowrap;
 }
 

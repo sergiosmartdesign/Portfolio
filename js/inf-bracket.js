@@ -9,7 +9,11 @@
     // 'scroll' intentionally omitted — handled by the scroll-hint clone
   };
 
-  const LABELS = { en: 'here', es: 'aquí' };
+  // Each word as an array: [char, isBold] pairs. Dots are dim, letters bold.
+  const LABEL_CHARS = {
+    en: [['·',false],['h',true],['e',true],['r',true],['e',true],['·',false]],
+    es: [['·',false],['a',true],['q',true],['u',true],['í',true],['·',false]],
+  };
 
   const topLineEl = document.querySelector('.panel-line--top');
 
@@ -41,13 +45,24 @@
   // ── Language sync — mirrors info SVG lang loop ──────────────────────────
   let currentLang = 'en';
 
+  function applyLabelChars(lang) {
+    if (!label) return;
+    const spans = label.querySelectorAll('.ibl');
+    const chars = LABEL_CHARS[lang] || LABEL_CHARS.en;
+    spans.forEach((sp, i) => {
+      if (!chars[i]) return;
+      sp.textContent = chars[i][0];
+      sp.setAttribute('font-weight', chars[i][1] ? 'bold' : 'normal');
+    });
+  }
+
   function setLang(lang) {
     if (lang === currentLang || !label) return;
     currentLang = lang;
     label.classList.remove('lang-flicker');
     void label.getBoundingClientRect();
     label.classList.add('lang-flicker');
-    label.textContent = LABELS[lang];
+    applyLabelChars(lang);
   }
 
   const esGroup = document.getElementById('inf-es');
@@ -108,11 +123,14 @@
     if (label) {
       label.setAttribute('x', cx);
       label.setAttribute('y', LABEL_Y);
-      label.textContent = LABELS[currentLang];
+      applyLabelChars(currentLang);
     }
 
     bracket.style.left = `${Math.round(rect.left)}px`;
     bracket.style.top  = `${Math.round(yRect.bottom + GAP)}px`;
+    // Force animation restart: remove, reflow, add
+    bracket.classList.remove('visible');
+    void bracket.getBoundingClientRect();
     bracket.classList.add('visible');
   }
 

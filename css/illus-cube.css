@@ -110,6 +110,11 @@
     opacity: 0;
 }
 
+/* ── Gallery title face — intro robot background image ───────────────────── */
+.illus-face[data-face="top"] {
+    background: url('../images/ilust intro robot.jpeg') center / cover no-repeat;
+}
+
 /* ── Image entry animation — scan reveal ─────────────────────────────────── */
 /* Scan line sweeps top→bottom (GPU transform, no layout cost).               */
 /* Image clip-path is locked to the same linear 1.1 s so they stay in sync:  */

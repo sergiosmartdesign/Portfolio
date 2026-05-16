@@ -48,21 +48,37 @@
   100%    { opacity: 0.1; }
 }
 
-/* Label below chevrons */
+/* Label below chevrons — individual letter spans */
 #inf-bracket-label {
   fill: #ff3c00;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
 }
 
-#inf-bracket-label.lang-flicker {
-  animation: inf-label-flicker 0.45s ease forwards;
+/* Each letter hidden by default */
+.ibl {
+  opacity: 0;
 }
 
-@keyframes inf-label-flicker {
-  0%   { opacity: 0.85; }
+/* Sequential reveal when bracket becomes visible */
+#inf-bracket.visible .ibl {
+  animation: ibl-pop 0.18s ease-out forwards;
+  animation-delay: calc(var(--li) * 70ms);
+}
+
+@keyframes ibl-pop {
+  0%   { opacity: 0; }
+  100% { opacity: var(--lo); }
+}
+
+/* Lang switch: flicker the whole label group, then letters re-sequence */
+#inf-bracket-label.lang-flicker .ibl {
+  animation: ibl-flicker 0.45s ease forwards;
+  animation-delay: calc(var(--li) * 70ms);
+}
+
+@keyframes ibl-flicker {
+  0%   { opacity: var(--lo); }
   20%  { opacity: 0.05; }
-  40%  { opacity: 0.5;  }
-  60%  { opacity: 0;    }
-  100% { opacity: 0.85; }
+  50%  { opacity: 0;    }
+  70%  { opacity: 0.3;  }
+  100% { opacity: var(--lo); }
 }

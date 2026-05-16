@@ -1309,17 +1309,29 @@ class AnimationCoordinator {
       const triggerAdListGlitch = () => {
         adListDone = true;
         adList.classList.add('ad-list-ready');
+        document.body.classList.add('ad-section-live');
         adListLinks.forEach((link, i) => scrambleItem(link, i * 120));
-        setTimeout(() => artEntranceSection.classList.add('ad-intro-animate'), 1800);
+        setTimeout(() => {
+          artEntranceSection.classList.add('ad-intro-animate');
+          const introHeader = artEntranceSection.querySelector('.iad-header[data-content]');
+          const introFooter = artEntranceSection.querySelector('.iad-footer[data-content]');
+          if (introHeader) scrambleItem(introHeader, 0);
+          if (introFooter) scrambleItem(introFooter, 200);
+        }, 2700);
       };
 
       const resetAdList = () => {
         adListDone = false;
         adList.classList.remove('ad-list-ready');
+        document.body.classList.remove('ad-section-live');
         artEntranceSection.classList.remove('ad-intro-animate');
         artEntranceSection.classList.add('ad-intro-active');
         adListLinks.forEach(link => {
           link.textContent = link.getAttribute('data-content');
+        });
+        ['.iad-header[data-content]', '.iad-footer[data-content]'].forEach(sel => {
+          const el = artEntranceSection.querySelector(sel);
+          if (el) el.textContent = el.getAttribute('data-content');
         });
       };
 
