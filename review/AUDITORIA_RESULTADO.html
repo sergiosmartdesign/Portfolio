@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría de Maestría — Sergio Ayala Portfolio</title>
+<style>
+  :root {
+    --bg: #001219;
+    --bg2: #012a35;
+    --surface: #0a2030;
+    --border: rgba(0,255,255,0.15);
+    --cyan: #00ffff;
+    --amber: #EE9B00;
+    --red: #AE2012;
+    --green: #0A9396;
+    --teal: #005F73;
+    --text: #e0f0f4;
+    --muted: #7ab0bc;
+    --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+    --font-sans: system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(180deg, #001c28 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .header-title h1 {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .header-title p { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+  .score-badge {
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--amber);
+    line-height: 1;
+  }
+  .score-badge span { font-size: 1rem; color: var(--muted); display: block; text-align: right; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+  /* ── PANELS ── */
+  .tab-panel { display: none; padding: 2rem 3rem; max-width: 1200px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  /* ── SUMMARY GRID ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+  .score-card .agent-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .score-card .score-val {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .score-card .score-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+  .score-card .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease-out;
+  }
+  .color-arch { color: #94D2BD; }
+  .fill-arch { background: #94D2BD; }
+  .color-ux { color: #0A9396; }
+  .fill-ux { background: #0A9396; }
+  .color-art { color: var(--amber); }
+  .fill-art { background: var(--amber); }
+  .color-perf { color: var(--red); }
+  .fill-perf { background: var(--red); }
+  .color-total { color: var(--cyan); }
+
+  /* ── SECTION HEADINGS ── */
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+    margin: 2rem 0 1rem;
+  }
+
+  /* ── AGENT HEADER ── */
+  .agent-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .agent-score-big {
+    font-family: var(--font-mono);
+    font-size: 3.5rem;
+    font-weight: bold;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .agent-summary { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+  /* ── STRENGTHS ── */
+  .strengths-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .strengths-list li {
+    background: rgba(10, 147, 150, 0.08);
+    border: 1px solid rgba(10, 147, 150, 0.25);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    position: relative;
+    padding-left: 2rem;
+  }
+  .strengths-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0.75rem;
+    color: var(--green);
+    font-weight: bold;
+  }
+
+  /* ── ISSUE CARDS ── */
+  .issues-list { display: flex; flex-direction: column; gap: 1rem; }
+  .issue-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .issue-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .issue-header:hover { background: rgba(255,255,255,0.03); }
+  .issue-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 68px;
+  }
+  .severity-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .sev-critical { background: rgba(174,32,18,0.25); color: #ff6b5a; border: 1px solid rgba(174,32,18,0.4); }
+  .sev-high    { background: rgba(202,103,2,0.2);  color: #f5a623; border: 1px solid rgba(202,103,2,0.4); }
+  .sev-medium  { background: rgba(238,155,0,0.15); color: var(--amber); border: 1px solid rgba(238,155,0,0.3); }
+  .sev-low     { background: rgba(10,147,150,0.1); color: #5ecfcf; border: 1px solid rgba(10,147,150,0.25); }
+  .issue-title { font-size: 0.9rem; flex: 1; }
+  .issue-chevron { color: var(--muted); font-size: 0.8rem; transition: transform 0.2s; flex-shrink: 0; }
+  .issue-card.open .issue-chevron { transform: rotate(90deg); }
+  .issue-body {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .issue-card.open .issue-body { display: block; }
+  .issue-field { margin-top: 0.75rem; }
+  .issue-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .issue-text { font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+  .issue-rec {
+    background: rgba(0,255,255,0.05);
+    border-left: 2px solid var(--cyan);
+    padding: 0.75rem 1rem;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-top: 0.25rem;
+  }
+  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── METRICS ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .metric-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.875rem;
+  }
+  .metric-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  .metric-value { font-family: var(--font-mono); font-size: 1.1rem; color: var(--cyan); }
+  .metric-value.warn { color: var(--amber); }
+  .metric-value.bad { color: #ff6b5a; }
+  .metric-value.good { color: var(--green); }
+
+  /* ── ACTION PLAN ── */
+  .priority-block { margin-bottom: 2rem; }
+  .priority-label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  .p-critical { background: rgba(174,32,18,0.2); color: #ff6b5a; border: 1px solid rgba(174,32,18,0.3); }
+  .p-high     { background: rgba(202,103,2,0.15); color: #f5a623; border: 1px solid rgba(202,103,2,0.3); }
+  .p-medium   { background: rgba(238,155,0,0.1); color: var(--amber); border: 1px solid rgba(238,155,0,0.2); }
+  .action-row {
+    display: grid;
+    grid-template-columns: 60px 80px 1fr 80px 60px;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .action-row:hover { border-color: rgba(0,255,255,0.3); }
+  .ar-id { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+  .ar-effort { font-family: var(--font-mono); font-size: 0.7rem; text-align: center; padding: 0.15rem 0.35rem; border-radius: 3px; border: 1px solid var(--border); color: var(--muted); }
+  .ar-impact { font-family: var(--font-mono); font-size: 0.7rem; text-align: right; color: var(--muted); }
+
+  /* ── CRITICAL BUG ALERT ── */
+  .alert-critical {
+    background: rgba(174,32,18,0.15);
+    border: 1px solid rgba(174,32,18,0.5);
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .alert-critical .alert-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .alert-critical p { font-size: 0.9rem; }
+  .alert-critical strong { color: #ff6b5a; }
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: rgba(0,255,255,0.08);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    color: var(--cyan);
+  }
+
+  @media (max-width: 768px) {
+    header, .tab-panel { padding: 1.25rem; }
+    .agent-header { flex-direction: column; gap: 1rem; }
+    .action-row { grid-template-columns: 1fr; }
+    .ar-id, .ar-effort, .ar-impact { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>// AUDITORÍA DE MAESTRÍA — PORTAFOLIO WEB</h1>
+    <p>Sergio Ayala · 4 agentes expertos · Mayo 2026 · Análisis real del código</p>
+  </div>
+  <div>
+    <div class="score-badge" style="color:var(--amber)">6.5<span style="font-size:1.2rem">/10</span></div>
+    <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);text-align:right;margin-top:0.25rem">PROMEDIO GENERAL</div>
+  </div>
+</header>
+
+<nav class="tab-bar" role="tablist">
+  <button class="tab-btn active" role="tab" onclick="showTab('resumen')">📊 Resumen Ejecutivo</button>
+  <button class="tab-btn" role="tab" onclick="showTab('arch')">🏗️ Arquitectura &nbsp;<span style="color:#94D2BD">6.2</span></button>
+  <button class="tab-btn" role="tab" onclick="showTab('ux')">♿ UI/UX &nbsp;<span style="color:#0A9396">7.1</span></button>
+  <button class="tab-btn" role="tab" onclick="showTab('art')">🎨 Arte &nbsp;<span style="color:#EE9B00">8.1</span></button>
+  <button class="tab-btn" role="tab" onclick="showTab('perf')">⚡ Performance &nbsp;<span style="color:#AE2012">4.5</span></button>
+  <button class="tab-btn" role="tab" onclick="showTab('plan')">🎯 Plan de Acción</button>
+</nav>
+
+<!-- ══════════════════ RESUMEN ══════════════════ -->
+<section id="tab-resumen" class="tab-panel active">
+  <div class="alert-critical">
+    <div class="alert-icon">🚨</div>
+    <p><strong>Bug crítico encontrado:</strong> El CTA "Let's Work Together" tiene <code>href="mailto:placeholder@mail.com"</code> — los contactos van al vacío. Corrígelo antes de cualquier otra cosa.</p>
+  </div>
+
+  <div class="summary-grid">
+    <div class="score-card">
+      <div class="agent-name">Arquitectura</div>
+      <div class="score-val color-arch">6.2</div>
+      <div class="score-bar"><div class="score-bar-fill fill-arch" style="width:62%"></div></div>
+    </div>
+    <div class="score-card">
+      <div class="agent-name">UI/UX y Accesibilidad</div>
+      <div class="score-val color-ux">7.1</div>
+      <div class="score-bar"><div class="score-bar-fill fill-ux" style="width:71%"></div></div>
+    </div>
+    <div class="score-card">
+      <div class="agent-name">Dirección de Arte</div>
+      <div class="score-val color-art">8.1</div>
+      <div class="score-bar"><div class="score-bar-fill fill-art" style="width:81%"></div></div>
+    </div>
+    <div class="score-card">
+      <div class="agent-name">Performance</div>
+      <div class="score-val color-perf">4.5</div>
+      <div class="score-bar"><div class="score-bar-fill fill-perf" style="width:45%"></div></div>
+    </div>
+    <div class="score-card" style="border-color:rgba(0,255,255,0.3)">
+      <div class="agent-name">Promedio General</div>
+      <div class="score-val color-total">6.5</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:65%;background:var(--cyan)"></div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Fortalezas del Proyecto</div>
+  <ul class="strengths-list">
+    <li>Dirección de arte VHS/cyberpunk genuinamente distintiva — paleta de 10 colores Smithsonian excepcionalmente coherente</li>
+    <li>Sistema de design tokens CSS maduro (52 variables, z-index tokenizado, easing, spacing)</li>
+    <li>Skip link correcto, ARIA landmarks, 167 etiquetas aria-label, alt text descriptivo en ilustraciones</li>
+    <li>JSON-LD estructurado (Person + ProfessionalService + VisualArtwork) + Open Graph completo</li>
+    <li>58 animaciones coreografiadas con cinética real (DeLorean, equalizer, synthwave sun)</li>
+    <li>RAF-gating en scroll, listeners pasivos, IntersectionObserver para pausar animaciones off-screen</li>
+    <li>i18n robusto con CustomEvent arquitecture para sincronizar módulos en cambio de idioma</li>
+    <li>Content Security Policy + headers de seguridad correctamente configurados</li>
+  </ul>
+
+  <div class="section-title">Top 5 Problemas a Resolver</div>
+  <div class="issues-list">
+    <div class="issue-card">
+      <div class="issue-header" onclick="toggleIssue(this)">
+        <span class="issue-id">ux-004</span>
+        <span class="severity-badge sev-critical">CRÍTICO</span>
+        <span class="issue-title">mailto:placeholder@mail.com en el CTA principal — contatos perdidos</span>
+        <span class="issue-chevron">▶</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-field"><div class="issue-label">Fix</div>
+        <div class="issue-rec">Cambiar <code>href="mailto:placeholder@mail.com"</code> → <code>href="mailto:sergionook@gmail.com"</code> en el anchor <code>#seal-cta</code> en index.html línea ~798.</div></div>
+      </div>
+    </div>
+    <div class="issue-card">
+      <div class="issue-header" onclick="toggleIssue(this)">
+        <span class="issue-id">perf-001</span>
+        <span class="severity-badge sev-critical">CRÍTICO</span>
+        <span class="issue-title">113 MB de JPGs sin comprimir en la galería de fotos</span>
+        <span class="issue-chevron">▶</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-field"><div class="issue-label">Problema</div>
+        <div class="issue-text">62 archivos JPG en /images/photo/, 2–3.2 MB cada uno. Destruye LCP y cualquier UX móvil.</div></div>
+        <div class="issue-field"><div class="issue-label">Fix</div>
+        <div class="issue-rec">Convertir todo a WebP al 80% quality, max 1400px. Usar sharp/squoosh. Reducción esperada: de 113 MB a ~8 MB.</div></div>
+      </div>
+    </div>
+    <div class="issue-card">
+      <div class="issue-header" onclick="toggleIssue(this)">
+        <span class="issue-id">perf-003</span>
+        <span class="severity-badge sev-critical">CRÍTICO</span>
+        <span class="issue-title">GSAP se carga después de los scripts que lo usan — orden roto</span>
+        <span class="issue-chevron">▶</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-field"><div class="issue-label">Problema</div>
+        <div class="issue-text">gsap.min.js está en línea 2447 pero script.js (línea 2443), cert-gallery.js (2445) y photo-vfx.js (2446) se cargan antes. Errores en runtime silenciados por load order.</div></div>
+        <div class="issue-field"><div class="issue-label">Fix</div>
+        <div class="issue-rec">Orden correcto: browser-detect → splitting → scroll-out → gsap → ScrambleTextPlugin → script.js → resto. Además agregar <code>defer</code> a todos los scripts.</div></div>
+      </div>
+    </div>
+    <div class="issue-card">
+      <div class="issue-header" onclick="toggleIssue(this)">
+        <span class="issue-id">ux-001</span>
+        <span class="severity-badge sev-critical">CRÍTICO</span>
+        <span class="issue-title">prefers-reduced-motion ignorado en styles.css — 58 animaciones activas para usuarios con fotosensibilidad</span>
+        <span class="issue-chevron">▶</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-field"><div class="issue-label">Fix</div>
+        <div class="issue-rec">Agregar al final de styles.css: <code>@media (prefers-reduced-motion: reduce) { .scanlines, .vhs-static, .orb-wrap, #intro::before, #about::before, .glitch-text [data-char]::after { animation: none !important; } }</code></div></div>
+      </div>
+    </div>
+    <div class="issue-card">
+      <div class="issue-header" onclick="toggleIssue(this)">
+        <span class="issue-id">arch-001</span>
+        <span class="severity-badge sev-high">ALTO</span>
+        <span class="issue-title">Patrón static-line canvas copy-paste 4 veces en script.js (~350 líneas duplicadas)</span>
+        <span class="issue-chevron">▶</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-field"><div class="issue-label">Fix</div>
+        <div class="issue-rec">Extraer <code>function makeStaticLine(canvasEl, opts)</code> que retorne <code>{ show, hide, update }</code>. Reduce ~350 líneas a ~80.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ ARQUITECTURA ══════════════════ -->
+<section id="tab-arch" class="tab-panel">
+  <div class="agent-header">
+    <div class="agent-score-big color-arch">6.2</div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Arquitectura de Software</div>
+      <div class="agent-summary">El codebase demuestra buena intención y disciplina en design tokens CSS, con clases bien estructuradas (GlitchSystem, NavigationManager, AnimationCoordinator). Sin embargo, script.js ha crecido hasta 2,179 líneas con violaciones DRY severas (el patrón canvas está copy-paste 4 veces verbatim), contaminación masiva del namespace global con 13+ window assignments, y un anti-patrón de monkey-patching que envuelve window.playArtEntranceAnimation 3 veces secuencialmente. BarcodeAnimation está referenciado pero nunca definido en ningún archivo.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Métricas</div>
+  <div class="metrics-grid">
+    <div class="metric-item"><div class="metric-label">Archivos JS</div><div class="metric-value warn">16</div></div>
+    <div class="metric-item"><div class="metric-label">Líneas JS</div><div class="metric-value warn">8,137</div></div>
+    <div class="metric-item"><div class="metric-label">Archivos CSS</div><div class="metric-value">10</div></div>
+    <div class="metric-item"><div class="metric-label">Líneas CSS</div><div class="metric-value">9,406</div></div>
+    <div class="metric-item"><div class="metric-label">Clases ES6</div><div class="metric-value good">5</div></div>
+    <div class="metric-item"><div class="metric-label">Globals window.*</div><div class="metric-value bad">13</div></div>
+    <div class="metric-item"><div class="metric-label">Patrones dup.</div><div class="metric-value bad">5</div></div>
+  </div>
+
+  <div class="section-title">Fortalezas</div>
+  <ul class="strengths-list">
+    <li>Sistema de design tokens CSS sólido: colores, spacing, shadows, z-indexes centralizados</li>
+    <li>Buen uso de clases ES6 con separación constructor/métodos clara</li>
+    <li>Preloader, i18n y cert-gallery envueltos en IIFEs con 'use strict'</li>
+    <li>Patrones de performance: RAF-gating, listeners pasivos, IntersectionObserver, visibilitychange</li>
+    <li>i18n.js LanguageManager limpio con CustomEvent architecture</li>
+    <li>JSON-LD estructurado (Person + ProfessionalService + WebSite + VisualArtwork)</li>
+    <li>CSP meta tag + rel="noopener noreferrer" en todos los links externos</li>
+  </ul>
+
+  <div class="section-title">Problemas Encontrados (15)</div>
+  <div class="issues-list" id="arch-issues"></div>
+</section>
+
+<!-- ══════════════════ UI/UX ══════════════════ -->
+<section id="tab-ux" class="tab-panel">
+  <div class="agent-header">
+    <div class="agent-score-big color-ux">7.1</div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">UI/UX y Accesibilidad</div>
+      <div class="agent-summary">Portfolio técnicamente ambicioso con trabajo de accesibilidad sólido: skip link correcto, ARIA landmarks, alt text descriptivo, aria-hidden en SVGs decorativos, y SEO Open Graph/JSON-LD completo. Las debilidades principales son la ausencia de prefers-reduced-motion en styles.css, ningún patrón de navegación móvil, falta de elementos hreflang, y el bug crítico mailto:placeholder en el CTA principal.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Métricas</div>
+  <div class="metrics-grid">
+    <div class="metric-item"><div class="metric-label">Atributo lang</div><div class="metric-value good">✓ Sí</div></div>
+    <div class="metric-item"><div class="metric-label">Open Graph tags</div><div class="metric-value good">✓ Sí</div></div>
+    <div class="metric-item"><div class="metric-label">Viewport meta</div><div class="metric-value good">✓ Sí</div></div>
+    <div class="metric-item"><div class="metric-label">Skip link</div><div class="metric-value good">✓ Sí</div></div>
+    <div class="metric-item"><div class="metric-label">Reduced motion</div><div class="metric-value bad">✗ Parcial</div></div>
+    <div class="metric-item"><div class="metric-label">Aria labels</div><div class="metric-value good">167</div></div>
+    <div class="metric-item"><div class="metric-label">Imgs sin alt</div><div class="metric-value warn">2</div></div>
+    <div class="metric-item"><div class="metric-label">Soporte bilingüe</div><div class="metric-value good">✓ EN/ES</div></div>
+  </div>
+
+  <div class="section-title">Fortalezas</div>
+  <ul class="strengths-list">
+    <li>Skip link con position:absolute top:-100% que aparece en :focus — patrón correcto</li>
+    <li>SVGs decorativos consistentemente aria-hidden="true" + role="presentation"</li>
+    <li>Alt text descriptivo en todas las figures de ilustración y la mayoría de blog</li>
+    <li>aria-live="polite" en .cert-counter para feedback de screen readers</li>
+    <li>Sound toggle usa aria-pressed con ambos estados gestionados</li>
+    <li>JSON-LD estructurado + Microdata en illustration figures — SEO doble capa</li>
+    <li>Social links con rel="noopener noreferrer" consistente en target="_blank"</li>
+    <li>ad-project-modal usa role="dialog", aria-modal="true", aria-hidden cuando cerrado</li>
+  </ul>
+
+  <div class="section-title">Problemas Encontrados (14)</div>
+  <div class="issues-list" id="ux-issues"></div>
+</section>
+
+<!-- ══════════════════ ARTE ══════════════════ -->
+<section id="tab-art" class="tab-panel">
+  <div class="agent-header">
+    <div class="agent-score-big color-art">8.1</div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Dirección de Arte</div>
+      <div class="agent-summary">El portfolio tiene una dirección de arte VHS/synthwave/cyberpunk genuinamente distintiva que es rara en 2025. La paleta de 10 colores del Smithsonian Tropical Research Institute es excepcional. El sistema CSS está más maduro que la mayoría de portfolios personales: tokens organizados, choreografía de animaciones sofisticada, y presupuesto visual por sección. Las debilidades son drift en la disciplina de tokens (valores hex hardcoded en CSS legacy), jerarquía tipográfica con demasiadas variables simultáneas, y ausencia de estrategia mobile-first.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Métricas</div>
+  <div class="metrics-grid">
+    <div class="metric-item"><div class="metric-label">Variables CSS</div><div class="metric-value good">52</div></div>
+    <div class="metric-item"><div class="metric-label">Animaciones</div><div class="metric-value good">58</div></div>
+    <div class="metric-item"><div class="metric-label">Fuentes cargadas</div><div class="metric-value warn">4</div></div>
+    <div class="metric-item"><div class="metric-label">Dark mode</div><div class="metric-value bad">✗ No</div></div>
+    <div class="metric-item"><div class="metric-label">Design tokens</div><div class="metric-value good">✓ Sí</div></div>
+    <div class="metric-item"><div class="metric-label">Colores paleta</div><div class="metric-value good">10 stops</div></div>
+  </div>
+
+  <div class="section-title">Elementos Creativos Únicos</div>
+  <ul class="strengths-list">
+    <li>Houdini @property sun stripe mask con --ct-shift interpolation (sección contact)</li>
+    <li>DeLorean CSS puro con state-machine para física de llegada/tracking/partida</li>
+    <li>Glitch text via Splitting.js + CSS custom props --char-0..--char-9 por carácter</li>
+    <li>Paleta temperatura 10-stop que mapea arco emocional del portfolio</li>
+    <li>Preloader equalizer con step() animation incluyendo dropout, overshoot y bounce</li>
+    <li>3D CSS cube gallery con scan-line reveal sincronizado a clip-path/translateY</li>
+    <li>VHS stack: 4 capas (grid + color shift + scanlines + static) con pausing por sección</li>
+    <li>Synthwave contact section: 3-depth mountain parallax + perspective grid animado</li>
+    <li>Info-interface SVG hotspot con { bracket que trackea DOM via getBoundingClientRect</li>
+    <li>Nav underline fill animation con background-size/position trick + stagger de entrada</li>
+  </ul>
+
+  <div class="section-title">Problemas Encontrados (13)</div>
+  <div class="issues-list" id="art-issues"></div>
+</section>
+
+<!-- ══════════════════ PERFORMANCE ══════════════════ -->
+<section id="tab-perf" class="tab-panel">
+  <div class="agent-header">
+    <div class="agent-score-big color-perf">4.5</div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Performance y Optimización</div>
+      <div class="agent-summary">El site carga un payload extremadamente pesado: 113 MB de JPGs sin optimizar, 493 KB de JS custom sin minificar en 18 requests separados, y 10 CSS render-blocking. El orden de scripts está roto (GSAP después del código que lo usa), ninguno de los 23 scripts usa defer/async, y no hay cache headers. Estas issues combinadas representan riesgo crítico de LCP y TTI. El score más bajo de los 4 agentes.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Métricas</div>
+  <div class="metrics-grid">
+    <div class="metric-item"><div class="metric-label">JS total (sin min.)</div><div class="metric-value bad">483 KB</div></div>
+    <div class="metric-item"><div class="metric-label">CSS total</div><div class="metric-value warn">260 KB</div></div>
+    <div class="metric-item"><div class="metric-label">HTML</div><div class="metric-value warn">201 KB</div></div>
+    <div class="metric-item"><div class="metric-label">Fotos (sin opt.)</div><div class="metric-value bad">113 MB</div></div>
+    <div class="metric-item"><div class="metric-label">Scripts totales</div><div class="metric-value bad">23</div></div>
+    <div class="metric-item"><div class="metric-label">CSS requests</div><div class="metric-value bad">10</div></div>
+    <div class="metric-item"><div class="metric-label">Scripts defer/async</div><div class="metric-value bad">0</div></div>
+    <div class="metric-item"><div class="metric-label">Cache headers</div><div class="metric-value bad">✗ Ninguno</div></div>
+    <div class="metric-item"><div class="metric-label">Usa WebP</div><div class="metric-value warn">1 img</div></div>
+    <div class="metric-item"><div class="metric-label">Resource hints</div><div class="metric-value warn">Parcial</div></div>
+  </div>
+
+  <div class="section-title">Fortalezas</div>
+  <ul class="strengths-list">
+    <li>Google Fonts con preconnect + display=swap — carga de fuentes no bloqueante</li>
+    <li>Scroll listeners con { passive: true } en la mayoría de handlers</li>
+    <li>Security headers sólidos (CSP, X-Frame-Options, HTTPS redirect)</li>
+    <li>will-change: transform/opacity correcto en elementos GPU-animados</li>
+    <li>cancelAnimationFrame correcto cuando secciones se vuelven inactivas</li>
+    <li>decoding="async" en imágenes de cert gallery</li>
+    <li>Lazy loading implementado en fotos de la galería debajo del fold</li>
+  </ul>
+
+  <div class="section-title">Problemas Encontrados (14)</div>
+  <div class="issues-list" id="perf-issues"></div>
+</section>
+
+<!-- ══════════════════ PLAN ══════════════════ -->
+<section id="tab-plan" class="tab-panel">
+  <p style="color:var(--muted);margin-bottom:2rem;font-size:0.9rem">Plan de acción por prioridad. Estimados de esfuerzo: L = pocas horas, M = 1-2 días, H = varios días.</p>
+
+  <div class="priority-block">
+    <div class="priority-label p-critical">🔴 CRÍTICO — Hacer hoy</div>
+    <div class="action-row"><span class="ar-id">ux-004</span><span class="severity-badge sev-critical">CRÍTICO</span><span>Corregir mailto:placeholder@mail.com → sergionook@gmail.com en #seal-cta</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#ff6b5a">↑↑↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-003</span><span class="severity-badge sev-critical">CRÍTICO</span><span>Reordenar scripts: GSAP antes de script.js, cert-gallery.js, photo-vfx.js</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#ff6b5a">↑↑↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-002</span><span class="severity-badge sev-critical">CRÍTICO</span><span>Agregar defer a los 23 scripts (excepto browser-detect.js)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#ff6b5a">↑↑↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-001</span><span class="severity-badge sev-critical">CRÍTICO</span><span>Agregar @media (prefers-reduced-motion: reduce) en styles.css</span><span class="ar-effort">M</span><span class="ar-impact" style="color:#ff6b5a">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-001</span><span class="severity-badge sev-critical">CRÍTICO</span><span>Convertir 62 JPGs de fotos a WebP/AVIF — 113 MB → ~8 MB</span><span class="ar-effort">M</span><span class="ar-impact" style="color:#ff6b5a">↑↑↑</span></div>
+  </div>
+
+  <div class="priority-block">
+    <div class="priority-label p-high">🟠 ALTO — Esta semana</div>
+    <div class="action-row"><span class="ar-id">perf-005</span><span class="severity-badge sev-high">ALTO</span><span>Agregar Cache-Control headers en _headers para JS, CSS, images</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-010</span><span class="severity-badge sev-high">ALTO</span><span>Agregar width/height a todos los &lt;img&gt; para eliminar CLS</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-014</span><span class="severity-badge sev-high">ALTO</span><span>Agregar &lt;link rel="preload"&gt; para la imagen LCP (intro robot)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-009</span><span class="severity-badge sev-high">ALTO</span><span>Convertir 4 background images a WebP con &lt;picture&gt; fallback</span><span class="ar-effort">M</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-002</span><span class="severity-badge sev-high">ALTO</span><span>Implementar navegación móvil (hamburger + off-canvas) con focus trap</span><span class="ar-effort">H</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-009</span><span class="severity-badge sev-high">ALTO</span><span>Agregar *:focus-visible global en styles.css (outline 2px cyan)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-014</span><span class="severity-badge sev-high">ALTO</span><span>Focus trap en modal art-direction + return focus al trigger + Escape key</span><span class="ar-effort">M</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">arch-001</span><span class="severity-badge sev-high">ALTO</span><span>Extraer makeStaticLine() factory — refactorizar 4 canvas duplicados (~350 líneas)</span><span class="ar-effort">M</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">arch-002</span><span class="severity-badge sev-high">ALTO</span><span>Reemplazar triple monkey-patch de window.playArtEntranceAnimation con CustomEvent</span><span class="ar-effort">M</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">art-004</span><span class="severity-badge sev-high">ALTO</span><span>Agregar breakpoints responsive en styles.css (768/1024/1440) — layout principal sin mobile</span><span class="ar-effort">H</span><span class="ar-impact" style="color:#f5a623">↑↑</span></div>
+    <div class="action-row"><span class="ar-id">art-005</span><span class="severity-badge sev-high">ALTO</span><span>#main-title: reemplazar font-size:3.5rem con clamp(2rem, 6vw, 4.5rem)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:#f5a623">↑</span></div>
+  </div>
+
+  <div class="priority-block">
+    <div class="priority-label p-medium">🟡 MEDIO — Próximas 2 semanas</div>
+    <div class="action-row"><span class="ar-id">perf-004</span><span class="severity-badge sev-medium">MEDIO</span><span>Bundlear 10 CSS en 1-2 archivos con postcss/cssnano</span><span class="ar-effort">M</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">perf-007</span><span class="severity-badge sev-medium">MEDIO</span><span>Introducir build step (esbuild/Vite) para bundle + minify 18 JS custom</span><span class="ar-effort">H</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">arch-003</span><span class="severity-badge sev-medium">MEDIO</span><span>Split script.js (2179 líneas) en módulos: about-pin, art-direction-entrance, static-line</span><span class="ar-effort">H</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-003</span><span class="severity-badge sev-medium">MEDIO</span><span>Agregar aria-pressed a language toggle buttons (EN/ES)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-005</span><span class="severity-badge sev-medium">MEDIO</span><span>Agregar &lt;link rel="alternate" hreflang="en|es"&gt; al &lt;head&gt;</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">ux-013</span><span class="severity-badge sev-medium">MEDIO</span><span>En JS: setear polaroidPhoto.alt dinámicamente con título+ubicación al cambiar src</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">arch-004</span><span class="severity-badge sev-medium">MEDIO</span><span>Implementar o eliminar BarcodeAnimation (referenciado 3x, nunca definido)</span><span class="ar-effort">M</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">arch-010</span><span class="severity-badge sev-medium">MEDIO</span><span>Crear og-image.jpg 1200×630 + verificar canonical URL en producción</span><span class="ar-effort">M</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">art-001</span><span class="severity-badge sev-medium">MEDIO</span><span>Tokenizar #ee9b00 en cert-gallery.css → var(--cert-amber)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">art-003</span><span class="severity-badge sev-medium">MEDIO</span><span>Definir jerarquía cyan=máquina / amber=contenido en todos los interactive states</span><span class="ar-effort">M</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">art-002</span><span class="severity-badge sev-medium">MEDIO</span><span>Eliminar Playwrite DK Loopet (sin uso); reemplazar Workbench con Share Tech Mono</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--amber)">↑</span></div>
+    <div class="action-row"><span class="ar-id">arch-005</span><span class="severity-badge sev-low">BAJO</span><span>Eliminar chroma.min.js y photo-polaroids.js (tombstone) del repo</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--muted)">–</span></div>
+    <div class="action-row"><span class="ar-id">perf-008</span><span class="severity-badge sev-low">BAJO</span><span>Eliminar chroma.min.js del filesystem (archivo muerto)</span><span class="ar-effort">L</span><span class="ar-impact" style="color:var(--muted)">–</span></div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin-top:2rem">
+    <div class="section-title" style="margin-top:0">Proyección Post-Fix</div>
+    <div class="summary-grid">
+      <div class="score-card"><div class="agent-name">Arquitectura (objetivo)</div><div class="score-val" style="color:#94D2BD">7.5</div><div class="score-bar"><div class="score-bar-fill fill-arch" style="width:75%"></div></div></div>
+      <div class="score-card"><div class="agent-name">UI/UX (objetivo)</div><div class="score-val" style="color:#0A9396">8.5</div><div class="score-bar"><div class="score-bar-fill fill-ux" style="width:85%"></div></div></div>
+      <div class="score-card"><div class="agent-name">Arte (objetivo)</div><div class="score-val" style="color:#EE9B00">8.8</div><div class="score-bar"><div class="score-bar-fill fill-art" style="width:88%"></div></div></div>
+      <div class="score-card"><div class="agent-name">Performance (objetivo)</div><div class="score-val" style="color:#0A9396">7.5</div><div class="score-bar"><div class="score-bar-fill" style="width:75%;background:#0A9396"></div></div></div>
+      <div class="score-card" style="border-color:rgba(0,255,255,0.3)"><div class="agent-name">Promedio objetivo</div><div class="score-val color-total">8.1</div><div class="score-bar"><div class="score-bar-fill" style="width:81%;background:var(--cyan)"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── Issue data ──
+const archIssues = [
+  { id:'arch-001', sev:'high', title:'Static-line canvas copy-paste 4 veces (~350 líneas duplicadas)', file:'js/script.js', desc:'Cuatro bloques casi idénticos (drawStaticLine, drawAboutStaticLine, drawAboutTopLine, drawArtDirLine) cada uno con helpers de draw/show/hide/resize independientes. Cualquier cambio debe hacerse 4 veces.', rec:'Extraer makeStaticLine(canvasEl, opts) factory que retorne { show, hide, update }. Reduce ~350 líneas a ~80.', effort:'medium', impact:'high' },
+  { id:'arch-002', sev:'high', title:'window.playArtEntranceAnimation monkey-patched 3 veces secuencialmente', file:'js/script.js', desc:'Líneas 1185, 1254 y 1343: window.playArtEntranceAnimation es reasignado envolviendo el valor previo. Crea una cadena de 3 wrappers invisible desde cualquier call site, rompe debuggability.', rec:'Reemplazar con CustomEvent("artEntrancePlay") disparado desde una función autoritativa. Cada subsistema escucha independientemente.', effort:'medium', impact:'high' },
+  { id:'arch-003', sev:'high', title:'script.js: 2,179 líneas — god module con responsabilidades mezcladas', file:'js/script.js', desc:'Contiene: glitch system, navigation, animation coordinator, 3 canvas static-lines, art-direction entrance, list scramble, background image animation, collision detection, SVG inline, info-interface hints, bilingual loop, about-pin, scroll-to-top.', rec:'Split mínimo: about-pin.js (ya es IIFE autocontenido), art-direction-entrance.js (líneas 1163-1364), static-line.js (factory), svg-inline.js.', effort:'high', impact:'high' },
+  { id:'arch-004', sev:'high', title:'BarcodeAnimation referenciado 3 veces pero nunca definido', file:'js/script.js', desc:'window.BarcodeAnimation?.start y .stop en líneas 589, 596, 1840. Ningún archivo define window.BarcodeAnimation. El optional chaining silencia el error — feature completamente muerta.', rec:'Implementar BarcodeAnimation module o eliminar los 3 call sites.', effort:'low', impact:'medium' },
+  { id:'arch-005', sev:'medium', title:'2 vendor libraries muertas en el repo', file:'js/lib/', desc:'chroma.min.js y simplex-noise.min.js presentes pero sin referencias activas. chroma fue eliminado del HTML tag pero el archivo permanece.', rec:'Eliminar chroma.min.js. Mantener simplex-noise.min.js solo si la sección illustration está en roadmap activo.', effort:'low', impact:'low' },
+  { id:'arch-006', sev:'medium', title:'mulberry32 PRNG duplicado verbatim en cert-gallery.js e illus-cube.js', file:'js/cert-gallery.js, js/illus-cube.js', desc:'La función de 6 líneas está copy-paste en ambos archivos. El comentario en cert-gallery.js incluso reconoce: "Same seeded PRNG as illus-cube".', rec:'Crear js/lib/mulberry32.js exportando la función, o añadirla a un shared utils.js.', effort:'low', impact:'low' },
+  { id:'arch-007', sev:'medium', title:'13 globals window.* como canal de comunicación entre módulos', file:'js/script.js, múltiples', desc:'Módulos se comunican a través de: BrowserDetect, glitchSystem, playArtEntranceAnimation, _photoNavExit, _scrollPathActive, sectionEnter, certCube, LanguageManager, ParticleSystem, Orb3D, BarcodeAnimation, ScrollOut, Splitting. Cualquier typo produce undefined behavior sin contrato.', rec:'App registry pattern: const App = window.App = {}; App.glitchSystem = glitchSystem. Largo plazo: migrar a ES modules.', effort:'medium', impact:'medium' },
+  { id:'arch-008', sev:'medium', title:'photo-polaroids.js: archivo tombstone de una línea', file:'js/photo-polaroids.js', desc:'Contiene solo un comentario: "removed 2026-05-11". No tiene script tag en HTML pero ocupa posición confusa en el directorio.', rec:'Eliminar el archivo — el git history mantiene el contexto de la eliminación.', effort:'low', impact:'low' },
+  { id:'arch-009', sev:'medium', title:'createElementObserver y createClassObserver: lógica IntersectionObserver duplicada', file:'js/script.js', desc:'Líneas 665-703: dos funciones con lógica idéntica de IntersectionObserver. La única diferencia es getElementById vs querySelectorAll. ~25 líneas duplicadas.', rec:'Merge: function createVisibilityObserver(targets, options) donde targets es array de elementos.', effort:'low', impact:'medium' },
+  { id:'arch-010', sev:'medium', title:'TODO comments y URLs placeholder en producción', file:'index.html', desc:'4 TODO comments visibles: reemplazar placeholder URL, crear og-image.jpg, y 2 TODOs de secciones pendientes. og-image.jpg probablemente no existe en el servidor live.', rec:'Crear og-image.jpg 1200×630 hoy. Mover TODOs a un issue tracker.', effort:'low', impact:'medium' },
+  { id:'arch-011', sev:'medium', title:'AnimationCoordinator.initAnimationOptimizer() — clase estática de 900 líneas sin instancia', file:'js/script.js', desc:'Es una clase solo de nombre. initAnimationOptimizer es un método estático que captura DOM internamente, maneja 8+ IntersectionObserver, 3 canvas loops, y corre de línea 561 a 1482.', rec:'Reemplazar con plain initAnimations() o split por sección: initAboutAnimations, initPhotoReveal, initArtDirectionEntrance.', effort:'medium', impact:'medium' },
+  { id:'arch-012', sev:'medium', title:'Sin error boundaries en el DOMContentLoaded — un error para toda la inicialización', file:'js/script.js', desc:'El handler en línea 1785 ejecuta toda la init secuencialmente sin try-catch. Un elemento DOM faltante puede detener navegación, analytics, y todos los subsistemas.', rec:'Envolver cada init call: try { new GlitchSystem(); } catch(e) { console.error("[GlitchSystem]", e); }', effort:'low', impact:'medium' },
+  { id:'arch-013', sev:'low', title:'Inline styles con valores hardcoded que están en CSS variables', file:'js/script.js', desc:'cell.style.transition = "clip-path 0.28s ease-out" hardcodea un valor que existe en --transition-base. Múltiples instancias similares.', rec:'Extraer constantes que correspondan a CSS vars. Comentar linking entre valor JS y su contraparte CSS.', effort:'low', impact:'low' },
+  { id:'arch-014', sev:'low', title:'CSS tiene clases para secciones que no existen en HTML', file:'css/styles.css', desc:'header.section-web y header.section-experiments en línea 451 referencian secciones que no existen en el HTML actual.', rec:'Auditar sectionClasses array contra HTML actual y eliminar entries huérfanos.', effort:'low', impact:'low' },
+  { id:'arch-015', sev:'low', title:'window.sectionEnter referenciado pero nunca populado', file:'js/script.js', desc:'NavigationManager.setupClickHandlers() en línea 483 llama window.sectionEnter?.[sectionId]() pero ningún archivo registra callbacks ahí. Infrastructure muerta.', rec:'Implementar el registro o eliminar la referencia.', effort:'low', impact:'low' },
+];
+
+const uxIssues = [
+  { id:'ux-001', sev:'critical', title:'prefers-reduced-motion ignorado en styles.css — 58 animaciones activas para usuarios con fotosensibilidad', file:'css/styles.css', desc:'styles.css tiene gridMove, colorShift, scanlineMove, vhsStatic, glitch-switch, orb-rotate, y decenas más sin @media (prefers-reduced-motion: reduce). Solo contact.css tiene soporte. Usuarios con trastornos vestibulares o epilepsia ven la animación completa.', rec:'Agregar al final de styles.css: @media (prefers-reduced-motion: reduce) { .scanlines, .vhs-static, .orb-wrap, #intro::before, #about::before, .glitch-text [data-char]::after { animation: none !important; } }', effort:'medium', impact:'high' },
+  { id:'ux-002', sev:'high', title:'Sin navegación móvil — main-nav overflow en pantallas pequeñas', file:'css/styles.css', desc:'.main-nav con 6 .nav-btn en flex row con gap:40px. Sin hamburger, sin display:none en mobile, sin off-canvas. En viewports <768px el nav overflow o colapsa.', rec:'Agregar hamburger button con aria-expanded, ocultar .main-nav en max-width:768px, implementar off-canvas con focus trap en NavigationManager.', effort:'high', impact:'high' },
+  { id:'ux-003', sev:'high', title:'Language toggle buttons sin aria-pressed — estado activo no comunicado a screen readers', file:'index.html', desc:'Los 2 botones de idioma controlan un estado fundamental pero sin aria-pressed. El sound toggle usa aria-pressed correctamente — el mismo patrón debe aplicarse aquí.', rec:'Agregar aria-pressed="true/false" a .lang-btn. En i18n.js: toggle estos valores en el cambio de idioma.', effort:'low', impact:'medium' },
+  { id:'ux-004', sev:'critical', title:'mailto:placeholder@mail.com en el CTA principal — contactos perdidos', file:'index.html', desc:'El anchor #seal-cta "Let\'s Work Together" en línea ~798 tiene href="mailto:placeholder@mail.com". Los contactos van al vacío en vez de al dueño del portfolio.', rec:'Cambiar href="mailto:placeholder@mail.com" → href="mailto:sergionook@gmail.com"', effort:'low', impact:'high' },
+  { id:'ux-005', sev:'medium', title:'Falta hreflang link elements para contenido bilingüe', file:'index.html', desc:'El site tiene og:locale:alternate="es_CO" y JSON-LD knowsLanguage pero sin <link rel="alternate" hreflang>. Google Search no puede entender el targeting internacional sin estos.', rec:'Agregar en <head>: <link rel="alternate" hreflang="en" href="https://sergioayala.design/"> y hreflang="es" y hreflang="x-default".', effort:'low', impact:'medium' },
+  { id:'ux-006', sev:'medium', title:'Disciplinas art direction usan role="button" en span sin activación Enter/Space confirmada', file:'index.html', desc:'<span role="button" tabindex="0"> requiere activación con Enter y Space. Si solo hay click handlers, usuarios de teclado pueden enfocar pero no activar.', rec:'Reemplazar <span role="button"> con <button> nativo dentro de cada <li>. Eliminar role y tabindex.', effort:'low', impact:'medium' },
+  { id:'ux-007', sev:'medium', title:'skills.svg con alt="" sin aria-hidden — intención decorativa no explícita', file:'index.html', desc:'img.skills-svg con alt="" pero sin role="presentation" o aria-hidden. intro-art-direction.svg también con alt="" sin aria-hidden.', rec:'Para SVGs decorativos: agregar aria-hidden="true" para hacer explícita la intención. Verificar que el SVG no contenga texto único no replicado en el DOM.', effort:'low', impact:'medium' },
+  { id:'ux-008', sev:'medium', title:'Heading hierarchy: h3 en blockquote sin contexto, h2 en labels de categoría', file:'index.html', desc:'Paul Rand quote usa <h3> para "Design" dentro de <blockquote> sin h3-level previo. En ilustración, <h2 class="illus-h2">DIGITAL</h2> para label de categoría mientras títulos reales de piezas están en <p>.', rec:'Remover <h3> del blockquote, usar <p> o <cite>. Promover títulos de piezas a h2/h3, degradar labels de categoría a span.', effort:'medium', impact:'medium' },
+  { id:'ux-009', sev:'medium', title:'Focus indicators ausentes en la mayoría de elementos interactivos', file:'css/styles.css', desc:'Solo .intro-otw-link y .intro-work-cta tienen :focus-visible definido. Los 167+ elementos con aria-label como cert-prev, cert-next, nav-btn, illus-cta no tienen outline.', rec:'Agregar global baseline: *:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: 2px; }', effort:'low', impact:'high' },
+  { id:'ux-010', sev:'medium', title:'Touch targets pequeños en polaroid navigation y photo category buttons', file:'index.html', desc:'.pgallery-info-left y .pgallery-info-right probablemente < 44px. WCAG 2.5.5 requiere 44×44 CSS px mínimo.', rec:'Agregar min-width:44px; min-height:44px; display:inline-flex a los navigation spans. Aumentar padding de .photo-category-btn en mobile.', effort:'low', impact:'medium' },
+  { id:'ux-011', sev:'medium', title:'Blog post links con href="#" — links misleading no funcionales', file:'index.html', desc:'Múltiples <a href="#">Read Full Transmission</a> que navegan al top de página. Screen readers y usuarios de teclado no obtienen destino útil.', rec:'Usar aria-disabled="true" + role="link" en placeholders, o reemplazar con <button> stylizado como link, o agregar aria-label="Coming soon".', effort:'low', impact:'medium' },
+  { id:'ux-012', sev:'low', title:'Solo mailto como mecanismo de contacto — excluye usuarios sin mail client', file:'index.html', desc:'Mailto requiere cliente de correo local configurado — muchos dispositivos mobile y corporativos no lo tienen.', rec:'Considerar form de contacto mínimo con Formspree/Netlify Forms. Asegurar labels asociados, required attributes, y estados de error visibles.', effort:'high', impact:'medium' },
+  { id:'ux-013', sev:'medium', title:'Polaroid photo img.alt siempre vacío — contenido dinámico sin descripción', file:'index.html', desc:'<img id="polaroidPhoto" alt=""> se puebla por JS pero alt nunca se actualiza. Screen readers oyen "imagen" sin descripción.', rec:'En JS donde se setea polaroidPhoto.src, también setear polaroidPhoto.alt al título+ubicación de la foto. El data ya existe en data-i18n attributes.', effort:'low', impact:'medium' },
+  { id:'ux-014', sev:'medium', title:'Art direction modal sin focus trap ni return focus management', file:'index.html', desc:'role="dialog" + aria-modal="true" requieren JS para focus trap. Sin él, teclado puede salir del modal al background. ARIA solo no implementa el trapping.', rec:'Al abrir modal: mover focus al primer elemento focusable (.ad-pm-close). Agregar Tab/Shift+Tab cycling dentro del modal. Al cerrar: return focus al trigger. Agregar Escape key listener.', effort:'medium', impact:'high' },
+];
+
+const artIssues = [
+  { id:'art-001', sev:'medium', title:'Valores hex hardcoded en cert-gallery.css — 18+ instancias escapan del sistema de tokens', file:'css/cert-gallery.css', desc:'cert-gallery.css usa #ee9b00 como string raw 18+ veces en vez de var(--grid-color-6). También como rgba(238, 155, 0, ...) en variantes alpha. Si el token cambia, cert-gallery divergirá silenciosamente.', rec:'Agregar --cert-amber: var(--grid-color-6) como token local y reemplazar las 18+ instancias. Alias rgba: --cert-amber-45: rgba(238, 155, 0, 0.45).', effort:'low', impact:'medium' },
+  { id:'art-002', sev:'medium', title:'4 fuentes cargadas — Workbench y Playwrite DK Loopet sin rol visual', file:'index.html', desc:'Workbench solo en .date a 12px rotado (ilegible). Playwrite DK Loopet: cero uso encontrado en ningún CSS. 2 display fonts para uso marginal/nulo.', rec:'Eliminar Playwrite DK Loopet. Reemplazar Workbench en .date con Share Tech Mono (ya cargado) a 10px con letter-spacing: 0.15em.', effort:'low', impact:'medium' },
+  { id:'art-003', sev:'medium', title:'Tensión no resuelta entre cyan (#00ffff) y amber (#EE9B00) como acentos principales', file:'css/styles.css', desc:'La paleta cuenta una historia warm amber→red, pero el chrome interactivo es cool cyan. La tensión es intencional (VHS/glitch) pero nunca se resuelve en jerarquía deliberada. Nav underline usa orange (#ff3c00), art-direction list usa amber (#EE9B00).', rec:'Definir explícitamente: cyan = estado sistema/máquina (glitch, HUD), amber = estado humano/contenido (hovers, active). Auditar todos los interactive states y asignar un color por tipo de interacción.', effort:'medium', impact:'high' },
+  { id:'art-004', sev:'high', title:'Sin breakpoints móviles en la mayoría de CSS — estrategia responsive ausente', file:'css/styles.css', desc:'De 7 CSS files revisados, solo cert-gallery (768px), art-direction-list (1219px hide), illus-cube (900px), y contact (640px) tienen reglas responsive. styles.css esencialmente sin adaptación mobile. art-direction-list oculta el panel completo bajo 1220px sin alternativa.', rec:'Crear sistema de 3 breakpoints (768/1024/1440px) y definir layout pivots para #about, #intro, y nav. Crear mobile drawer/accordion para art-direction list bajo 900px.', effort:'high', impact:'high' },
+  { id:'art-005', sev:'high', title:'#main-title con font-size:3.5rem fijo — sin fluid scaling', file:'css/styles.css', desc:'El hero title no usa clamp(). El subtitle usa clamp(0.85rem, 1.6vw, 1.2rem) correctamente. illus-cube usa clamp(3rem, 8vw, 6.5rem). El main title es la inconsistencia principal.', rec:'Reemplazar font-size:3.5rem con font-size: clamp(2rem, 6vw, 4.5rem).', effort:'low', impact:'high' },
+  { id:'art-006', sev:'low', title:'Easing tokens solo alias keywords CSS — los cubic-bezier distintivos no están tokenizados', file:'css/styles.css', desc:'--easing-ease, --easing-ease-out, etc. son aliases de keywords nativas. Los easings reales de la personalidad de movimiento (cubic-bezier(0.34,1.56,0.64,1) spring, (0.22,1,0.36,1) expo) no están en el token system.', rec:'Agregar: --ease-spring: cubic-bezier(0.34,1.56,0.64,1); --ease-expo-out: cubic-bezier(0.22,1,0.36,1); --ease-material: cubic-bezier(0.4,0,0.2,1). Reemplazar 15+ inline cubic-bezier() con tokens.', effort:'medium', impact:'medium' },
+  { id:'art-007', sev:'low', title:'Tokens de duración de transición semánticamente inconsistentes', file:'css/styles.css', desc:'--transition-fast:0.2s se usa como duration de animación VHS static. --transition-slow:0.5s para hover de nav. Pero animaciones reales lentas (DeLorean:1.6s, preloader:2.5s) usan valores raw. Los tokens "slow" no son realmente lentos.', rec:'Extender escala: --duration-quick, --duration-base, --duration-slow, --duration-scene, --duration-ambient. Prefijo "transition" solo para transition property.', effort:'low', impact:'low' },
+  { id:'art-008', sev:'medium', title:'cert-gallery.css tiene layout muerto: .cert-gallery position:fixed z-index:9999', file:'css/cert-gallery.css', desc:'Implementación de gallery con position:fixed que coexiste con la implementación del .cert-cube-wrapper. Parece código huérfano o supersedido que agrega 200+ líneas de CSS sin usar.', rec:'Auditar cuál implementación se usa en HTML actual. Eliminar la que no se usa. El z-index:9999 en fixed es riesgo global de stacking context.', effort:'low', impact:'medium' },
+  { id:'art-009', sev:'medium', title:'art-direction-list.css usa position:fixed dentro de sección — bug de layout potencial', file:'css/art-direction-list.css', desc:'#art-direction .ad-list con position:fixed pero como child de #art-direction. Math usa left:calc(min(62.5vh,62.5vw)+780px) — mezcla viewport-relative con 780px fijo. Se rompe bajo 1440px y si el parent tiene transform.', rec:'Cambiar a position:absolute con coordenadas relativas a la sección. Si fixed es necesario para layering, documentar la razón y warning sobre ancestors con transform/filter.', effort:'medium', impact:'medium' },
+  { id:'art-010', sev:'low', title:'Modal de cert: box-shadow #001219 (oscuro sobre oscuro) — efecto invisible', file:'css/cert-gallery.css', desc:'cert-modal-content img tiene box-shadow con #001219 (el color de fondo más oscuro) sobre backdrop rgba(0,0,0,0.9). El glow es efectivamente invisible.', rec:'Cambiar a: box-shadow: 0 0 20px rgba(238,155,0,0.15), 0 0 40px rgba(238,155,0,0.08); border: 1px solid rgba(238,155,0,0.3).', effort:'low', impact:'low' },
+  { id:'art-011', sev:'low', title:'Escala de spacing no-lineal con gaps en el rango medio', file:'css/styles.css', desc:'10/15/20/30/40/60/100px. Ratios inconsistentes: xs→sm=1.5×, sm→md=1.33×, md→lg=1.5×. Componentes usan 18px, 22px, 48px fuera del token scale.', rec:'Adoptar grid de 8 puntos: 8, 16, 24, 32, 48, 64, 96, 128px. Remap tokens existentes al valor más cercano.', effort:'high', impact:'medium' },
+  { id:'art-012', sev:'low', title:'Courier New como fuente monospace directa en lugar de Share Tech Mono', file:'css/art-direction-list.css', desc:'art-direction-list.css, preloader.css y cert-gallery.css usan Courier New directamente en vez de Share Tech Mono. Métricas diferentes pueden romper layouts con min-width basados en em.', rec:"Reemplazar todas las font stacks 'Courier New', Courier, monospace con 'Share Tech Mono', 'Courier New', monospace.", effort:'low', impact:'low' },
+  { id:'art-013', sev:'medium', title:'Yellow rgba(255,223,0,0.92) en hover de art-direction row — fuera de la paleta', file:'css/art-direction-list.css', desc:'Línea 319: hover sweep usa amarillo puro que no existe en la paleta de 10 colores ni como CSS variable. La paleta va de amber #EE9B00 a teal, nunca llega a amarillo puro.', rec:'Reemplazar rgba(255,223,0,0.92) con rgba(238,155,0,0.92) — amber de la paleta establecida, mismo efecto de high-contrast fill.', effort:'low', impact:'medium' },
+];
+
+const perfIssues = [
+  { id:'perf-001', sev:'critical', title:'113 MB de JPGs sin comprimir en galería de fotos', file:'images/photo/', desc:'62 archivos JPG, 2-3.2 MB cada uno. Incluso con lazy loading, las primeras fotos visibles disparan descargas masivas. LCP y mobile UX destruidos.', rec:'Convertir a WebP al 80% quality, max 1400px con sharp/squoosh. Reducción esperada: 113 MB → ~8 MB.', effort:'medium', impact:'high' },
+  { id:'perf-002', sev:'critical', title:'Cero scripts usan defer o async — 23 script tags bloquean rendering', file:'index.html', desc:'Todos los 23 <script> al final de index.html son síncronos. El browser debe parsear y ejecutar cada uno en secuencia antes de DOMContentLoaded.', rec:'Agregar defer a todos los scripts excepto browser-detect.js. GSAP con defer es seguro pues se consume después del DOM.', effort:'low', impact:'high' },
+  { id:'perf-003', sev:'critical', title:'GSAP cargado después de los scripts que lo usan — orden roto', file:'index.html', desc:'gsap.min.js en línea 2447 pero photo-vfx.js (2446), cert-gallery.js (2445) y script.js (2443) se cargan antes. Bug de dependency order.', rec:'Orden correcto: browser-detect → splitting → scroll-out → gsap → ScrambleTextPlugin → script.js → resto.', effort:'low', impact:'high' },
+  { id:'perf-004', sev:'high', title:'10 CSS render-blocking en el <head>', file:'index.html', desc:'10 <link rel="stylesheet"> en el head, ~260 KB total sin minificar. El browser no puede pintar hasta que todos estén descargados y aplicados.', rec:'Bundle todo en 1 CSS minificado con postcss+cssnano. Para secciones debajo del fold, usar link rel="preload" as="style" con onload swap.', effort:'medium', impact:'high' },
+  { id:'perf-005', sev:'high', title:'Sin cache headers — re-descarga completa en cada visita', file:'_headers, .htaccess', desc:'_headers y .htaccess solo tienen security headers. Sin Cache-Control, Expires ni ETag. JS, CSS, images y fonts se descargan fresh cada vez.', rec:'Agregar en _headers:\n/js/*\n  Cache-Control: public, max-age=31536000, immutable\n/css/*\n  Cache-Control: public, max-age=31536000, immutable\n/images/*\n  Cache-Control: public, max-age=31536000, immutable', effort:'low', impact:'high' },
+  { id:'perf-006', sev:'high', title:'201 KB de HTML sin minificar con SVG inline y secciones completas below-fold', file:'index.html', desc:'index.html es 205,926 bytes incluyendo secciones completas no visibles al cargar, SVG blocks inline, y HTML de blog/contact que podría lazy-loading.', rec:'Minificar con html-minifier-terser. Considerar inyectar HTML de secciones debajo del fold via JS después de que la página sea interactiva.', effort:'medium', impact:'medium' },
+  { id:'perf-007', sev:'high', title:'18 JS custom sin minificar ni bundlear — 338 KB de código fuente', file:'js/*.js', desc:'Todos los 18 JS custom son código fuente raw (338 KB). Cada uno es un HTTP request adicional. script.js solo (80 KB) podría reducirse ~40% con minificación.', rec:'Build step con esbuild o Vite para bundle+minify a 1 output file. Tree-shaking eliminaría código dead de secciones no construidas.', effort:'medium', impact:'high' },
+  { id:'perf-008', sev:'low', title:'chroma.min.js (41 KB) presente pero no cargado — dead file', file:'js/lib/chroma.min.js', desc:'Existe en el repo pero sin <script> tag en HTML. No afecta runtime pero agrega confusión.', rec:'Eliminar del repositorio.', effort:'low', impact:'low' },
+  { id:'perf-009', sev:'high', title:'4 background images JPEG 360-444 KB sin WebP fallback', file:'images/', desc:'intro robot.jpeg, photo background.jpeg, about.jpg, robot art direction background.jpeg: 360-444 KB como JPEG. Solo 1 WebP en todo el directorio (polaroid camera decoration). Estos son candidatos LCP.', rec:'Convertir a WebP/AVIF. Usar <picture> con <source type="image/avif">, <source type="image/webp">, <img> JPEG fallback. Agregar fetchpriority="high" a la imagen LCP.', effort:'medium', impact:'high' },
+  { id:'perf-010', sev:'high', title:'Sin width/height en ningún <img> — CLS risk en todo el site', file:'index.html', desc:'Ningún img tiene width y height HTML attributes. El browser no puede reservar espacio antes de que la imagen cargue — CLS al aparecer imágenes.', rec:'Agregar width y height a cada <img> con sus dimensiones intrínsecas. O setear aspect-ratio en CSS para los contenedores.', effort:'low', impact:'high' },
+  { id:'perf-011', sev:'medium', title:'15 scroll listeners independientes — reads de layout redundantes por frame', file:'js/script.js y otros', desc:'15 window scroll event listeners separados ejecutando independientemente en cada tick. Script.js solo tiene 26 getBoundingClientRect() calls. Layout reads duplicados por scroll tick.', rec:'ScrollCoordinator que lee métricas de layout una vez y notifica a suscriptores registrados. Eliminar reads duplicados.', effort:'medium', impact:'medium' },
+  { id:'perf-012', sev:'medium', title:'2 scroll listeners sin { passive: true }', file:'js/script.js', desc:'Líneas 510 y 612: scroll listeners sin el passive flag. El browser asume que podrían llamar preventDefault(), previniendo optimizaciones del compositor.', rec:'Agregar { passive: true } a ambos listeners.', effort:'low', impact:'medium' },
+  { id:'perf-013', sev:'medium', title:'4 familias de fuentes Google Fonts sin subsetting manual', file:'index.html', desc:'Funnel Display (2 weights), Share Tech Mono, Workbench y Playwrite DK Loopet (variable). 4 familias es alto para un portfolio. Sin unicode-range subsetting más allá de lo automático.', rec:'Auditar uso real de cada fuente. Self-host solo los glyphs necesarios con glyphhanger/fonttools si son para texto fijo. Reducir a 2-3 familias max.', effort:'medium', impact:'medium' },
+  { id:'perf-014', sev:'high', title:'Sin preload para imagen LCP ni assets críticos above-fold', file:'index.html', desc:'Solo 2 resource hints (preconnect a Google Fonts). Sin <link rel="preload"> para imagen LCP (intro robot JPEG) ni para GSAP (72 KB). El browser los descubre tarde.', rec:'Agregar: <link rel="preload" as="image" href="images/intro robot.jpeg" fetchpriority="high">. Preload de GSAP si es critical path.', effort:'low', impact:'high' },
+];
+
+function renderIssues(issues, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = issues.map(issue => `
+    <div class="issue-card">
+      <div class="issue-header" onclick="toggleIssue(this)">
+        <span class="issue-id">${issue.id}</span>
+        <span class="severity-badge sev-${issue.sev}">${{critical:'CRÍTICO',high:'ALTO',medium:'MEDIO',low:'BAJO'}[issue.sev]}</span>
+        <span class="issue-title">${issue.title}</span>
+        <span class="issue-chevron">▶</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-field">
+          <div class="issue-label">Archivo</div>
+          <div class="issue-text"><code>${issue.file}</code></div>
+        </div>
+        <div class="issue-field">
+          <div class="issue-label">Problema</div>
+          <div class="issue-text">${issue.desc}</div>
+        </div>
+        <div class="issue-field">
+          <div class="issue-label">Recomendación</div>
+          <div class="issue-rec">${issue.rec}</div>
+        </div>
+        <div class="tags">
+          <span class="tag">esfuerzo: ${issue.effort}</span>
+          <span class="tag">impacto: ${issue.impact}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function toggleIssue(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// Render all issue lists
+renderIssues(archIssues, 'arch-issues');
+renderIssues(uxIssues, 'ux-issues');
+renderIssues(artIssues, 'art-issues');
+renderIssues(perfIssues, 'perf-issues');
+</script>
+</body>
+</html>
