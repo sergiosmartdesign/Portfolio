@@ -307,9 +307,15 @@ class NavigationManager {
    * Initialize navigation system
    */
   init() {
+    this.hamburger  = document.getElementById('hamburger-btn');
+    this.drawer     = document.getElementById('main-nav');
+    this.backdrop   = document.getElementById('nav-backdrop');
+    this._boundKeydown = this._handleKeydown.bind(this);
+
     this.buildSectionMap();
     this.setupClickHandlers();
     this.setupScrollHandler();
+    this.setupMobileNav();
   }
 
   /**
@@ -528,6 +534,70 @@ class NavigationManager {
     });
     // Seed the correct state on page load (e.g. deep-linked URL)
     setTimeout(() => this.detectActiveSection(), 100);
+  }
+
+  setupMobileNav() {
+    if (!this.hamburger || !this.drawer || !this.backdrop) return;
+
+    this.hamburger.addEventListener('click', () => this.toggleDrawer());
+    this.backdrop.addEventListener('click',  () => this.closeDrawer());
+
+    // Close on any nav link click
+    this.drawer.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => this.closeDrawer());
+    });
+  }
+
+  toggleDrawer() {
+    const isOpen = this.drawer.classList.contains('is-open');
+    isOpen ? this.closeDrawer() : this.openDrawer();
+  }
+
+  openDrawer() {
+    this.drawer.classList.add('is-open');
+    this.backdrop.classList.add('is-visible');
+    document.body.classList.add('nav-open');
+    this.hamburger.setAttribute('aria-expanded', 'true');
+    this.hamburger.setAttribute('aria-label', 'Close navigation menu');
+    document.addEventListener('keydown', this._boundKeydown);
+    // Move focus into drawer
+    const firstFocusable = this._getFocusable()[0];
+    if (firstFocusable) firstFocusable.focus();
+  }
+
+  closeDrawer() {
+    this.drawer.classList.remove('is-open');
+    this.backdrop.classList.remove('is-visible');
+    document.body.classList.remove('nav-open');
+    this.hamburger.setAttribute('aria-expanded', 'false');
+    this.hamburger.setAttribute('aria-label', 'Open navigation menu');
+    document.removeEventListener('keydown', this._boundKeydown);
+    this.hamburger.focus();
+  }
+
+  _getFocusable() {
+    return Array.from(
+      this.drawer.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+    ).filter(el => !el.closest('[hidden]'));
+  }
+
+  _handleKeydown(e) {
+    if (e.key === 'Escape') {
+      this.closeDrawer();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+
+    const focusable = this._getFocusable();
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+    }
   }
 }
 

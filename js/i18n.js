@@ -410,7 +410,9 @@
 
       // Sync button active states
       document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
+        const isActive = btn.dataset.lang === lang;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
       });
 
       // Notify other modules (e.g. photo-portfolio.js) so they can refresh caches

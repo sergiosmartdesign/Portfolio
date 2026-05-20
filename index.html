@@ -20,6 +20,9 @@
     <meta name="author" content="Sergio Ayala">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://sergioayala.design/">
+    <link rel="alternate" hreflang="en"       href="https://sergioayala.design/">
+    <link rel="alternate" hreflang="es"       href="https://sergioayala.design/">
+    <link rel="alternate" hreflang="x-default" href="https://sergioayala.design/">
 
     <!-- ═══ OPEN GRAPH (social sharing previews) ═════════════════════════════ -->
     <meta property="og:type" content="website">
@@ -404,8 +407,14 @@
     <header>
         <nav aria-label="Main navigation">
             <a href="#intro" class="logo glitch-text" data-i18n="name" data-splitting aria-label="Sergio Ayala">· S e r g i o  A y a l a ·</a>
-                    
-            <div class="main-nav">
+
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="main-nav" aria-haspopup="true">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <div class="main-nav" id="main-nav" role="dialog" aria-label="Main navigation menu" aria-modal="true">
                 <a href="#about" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.about">[ · a b o u t · ]</a>
                 <a href="#art-direction" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.art-direction">[ · a r t · d i r e c t i o n · ]</a>
                 <a href="#photo" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.photography">[ · p h o t o g r a p h y · ]</a>
@@ -414,9 +423,11 @@
                 <a href="#contact" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.contact">[ · c o n t a c t · ]</a>
             </div>
 
+            <div class="nav-backdrop" id="nav-backdrop" aria-hidden="true"></div>
+
             <div class="language-toggle">
-                <button class="nav-btn glitch-text lang-btn active" data-splitting data-lang="en">[EN]</button>
-                <button class="nav-btn glitch-text lang-btn" data-splitting data-lang="es">[ES]</button>
+                <button class="nav-btn glitch-text lang-btn active" data-splitting data-lang="en" aria-pressed="true">[EN]</button>
+                <button class="nav-btn glitch-text lang-btn" data-splitting data-lang="es" aria-pressed="false">[ES]</button>
                 <button id="sound-toggle" class="nav-btn sound-btn active" aria-label="Toggle sound" aria-pressed="true">
                     <svg class="sound-icon" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                         <path class="speaker-body" d="M2 8 h4 l5 -3 v12 l-5 -3 H2 Z"/>
@@ -848,7 +859,7 @@
                 <img class="decoration-bar1" src="images/bar1.svg" alt="" role="presentation">
                 <img class="decoration-bar2" src="images/bar2.svg" alt="" role="presentation">
                 <div class="decoration-skills">
-                    <img class="skills-svg" src="images/skills.svg" alt="">
+                    <img class="skills-svg" src="images/skills.svg" alt="" role="presentation" aria-hidden="true">
                     <ul class="skills-list">
                         <li>Art Direction<span class="skills-sub">Prompt Engineering · Brand Campaigns · Visual Strategy · Creative Concepting · Editorial Design</span></li>
                         <li>Photography<span class="skills-sub">Commercial · Portrait · Street · Studio Lighting · Photo Retouching</span></li>
@@ -864,7 +875,7 @@
 
             <div class="paul-rands-quote">
                 <blockquote>
-                    <h3 class="glitch-text" data-splitting aria-label='"Design'><span>· " D e s i g n &nbsp;</span></h3>
+                    <p class="glitch-text" data-splitting aria-label='"Design'><span>· " D e s i g n &nbsp;</span></p>
                     <ul>
                         <li class="glitch-text" data-splitting>can be art ·</li>
                         <li class="glitch-text" data-splitting>can be aesthetics ·</li>
@@ -993,17 +1004,17 @@
 
             <!-- HOW TO EXPLORE card — bottom-right zone, next to N, below project list -->
             <div class="ad-explore-card" aria-hidden="true">
-                <img src="images/intro-art-direction.svg" alt="">
+                <img src="images/intro-art-direction.svg" alt="" role="presentation" aria-hidden="true">
             </div>
 
             <!-- Discipline list — left rail, z:10, above all section layers -->
             <nav class="ad-list" aria-label="Art direction disciplines">
                 <ol class="ad-list-items">
-                    <li data-discipline="branding"><span class="ad-text-link" role="button" tabindex="0" data-content="· B r a n d i n g ·">· B r a n d i n g ·</span></li>
-                    <li data-discipline="web"><span class="ad-text-link" role="button" tabindex="0" data-content="· W e b ·">· W e b ·</span></li>
-                    <li data-discipline="editorial"><span class="ad-text-link" role="button" tabindex="0" data-content="· E d i t o r i a l ·">· E d i t o r i a l ·</span></li>
-                    <li data-discipline="identity"><span class="ad-text-link" role="button" tabindex="0" data-content="· I d e n t i t y ·">· I d e n t i t y ·</span></li>
-                    <li data-discipline="motion"><span class="ad-text-link" role="button" tabindex="0" data-content="· M o t i o n ·">· M o t i o n ·</span></li>
+                    <li data-discipline="branding"><button class="ad-text-link" data-content="· B r a n d i n g ·">· B r a n d i n g ·</button></li>
+                    <li data-discipline="web"><button class="ad-text-link" data-content="· W e b ·">· W e b ·</button></li>
+                    <li data-discipline="editorial"><button class="ad-text-link" data-content="· E d i t o r i a l ·">· E d i t o r i a l ·</button></li>
+                    <li data-discipline="identity"><button class="ad-text-link" data-content="· I d e n t i t y ·">· I d e n t i t y ·</button></li>
+                    <li data-discipline="motion"><button class="ad-text-link" data-content="· M o t i o n ·">· M o t i o n ·</button></li>
                 </ol>
             </nav>
 
@@ -1861,8 +1872,8 @@
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
                             <div class="illus-tag glitch-text" data-splitting>2025</div>
-                            <p class="illus-piece-title">The Fat Dragon — Themberchaud Concept Art</p>
-                            <h2 class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</h2>
+                            <h3 class="illus-piece-title">The Fat Dragon — Themberchaud Concept Art</h3>
+                            <p class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</p>
                             <p class="illus-body glitch-text" data-splitting>Themberchaud, Wyrmsmith of Gracklstugh — lying furious on his hoard. Concept art inspired by Alexander Ostrowski's D&amp;D character design. Procreate. Infernal palette: deep indigo, burnt amber, crimson.</p>
                             <div class="illus-meta-row">
                                 <span class="illus-meta-item">Procreate</span>
@@ -1899,8 +1910,8 @@
                         <div class="illus-card">
                             <div class="illus-h-line"></div>
                             <div class="illus-tag glitch-text" data-splitting>2024</div>
-                            <p class="illus-piece-title">Andean Fairy — What If Fairies Were Born in the Andes?</p>
-                            <h2 class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</h2>
+                            <h3 class="illus-piece-title">Andean Fairy — What If Fairies Were Born in the Andes?</h3>
+                            <p class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</p>
                             <p class="illus-body glitch-text" data-splitting>South American owl butterfly wings. Aguayo textiles. A golden tumi in hand. What if the mythical creatures of medieval European fantasy had been born in the Andes instead? Procreate. Warm amber palette.</p>
                             <div class="illus-meta-row">
                                 <span class="illus-meta-item">Procreate</span>
@@ -1927,8 +1938,8 @@
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
                             <div class="illus-tag glitch-text" data-splitting>Sep — 2024</div>
-                            <p class="illus-piece-title">Flawless Victory — Meninas de Canido 2024</p>
-                            <h2 class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</h2>
+                            <h3 class="illus-piece-title">Flawless Victory — Meninas de Canido 2024</h3>
+                            <p class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</p>
                             <p class="illus-body glitch-text" data-splitting>Official mural for the Meninas de Canido festival in Ferrol, Galicia. Velázquez's Las Meninas as a tarot major arcana — a baroque wolf (canid / Canido) against a hypnotic cosmic spiral, flanked by golden Galician architecture. Procreate.</p>
                             <div class="illus-meta-row">
                                 <span class="illus-meta-item">Procreate</span>
@@ -1965,8 +1976,8 @@
                         <div class="illus-card">
                             <div class="illus-h-line"></div>
                             <div class="illus-tag glitch-text" data-splitting>Mar — 2024</div>
-                            <p class="illus-piece-title">Rocker Ghost Geisha — When a Japanese Yūrei Picks Up a Les Paul</p>
-                            <h2 class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</h2>
+                            <h3 class="illus-piece-title">Rocker Ghost Geisha — When a Japanese Yūrei Picks Up a Les Paul</h3>
+                            <p class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</p>
                             <p class="illus-body glitch-text" data-splitting>A Japanese yūrei discovers rock and roll. Purple-gold kimono, Noh-mask face, skull hair ornament, Gibson Les Paul sunburst. Ukiyo-e border meets visual kei energy. Procreate.</p>
                             <div class="illus-meta-row">
                                 <span class="illus-meta-item">Procreate</span>
@@ -2003,8 +2014,8 @@
                         <div class="illus-card illus-card--right">
                             <div class="illus-h-line"></div>
                             <div class="illus-tag glitch-text" data-splitting>2024</div>
-                            <p class="illus-piece-title">Holy Vandal — The Draft That Became Its Own Piece</p>
-                            <h2 class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</h2>
+                            <h3 class="illus-piece-title">Holy Vandal — The Draft That Became Its Own Piece</h3>
+                            <p class="illus-h2 illus-h2--category glitch-text" data-splitting>DIGITAL</p>
                             <p class="illus-body glitch-text" data-splitting>The first concept study for Meninas de Canido that outgrew its brief. A baroque canid knight painting a mask, cherub heralds blowing purple paint-smoke above, Hokusai waves in the corner. Sacred iconography meets street art. Procreate.</p>
                             <div class="illus-meta-row">
                                 <span class="illus-meta-item">Procreate</span>

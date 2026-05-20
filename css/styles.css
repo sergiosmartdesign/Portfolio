@@ -142,6 +142,15 @@
 }
 .skip-link:focus { top: 1rem; }
 
+/* ── Global focus indicator ─────────────────────────────────────────────────
+   Single source of truth for keyboard focus across all interactive elements.
+   Component-specific overrides below this rule intentionally shadow it.      */
+*:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 /* ── Coming-soon placeholder for unbuilt sections ───────────────────────── */
 .coming-soon {
   display: flex;
@@ -1145,6 +1154,70 @@ nav {
   --glitch-count: 8;
 }
 
+/* ─── Hamburger button ─────────────────────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--white);
+  z-index: calc(var(--z-header) + 2);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:focus-visible {
+  outline: 1px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity   0.2s ease,
+              width     0.3s ease;
+}
+
+/* X morph when open */
+.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* ─── Nav backdrop ─────────────────────────────────────────────────────────── */
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 10, 15, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: calc(var(--z-header) - 1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-backdrop.is-visible {
+  opacity: 1;
+}
+
 /* ── Target glow applied by JS (.info-glow) — matches logo hover cyan ── */
 .nav-btn.info-glow,
 .lang-btn.info-glow,
@@ -2003,7 +2076,7 @@ nav {
   margin: 0;
 }
 
-.paul-rands-quote blockquote h3 {
+.paul-rands-quote blockquote p {
   font-size: inherit;
   margin: 0;
   display: inline-block;
@@ -2013,15 +2086,15 @@ nav {
 }
 
 /* Prevent quote glitch on page load */
-.paul-rands-quote h3[data-splitting] [data-char]:after {
+.paul-rands-quote p[data-splitting] [data-char]:after {
   color: #000 !important;
   font-weight: 900;
   animation-name: none;
 }
 
 /* Enable glitch when about section is visible */
-#about .paul-rands-quote h3[data-splitting].element-visible [data-char]:after,
-#about .paul-rands-quote h3[data-splitting].glitch-active [data-char]:after {
+#about .paul-rands-quote p[data-splitting].element-visible [data-char]:after,
+#about .paul-rands-quote p[data-splitting].glitch-active [data-char]:after {
   animation-name: glitch-switch;
   animation-duration: var(--transition-fast);
   animation-delay: var(--transition-slow);
@@ -4153,7 +4226,11 @@ nav {
   font-weight: 900;
   color: #001219;
   letter-spacing: -0.05em;
-  min-width: 4ch;
+  min-width: max(4ch, 44px);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   user-select: none;
   padding: 0 0.25rem;
@@ -4308,6 +4385,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  min-height: 44px;
   background: none;
   border: none;
   border-top: 1px solid rgba(10, 147, 150, 0.18);
@@ -4672,5 +4750,179 @@ nav {
   .dna-capsule {
     max-width: 150px;
     height: 300px;
+  }
+}
+
+/* ─── Mobile navigation ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hamburger-btn {
+    display: flex;
+    order: 3;
+  }
+
+  .language-toggle {
+    order: 4;
+  }
+
+  /* Off-canvas drawer */
+  .main-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(280px, 85vw);
+    height: 100dvh;
+    background: rgba(0, 12, 18, 0.97);
+    border-left: 1px solid rgba(238, 155, 0, 0.2);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: 80px var(--spacing-xl) var(--spacing-xl);
+    z-index: calc(var(--z-header) + 1);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Scanline texture matching site aesthetic */
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(238, 155, 0, 0.02) 3px,
+        rgba(238, 155, 0, 0.02) 4px
+      );
+  }
+
+  .main-nav.is-open {
+    transform: translateX(0);
+  }
+
+  .main-nav .nav-btn {
+    font-size: 0.85rem;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    width: 100%;
+    text-align: left;
+  }
+
+  .main-nav .nav-btn:last-child {
+    border-bottom: none;
+  }
+
+  .main-nav .nav-btn:focus-visible {
+    outline: 1px solid var(--amber);
+    outline-offset: 3px;
+  }
+
+  .nav-backdrop {
+    display: block;
+    pointer-events: none;
+  }
+
+  .nav-backdrop.is-visible {
+    pointer-events: auto;
+  }
+
+  /* Prevent body scroll when drawer is open */
+  body.nav-open {
+    overflow: hidden;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   Respects the OS "reduce motion" accessibility preference.
+   WCAG 2.3.3 (Level AAA) — Vestibular disorders, photosensitive epilepsy.
+
+   Two-tier strategy
+   ─────────────────
+   Tier 1 · Global collapse
+     All animation/transition durations shrink to 0.001 ms.  One-shot entrance
+     animations jump instantly to their final keyframe (content visible, layout
+     correct) without any spatial movement — content is never hidden.
+
+   Tier 2 · Explicit kill for infinite loops
+     animation-iteration-count: 1 alone isn't enough when paired with
+     animation: <name> on an element that re-applies the rule every frame.
+     animation: none !important is the only reliable gate.  Each selector
+     below also serves as a human-readable audit of every looping effect.
+
+   Note: this block covers all partials loaded in the same document because
+   @media queries are document-scoped.  Files with their own reduced-motion
+   blocks (contact.css) are intentionally left in place — duplication is
+   harmless and easier to audit per-file.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+
+  /* ── Tier 1: global duration collapse ──────────────────────────────────── */
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.001ms !important;
+    animation-iteration-count: 1       !important;
+    animation-delay:           0s      !important;
+    transition-duration:       0.001ms !important;
+    transition-delay:          0s      !important;
+    scroll-behavior:           auto    !important;
+  }
+
+  /* ── Tier 2: explicit animation:none for every infinite loop ────────────
+     Ordered by hazard severity: flash/flicker first, continuous motion next.  */
+
+  /* Intro: scanlines (0.3 s loop) and VHS static (steps, fast) are the
+     highest photosensitivity risk in the codebase — kill first.             */
+  .scanlines,
+  .vhs-static { animation: none !important; }
+
+  /* Intro: animated perspective grid and hue-rotate color layer            */
+  #intro::before,
+  #intro::after { animation: none !important; }
+
+  /* Intro/About: 3-D particle orb (continuous rotation → vestibular risk)  */
+  .orb-wrap,
+  .orb-wrap .orb-particle { animation: none !important; }
+
+  /* Art-direction: letter-grid blink (10–14 s; organic, but infinite)      */
+  .art-cell { animation: none !important; }
+
+  /* Art-direction: RGB glitch layers on hover — 0.35 s ≈ 2.9 Hz,
+     right at the WCAG photosensitivity threshold of 3 Hz                   */
+  .art-cell:hover .glitch-r,
+  .art-cell:hover .glitch-g,
+  .art-cell:hover .glitch-b { animation: none !important; }
+
+  /* About: ID-card SVG shimmer                                              */
+  .info-interface.active .info-interface-svg { animation: none !important; }
+
+  /* Photo: vertical scan lines on instagram and camera columns              */
+  .photo-col-instagram::after,
+  .photo-col-camera::after { animation: none !important; }
+
+  /* Photo: lightbox close-button attention pulse                            */
+  .photo-stream-lightbox.open .photo-stream-lb-close { animation: none !important; }
+
+  /* Photo: Fuji X-T4 camera SVG — all infinite mechanical loops            */
+  .camera-focus-ring-anim,
+  .camera-body-group,
+  .camera-iris,
+  .camera-shutter,
+  .camera-flash,
+  .camera-led,
+  .camera-vf-glow { animation: none !important; }
+
+  /* ── Tier 3: visibility repair ─────────────────────────────────────────
+     Elements that start at opacity: 0 via a non-animated CSS property and
+     only become visible when JS adds a trigger class.  The 0.001 ms jump
+     lands at the final keyframe when the class is present, but if JS runs
+     late the user sees nothing.  Show them unconditionally instead.        */
+
+  /* About: info-panel language lines; JS adds .inf-lang--entering          */
+  .inf-lang .info-line {
+    opacity:   1    !important;
+    transform: none !important;
+  }
+  .inf-lang .info-line--rule {
+    opacity:   0.35 !important;
+    transform: none !important;
   }
 }

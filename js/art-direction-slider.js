@@ -137,20 +137,10 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
 
     init() {
         this.listItems.forEach(li => {
-            const span = li.querySelector('.ad-text-link');
             li.addEventListener('click', () => {
                 this._dismissIntro();
                 this.selectDiscipline(li.dataset.discipline);
             });
-            if (span) {
-                span.addEventListener('keydown', e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        this._dismissIntro();
-                        this.selectDiscipline(li.dataset.discipline);
-                    }
-                });
-            }
         });
 
         // Show intro card; pre-populate branding data silently so first click is instant
@@ -335,6 +325,7 @@ this.listItems.forEach(li =>
         this.modalSpecs = this.modal.querySelector('.ad-pm-specs');
         this.modalTags  = this.modal.querySelector('.ad-pm-tags');
         this.modalClose = this.modal.querySelector('.ad-pm-close');
+        this._triggerEl = null;
 
         this.modalClose.addEventListener('click', () => this._closeModal());
 
@@ -345,14 +336,40 @@ this.listItems.forEach(li =>
         });
 
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && this.modal.classList.contains('is-open')) {
+            if (!this.modal.classList.contains('is-open')) return;
+
+            if (e.key === 'Escape') {
                 this._closeModal();
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                const focusable = Array.from(
+                    this.modal.querySelectorAll(
+                        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                    )
+                ).filter(el => el.offsetParent !== null);
+
+                if (!focusable.length) { e.preventDefault(); return; }
+
+                const first = focusable[0];
+                const last  = focusable[focusable.length - 1];
+
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
             }
         });
     }
 
     _openModal(work) {
         if (!this.modal) return;
+
+        this._triggerEl = document.activeElement;
 
         if (this.modalBg) {
             this.modalBg.style.backgroundImage = work.bg ? `url('${work.bg}')` : 'none';
@@ -375,6 +392,8 @@ this.listItems.forEach(li =>
         this.modal.setAttribute('aria-hidden', 'false');
         this.modal.classList.add('is-open');
         document.body.style.overflow = 'hidden';
+
+        requestAnimationFrame(() => this.modalClose.focus());
     }
 
     _closeModal() {
@@ -382,6 +401,8 @@ this.listItems.forEach(li =>
         this.modal.classList.remove('is-open');
         this.modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        this._triggerEl?.focus();
+        this._triggerEl = null;
     }
 }
 

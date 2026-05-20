@@ -24,7 +24,7 @@ export function initAboutPin(smoothScrollTo) {
   const quoteItems     = Array.from(document.querySelectorAll('.paul-rands-quote li'));
   const ending         = document.querySelector('.paul-rands-quote .ending');
   const quoteContainer = document.querySelector('.paul-rands-quote');
-  const quoteH3        = document.querySelector('.paul-rands-quote h3');
+  const quoteH3        = document.querySelector('.paul-rands-quote blockquote p');
   const numItems       = quoteItems.length; // 3
 
   const EXTRA_SCROLL     = 1200;

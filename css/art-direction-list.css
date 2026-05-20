@@ -30,6 +30,11 @@ body.ad-section-live #art-direction .ad-list.ad-list-ready {
 /* ── Base text ── */
 #art-direction .ad-text-link {
   --glitch-final-color: #E9D8A6;
+  /* reset native <button> chrome */
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
   position: relative;
   display: inline-block;
   font-family: 'Funnel Display', sans-serif;
