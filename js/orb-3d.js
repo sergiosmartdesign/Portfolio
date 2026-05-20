@@ -6,7 +6,7 @@
 class Orb3D {
   constructor() {
     // Detect Safari for performance optimizations
-    const isSafari = window.BrowserDetect ? window.BrowserDetect.isSafariBased() : false;
+    const isSafari = App.BrowserDetect ? App.BrowserDetect.isSafariBased() : false;
 
     this.config = {
       total: isSafari ? 150 : 300,  // Reduced particle count on Safari
@@ -163,7 +163,7 @@ class Orb3D {
     const orb = new Orb3D();
 
     // Expose pause/resume methods globally
-    window.Orb3D = {
+    App.Orb3D = {
       pause: () => orb.pause(),
       resume: () => orb.resume()
     };

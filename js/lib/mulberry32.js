@@ -1,0 +1,12 @@
+// mulberry32 — fast 32-bit seeded PRNG.
+// Returns a zero-argument function that yields the next float in [0, 1).
+// Same path every page load for a given seed, so visual layouts are stable.
+// Used by cert-gallery.js and illus-cube.js with different seeds.
+window.mulberry32 = function mulberry32(seed) {
+    return function () {
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+};

@@ -15,7 +15,6 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
 
     <!-- ═══ PRIMARY SEO ══════════════════════════════════════════════════════ -->
-    <!-- TODO: replace every instance of "https://sergioayala.design" with your actual live URL -->
     <title>Sergio Ayala | Senior Art Director, Photographer &amp; UX/UI Designer</title>
     <meta name="description" content="Senior Art Director, Photographer and UX/UI Designer based in Bogotá, Colombia. Freelance services worldwide — brand identity, web design, UX/UI, photography, and illustration.">
     <meta name="author" content="Sergio Ayala">
@@ -23,7 +22,6 @@
     <link rel="canonical" href="https://sergioayala.design/">
 
     <!-- ═══ OPEN GRAPH (social sharing previews) ═════════════════════════════ -->
-    <!-- TODO: create a 1200×630 px image at images/og-image.jpg for social previews -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sergioayala.design/">
     <meta property="og:title" content="Sergio Ayala | Senior Art Director, Photographer &amp; UX/UI Designer">
@@ -785,7 +783,7 @@
 
                 <!-- Seal CTA — Let's Work Together -->
                 <div class="seal-cta-wrapper">
-                    <a href="mailto:placeholder@mail.com" class="seal-cta" id="seal-cta" aria-label="Let's work together — send email to Sergio Ayala">
+                    <a href="mailto:sergionook@gmail.com" class="seal-cta" id="seal-cta" aria-label="Let's work together — send email to Sergio Ayala">
                         <svg class="seal-svg" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
                             <g class="seal-ring-group">
                                 <circle class="seal-ring-outer" cx="100" cy="100" r="90" />
@@ -2418,20 +2416,21 @@
         <p data-i18n="footer.rights">© 2026 All rights reserved — Sergio Ayala, Senior Art Director &amp; Photographer, Bogotá, Colombia</p>
     </footer>
     
+    <!-- App registry — must be first; all modules write/read App.* -->
+    <script src="js/app-registry.js"></script>
+
     <!-- Browser detection for performance optimizations -->
     <script src="js/browser-detect.js"></script>
 
     <script src="js/lib/splitting.min.js"></script>
     <script src="js/lib/scroll-out.min.js"></script>
-    <!-- TODO: enable when illustration section is developed -->
-    <!-- <script src="js/lib/simplex-noise.min.js"></script> -->
-
     <script src="js/art-direction-slider.js"></script>
     <script src="js/particle-system.js"></script>
     <script src="js/orb-3d.js"></script>
     <script src="js/i18n.js"></script>
-    <script src="js/script.js"></script>
-    <!-- TODO: enable when illustration section is developed -->
+    <script src="js/barcode-animation.js"></script>
+    <script type="module" src="js/script.js"></script>
+    <script src="js/lib/mulberry32.js"></script>
     <script src="js/cert-gallery.js"></script>
     <script src="js/photo-vfx.js"></script>
     <script src="js/lib/gsap.min.js"></script>

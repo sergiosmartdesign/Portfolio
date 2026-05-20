@@ -53,10 +53,7 @@
   /* Header backgrounds per section (15% transparency = 0.85 alpha) */
   --header-bg-intro: rgba(0, 18, 25, 0.85);
   --header-bg-about: rgba(0, 95, 115, 0.85);
-  --header-bg-web: rgba(10, 147, 150, 0.85);
-  --header-bg-photo: rgba(174, 32, 18, 0.85);
   --header-bg-illustration: rgba(148, 210, 189, 0.85);
-  --header-bg-experiments: rgba(238, 155, 0, 0.85);
   --header-bg-contact: rgba(202, 103, 2, 0.85);
 
   /* Grid color palette */
@@ -448,10 +445,8 @@ header {
 /* Header color changes per section */
 header.section-intro { background: var(--header-bg-intro); }
 header.section-about { background: var(--header-bg-about); }
-header.section-web { background: var(--header-bg-web); }
 header.section-photo { background: transparent; }
 header.section-illustration { background: var(--header-bg-illustration); }
-header.section-experiments { background: var(--header-bg-experiments); }
 header.section-contact { background: var(--header-bg-contact); }
 
 nav {
@@ -730,6 +725,20 @@ nav {
   pointer-events: none;
   opacity: 0.8;
   will-change: transform;  /* GPU acceleration hint */
+}
+
+#barcodeCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-layer-1);   /* above particle canvas (z:0), below text (z:5) */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  mix-blend-mode: screen;       /* enriches dark areas; white/bright content unaffected */
+  will-change: opacity;
 }
 
 /* --- 3D Particle Orb --- */

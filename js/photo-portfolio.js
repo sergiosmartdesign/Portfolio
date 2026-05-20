@@ -940,7 +940,7 @@
       });
 
       // Re-translate static prose elements that sit outside the hover/highlight systems
-      const tm = window.LanguageManager;
+      const tm = App.LanguageManager;
       if (tm) {
         [
           ['.photo-polaroids-desc',  'photo.ui.polaroidsDesc'],

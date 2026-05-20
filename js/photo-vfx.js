@@ -13,7 +13,7 @@
 
   // ── CONFIGURATION ───────────────────────────────────────────────────────────
   // Adaptive sample count: fewer samples on lower-end GPUs (Safari/iOS)
-  const _tier    = window.BrowserDetect ? window.BrowserDetect.getPerformanceTier() : 'high';
+  const _tier    = App.BrowserDetect ? App.BrowserDetect.getPerformanceTier() : 'high';
   const _samples = _tier === 'low' ? 8 : _tier === 'medium' ? 12 : 16;
 
   const CONFIG = {

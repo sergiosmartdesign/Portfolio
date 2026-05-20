@@ -30,16 +30,7 @@
         { hex: '#9B2226', rgb: '155,34,38'   },
     ];
 
-    // Seeded PRNG — same path every page load, so image order is always identical
-    function mulberry32(seed) {
-        return function () {
-            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-            let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-            return ((t ^ t >>> 14) >>> 0) / 4294967296;
-        };
-    }
-    const rand = mulberry32(0xA1B2C3D4);
+    const rand = window.mulberry32(0xA1B2C3D4);
 
     const STOPS        = buildRandomStops(N);
     const FACE_MAP     = buildFaceMap(STOPS);

@@ -20,7 +20,7 @@ const PARTICLE_PALETTE = [
 class ParticleSystem {
   constructor() {
     // Detect Safari for performance optimizations
-    const isSafari = window.BrowserDetect ? window.BrowserDetect.isSafariBased() : false;
+    const isSafari = App.BrowserDetect ? App.BrowserDetect.isSafariBased() : false;
 
     // Configuration constants (optimized for Safari)
     this.config = {
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const particleSystem = new ParticleSystem();
 
   // Expose globally for animation optimizer
-  window.ParticleSystem = {
+  App.ParticleSystem = {
     pause: () => particleSystem.pause(),
     resume: () => particleSystem.resume()
   };

@@ -16,16 +16,7 @@
     const N           = CERTS.length;
     const SWAP_RADIUS = 2;
 
-    // Same seeded PRNG as illus-cube, different seed so sequences diverge
-    function mulberry32(seed) {
-        return function () {
-            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-            let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-            return ((t ^ t >>> 14) >>> 0) / 4294967296;
-        };
-    }
-    const rand = mulberry32(0xC3D4E5F6);
+    const rand = window.mulberry32(0xC3D4E5F6);
 
     // Builds N distinct cube orientation stops using random 90-degree moves.
     // Same algorithm as illus-cube: stays within rx ∈ [-90, 90], never returns
@@ -225,7 +216,7 @@
     cubeEl.style.transform = `rotateX(${STOPS[0].rx}deg) rotateY(${STOPS[0].ry}deg)`;
     if (counterEl) counterEl.textContent = '01 / ' + String(N).padStart(2, '0');
 
-    window.certCube = {
+    App.certCube = {
         goto: gotoStop,
         next: () => gotoStop(currentStop + 1),
         prev: () => gotoStop(currentStop - 1),

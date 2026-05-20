@@ -438,8 +438,7 @@
     },
   };
 
-  // Expose for optional external access (e.g. script.js, future sections)
-  window.LanguageManager = LanguageManager;
+  App.LanguageManager = LanguageManager;
 
   // Apply before Splitting.js runs
   document.addEventListener('DOMContentLoaded', () => LanguageManager.init());

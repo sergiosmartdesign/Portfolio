@@ -23,5 +23,4 @@ const BrowserDetect = {
   }
 };
 
-// Make globally available
-window.BrowserDetect = BrowserDetect;
+App.BrowserDetect = BrowserDetect;

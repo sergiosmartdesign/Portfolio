@@ -7,7 +7,7 @@
     const gl = canvas.getContext('webgl2');
     if (!gl) return;
 
-    const isSafari = window.BrowserDetect && window.BrowserDetect.isSafari;
+    const isSafari = App.BrowserDetect && App.BrowserDetect.isSafari;
     const LOOP_COUNT = isSafari ? 18 : 32;
 
     const VS = `#version 300 es
