@@ -100,17 +100,31 @@
 
   --text-shadow-dark: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 0, 0, 0.7), 0 4px 8px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4);
 
-  /* ===== TRANSITIONS ===== */
+  /* ===== TRANSITIONS — use only in `transition:` property ===== */
   --transition-fast: 0.2s;
   --transition-base: 0.3s;
   --transition-slow: 0.5s;
   --transition-slower: 0.6s;
-  --transition-slowest: 1s;
+  --transition-slowest: 1s;   /* deprecated: prefer --duration-slow in animation: */
+
+  /* ===== DURATIONS — use only in `animation:` and `animation-duration:` ===== */
+  --duration-quick:    0.2s;   /* glitch micro-frames, VHS static */
+  --duration-base:     0.5s;   /* single-element entrance, line draw */
+  --duration-moderate: 0.6s;   /* medium entrance, social icon sequences */
+  --duration-rise:     0.8s;   /* content entrance: slideIn / slideDown */
+  --duration-slow:     1s;     /* deliberate: icon transforms, lineGrow */
+  --duration-scene:    1.5s;   /* scene-level: capsule, multi-element compositions */
+  --duration-ambient:  2.4s;   /* ambient infinite: pulsing markers */
 
   --easing-ease: ease;
   --easing-ease-out: ease-out;
   --easing-ease-in: ease-in;
   --easing-ease-in-out: ease-in-out;
+
+  /* Distinctive motion curves — the personality of this site's movement */
+  --ease-spring:   var(--ease-spring); /* overshoot / playful land */
+  --ease-expo-out: var(--ease-expo-out);    /* fast out, slow settle    */
+  --ease-material: var(--ease-material);      /* Material standard        */
 
   /* ===== Z-INDEX LAYERS ===== */
   --z-background: 0;
@@ -239,8 +253,8 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
 }
@@ -362,7 +376,7 @@ body {
   height: 100%;
   background: repeating-linear-gradient(90deg, transparent, transparent 2px, var(--white-alpha-01) 2px, var(--white-alpha-01) 4px);
   opacity: 0.5;
-  animation: vhsStatic var(--transition-fast) steps(2, end) infinite;
+  animation: vhsStatic var(--duration-quick) steps(2, end) infinite;
   z-index: var(--z-layer-4);
   pointer-events: none;
 }
@@ -541,7 +555,7 @@ nav {
   background-repeat: no-repeat;
   background-position: 100% 0%;
   transition: background-size 0.7s, background-position var(--transition-slow) var(--easing-ease-in-out), color var(--transition-base);
-  animation: lineGrow var(--transition-slowest) var(--easing-ease-out);
+  animation: lineGrow var(--duration-slow) var(--easing-ease-out);
   animation-fill-mode: backwards;
 }
 
@@ -1029,11 +1043,11 @@ nav {
 }
 
 .cyber-panel.active .panel-line--right {
-  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 1.4s forwards;
+  animation: drawLineVertical var(--duration-base) var(--easing-ease-out) 1.4s forwards;
 }
 
 .cyber-panel.active .panel-line--right::before {
-  animation: fadeIn var(--transition-base) var(--easing-ease-out) 1.6s forwards;
+  animation: fadeIn var(--duration-quick) var(--easing-ease-out) 1.6s forwards;
 }
 
 @keyframes drawLineHorizontal {
@@ -1074,7 +1088,7 @@ nav {
 
 .info-interface.active {
   /* Single keyframe owns both transform and opacity — no property-conflict jank */
-  animation: infoEntrance 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: infoEntrance 0.75s var(--ease-expo-out) forwards;
 }
 
 @keyframes infoEntrance {
@@ -1102,11 +1116,11 @@ nav {
 /* ── Entrance: JS adds .inf-lang--entering to trigger stagger ──── */
 /* delay var(--line-offset) is set by JS: 0.75s on first load, 0s on language switch */
 .inf-lang--entering .info-line {
-  animation: infoLineIn 0.4s cubic-bezier(0.22, 1, 0.36, 1)
+  animation: infoLineIn 0.4s var(--ease-expo-out)
     calc(var(--line-offset, 0s) + var(--i) * 0.07s) forwards;
 }
 .inf-lang--entering .info-line--rule {
-  animation: infoRuleDraw 0.5s cubic-bezier(0.22, 1, 0.36, 1)
+  animation: infoRuleDraw 0.5s var(--ease-expo-out)
     calc(var(--line-offset, 0s) + var(--i) * 0.07s) forwards;
 }
 
@@ -1194,7 +1208,7 @@ nav {
   background: currentColor;
   border-radius: 1px;
   transform-origin: center;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+  transition: transform 0.3s var(--ease-material),
               opacity   0.2s ease,
               width     0.3s ease;
 }
@@ -1285,7 +1299,7 @@ nav {
 
 /* Animate icons when panel becomes active */
 .cyber-panel.active ~ .social-media-icons {
-  animation: socialIconsGrow var(--transition-slower) var(--easing-ease-out) 1.5s forwards;
+  animation: socialIconsGrow var(--duration-moderate) var(--easing-ease-out) 1.5s forwards;
 }
 
 @keyframes socialIconsGrow {
@@ -1301,7 +1315,7 @@ nav {
 
 /* Auto-play hover animation on load */
 .cyber-panel.active ~ .social-media-icons li a {
-  animation: iconColorChange var(--transition-slowest) var(--easing-ease-in-out) 1.5s;
+  animation: iconColorChange var(--duration-slow) var(--easing-ease-in-out) 1.5s;
 }
 
 @keyframes iconColorChange {
@@ -1318,7 +1332,7 @@ nav {
 /* Horizontal spans - disappear then reappear on load */
 .cyber-panel.active ~ .social-media-icons li a span:nth-child(1),
 .cyber-panel.active ~ .social-media-icons li a span:nth-child(3) {
-  animation: spanHorizontalDisappear var(--transition-slowest) var(--easing-ease-in-out) 1.5s;
+  animation: spanHorizontalDisappear var(--duration-slow) var(--easing-ease-in-out) 1.5s;
 }
 
 @keyframes spanHorizontalDisappear {
@@ -1337,7 +1351,7 @@ nav {
 /* Vertical spans - appear then disappear on load */
 .cyber-panel.active ~ .social-media-icons li a span:nth-child(2),
 .cyber-panel.active ~ .social-media-icons li a span:nth-child(4) {
-  animation: spanVerticalAppear var(--transition-slowest) var(--easing-ease-in-out) 1.5s;
+  animation: spanVerticalAppear var(--duration-slow) var(--easing-ease-in-out) 1.5s;
 }
 
 @keyframes spanVerticalAppear {
@@ -1582,7 +1596,7 @@ nav {
 
 /* Animate line when right column becomes visible in viewport */
 #about .about-right.element-visible::before {
-  animation: drawLineVertical var(--transition-slow) var(--easing-ease-out) 0s forwards;
+  animation: drawLineVertical var(--duration-base) var(--easing-ease-out) 0s forwards;
 }
 
 #about .about-right.element-exit::before {
@@ -1637,8 +1651,8 @@ nav {
 /* Enable glitch animation for abouttitle when element is visible in viewport */
 #about #abouttitle[data-splitting].element-visible [data-char]:after {
   animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -1693,19 +1707,19 @@ nav {
 
 /* Slide down animation when title becomes visible in viewport */
 #about #abouttitle.element-visible .title-line-1 {
-  animation: slideDownFade 0.8s ease-out 0s forwards;
+  animation: slideDownFade var(--duration-rise) ease-out 0s forwards;
 }
 
 #about #abouttitle.element-visible .title-line-2 {
-  animation: slideDownFade 0.8s ease-out 0.15s forwards;
+  animation: slideDownFade var(--duration-rise) ease-out 0.15s forwards;
 }
 
 #about #abouttitle.element-visible .title-line-3 {
-  animation: slideDownFade 0.8s ease-out 0.3s forwards;
+  animation: slideDownFade var(--duration-rise) ease-out 0.3s forwards;
 }
 
 #about #abouttitle.element-visible .title-line-4 {
-  animation: slideDownFade 0.8s ease-out 0.45s forwards;
+  animation: slideDownFade var(--duration-rise) ease-out 0.45s forwards;
 }
 
 #about #abouttitle.element-exit .title-line-1 {
@@ -1871,7 +1885,7 @@ nav {
 
 #seal-cta.element-visible {
   opacity: 1;
-  animation: seal-entrance 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+  animation: seal-entrance 0.85s var(--ease-spring) 0.1s forwards;
 }
 
 #seal-cta.element-exit {
@@ -1973,8 +1987,8 @@ nav {
 
 #seal-cta.element-visible .seal-label[data-splitting] [data-char]:after {
   animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -2060,8 +2074,8 @@ nav {
 /* Enable glitch animation for quote when element is visible in viewport */
 #about #paulrand-quote[data-splitting].element-visible [data-char]:after {
   animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -2105,8 +2119,8 @@ nav {
 #about .paul-rands-quote p[data-splitting].element-visible [data-char]:after,
 #about .paul-rands-quote p[data-splitting].glitch-active [data-char]:after {
   animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -2136,8 +2150,8 @@ nav {
 }
 .paul-rands-quote li.glitch-text[data-splitting].glitch-active [data-char]:after {
   animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -2170,8 +2184,8 @@ nav {
 }
 .paul-rands-quote .ending.glitch-text[data-splitting].glitch-active [data-char]:after {
   animation-name: glitch-switch;
-  animation-duration: var(--transition-fast);
-  animation-delay: var(--transition-slow);
+  animation-duration: var(--duration-quick);
+  animation-delay: var(--duration-base);
   animation-timing-function: steps(1);
   animation-fill-mode: backwards;
   animation-iteration-count: calc(var(--char-index) * 0.55);
@@ -2196,15 +2210,15 @@ nav {
 
 /* Slide in animation for paragraphs when element becomes visible in viewport */
 #about .about-left > p:nth-of-type(1).element-visible {
-  animation: slideInFromLeft 0.8s ease-out 0s forwards;
+  animation: slideInFromLeft var(--duration-rise) ease-out 0s forwards;
 }
 
 #about .about-left > p:nth-of-type(2).element-visible {
-  animation: slideInFromLeft 0.8s ease-out 0s forwards;
+  animation: slideInFromLeft var(--duration-rise) ease-out 0s forwards;
 }
 
 #about .about-left > p:nth-of-type(3).element-visible {
-  animation: slideInFromLeft 0.8s ease-out 0s forwards;
+  animation: slideInFromLeft var(--duration-rise) ease-out 0s forwards;
 }
 
 #about .about-left > p:nth-of-type(1).element-exit,
@@ -2215,11 +2229,11 @@ nav {
 
 /* Slide in animation for Paul Rand quote when element becomes visible in viewport */
 #about #paulrand-quote.element-visible {
-  animation: slideInFromLeft 0.8s ease-out 0s forwards;
+  animation: slideInFromLeft var(--duration-rise) ease-out 0s forwards;
 }
 
 #about #paulrand-author.element-visible {
-  animation: slideInFromLeft 0.8s ease-out 0.2s forwards;
+  animation: slideInFromLeft var(--duration-rise) ease-out 0.2s forwards;
 }
 
 #about #paulrand-quote.element-exit {
@@ -2232,7 +2246,7 @@ nav {
 
 /* Slide in animation for DNA title when element becomes visible in viewport */
 #about #dnatitle.element-visible {
-  animation: slideInFromRight 0.8s ease-out 0s forwards;
+  animation: slideInFromRight var(--duration-rise) ease-out 0s forwards;
 }
 
 #about #dnatitle.element-exit {
@@ -2241,7 +2255,7 @@ nav {
 
 /* Slide in animation for aboutp4 paragraph when element becomes visible in viewport */
 #about #aboutp4.element-visible {
-  animation: slideInFromRight 0.8s ease-out 0s forwards;
+  animation: slideInFromRight var(--duration-rise) ease-out 0s forwards;
 }
 
 #about #aboutp4.element-exit {
@@ -2428,7 +2442,7 @@ nav {
 
 /* Scale animation - grows horizontally first, then vertically */
 #about .dna-capsule-svg.element-visible {
-  animation: capsuleGrow 1.5s ease-out 0s forwards;
+  animation: capsuleGrow var(--duration-scene) ease-out 0s forwards;
 }
 
 #about .dna-capsule-svg.element-exit {
@@ -2760,7 +2774,7 @@ nav {
 
 /* Animate decorations when element becomes visible in viewport */
 #about .decoration-bar1.element-visible {
-  animation: slideInFromLeft 0.8s ease-out 0s forwards;
+  animation: slideInFromLeft var(--duration-rise) ease-out 0s forwards;
 }
 
 #about .decoration-bar1.element-exit {
@@ -2768,7 +2782,7 @@ nav {
 }
 
 #about .decoration-bar2.element-visible {
-  animation: slideDownFade 0.8s ease-out 0s forwards;
+  animation: slideDownFade var(--duration-rise) ease-out 0s forwards;
 }
 
 #about .decoration-bar2.element-exit {
@@ -2822,7 +2836,7 @@ nav {
 
 /* — ENTER — */
 #about .decoration-skills.element-visible .skills-list {
-  animation: skillsBgIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: skillsBgIn 0.4s var(--ease-material) forwards;
 }
 
 #about .decoration-skills.element-visible .skills-list li {
@@ -2851,7 +2865,7 @@ nav {
 
 /* — EXIT — */
 #about .decoration-skills.element-exit .skills-list {
-  animation: skillsBgOut 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+  animation: skillsBgOut 0.35s var(--ease-material) 0.2s forwards;
 }
 
 #about .decoration-skills.element-exit .skills-list li {
@@ -4118,7 +4132,7 @@ nav {
 }
 
 .photo-polaroids-camera.photo-camera-reveal {
-  animation: photo-camera-bounce-left 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: photo-camera-bounce-left 0.65s var(--ease-spring) forwards;
 }
 
 /* ── Polaroid ghost stream ──────────────────────────────────────────────── */
@@ -4314,7 +4328,7 @@ nav {
   position: relative;
   display: inline-flex;
   transform: scale(0.2);
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.5s var(--ease-spring);
 }
 
 .photo-stream-lightbox.open .photo-stream-lb-frame {
@@ -4795,7 +4809,7 @@ nav {
     padding: 80px var(--spacing-xl) var(--spacing-xl);
     z-index: calc(var(--z-header) + 1);
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s var(--ease-material);
     overflow-y: auto;
     overscroll-behavior: contain;
     /* Scanline texture matching site aesthetic */

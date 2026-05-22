@@ -33,7 +33,7 @@ const TIMING = {
 // JS mirrors of :root CSS variables in css/styles.css.
 // When updating either side, update both.
 const CSS = {
-  transitionFast: '0.2s',    // --transition-fast
+  transitionFast: '0.2s',    // --transition-fast / --duration-quick
   glitchStagger:   0.04,     // --glitch-stagger on .main-nav .nav-btn (line ~1149)
   easingEaseOut:  'ease-out', // --easing-ease-out
 };
