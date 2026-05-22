@@ -89,6 +89,14 @@
   --glow-cyan: 0 0 15px var(--cyan), 0 0 30px var(--cyan);
   --glow-cyan-intense: 0 0 10px var(--cyan), 0 0 20px var(--cyan), 0 0 30px var(--cyan), 0 0 40px var(--cyan), 0 0 70px var(--cyan), 0 0 80px var(--cyan), 0 0 100px var(--cyan);
   --glow-orange: 0 0 15px var(--orange), 0 0 30px var(--orange);
+  --glow-amber: 0 0 15px var(--grid-color-6), 0 0 30px var(--grid-color-6);
+
+  /* ── Semantic interaction roles ────────────────────────────────────────────
+     cyan  = system / machine state  (glitch fx, HUD panels, focus rings)
+     amber = human  / content state  (link hovers, active CTAs, content chrome)
+     ───────────────────────────────────────────────────────────────────────── */
+  --accent-system: var(--cyan);
+  --accent-human:  var(--grid-color-6);
 
   --text-shadow-dark: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 0, 0, 0.7), 0 4px 8px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4);
 
@@ -696,8 +704,8 @@ nav {
 }
 
 .intro-otw-link:hover .subtitle-glitch {
-  color: var(--cyan);
-  text-shadow: var(--glow-cyan);
+  color: var(--accent-human);
+  text-shadow: var(--glow-amber);
 }
 
 .intro-otw-link:focus-visible {
@@ -928,10 +936,11 @@ nav {
   transform-origin: center;
   font-size: 12px;
   opacity: 0.8;
-  font-family: 'Workbench', monospace, sans-serif;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
   color: #9B2226;
   z-index: var(--z-layer-10);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.15em;
   white-space: nowrap;
 }
 
@@ -1434,17 +1443,17 @@ nav {
   transition: transform var(--transition-slow);
 }
 
-/* Icon hover effects with cyan glow - Consolidated */
+/* Icon hover — human social links use amber (content state, not machine state) */
 .social-media-icons .instagram:hover,
 .social-media-icons .linkedin:hover {
-  color: var(--cyan);
-  text-shadow: var(--glow-cyan-intense);
+  color: var(--accent-human);
+  text-shadow: var(--glow-amber);
 }
 
 .social-media-icons .instagram:hover span,
 .social-media-icons .linkedin:hover span {
-  background: var(--cyan);
-  box-shadow: var(--glow-cyan);
+  background: var(--accent-human);
+  box-shadow: var(--glow-amber);
 }
 
 /* Social media SVG icons */
@@ -1460,7 +1469,7 @@ nav {
 
 .social-media-icons .instagram:hover .social-icon,
 .social-media-icons .linkedin:hover .social-icon {
-  filter: drop-shadow(0 0 5px var(--cyan)) drop-shadow(0 0 10px var(--cyan)) drop-shadow(0 0 20px var(--cyan));
+  filter: drop-shadow(0 0 5px var(--accent-human)) drop-shadow(0 0 10px var(--accent-human)) drop-shadow(0 0 20px var(--accent-human));
 }
 
 /* ============================================================================
@@ -1993,7 +2002,7 @@ nav {
 }
 
 #seal-cta:hover .seal-label[data-splitting] [data-char]:after {
-  color: var(--cyan);
+  color: var(--accent-human);
 }
 
 #seal-cta:hover {
@@ -2335,7 +2344,7 @@ nav {
 .texts {
   position: absolute;
   font-size: 3.5vmin; /* Further reduced for better readability */
-  font-family: 'Workbench', sans-serif;
+  font-family: 'Share Tech Mono', monospace;
   transform-style: preserve-3d;
   animation: none; /* Disabled by default */
   opacity: 0; /* Hidden until visible */

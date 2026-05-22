@@ -9,25 +9,25 @@ const WORKS_DATA = {
       num: '01', cat: 'Branding', title: 'Brand Identity Systems', sub: 'From strategy to production',
       specs: [['Scope','Logo · System · Guidelines'],['Tools','Figma · Illustrator'],['Year','2021 – 2024'],['Mode','Freelance · Studio']],
       tags: ['Multi-brand','Identity','Print'],
-      bg: 'images/photo/Petra.jpg'
+      bg: 'images/photo/Petra.webp'
     },
     {
       num: '02', cat: 'Branding', title: 'Retail Brand Refresh', sub: 'Visual repositioning at scale',
       specs: [['Scope','Identity · Packaging'],['Tools','Illustrator · InDesign'],['Year','2022'],['Mode','Agency']],
       tags: ['Packaging','Retail','System'],
-      bg: 'images/photo/Kotor Montenegro.jpg'
+      bg: 'images/photo/Kotor Montenegro.webp'
     },
     {
       num: '03', cat: 'Branding', title: 'Startup Visual Language', sub: 'Zero to brand from scratch',
       specs: [['Scope','Logo · Motion · Web'],['Tools','Figma · After Effects'],['Year','2023'],['Mode','Freelance']],
       tags: ['Startup','Motion','Guidelines'],
-      bg: 'images/photo/Sevilla.jpg'
+      bg: 'images/photo/Sevilla.webp'
     },
     {
       num: '04', cat: 'Branding', title: 'Heritage Rebranding', sub: 'Tradition meets modernity',
       specs: [['Scope','Logo · Print · Digital'],['Tools','Illustrator · Figma'],['Year','2024'],['Mode','Studio']],
       tags: ['Heritage','Print','Identity'],
-      bg: 'images/photo/Goreme.jpg'
+      bg: 'images/photo/Goreme.webp'
     }
   ],
   web: [
@@ -35,19 +35,19 @@ const WORKS_DATA = {
       num: '01', cat: 'Web', title: 'Digital Product Design', sub: 'UX direction & interface',
       specs: [['Scope','UX · UI · Design Systems'],['Tools','Figma · CSS'],['Year','2020 – 2024'],['Mode','Freelance · Agency']],
       tags: ['UX','Design Systems','Frontend'],
-      bg: 'images/photo/Istanbul ships.jpg'
+      bg: 'images/photo/Istanbul ships.webp'
     },
     {
       num: '02', cat: 'Web', title: 'E-Commerce Platform', sub: 'Conversion-driven UX',
       specs: [['Scope','UX · Research · UI'],['Tools','Figma · Framer'],['Year','2022 – 2023'],['Mode','Agency']],
       tags: ['E-Commerce','Research','UI'],
-      bg: 'images/photo/London Bridge.jpg'
+      bg: 'images/photo/London Bridge.webp'
     },
     {
       num: '03', cat: 'Web', title: 'SaaS Dashboard', sub: 'Complex data made simple',
       specs: [['Scope','UX · Data Viz · Frontend'],['Tools','Figma · React'],['Year','2023 – 2024'],['Mode','Freelance']],
       tags: ['SaaS','Data','Dashboard'],
-      bg: 'images/photo/Rovinj Croatia.jpg'
+      bg: 'images/photo/Rovinj Croatia.webp'
     }
   ],
   editorial: [
@@ -55,31 +55,31 @@ const WORKS_DATA = {
       num: '01', cat: 'Editorial', title: 'Print & Layout Direction', sub: 'Publication & visual systems',
       specs: [['Scope','Layout · Typography'],['Tools','InDesign · Illustrator'],['Year','2019 – 2023'],['Mode','Studio · Client']],
       tags: ['Print','Typography','Layout'],
-      bg: 'images/photo/Dubrovnik.jpg'
+      bg: 'images/photo/Dubrovnik.webp'
     },
     {
       num: '02', cat: 'Editorial', title: 'Annual Report Design', sub: 'Data storytelling through layout',
       specs: [['Scope','Print · Infographic'],['Tools','InDesign · Figma'],['Year','2021'],['Mode','Client']],
       tags: ['Annual Report','Infographics','Data'],
-      bg: 'images/photo/Ojo Sevillano.jpg'
+      bg: 'images/photo/Ojo Sevillano.webp'
     },
     {
       num: '03', cat: 'Editorial', title: 'Cultural Magazine', sub: 'Six-issue visual identity',
       specs: [['Scope','Art Direction · Layout'],['Tools','InDesign · Photoshop'],['Year','2020 – 2021'],['Mode','Studio']],
       tags: ['Magazine','Culture','Series'],
-      bg: 'images/photo/Streets of Istanbul.jpg'
+      bg: 'images/photo/Streets of Istanbul.webp'
     },
     {
       num: '04', cat: 'Editorial', title: 'Book Cover Series', sub: 'Narrative through typography',
       specs: [['Scope','Cover · Typography'],['Tools','Illustrator · Photoshop'],['Year','2022'],['Mode','Freelance']],
       tags: ['Book','Series','Typography'],
-      bg: 'images/photo/Old tombs.jpg'
+      bg: 'images/photo/Old tombs.webp'
     },
     {
       num: '05', cat: 'Editorial', title: 'Corporate Brochure', sub: 'Brand voice in print',
       specs: [['Scope','Layout · Print'],['Tools','InDesign'],['Year','2023'],['Mode','Agency']],
       tags: ['Corporate','Print','Brand'],
-      bg: 'images/photo/Perast.jpg'
+      bg: 'images/photo/Perast.webp'
     }
   ],
   identity: [
@@ -87,13 +87,13 @@ const WORKS_DATA = {
       num: '01', cat: 'Identity', title: 'Visual Language Systems', sub: 'Coherent design at scale',
       specs: [['Scope','System · Guidelines'],['Tools','Figma · Illustrator'],['Year','2022 – 2024'],['Mode','Freelance']],
       tags: ['System','Guidelines','Color'],
-      bg: 'images/photo/Cajon del Maipo.jpg'
+      bg: 'images/photo/Cajon del Maipo.webp'
     },
     {
       num: '02', cat: 'Identity', title: 'Brand Tone & Voice', sub: 'Language as design material',
       specs: [['Scope','Strategy · Copy · Visual'],['Tools','Figma'],['Year','2023'],['Mode','Studio']],
       tags: ['Strategy','Tone','Messaging'],
-      bg: 'images/photo/Wandering Fox Street photo.jpg'
+      bg: 'images/photo/Wandering Fox Street photo.webp'
     }
   ],
   motion: [
@@ -101,19 +101,19 @@ const WORKS_DATA = {
       num: '01', cat: 'Motion', title: 'Animation & Moving Image', sub: 'Brand animation & interaction',
       specs: [['Scope','Animation · Interaction'],['Tools','After Effects · CSS'],['Year','2021 – 2024'],['Mode','Freelance']],
       tags: ['Animation','Brand','UI Motion'],
-      bg: 'images/photo/Dali Desert.jpg'
+      bg: 'images/photo/Dali Desert.webp'
     },
     {
       num: '02', cat: 'Motion', title: 'Intro Sequences', sub: 'Title animation for broadcast',
       specs: [['Scope','Motion · Compositing'],['Tools','After Effects · Cinema 4D'],['Year','2022'],['Mode','Studio']],
       tags: ['Broadcast','Compositing','3D'],
-      bg: 'images/photo/Laguna Azul Chile.jpg'
+      bg: 'images/photo/Laguna Azul Chile.webp'
     },
     {
       num: '03', cat: 'Motion', title: 'UI Micro-interactions', sub: 'Delightful product animation',
       specs: [['Scope','UI · CSS · JS'],['Tools','Figma · CSS'],['Year','2023 – 2024'],['Mode','Freelance']],
       tags: ['UI','CSS','Micro'],
-      bg: 'images/photo/Laguna Blanca Andes Bolivianos.jpg'
+      bg: 'images/photo/Laguna Blanca Andes Bolivianos.webp'
     }
   ]
 };
