@@ -673,7 +673,7 @@ nav {
 
 /* --- Main Title --- */
 #main-title {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 6vw, 4.5rem);
   font-weight: inherit;
   text-align: center;
   z-index: var(--z-layer-5);
@@ -4741,6 +4741,13 @@ nav {
 
   .about-right {
     padding: var(--spacing-lg);
+    margin-top: var(--spacing-2xl);
+    margin-left: 0;
+  }
+
+  /* Uncap the hardcoded 550px paragraph width */
+  .about-left > p {
+    width: 100%;
   }
 
   #about #dnatitle {
@@ -4835,6 +4842,25 @@ nav {
   /* Prevent body scroll when drawer is open */
   body.nav-open {
     overflow: hidden;
+  }
+}
+
+/* ─── Header — tighten horizontal padding on mobile ─────────────────────── */
+@media (max-width: 768px) {
+  header {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+/* ─── Intro — fluid title + subtitle on narrow viewports ────────────────── */
+@media (max-width: 768px) {
+  #main-title {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+  }
+
+  .subtitle-glitch {
+    font-size: clamp(0.9rem, 3.8vw, 1.5rem);
   }
 }
 

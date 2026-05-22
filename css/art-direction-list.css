@@ -127,3 +127,60 @@ body.ad-section-live #art-direction .ad-list.ad-list-ready {
   75%  { transform: translate( 3px, -3px); }
   100% { transform: translate(-3px,  3px); }
 }
+
+/* ─── Mobile — bottom dock ≤ 900px ──────────────────────────────────────── */
+@media (max-width: 900px) {
+  #art-direction .ad-list {
+    left: 50%;
+    top: auto;
+    bottom: 24px;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 92vw;
+  }
+
+  #art-direction .ad-list-items {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+    background: rgba(0, 18, 25, 0.88);
+    border: 1px solid rgba(238, 155, 0, 0.28);
+    border-radius: 2px;
+    padding: 6px 10px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Safari: no backdrop-filter */
+  @supports (-webkit-touch-callout: none) {
+    #art-direction .ad-list-items {
+      background: rgba(0, 18, 25, 0.97);
+      backdrop-filter: none;
+    }
+  }
+
+  #art-direction .ad-list-items li {
+    padding: 5px 14px;
+    border-right: 1px solid rgba(238, 155, 0, 0.15);
+  }
+
+  #art-direction .ad-list-items li:last-child {
+    border-right: none;
+  }
+
+  #art-direction .ad-text-link {
+    font-size: clamp(0.75rem, 3.2vw, 1rem);
+  }
+
+  /* Suppress left-rail bullet — doesn't fit row layout */
+  #art-direction .ad-list-items li.is-active::before {
+    display: none;
+  }
+
+  /* Active state: underline instead of bullet */
+  #art-direction .ad-list-items li.is-active .ad-text-link {
+    text-decoration: underline;
+    text-decoration-color: #EE9B00;
+    text-underline-offset: 4px;
+  }
+}

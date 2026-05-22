@@ -346,9 +346,33 @@
   letter-spacing: 0.06em;
 }
 
-/* ── Hide below 1220px — grid leaves no usable right space ── */
+/* ── Hide works panel below 1220px — grid leaves no usable right space ── */
 @media (max-width: 1219px) {
   #art-direction .ad-works-panel {
+    display: none;
+  }
+}
+
+/* ── Mobile ≤ 900px — recentre all right-rail overlays ─────────────────── */
+@media (max-width: 900px) {
+  /* Intro text: centre over the letter grid */
+  #art-direction .ad-intro-text {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(440px, 88vw);
+  }
+
+  /* Works zone: centre; panel is already hidden at 1219px so only label shows */
+  #art-direction .ad-works-zone {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(600px, 92vw);
+  }
+
+  /* Explore card: off-screen at 900px — hide it */
+  #art-direction .ad-explore-card {
     display: none;
   }
 }
