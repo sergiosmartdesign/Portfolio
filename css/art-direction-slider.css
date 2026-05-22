@@ -24,7 +24,7 @@
 #art-direction.ad-intro-active.ad-intro-animate .ad-intro-text {
   opacity: 1;
   pointer-events: auto;
-  animation: ad-intro-entrance 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: ad-intro-entrance 0.7s var(--ease-expo-out) forwards;
 }
 
 /* Works zone suppressed while intro is active */
@@ -53,7 +53,7 @@
 }
 
 #art-direction .ad-intro-text .iad-header {
-  font-family: 'Courier New', monospace;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   font-size: clamp(13px, 1.3vw, 18px);
   color: #EE9B00;
   letter-spacing: 0.1em;
@@ -70,7 +70,7 @@
 }
 
 #art-direction .ad-intro-text .iad-footer {
-  font-family: 'Courier New', monospace;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   font-size: clamp(11px, 0.95vw, 14px);
   color: rgba(238, 155, 0, 0.65);
   letter-spacing: 0.06em;
@@ -232,9 +232,9 @@
   pointer-events: none;
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-              width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.5s var(--ease-expo-out),
+              transform 0.5s var(--ease-expo-out),
+              width 0.5s var(--ease-expo-out);
 }
 
 #art-direction .ad-explore-card.is-visible {
@@ -316,7 +316,7 @@
   left: -6px;
   width: calc(100% + 12px);
   height: 100%;
-  background: rgba(255, 223, 0, 0.92);
+  background: rgba(238, 155, 0, 0.92);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.25s ease;
