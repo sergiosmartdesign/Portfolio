@@ -69,15 +69,15 @@
   --grid-color-10: #9B2226;
 
 
-  /* ===== SPACING ===== */
-  --spacing-xs: 10px;
-  --spacing-sm: 15px;
-  --spacing-md: 20px;
-  --spacing-lg: 30px;
-  --spacing-xl: 40px;
-  --spacing-2xl: 60px;
-  --spacing-3xl: 100px;
-  --nav-height: 74px;
+  /* ===== SPACING — 8-point grid (multiples of 8px) ===== */
+  --spacing-xs:  8px;    /*  1×8 */
+  --spacing-sm:  16px;   /*  2×8 */
+  --spacing-md:  24px;   /*  3×8 */
+  --spacing-lg:  32px;   /*  4×8 */
+  --spacing-xl:  48px;   /*  6×8 */
+  --spacing-2xl: 64px;   /*  8×8 */
+  --spacing-3xl: 96px;   /* 12×8 */
+  --nav-height:  72px;   /*  9×8 — documentary; actual height is set by content */
 
   /* ===== SHADOWS & GLOWS ===== */
   --glow-sm: 0 0 10px;
@@ -1845,7 +1845,7 @@ nav {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 32px;
+  gap: var(--spacing-lg);
   padding: 70px 0 30px;
 }
 
