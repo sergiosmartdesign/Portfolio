@@ -281,7 +281,7 @@
 .illus-title-float--right { right: 13%; text-align: right; }
 
 .illus-title-float--visible {
-    animation: illus-title-float-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1 both;
+    animation: illus-title-float-enter 0.7s var(--ease-expo-out) 1 both;
 }
 
 .illus-title-float-in {
@@ -434,7 +434,7 @@
     position: relative;
     display: inline-flex;
     transform: scale(0.2);
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.5s var(--ease-spring);
 }
 
 .illus-lightbox.open .illus-lightbox-frame {
@@ -1308,7 +1308,7 @@
 }
 
 #illustration.illus-entering .illus-scene {
-    animation: illus-enter-scale 480ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+    animation: illus-enter-scale 480ms var(--ease-expo-out) 80ms both;
 }
 
 #illustration.illus-entering .illus-hud {

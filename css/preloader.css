@@ -106,7 +106,7 @@ body.preloading header *::after {
 /* ── Text labels (direct children of stage, above and below bars) ─────────── */
 .preloader-label,
 .preloader-pct {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   font-size: 1rem;
   letter-spacing: 0.04em;
   display: flex;

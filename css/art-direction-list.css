@@ -3,8 +3,14 @@
    Ghost split: teal (#0A9396) / amber (#EE9B00) — project palette tension.
    ──────────────────────────────────────────────────────────────────────── */
 
+/* position:absolute keeps z:10 above vignette (z:8) / vhs-static (z:7) while
+   staying within the section's overflow:hidden and safe from any ancestor
+   transform/will-change that would silently re-contain a fixed element.
+   Coordinates use vw/vh which remain viewport-relative regardless of
+   positioning mode — visual result is identical to the previous fixed approach
+   while the section occupies the full viewport. */
 #art-direction .ad-list {
-  position: fixed;
+  position: absolute;
   left: calc(min(62.5vh, 62.5vw) + 780px);
   top: min(37.5vh, 37.5vw);
   transform: translate(-50%, -50%);

@@ -163,7 +163,7 @@
 
 /* Counter between Prev / Next */
 .cert-counter {
-  font-family: 'Courier New', monospace;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   font-size: 0.7rem;
   color: var(--cert-amber-65);
   letter-spacing: 0.12em;
