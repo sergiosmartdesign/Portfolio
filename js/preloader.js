@@ -5,7 +5,10 @@
 (function () {
   'use strict';
 
-  const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split(''); // keep in sync with script.js
+  // Canonical lives in constants.js — duplicated here intentionally because
+  // preloader runs as a classic IIFE before ES module infrastructure loads.
+  // If you change the string, update constants.js to match.
+  const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
 
   // Palette colors arranged symmetrically: cool teal outside → warm red/maroon centre
   const BAR_COLORS = [

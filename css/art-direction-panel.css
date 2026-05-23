@@ -270,6 +270,22 @@
   transition: border-bottom-color 0.2s ease;
 }
 
+/* ── Row entrance animation — toggled by _animateRowsIn() ── */
+#art-direction .ad-work-item.ad-row-entering {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
+}
+
+#art-direction .ad-work-item.ad-row-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity   var(--duration-quick) var(--ease-expo-out),
+    transform var(--duration-quick) var(--ease-expo-out);
+  transition-delay: calc(20ms + var(--row-index, 0) * 60ms);
+}
+
 #art-direction .ad-work-item:hover {
   border-bottom-color: rgba(238, 155, 0, 0.3);
 }

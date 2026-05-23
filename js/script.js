@@ -2,17 +2,11 @@
  * script.js — application coordinator.
  * Business logic lives in focused modules; this file wires them together.
  */
-
-import { makeStaticLine, bindSectionEdge }   from './static-line.js';
-import { convertID1SvgToInline }             from './svg-inline.js';
-import { initArtDirectionEntrance }          from './art-direction.js';
-import { initAboutPin }                      from './about-pin.js';
+'use strict';
 
 // ============================================================================
 // CONSTANTS AND CONFIGURATION
 // ============================================================================
-
-const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split(''); // keep in sync with preloader.js
 
 // Navigation exit flag — set true for 2 s when nav jumps away from #photo
 // so the photo reveal scroll handler ignores the programmatic scroll.
@@ -1162,7 +1156,10 @@ function safeInit(label, fn) {
   catch (e) { console.error(`[init:${label}]`, e); }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+// Boot after translations are applied — App.LanguageManager.ready resolves
+// after DOMContentLoaded + default locale fetch, so Splitting.js processes
+// already-translated text. i18n.js guarantees this runs before painting.
+App.LanguageManager.ready.then(() => {
   window.scrollTo(0, 0);
 
   safeInit('date',       updateDate);

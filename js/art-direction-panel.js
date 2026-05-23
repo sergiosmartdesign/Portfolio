@@ -285,28 +285,28 @@ this.listItems.forEach(li =>
     _animateRowsIn() {
         const rows = [...this.table.querySelectorAll('.ad-work-item')];
         if (!rows.length) { this._transitioning = false; return; }
-        void this.table.offsetWidth;
 
         rows.forEach((row, i) => {
-            row.style.opacity    = '0';
-            row.style.transform  = 'translateY(10px)';
-            row.style.transition = 'none';
-            setTimeout(() => {
-                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                row.style.opacity    = '1';
-                row.style.transform  = 'translateY(0)';
-                if (i === rows.length - 1) {
-                    setTimeout(() => {
-                        rows.forEach(r => {
-                            r.style.transition = '';
-                            r.style.transform  = '';
-                            r.style.opacity    = '';
-                        });
-                        this._transitioning = false;
-                    }, 340);
-                }
-            }, 20 + i * 60);
+            row.style.setProperty('--row-index', i);
+            row.classList.add('ad-row-entering');
         });
+        void this.table.offsetWidth; // flush CSSOM so entering state is computed
+
+        rows.forEach(row => {
+            row.classList.remove('ad-row-entering');
+            row.classList.add('ad-row-visible');
+        });
+
+        // Cleanup after the last row's transition ends.
+        // Last stagger delay: 20ms + (n-1) * 60ms. Duration: --duration-quick (200ms).
+        const lastDelay = 20 + (rows.length - 1) * 60;
+        setTimeout(() => {
+            rows.forEach(r => {
+                r.classList.remove('ad-row-visible');
+                r.style.removeProperty('--row-index');
+            });
+            this._transitioning = false;
+        }, lastDelay + 220); // 200 = --duration-quick, 20 = settle buffer
 
         this.table.style.opacity = '1';
     }

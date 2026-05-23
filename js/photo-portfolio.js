@@ -1,12 +1,16 @@
 /**
- * photo-portfolio.js
- * Interactive photography portfolio for the #photo section.
+ * photo-portfolio.js — orchestrator for the #photo section.
  *
  * Scroll phase 3 (rawProgress 2→3) drives two things:
  *   1. Sequential reveal of intro, cta, and the 4 category buttons.
  *   2. Category buttons expand/collapse their photo lists (accordion, multiple open).
  *
- * Dependencies: gsap.min.js + ScrambleTextPlugin.min.js (loaded before this file)
+ * Subsystems live in separate files, exposed via window.Photo:
+ *   • GhostStream     (photo-ghost-stream.js)  — horizontal card stream + lightbox
+ *   • PolaroidReveal  (photo-polaroid.js)       — canvas scratch-off + click
+ *   • FlyCaption      (photo-fly-caption.js)    — caption clone that flies to viewport bottom
+ *
+ * Dependencies: gsap.min.js + ScrambleTextPlugin.min.js (loaded before this file).
  */
 
 (function () {
@@ -32,7 +36,7 @@
       this.spacerDocTop   = 0;
 
       // Left-edge bar element — animated separately from staticEls (slide-in vs fade)
-      this._barEl        = null;
+      this._barEl    = null;
 
       // Chain-reveal elements: intro → cta → 4 buttons → polaroids title
       // Populated in init() once DOM is confirmed ready
@@ -54,27 +58,7 @@
       this._borderRaf         = null;
       this._borderFrameTick   = 0;
       this._borderTurbulence  = null; // set in init()
-
-      // Polaroid reveal state
-      this._polaroidMoveHandler = null;
-
-      // Ghost stream
-      this._stream              = null;
-      this._streamCards         = [];
-      this._streamRotations     = [];
-      this._cardHidden          = null;     // per-card boolean cache; true = last write was hidden
-      this._streamPhase         = 'idle';   // 'idle' | 'active'
-      this._masterT             = 0;
-      this._introRaf            = null;
-      this._introLastTs         = 0;        // previous frame timestamp for delta calc
-      this._streamCanPlay       = false;    // set true by _triggerChain after camera lands
-      this._streamVelocity      = 1;        // +1 forward, -1 reverse
-      this._infoAnimInterval    = null;
-
-      // Visibility pause/resume — RAF loops must not run in background tabs
-      this._introPaused       = false;
       this._borderPaused      = false;
-      this._photoBorderPaused = false;
 
       // Photo bg electric border
       this._photoBorderTurbulence  = null;
@@ -83,12 +67,12 @@
       this._photoBorderFrame       = 0;
       this._photoBorderSettleTimer = null;
       this._photoBorderStopTimer   = null;
+      this._photoBorderPaused      = false;
 
-      // Flying caption clone
-      this._flyClone         = null;
-      this._flySource        = null;
-      this._flyReturnTween   = null;
-      this._flyReturnTimeout = null;
+      // Subsystem instances — created in init()
+      this.stream  = null;
+      this.polaroid = null;
+      this.caption  = null;
 
       // Cache original text for ScrambleText restore
       document.querySelectorAll('.photo-project-item').forEach(item => {
@@ -107,33 +91,18 @@
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       this._borderTurbulence      = document.getElementById('accordion-electric-turbulence');
       this._photoBorderTurbulence = document.getElementById('photo-bg-turbulence');
-      this._stream      = document.querySelector('.photo-ghost-stream');
-      this._streamCards = Array.from(document.querySelectorAll('.photo-ghost-card'));
-      this._streamRotations = this._streamCards.map(card =>
-        parseFloat(getComputedStyle(card).getPropertyValue('--ghost-rotate').trim()) || 0
+
+      // Create subsystems
+      this.stream  = new window.Photo.GhostStream(
+        document.querySelector('.photo-ghost-stream'),
+        Array.from(document.querySelectorAll('.photo-ghost-card'))
       );
-      this._cardHidden = new Array(this._streamCards.length).fill(true);
-      this._updateStreamWidth();
+      this.stream.init();
 
-      // Debounced resize — getBoundingClientRect forces layout; winH is cheap to update eagerly
-      let _resizeTimer = null;
-      window.addEventListener('resize', () => {
-        this.winH = window.innerHeight;
-        this._updateStreamWidth();
-        clearTimeout(_resizeTimer);
-        _resizeTimer = setTimeout(() => {
-          this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
-        }, 100);
-      }, { passive: true });
+      this.polaroid = new window.Photo.PolaroidReveal(this);
+      this.polaroid.setupClick();
 
-      // Pause all RAF loops when the tab is hidden; resume on return
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          this._pauseAllRafs();
-        } else {
-          this._resumeAllRafs();
-        }
-      });
+      this.caption = new window.Photo.FlyCaption(this.originalTexts);
 
       // Chain order: section label → intro text → instagram → cta → camera col → 4 buttons → polaroids label → pgallery title → desc → scroll hint
       const pgalleryTitle    = document.querySelector('.pgallery-title');
@@ -161,12 +130,6 @@
         pgalleryHint,
       ].filter(Boolean);
 
-      // Info strip click handlers — left reverses stream, right plays forward
-      const infoLeft  = document.querySelector('.pgallery-info-left');
-      const infoRight = document.querySelector('.pgallery-info-right');
-      if (infoLeft)  infoLeft.addEventListener('click',  () => { this._streamVelocity = this._streamVelocity === -1 ? 1 : -1; });
-      if (infoRight) infoRight.addEventListener('click', () => { this._streamVelocity = this._streamVelocity ===  1 ? -1 : 1; });
-
       // Set random palette colour on label reveal and on hover
       if (polLabel) {
         polLabel.addEventListener('mouseenter', () => {
@@ -184,9 +147,24 @@
       this.preloadImages();
       this._setupCategoryButtons();
       this._setupHoverListeners();
-      this._setupPolaroidClick();
       this._setupTitleColorCycle();
-      this._setupStreamLightbox();
+
+      // Debounced resize — getBoundingClientRect forces layout; winH is cheap to update eagerly
+      let _resizeTimer = null;
+      window.addEventListener('resize', () => {
+        this.winH = window.innerHeight;
+        this.stream.resize();
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(() => {
+          this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
+        }, 100);
+      }, { passive: true });
+
+      // Pause all RAF loops when the tab is hidden; resume on return
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) this._pauseAllRafs();
+        else                 this._resumeAllRafs();
+      });
 
       window.addEventListener('scroll', () => this._updateScroll(), { passive: true });
       this._updateScroll();
@@ -200,7 +178,7 @@
       const rawProgress = 1 - (spacerTop / this.winH);
 
       // Stream state machine — runs every tick, before the phase-change guard
-      this._tickStream(rawProgress);
+      this.stream.tick(rawProgress);
 
       const nowInPhase3 = rawProgress > 2;
       if (nowInPhase3 === this.inPhase3) return;
@@ -231,7 +209,7 @@
       this.chainActive = true;
       this.introAnimating = true;
       this._borderStart();
-      this._initPolaroid();
+      this.polaroid.init();
       this._randomTitleColor();
       const polLabel = document.querySelector('.photo-polaroids-label');
       if (polLabel) polLabel.style.color = this._titlePalette[Math.floor(Math.random() * this._titlePalette.length)];
@@ -375,14 +353,15 @@
       const polCameraEl     = document.querySelector('.photo-polaroids-camera');
       const cameraInTailIdx = tailEls.indexOf(polCameraEl);
       const cameraRevealAt  = tailStart + (cameraInTailIdx >= 0 ? cameraInTailIdx : 2) * TAIL_STEP;
-      const tStreamReady    = setTimeout(() => { this._streamCanPlay = true; this._startInfoAnim(); }, cameraRevealAt + 720);
+      const tStreamReady    = setTimeout(() => {
+        this.stream.canPlay = true;
+        this.stream.startInfoAnim();
+      }, cameraRevealAt + 720);
       this.chainTimers.push(tStreamReady);
 
       // Lift the hover guard once the full intro sequence has settled
       const tIntroEnd = setTimeout(() => { this.introAnimating = false; this._borderDone(); }, cursor + 150);
       this.chainTimers.push(tIntroEnd);
-
-      // (stream-active is managed by _enterStreamIntro / _resetStream)
 
       // 5. Secondary effects
 
@@ -423,11 +402,10 @@
         }, hintDelay);
         this.chainTimers.push(t);
       }
-
     }
 
     _cancelChain() {
-      this._clearFlyClone();
+      this.caption.clear();
       this.chainTimers.forEach(t => clearTimeout(t));
       this.chainTimers = [];
       this.chainActive = false;
@@ -435,8 +413,7 @@
       this._borderCount = 0;
       if (this._borderRaf) { cancelAnimationFrame(this._borderRaf); this._borderRaf = null; }
       if (this.accordion) this.accordion.classList.remove('accordion-animating');
-      this._stopInfoAnim();
-      this._stream?.classList.remove('stream-active');
+      this.stream.deactivate();
 
       // Kill tweens and reset transforms on all chain elements
       this.staticEls.forEach(el => {
@@ -528,7 +505,7 @@
 
     // ── Called after reverse chain completes ────────────────────────────────
     _completeReset() {
-      this._clearFlyClone();
+      this.caption.clear();
       this.reverseActive = false;
       this.reverseTimers = [];
 
@@ -561,13 +538,13 @@
         gsap.killTweensOf(this.contentScroll);
         this.contentScroll.scrollTop = 0;
       }
-      this._resetPolaroid();
-      this._stream?.classList.remove('stream-active');
+      this.polaroid.reset();
+      this.stream.deactivate();
     }
 
     // ── Immediate hard reset (e.g. resize, bfcache) ──────────────────────────
     _fullReset() {
-      this._clearFlyClone();
+      this.caption.clear();
       this._cancelChain();
       this._cancelReverse();
 
@@ -599,163 +576,26 @@
         gsap.killTweensOf(this.contentScroll);
         this.contentScroll.scrollTop = 0;
       }
-      this._resetPolaroid();
-    }
-
-    // ── Ghost stream ─────────────────────────────────────────────────────────
-    _updateStreamWidth() {
-      if (this._stream) {
-        this._stream.style.setProperty('--ghost-stream-w', this._stream.offsetWidth + 'px');
-      }
-    }
-
-    // ── Ghost stream state machine ───────────────────────────────────────────
-    //
-    //   IDLE ──(rawProgress≥2)──▶ INTRO ──(first scroll)──▶ INTERACTIVE
-    //     ◀──────────────────────────────(rawProgress<2)──────────────────
-    //
-    // _masterT is the single value that drives all card rendering.
-    // In INTRO it grows via RAF; in INTERACTIVE it derives from rawProgress.
-    // A decaying offset at handoff prevents any visible jump.
-
-    // Called every scroll tick — owns all stream state transitions.
-    _tickStream(rawProgress) {
-      if (rawProgress < 2) {
-        if (this._streamPhase !== 'idle') this._resetStream();
-        return;
-      }
-      if (this._streamPhase === 'idle') this._enterStreamIntro();
-    }
-
-    _enterStreamIntro() {
-      this._streamPhase     = 'active';
-      this._masterT         = 0;
-      this._introLastTs     = 0;
-      this._streamCanPlay   = false;
-      this._streamVelocity  = 1;
-      this._stream?.classList.add('stream-active');
-      this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
-    }
-
-    _introLoop(timestamp) {
-      if (this._streamPhase !== 'active') return;
-
-      const INTRO_SPEED = 0.09; // masterT units/s — ~11 s per crossing
-
-      if (this._streamCanPlay) {
-        const dt      = this._introLastTs ? Math.min((timestamp - this._introLastTs) / 1000, 0.1) : 0;
-        this._introLastTs = timestamp;
-        this._masterT += this._streamVelocity * INTRO_SPEED * dt;
-        this._renderStream(this._masterT);
-      }
-
-      this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
-    }
-
-    _resetStream() {
-      this._streamPhase    = 'idle';
-      this._masterT        = 0;
-      this._introLastTs    = 0;
-      this._streamCanPlay  = false;
-      this._streamVelocity = 1;
-      this._introPaused    = false;
-      if (this._introRaf) {
-        cancelAnimationFrame(this._introRaf);
-        this._introRaf = null;
-      }
-      this._stopInfoAnim();
-      this._stream?.classList.remove('stream-active');
-      this._streamCards.forEach(card => {
-        card.style.opacity   = '0';
-        card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
-      });
-      // Sync cache so next _renderStream skips redundant writes for already-hidden cards
-      if (this._cardHidden) this._cardHidden.fill(true);
-      if (this._streamLbOpen) this._streamLbHide?.();
-    }
-
-    // Pure renderer — same function regardless of which driver owns masterT.
-    // Uses modulo so the stream loops: after the last card exits, card 0 re-enters.
-    // Works in both directions: increasing masterT = forward, decreasing = backward.
-    // _cardHidden cache skips DOM writes for cards that were already set to hidden last frame
-    // (~27 of 30 cards at any moment), cutting style-write overhead by ~90%.
-    _renderStream(masterT) {
-      if (!this._stream || !this._streamCards.length) return;
-
-      const N            = this._streamCards.length;
-      const CARD_SPACING = 0.22;
-      const LOOP_LENGTH  = N * CARD_SPACING;
-      const CARD_W       = 232;
-      const streamW      = parseFloat(
-        this._stream.style.getPropertyValue('--ghost-stream-w')
-      ) || 500;
-
-      const phase = ((masterT % LOOP_LENGTH) + LOOP_LENGTH) % LOOP_LENGTH;
-
-      for (let i = 0; i < N; i++) {
-        const card   = this._streamCards[i];
-        const offset = ((phase - i * CARD_SPACING) % LOOP_LENGTH + LOOP_LENGTH) % LOOP_LENGTH;
-
-        if (offset > 1) {
-          // Skip DOM write if card was already hidden last frame
-          if (!this._cardHidden[i]) {
-            card.style.opacity   = '0';
-            card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
-            this._cardHidden[i]  = true;
-          }
-          continue;
-        }
-
-        this._cardHidden[i] = false;
-
-        const t        = offset;
-        const finalRot = this._streamRotations[i] || 0;
-        let x, rot;
-
-        if (t < 0.22) {
-          const p = t / 0.22;
-          x   = p * (streamW * 0.22 - 51);
-          rot = -90;
-        } else if (t < 0.75) {
-          const p = (t - 0.22) / 0.53;
-          x   = (streamW * 0.22 - 51) + p * ((streamW * 0.75 - 174) - (streamW * 0.22 - 51));
-          rot = -90 + p * (finalRot + 90);
-        } else {
-          const p = (t - 0.75) / 0.25;
-          x   = (streamW * 0.75 - 174) + p * ((streamW - CARD_W) - (streamW * 0.75 - 174));
-          rot = finalRot;
-        }
-
-        card.style.opacity   = t < 0.03 ? String(t / 0.03) : '1';
-        card.style.transform = `translateX(${x}px) translateY(-50%) rotate(${rot}deg)`;
-      }
+      this.polaroid.reset();
     }
 
     // ── RAF visibility pause / resume ────────────────────────────────────────
     _pauseAllRafs() {
-      if (this._introRaf && this._streamPhase === 'active') {
-        cancelAnimationFrame(this._introRaf);
-        this._introRaf   = null;
-        this._introPaused = true;
-        this._introLastTs = 0; // reset so resumed loop doesn't jump by hidden-tab duration
-      }
+      this.stream.pauseRaf();
       if (this._borderRaf && this._borderCount > 0) {
         cancelAnimationFrame(this._borderRaf);
-        this._borderRaf   = null;
+        this._borderRaf    = null;
         this._borderPaused = true;
       }
       if (this._photoBorderRaf && this._photoBorderActive) {
         cancelAnimationFrame(this._photoBorderRaf);
-        this._photoBorderRaf   = null;
+        this._photoBorderRaf    = null;
         this._photoBorderPaused = true;
       }
     }
 
     _resumeAllRafs() {
-      if (this._introPaused && this._streamPhase === 'active') {
-        this._introPaused = false;
-        this._introRaf = requestAnimationFrame(ts => this._introLoop(ts));
-      }
+      this.stream.resumeRaf();
       if (this._borderPaused && this._borderCount > 0) {
         this._borderPaused    = false;
         this._borderFrameTick = 0;
@@ -986,7 +826,7 @@
         list.classList.add('has-active');
         item.classList.add('active');
         item.style.opacity = '0.5';
-        this._flyCaption(item);
+        this.caption.fly(item);
 
         textEls.forEach((el, i) => {
           gsap.killTweensOf(el);
@@ -1020,7 +860,7 @@
         }, 50);
 
         this.hideBackgroundImage();
-        this._returnCaption();
+        this.caption.return();
       });
     }
 
@@ -1053,224 +893,6 @@
       this._bgElecOff();
     }
 
-    // ── Polaroids title: random colour cycle on hover ────────────────────────
-    // ── Polaroid reveal: canvas scratch-off ──────────────────────────────────
-    _initPolaroid() {
-      const canvas = document.getElementById('polaroidCanvas');
-      const photo  = document.getElementById('polaroidPhoto');
-      if (!canvas || !photo) return;
-
-      // Random palette colour for the polaroid frame background
-      const palette = ['#005F73','#0A9396','#94D2BD','#E9D8A6','#EE9B00','#CA6702','#BB3E03','#AE2012','#9B2226'];
-      const frame   = document.querySelector('.photo-polaroid-frame');
-      if (frame) frame.style.background = palette[Math.floor(Math.random() * palette.length)];
-
-      // Pick a random image + title from the accordion list
-      const items = Array.from(document.querySelectorAll('.photo-project-item[data-image]'));
-      if (!items.length) return;
-      const item  = items[Math.floor(Math.random() * items.length)];
-      photo.src   = item.dataset.image;
-
-      // Populate caption with the photo title and trigger marker animation
-      const nameEl  = document.getElementById('polaroidName');
-      const titleEl = item.querySelector('.photo-title');
-      if (nameEl) {
-        nameEl.textContent = titleEl ? titleEl.textContent.trim() : '';
-        nameEl.classList.remove('reveal');
-        void nameEl.offsetWidth;
-        nameEl.classList.add('reveal');
-      }
-
-      // Section label — formatted as [ · A N I M A L S · ]
-      const sectionEl  = document.getElementById('polaroidSection');
-      const sectionBtn = item.closest('.photo-accordion-item')?.querySelector('.photo-btn-label');
-      if (sectionEl) {
-        if (sectionBtn) {
-          const word = sectionBtn.textContent.replace(/[·\[\]\s]/g, '').trim().toUpperCase();
-          const spaced = word.split('').join(' ');
-          sectionEl.textContent = '[ \u00b7 ' + spaced + ' \u00b7 ]';
-        } else {
-          sectionEl.textContent = '';
-        }
-        sectionEl.classList.remove('reveal');
-        void sectionEl.offsetWidth;
-        sectionEl.classList.add('reveal');
-      }
-
-      // Size canvas bitmap to physical pixels (HiDPI-aware).
-      // Deferred to rAF so layout is settled after the overlay becomes visible.
-      requestAnimationFrame(() => {
-        if (!this.inPhase3) return;
-
-        const dpr  = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        const cssW = rect.width;
-        const cssH = rect.height;
-        if (!cssW || !cssH) return;
-
-        canvas.width  = Math.round(cssW * dpr);
-        canvas.height = Math.round(cssH * dpr);
-
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
-
-        // Fill with dark background — this is what gets "scratched off"
-        ctx.fillStyle = '#001219';
-        ctx.fillRect(0, 0, cssW, cssH);
-
-        // Remove any leftover listener from a previous visit
-        if (this._polaroidMoveHandler) {
-          canvas.removeEventListener('mousemove', this._polaroidMoveHandler);
-        }
-
-        // Erase a soft circle wherever the mouse moves (permanent destination-out)
-        this._polaroidMoveHandler = (e) => {
-          const r = canvas.getBoundingClientRect();
-          const x = e.clientX - r.left;
-          const y = e.clientY - r.top;
-          const radius = 44;
-          ctx.globalCompositeOperation = 'destination-out';
-          const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-          grad.addColorStop(0,    'rgba(0,0,0,1)');
-          grad.addColorStop(0.6,  'rgba(0,0,0,0.85)');
-          grad.addColorStop(1,    'rgba(0,0,0,0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fill();
-        };
-
-        canvas.addEventListener('mousemove', this._polaroidMoveHandler, { passive: true });
-      });
-    }
-
-    _resetPolaroid() {
-      const canvas = document.getElementById('polaroidCanvas');
-      if (!canvas) return;
-      if (this._polaroidMoveHandler) {
-        canvas.removeEventListener('mousemove', this._polaroidMoveHandler);
-        this._polaroidMoveHandler = null;
-      }
-      // Resetting dimensions clears the bitmap automatically
-      canvas.width  = 0;
-      canvas.height = 0;
-      const photo  = document.getElementById('polaroidPhoto');
-      if (photo) photo.src = '';
-      const nameEl    = document.getElementById('polaroidName');
-      if (nameEl) { nameEl.textContent = ''; nameEl.classList.remove('reveal'); }
-      const sectionEl = document.getElementById('polaroidSection');
-      if (sectionEl) sectionEl.textContent = '';
-      const frame  = document.querySelector('.photo-polaroid-frame');
-      if (frame) frame.style.background = '';
-    }
-
-    // ── Polaroid reveal photo: click to open matching item ──────────────────
-    _setupPolaroidClick() {
-      const polaroidReveal = document.querySelector('.photo-polaroid-reveal');
-      if (!polaroidReveal) return;
-      polaroidReveal.style.cursor = 'pointer';
-      polaroidReveal.addEventListener('click', () => {
-        if (this.introAnimating) return;
-        const photoEl = document.getElementById('polaroidPhoto');
-        if (!photoEl || !photoEl.src) return;
-
-        const normalize = (src) => {
-          try { return new URL(src, location.href).pathname; } catch { return src; }
-        };
-        const polaroidPath = normalize(photoEl.src);
-
-        const matchingItem = Array.from(
-          document.querySelectorAll('.photo-project-item[data-image]')
-        ).find(item => normalize(item.dataset.image) === polaroidPath);
-
-        if (!matchingItem) return;
-
-        // Clear the scratch canvas to fully expose the photo
-        const canvas = document.getElementById('polaroidCanvas');
-        if (canvas && canvas.width && canvas.height) {
-          const ctx = canvas.getContext('2d');
-          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Re-trigger the caption reveal so name + section are prominently visible
-        const nameEl    = document.getElementById('polaroidName');
-        const sectionEl = document.getElementById('polaroidSection');
-        [nameEl, sectionEl].forEach(el => {
-          if (!el) return;
-          el.classList.remove('reveal');
-          void el.offsetWidth;   // force reflow so the animation restarts
-          el.classList.add('reveal');
-        });
-
-        const accordionItem = matchingItem.closest('.photo-accordion-item');
-        const btn  = accordionItem?.querySelector('.photo-category-btn');
-        const list = accordionItem?.querySelector('.photo-project-list');
-        const cat  = btn?.dataset.category;
-        if (!cat || !list || !btn) return;
-
-        const activate = () => this._activatePolaroidItem(matchingItem);
-
-        if (!this.openCategories.has(cat)) {
-          this._openCategory(cat, btn, list);
-          const n = list.querySelectorAll('.photo-project-item').length;
-          setTimeout(activate, n * 40 + 200);
-        } else {
-          activate();
-        }
-      });
-    }
-
-    _activatePolaroidItem(item) {
-      const list = item.closest('.photo-project-list');
-      if (!list) return;
-
-      const textEls       = item.querySelectorAll('.hover-text');
-      const originalTexts = this.originalTexts.get(item);
-
-      // Clear any previously active item in the same list
-      list.querySelectorAll('.photo-project-item').forEach(el => {
-        el.classList.remove('active');
-        el.style.opacity = '';
-      });
-      list.classList.add('has-active');
-      item.classList.add('active');
-
-      // ScrambleText on hover-text elements
-      if (originalTexts) {
-        textEls.forEach((el, i) => {
-          gsap.killTweensOf(el);
-          gsap.to(el, {
-            duration: 0.8,
-            scrambleText: {
-              text: originalTexts[i],
-              chars: 'qwerty1337h@ck3r',
-              revealDelay: 0.3,
-              speed: 0.4,
-            },
-          });
-        });
-      }
-
-      if (item.dataset.image) this.showBackgroundImage(item.dataset.image);
-
-      // Scroll to reveal the item
-      if (this.contentScroll) {
-        requestAnimationFrame(() => {
-          const csRect   = this.contentScroll.getBoundingClientRect();
-          const itemRect = item.getBoundingClientRect();
-          const needed   = this.contentScroll.scrollTop + (itemRect.bottom + 24 - csRect.bottom);
-          if (needed > this.contentScroll.scrollTop) {
-            gsap.to(this.contentScroll, {
-              scrollTop: needed,
-              duration: 0.5,
-              ease: 'power2.out',
-              overwrite: 'auto',
-            });
-          }
-        });
-      }
-    }
-
     // ── Polaroids title: pick a new random palette colour on each hover ────────
     _setupTitleColorCycle() {
       document.querySelectorAll('.pgallery-title').forEach(el => {
@@ -1285,25 +907,21 @@
       if (this._photoBorderSettleTimer) { clearTimeout(this._photoBorderSettleTimer); this._photoBorderSettleTimer = null; }
       if (this._photoBorderStopTimer)   { clearTimeout(this._photoBorderStopTimer);   this._photoBorderStopTimer   = null; }
 
-      // Snap on — same reflow trick as the illustration lightbox
       this.bgImage.classList.remove('photo-bg-elec-active');
       void this.bgImage.offsetWidth;
       this.bgImage.classList.add('photo-bg-elec-active');
 
-      // Start seed cycling if not already running
       if (!this._photoBorderActive) {
         this._photoBorderActive = true;
         this._photoBorderFrame  = 0;
         this._photoBorderRaf    = requestAnimationFrame(() => this._photoBorderTick());
       }
 
-      // After settle window: remove class → CSS fades border out over 0.4s
       const SETTLE_MS = 620;
       const FADE_MS   = 400;
       this._photoBorderSettleTimer = setTimeout(() => {
         this._photoBorderSettleTimer = null;
         this.bgImage.classList.remove('photo-bg-elec-active');
-        // Stop the RAF once the fade is complete — zero CPU after that
         this._photoBorderStopTimer = setTimeout(() => {
           this._photoBorderStopTimer  = null;
           this._photoBorderActive     = false;
@@ -1325,233 +943,6 @@
         this._photoBorderTurbulence.setAttribute('seed', (Math.random() * 500 | 0) + 1);
       }
       this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
-    }
-
-    // ── Flying caption clone ─────────────────────────────────────────────────
-
-    _getCounterIndex(item) {
-      const list = item.closest('.photo-project-list');
-      if (!list) return '01';
-      const items = Array.from(list.querySelectorAll('.photo-project-item'));
-      return String(items.indexOf(item) + 1).padStart(2, '0');
-    }
-
-    _buildFlyClone(item) {
-      const clone = document.createElement('li');
-      clone.className = 'photo-project-item photo-caption-fly';
-
-      const numSpan = document.createElement('span');
-      numSpan.className = 'photo-fly-num';
-      numSpan.textContent = this._getCounterIndex(item);
-      clone.appendChild(numSpan);
-
-      item.querySelectorAll('.photo-project-data').forEach(span => {
-        clone.appendChild(span.cloneNode(true));
-      });
-
-      return clone;
-    }
-
-    _flyCaption(item) {
-      if (this._flyReturnTimeout) {
-        clearTimeout(this._flyReturnTimeout);
-        this._flyReturnTimeout = null;
-      }
-
-      const rect      = item.getBoundingClientRect();
-      const nav       = document.querySelector('header');
-      const navH      = nav ? nav.offsetHeight : 70;
-      const targetTop = Math.round(window.innerHeight * 0.975) - 32;
-      const targetLeft = (window.innerWidth - rect.width) / 2;
-
-      // Quick-switch: clone already exists for a different item
-      if (this._flyClone && this._flySource !== item) {
-        this._flySource.style.opacity = '0.25';
-        this._flySource.style.zIndex  = '';
-        this._flySource = item;
-        item.style.opacity = '0.5';
-        item.style.zIndex  = '0';
-
-        const numEl = this._flyClone.querySelector('.photo-fly-num');
-        if (numEl) numEl.textContent = this._getCounterIndex(item);
-
-        const cloneSpans = this._flyClone.querySelectorAll('.photo-project-data');
-        const origTexts  = this.originalTexts.get(item);
-        const srcSpans   = item.querySelectorAll('.photo-project-data');
-        cloneSpans.forEach((el, i) => {
-          gsap.killTweensOf(el);
-          const target = (origTexts && origTexts[i]) ? origTexts[i]
-                       : (srcSpans[i] ? srcSpans[i].textContent : '');
-          gsap.to(el, {
-            duration: 0.5,
-            scrambleText: { text: target, chars: 'qwerty1337h@ck3r', revealDelay: 0.1, speed: 0.5 }
-          });
-        });
-        return;
-      }
-
-      if (this._flyClone) return; // same item already tracked
-
-      const clone = this._buildFlyClone(item);
-      gsap.set(clone, { top: rect.top, left: rect.left, width: rect.width, opacity: 0 });
-      document.body.appendChild(clone);
-      this._flyClone  = clone;
-      this._flySource = item;
-      item.style.zIndex = '0';
-
-      clone.classList.add('photo-glitch-load');
-      setTimeout(() => { if (this._flyClone === clone) clone.classList.remove('photo-glitch-load'); }, 520);
-
-      gsap.to(clone, {
-        top:      targetTop,
-        left:     targetLeft,
-        opacity:  1,
-        duration: 0.42,
-        ease:     'power3.out',
-      });
-    }
-
-    _returnCaption() {
-      if (!this._flyClone) return;
-
-      this._flyReturnTimeout = setTimeout(() => {
-        this._flyReturnTimeout = null;
-        if (!this._flyClone) return;
-
-        const clone  = this._flyClone;
-        const source = this._flySource;
-        this._flyClone  = null;
-        this._flySource = null;
-
-        const rect = source ? source.getBoundingClientRect() : null;
-        if (!rect) { clone.remove(); return; }
-
-        if (source) source.style.zIndex = '';
-        if (this._flyReturnTween) this._flyReturnTween.kill();
-        this._flyReturnTween = gsap.to(clone, {
-          top:      rect.top,
-          left:     rect.left,
-          width:    rect.width,
-          opacity:  0,
-          duration: 0.32,
-          ease:     'power2.in',
-          onComplete: () => { clone.remove(); this._flyReturnTween = null; }
-        });
-      }, 0);
-    }
-
-    _clearFlyClone() {
-      if (this._flyReturnTimeout) { clearTimeout(this._flyReturnTimeout); this._flyReturnTimeout = null; }
-      if (this._flyReturnTween)   { this._flyReturnTween.kill(); this._flyReturnTween = null; }
-      if (this._flyClone)         { this._flyClone.remove(); this._flyClone = null; }
-      if (this._flySource)        { this._flySource.style.opacity = ''; this._flySource.style.zIndex = ''; this._flySource = null; }
-    }
-
-    // ── Info strip animation ─────────────────────────────────────────────────
-    _startInfoAnim() {
-      const rightEl = document.querySelector('.pgallery-info-right');
-      const leftEl  = document.querySelector('.pgallery-info-left');
-      if (!rightEl || !leftEl) return;
-
-      const rightStates = ['', '>', '>>', '>>>'];
-      const leftStates  = ['', '<', '<<', '<<<'];
-      const STEP_DELAY  = 500;
-      const LOOP_PAUSE  = 2200;
-      let step = 0;
-
-      const tick = () => {
-        rightEl.textContent = rightStates[step];
-        leftEl.textContent  = leftStates[step];
-        step = (step + 1) % rightStates.length;
-        this._infoAnimInterval = setTimeout(tick, step === 0 ? LOOP_PAUSE : STEP_DELAY);
-      };
-
-      tick();
-    }
-
-    _stopInfoAnim() {
-      if (this._infoAnimInterval) {
-        clearTimeout(this._infoAnimInterval);
-        this._infoAnimInterval = null;
-      }
-      const rightEl = document.querySelector('.pgallery-info-right');
-      const leftEl  = document.querySelector('.pgallery-info-left');
-      if (rightEl) rightEl.textContent = '';
-      if (leftEl)  leftEl.textContent  = '';
-    }
-
-    // ── Ghost stream lightbox ────────────────────────────────────────────────
-    _setupStreamLightbox() {
-      // Distribute photo data across cards by cycling through all accordion items
-      const photoItems = Array.from(document.querySelectorAll('.photo-project-item[data-image]'));
-      this._streamCards.forEach((card, i) => {
-        const item = photoItems[i % photoItems.length];
-        if (!item) return;
-        card.dataset.image = item.dataset.image;
-        card.style.backgroundImage    = `url("${item.dataset.image}")`;
-        card.style.backgroundSize     = 'cover';
-        card.style.backgroundPosition = 'center';
-        const titleEl = item.querySelector('.photo-title');
-        card.dataset.alt = titleEl ? titleEl.textContent.trim() : '';
-      });
-
-      // Build lightbox — same structure as illus-lightbox
-      const lb = document.createElement('div');
-      lb.className = 'photo-stream-lightbox';
-      lb.setAttribute('aria-hidden', 'true');
-      lb.setAttribute('role', 'dialog');
-      lb.setAttribute('aria-modal', 'true');
-      lb.innerHTML = `
-        <div class="photo-stream-lb-frame">
-          <img class="photo-stream-lb-img" alt="">
-          <div class="photo-stream-lb-border" aria-hidden="true"></div>
-          <button class="photo-stream-lb-close" aria-label="Close">[ x ]</button>
-        </div>`;
-      document.body.appendChild(lb);
-
-      const lbImg = lb.querySelector('.photo-stream-lb-img');
-      this._streamLbOpen = false;
-      let lbTimer = null;
-      const LB_SETTLE_MS = 620;
-
-      const lbShow = (src, alt) => {
-        lbImg.src = src;
-        lbImg.alt = alt || '';
-        lb.setAttribute('aria-hidden', 'false');
-        lb.classList.add('open');
-        this._streamLbOpen = true;
-        document.body.style.overflow = 'hidden';
-
-        if (lbTimer) { clearTimeout(lbTimer); lbTimer = null; }
-        lb.classList.remove('lb-elec-active');
-        void lb.offsetWidth;
-        lb.classList.add('lb-elec-active');
-        lbTimer = setTimeout(() => {
-          lb.classList.remove('lb-elec-active');
-          lbTimer = null;
-        }, LB_SETTLE_MS);
-      };
-
-      this._streamLbHide = () => {
-        if (lbTimer) { clearTimeout(lbTimer); lbTimer = null; }
-        lb.classList.remove('lb-elec-active', 'open');
-        lb.setAttribute('aria-hidden', 'true');
-        this._streamLbOpen = false;
-        document.body.style.overflow = '';
-        setTimeout(() => { if (!this._streamLbOpen) lbImg.src = ''; }, 500);
-      };
-
-      lb.addEventListener('click', e => { if (e.target === lb) this._streamLbHide(); });
-      lb.querySelector('.photo-stream-lb-close').addEventListener('click', this._streamLbHide);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && this._streamLbOpen) this._streamLbHide(); });
-
-      // Wire click on each card
-      this._streamCards.forEach(card => {
-        card.addEventListener('click', () => {
-          if (!card.dataset.image) return;
-          lbShow(card.dataset.image, card.dataset.alt || '');
-        });
-      });
     }
 
     // ── Text scramble — same glitch pattern as art-direction discipline list ──
@@ -1595,4 +986,4 @@
     init();
   }
 
-})();
+}());
