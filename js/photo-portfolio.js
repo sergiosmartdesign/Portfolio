@@ -435,22 +435,24 @@
       lb.addEventListener('click', () => this._closeItemLightbox());
     }
 
-    _openItemLightbox(sourceItem, startX, startY) {
+    _openItemLightbox(sourceItem, startX, startY, startW, startH) {
       if (this._itemLbOpen || !this._itemLb) return;
       this._itemLbOpen = true;
-      this._itemLbOrigin      = { x: startX, y: startY };
+      const w = startW ?? this._PREVIEW_W;
+      const h = startH ?? this._PREVIEW_H;
+      this._itemLbOrigin      = { x: startX, y: startY, w, h };
       this._itemLbSourceItem  = sourceItem;
 
       const lb  = this._itemLb;
       const src = sourceItem.dataset.image;
       this._itemLbImg.src = src;
 
-      // Pin at thumbnail position — set ALL inline styles before display:block
+      // Pin at origin position — set ALL inline styles before display:block
       // so the browser commits the start geometry in one layout pass.
       lb.style.left    = startX + 'px';
       lb.style.top     = startY + 'px';
-      lb.style.width   = this._PREVIEW_W + 'px';
-      lb.style.height  = this._PREVIEW_H + 'px';
+      lb.style.width   = w + 'px';
+      lb.style.height  = h + 'px';
       lb.style.opacity = '1';
       lb.style.display = 'block';
       lb.setAttribute('aria-hidden', 'false');
@@ -484,8 +486,7 @@
       this.caption.clear();
 
       const lb      = this._itemLb;
-      const originX = this._itemLbOrigin.x;
-      const originY = this._itemLbOrigin.y;
+      const { x: originX, y: originY, w: originW, h: originH } = this._itemLbOrigin;
 
       // Activate electric border for the shrink
       lb.classList.add('lb-expanding');
@@ -494,11 +495,11 @@
       // Force reflow from current fullscreen state before transitioning
       void lb.offsetWidth;
 
-      // Shrink back to thumbnail origin
+      // Shrink back to exact origin rect
       lb.style.left   = originX + 'px';
       lb.style.top    = originY + 'px';
-      lb.style.width  = this._PREVIEW_W  + 'px';
-      lb.style.height = this._PREVIEW_H + 'px';
+      lb.style.width  = originW + 'px';
+      lb.style.height = originH + 'px';
 
       const onShrink = (e) => {
         if (e.propertyName !== 'width') return;
@@ -1034,9 +1035,10 @@
       }
       if (this._enlargeText) {
         gsap.killTweensOf(this._enlargeText);
+        const enlargeStr = App.LanguageManager?.translate('photo.ui.enlarge') || '· click to enlarge ·';
         gsap.to(this._enlargeText, {
           duration: 0.5,
-          scrambleText: { text: '· click to enlarge ·', chars: 'qwerty1337h@ck3r', revealDelay: 0.1, speed: 0.5 }
+          scrambleText: { text: enlargeStr, chars: 'qwerty1337h@ck3r', revealDelay: 0.1, speed: 0.5 }
         });
       }
     }

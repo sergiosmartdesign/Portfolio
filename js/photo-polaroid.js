@@ -185,52 +185,31 @@
     // ── Private ──────────────────────────────────────────────────────────────
 
     _onPolaroidClick() {
-      if (this._mgr.introAnimating) return;
       const photoEl = document.getElementById('polaroidPhoto');
       if (!photoEl || !photoEl.src) return;
 
       const normalize = src => {
         try { return new URL(src, location.href).pathname; } catch { return src; }
       };
-      const polaroidPath  = normalize(photoEl.src);
-      const matchingItem  = Array.from(
+      const polaroidPath = normalize(photoEl.src);
+      const matchingItem = Array.from(
         document.querySelectorAll('.photo-project-item[data-image]')
       ).find(item => normalize(item.dataset.image) === polaroidPath);
 
       if (!matchingItem) return;
 
-      // Clear the scratch canvas to fully expose the photo
+      // Clear the scratch canvas so the photo is fully visible
       const canvas = document.getElementById('polaroidCanvas');
       if (canvas && canvas.width && canvas.height) {
         const ctx = canvas.getContext('2d');
         if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
 
-      // Re-trigger the caption reveal so name + section are prominently visible
-      const nameEl    = document.getElementById('polaroidName');
-      const sectionEl = document.getElementById('polaroidSection');
-      [nameEl, sectionEl].forEach(el => {
-        if (!el) return;
-        el.classList.remove('reveal');
-        void el.offsetWidth;
-        el.classList.add('reveal');
-      });
+      // Use the polaroid frame's bounding rect as the expand origin
+      const frame = document.querySelector('.photo-polaroid-frame');
+      const rect  = frame ? frame.getBoundingClientRect() : photoEl.getBoundingClientRect();
 
-      const accordionItem = matchingItem.closest('.photo-accordion-item');
-      const btn  = accordionItem?.querySelector('.photo-category-btn');
-      const list = accordionItem?.querySelector('.photo-project-list');
-      const cat  = btn?.dataset.category;
-      if (!cat || !list || !btn) return;
-
-      const activate = () => this.activateItem(matchingItem);
-
-      if (!this._mgr.openCategories.has(cat)) {
-        this._mgr._openCategory(cat, btn, list);
-        const n = list.querySelectorAll('.photo-project-item').length;
-        setTimeout(activate, n * 40 + 200);
-      } else {
-        activate();
-      }
+      this._mgr._openItemLightbox(matchingItem, rect.left, rect.top, rect.width, rect.height);
     }
   }
 

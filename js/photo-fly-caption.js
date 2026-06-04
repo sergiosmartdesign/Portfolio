@@ -26,9 +26,17 @@
         this._flyReturnTimeout = null;
       }
 
-      const rect       = item.getBoundingClientRect();
+      const rect      = item.getBoundingClientRect();
+      const itemHidden = rect.width < 10;
+
+      // When the source item is hidden (inside a collapsed accordion), derive a
+      // natural caption width from the left column. Fall back to 55% of viewport.
+      const captionW  = itemHidden
+        ? (document.querySelector('.photo-col-left')?.getBoundingClientRect().width || window.innerWidth * 0.55)
+        : rect.width;
+
       const targetTop  = Math.round(window.innerHeight * 0.975) - 32;
-      const targetLeft = (window.innerWidth - rect.width) / 2;
+      const targetLeft = (window.innerWidth - captionW) / 2;
 
       // Quick-switch: clone exists but is tracking a different item
       if (this._flyClone && this._flySource !== item) {
@@ -37,6 +45,9 @@
         this._flySource = item;
         item.style.opacity = '0.5';
         item.style.zIndex  = '0';
+
+        // Also update width in case the new item has a different rect
+        gsap.set(this._flyClone, { width: captionW });
 
         const numEl = this._flyClone.querySelector('.photo-fly-num');
         if (numEl) numEl.textContent = this._getCounterIndex(item);
@@ -59,11 +70,16 @@
       if (this._flyClone) return; // same item already tracked
 
       const clone = this._buildFlyClone(item);
-      gsap.set(clone, { top: rect.top, left: rect.left, width: rect.width, opacity: 0 });
+
+      // Hidden items start at their final position and fade in — no fly from (0,0).
+      const startTop  = itemHidden ? targetTop  : rect.top;
+      const startLeft = itemHidden ? targetLeft : rect.left;
+
+      gsap.set(clone, { top: startTop, left: startLeft, width: captionW, opacity: 0 });
       document.body.appendChild(clone);
       this._flyClone  = clone;
       this._flySource = item;
-      item.style.zIndex = '0';
+      if (!itemHidden) item.style.zIndex = '0';
 
       clone.classList.add('photo-glitch-load');
       setTimeout(() => { if (this._flyClone === clone) clone.classList.remove('photo-glitch-load'); }, 520);
