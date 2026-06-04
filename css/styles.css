@@ -4780,7 +4780,7 @@ nav {
 /* Flying caption clone — cloned row that flies to top-center of the active photo */
 .photo-caption-fly {
   position: fixed;
-  z-index: 9000;
+  z-index: 9200;
   pointer-events: none;
   list-style: none;
   margin: 0;

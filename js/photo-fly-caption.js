@@ -93,7 +93,15 @@
         if (!rect) { clone.remove(); return; }
 
         if (source) source.style.zIndex = '';
-        if (this._flyReturnTween) this._flyReturnTween.kill();
+
+        // Kill the old tween AND remove its target so orphaned clones don't accumulate.
+        if (this._flyReturnTween) {
+          const oldEl = this._flyReturnTween.targets()[0];
+          this._flyReturnTween.kill();
+          this._flyReturnTween = null;
+          if (oldEl && oldEl !== clone) oldEl.remove();
+        }
+
         this._flyReturnTween = gsap.to(clone, {
           top:      rect.top,
           left:     rect.left,
@@ -111,6 +119,8 @@
       if (this._flyReturnTween)   { this._flyReturnTween.kill(); this._flyReturnTween = null; }
       if (this._flyClone)         { this._flyClone.remove(); this._flyClone = null; }
       if (this._flySource)        { this._flySource.style.opacity = ''; this._flySource.style.zIndex = ''; this._flySource = null; }
+      // Remove any clones that escaped tracking (orphaned by killed tweens).
+      document.querySelectorAll('.photo-caption-fly').forEach(el => el.remove());
     }
 
     // ── Private ──────────────────────────────────────────────────────────────

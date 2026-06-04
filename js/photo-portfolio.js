@@ -435,12 +435,14 @@
       lb.addEventListener('click', () => this._closeItemLightbox());
     }
 
-    _openItemLightbox(src, startX, startY) {
+    _openItemLightbox(sourceItem, startX, startY) {
       if (this._itemLbOpen || !this._itemLb) return;
       this._itemLbOpen = true;
-      this._itemLbOrigin = { x: startX, y: startY }; // snapshot for close reverse
+      this._itemLbOrigin      = { x: startX, y: startY };
+      this._itemLbSourceItem  = sourceItem;
 
-      const lb = this._itemLb;
+      const lb  = this._itemLb;
+      const src = sourceItem.dataset.image;
       this._itemLbImg.src = src;
 
       // Pin at thumbnail position — set ALL inline styles before display:block
@@ -469,6 +471,7 @@
         lb.removeEventListener('transitionend', onExpand);
         lb.classList.remove('lb-expanding');
         this._stopPhotoBorderTick();
+        if (this._itemLbSourceItem) this.caption.fly(this._itemLbSourceItem);
       };
       lb.addEventListener('transitionend', onExpand);
 
@@ -478,6 +481,7 @@
     _closeItemLightbox() {
       if (!this._itemLbOpen || !this._itemLb) return;
       this._itemLbOpen = false;
+      this.caption.clear();
 
       const lb      = this._itemLb;
       const originX = this._itemLbOrigin.x;
@@ -516,6 +520,7 @@
     _forceCloseItemLightbox() {
       if (!this._itemLb) return;
       this._itemLbOpen = false;
+      this.caption.clear();
       this._itemLb.classList.remove('lb-expanding');
       this._stopPhotoBorderTick();
       // Clone-replace the node to shed any pending transitionend listeners
@@ -967,7 +972,6 @@
         list.classList.add('has-active');
         item.classList.add('active');
         item.style.opacity = '0.5';
-        this.caption.fly(item);
 
         textEls.forEach((el, i) => {
           gsap.killTweensOf(el);
@@ -1001,12 +1005,13 @@
         }, 50);
 
         this.hideBackgroundImage();
-        this.caption.return();
       });
 
-      item.addEventListener('click', () => {
-        if (this.introAnimating || !item.dataset.image) return;
-        this._openItemLightbox(item.dataset.image, this._previewTargetX, this._previewTargetY);
+      item.addEventListener('click', (e) => {
+        if (!item.dataset.image) return;
+        const x = this._previewTargetX || e.clientX;
+        const y = this._previewTargetY || e.clientY;
+        this._openItemLightbox(item, x, y);
       });
     }
 
