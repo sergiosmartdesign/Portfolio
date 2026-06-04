@@ -254,10 +254,6 @@
    *   footer p            — copyright line (too short / legal text)
    */
   var PARA_SELECTORS = [
-    '#aboutp1',
-    '#aboutp2',
-    '#aboutp3',
-    '#aboutp4',
     '.photo-intro',    // data-i18n-html: <em>/<span>/<strong> recovered via innerHTML restore
     '.photo-ig-desc',
     '.pgallery-desc',  // data-splitting: Splitting.js char-spans recovered via innerHTML restore
