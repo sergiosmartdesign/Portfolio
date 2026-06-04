@@ -4051,6 +4051,20 @@ nav {
   counter-reset: photo-project-counter 0;
   display: none;
   flex-direction: column;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.photo-accordion-item.list-animating,
+.photo-accordion-item.list-animating .photo-project-list,
+.photo-accordion-item.list-animating .photo-category-btn {
+  background-color: rgba(0, 18, 25, 0.7);
+}
+
+.photo-accordion-item.list-animating .photo-category-btn,
+.photo-accordion-item.list-animating .photo-project-data,
+.photo-accordion-item.list-animating .photo-project-item::before {
+  color: #94D2BD;
 }
 
 /* Each row */
@@ -4123,6 +4137,8 @@ nav {
 .photo-accordion-item {
   display: flex;
   flex-direction: column;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
 }
 
 /* Category button */
@@ -4464,7 +4480,7 @@ nav {
   letter-spacing: 0.12em;
   line-height: 1;
   padding: 0.75rem 0;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.3s ease;
 }
 
 .photo-category-btn:hover {

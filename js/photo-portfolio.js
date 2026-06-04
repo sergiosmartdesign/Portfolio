@@ -271,6 +271,7 @@
           btn.classList.add('active');
           btn.setAttribute('aria-expanded', 'true');
           if (list) list.style.display = 'flex';
+          if (accordionItem) accordionItem.classList.add('list-animating');
           this._revealItem(btn, 0);
 
           // After layout update, scroll the content container to keep the last item visible
@@ -343,6 +344,7 @@
           btn.classList.remove('active');
           btn.setAttribute('aria-expanded', 'false');
           if (list) list.style.display = 'none';
+          if (accordionItem) accordionItem.classList.remove('list-animating');
           gsap.killTweensOf(btn);
           gsap.fromTo(btn, { y: -5 }, { y: 0, duration: 0.4, ease: 'elastic.out(1.2, 0.5)' });
         }, closeAt);
