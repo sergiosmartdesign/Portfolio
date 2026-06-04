@@ -4194,6 +4194,17 @@ nav {
   animation: photo-camera-bounce-left 0.65s var(--ease-spring) forwards;
 }
 
+@keyframes camera-eject-bounce {
+  0%   { transform: rotate(-90deg) translateY(0);    opacity: 1; }
+  25%  { transform: rotate(-90deg) translateY(-5px); opacity: 1; }
+  65%  { transform: rotate(-90deg) translateY(1px);  opacity: 1; }
+  100% { transform: rotate(-90deg) translateY(0);    opacity: 1; }
+}
+
+.photo-polaroids-camera.camera-eject {
+  animation: camera-eject-bounce 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* ── Polaroid ghost stream ──────────────────────────────────────────────── */
 /* Container positioned at the bottom of the left column, same vertical zone
    as the camera image. Cards travel left → right and are clipped by a

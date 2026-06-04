@@ -28,6 +28,10 @@
       this._infoAnimInterval = null;
       this._streamLbOpen     = false;
       this._streamLbHide     = null;
+
+      this._cameraEl       = null;
+      this._cardLastPhase  = null; // per-card: -1=hidden, 0=entering(t<0.22), 1=visible(t>=0.22)
+      this._ejectRafPending = false;
     }
 
     get canPlay()  { return this._streamCanPlay; }
@@ -37,7 +41,9 @@
       this._streamRotations = this._streamCards.map(card =>
         parseFloat(getComputedStyle(card).getPropertyValue('--ghost-rotate').trim()) || 0
       );
-      this._cardHidden = new Array(this._streamCards.length).fill(true);
+      this._cardHidden     = new Array(this._streamCards.length).fill(true);
+      this._cardLastPhase  = new Array(this._streamCards.length).fill(-1);
+      this._cameraEl       = document.querySelector('.photo-polaroids-camera');
       this._updateStreamWidth();
       this._setupInfoStripClicks();
       this._setupStreamLightbox();
@@ -90,7 +96,8 @@
         card.style.opacity   = '0';
         card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
       });
-      if (this._cardHidden) this._cardHidden.fill(true);
+      if (this._cardHidden)    this._cardHidden.fill(true);
+      if (this._cardLastPhase) this._cardLastPhase.fill(-1);
       if (this._streamLbOpen) this._streamLbHide?.();
     }
 
@@ -134,6 +141,19 @@
     }
 
     // ── Private ──────────────────────────────────────────────────────────────
+
+    _ejectBounce() {
+      if (!this._cameraEl || this._ejectRafPending) return;
+      // Batch into a single rAF so multiple same-frame crossings don't stack
+      this._ejectRafPending = true;
+      requestAnimationFrame(() => {
+        this._ejectRafPending = false;
+        if (!this._cameraEl) return;
+        this._cameraEl.classList.remove('camera-eject');
+        void this._cameraEl.offsetWidth;
+        this._cameraEl.classList.add('camera-eject');
+      });
+    }
 
     _updateStreamWidth() {
       if (this._stream) {
@@ -199,6 +219,7 @@
             card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
             this._cardHidden[i]  = true;
           }
+          this._cardLastPhase[i] = -1;
           continue;
         }
 
@@ -206,6 +227,13 @@
         const t        = offset;
         const finalRot = this._streamRotations[i] || 0;
         let x, rot;
+
+        // Detect eject moment: card crosses t=0.22 in either direction
+        const curPhase = t < 0.22 ? 0 : 1;
+        if (this._cardLastPhase[i] !== -1 && this._cardLastPhase[i] !== curPhase) {
+          this._ejectBounce();
+        }
+        this._cardLastPhase[i] = curPhase;
 
         if (t < 0.22) {
           const p = t / 0.22;
