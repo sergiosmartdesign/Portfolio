@@ -209,7 +209,7 @@
       const frame = document.querySelector('.photo-polaroid-frame');
       const rect  = frame ? frame.getBoundingClientRect() : photoEl.getBoundingClientRect();
 
-      this._mgr._openItemLightbox(matchingItem, rect.left, rect.top, rect.width, rect.height);
+      this._mgr._openItemLightbox(matchingItem, rect.left, rect.top, rect.width, rect.height, true);
     }
   }
 

@@ -435,13 +435,14 @@
       lb.addEventListener('click', () => this._closeItemLightbox());
     }
 
-    _openItemLightbox(sourceItem, startX, startY, startW, startH) {
+    _openItemLightbox(sourceItem, startX, startY, startW, startH, fromPolaroid = false) {
       if (this._itemLbOpen || !this._itemLb) return;
       this._itemLbOpen = true;
       const w = startW ?? this._PREVIEW_W;
       const h = startH ?? this._PREVIEW_H;
       this._itemLbOrigin      = { x: startX, y: startY, w, h };
       this._itemLbSourceItem  = sourceItem;
+      this._itemLbFromPolaroid = fromPolaroid;
 
       const lb  = this._itemLb;
       const src = sourceItem.dataset.image;
@@ -501,6 +502,9 @@
       lb.style.width  = originW + 'px';
       lb.style.height = originH + 'px';
 
+      const sourceItem    = this._itemLbSourceItem;
+      const fromPolaroid  = this._itemLbFromPolaroid;
+
       const onShrink = (e) => {
         if (e.propertyName !== 'width') return;
         lb.removeEventListener('transitionend', onShrink);
@@ -514,6 +518,23 @@
         lb.style.height   = '';
         lb.setAttribute('aria-hidden', 'true');
         this._itemLbImg.src = '';
+
+        if (fromPolaroid && sourceItem) {
+          const accordionItem = sourceItem.closest('.photo-accordion-item');
+          const btn  = accordionItem?.querySelector('.photo-category-btn');
+          const list = accordionItem?.querySelector('.photo-project-list');
+          const cat  = btn?.dataset.category;
+          if (cat && list && btn) {
+            const activate = () => this.polaroid.activateItem(sourceItem);
+            if (!this.openCategories.has(cat)) {
+              this._openCategory(cat, btn, list);
+              const n = list.querySelectorAll('.photo-project-item').length;
+              setTimeout(activate, n * 40 + 200);
+            } else {
+              activate();
+            }
+          }
+        }
       };
       lb.addEventListener('transitionend', onShrink);
     }
