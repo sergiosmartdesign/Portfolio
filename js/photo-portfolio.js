@@ -69,7 +69,14 @@
       this._photoBorderStopTimer   = null;
       this._photoBorderPaused      = false;
 
-      this._previewVisible = false;
+      this._previewVisible    = false;
+      this._enlargeLabel      = null;
+      this._enlargeText       = null;
+      this._PREVIEW_W         = 200;
+      this._PREVIEW_H         = 260;
+      this._previewTargetX    = 0;
+      this._previewTargetY    = 0;
+      this._previewRafPending = false;
 
       // Subsystem instances — created in init()
       this.stream  = null;
@@ -93,6 +100,8 @@
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
       this._borderTurbulence      = document.getElementById('accordion-electric-turbulence');
       this._photoBorderTurbulence = document.getElementById('photo-bg-turbulence');
+      this._enlargeLabel          = document.getElementById('photoEnlargeLabel');
+      this._enlargeText           = this._enlargeLabel?.querySelector('.photo-enlarge-text') ?? null;
 
       // Create subsystems
       this.stream  = new window.Photo.GhostStream(
@@ -533,6 +542,7 @@
       });
       this._previewVisible       = false;
       this.bgImage.style.opacity = '0';
+      if (this._enlargeLabel) this._enlargeLabel.style.opacity = '0';
       this._bgElecOff();
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
@@ -575,6 +585,7 @@
       });
       this._previewVisible       = false;
       this.bgImage.style.opacity = '0';
+      if (this._enlargeLabel) this._enlargeLabel.style.opacity = '0';
       this._bgElecOff();
       if (this.contentScroll) {
         gsap.killTweensOf(this.contentScroll);
@@ -881,34 +892,57 @@
 
     showBackgroundImage(imageUrl) {
       this._previewVisible               = true;
+      this.bgImage.style.transform       = `translate(${this._previewTargetX}px,${this._previewTargetY}px)`;
       this.bgImage.style.backgroundImage = `url("${imageUrl}")`;
       this.bgImage.style.opacity         = '1';
-      this._bgElecOn();
+      if (this._enlargeLabel) {
+        this._enlargeLabel.style.transform = `translate(${this._previewTargetX}px,${this._previewTargetY + this._PREVIEW_H + 4}px)`;
+        this._enlargeLabel.style.opacity   = '1';
+      }
+      if (this._enlargeText) {
+        gsap.killTweensOf(this._enlargeText);
+        gsap.to(this._enlargeText, {
+          duration: 0.5,
+          scrambleText: { text: '· click to enlarge ·', chars: 'qwerty1337h@ck3r', revealDelay: 0.1, speed: 0.5 }
+        });
+      }
     }
 
     hideBackgroundImage() {
-      this._previewVisible       = false;
-      this.bgImage.style.opacity = '0';
-      this._bgElecOff();
+      this._previewVisible               = false;
+      this.bgImage.style.opacity         = '0';
+      if (this._enlargeLabel) this._enlargeLabel.style.opacity = '0';
     }
 
+    // Hot path: runs on every mousemove over the overlay.
+    // Zero reflows — dimensions cached as constants.
+    // RAF-gated — one DOM write per animation frame regardless of event rate.
+    // Tracks position even when hidden so showBackgroundImage pre-positions correctly.
     _movePreview(e) {
-      if (!this._previewVisible) return;
-      const W  = this.bgImage.offsetWidth;
-      const H  = this.bgImage.offsetHeight;
+      const OFFSET_X = 24;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const OFFSET_X = 24;
 
       let x = e.clientX + OFFSET_X;
-      let y = e.clientY - Math.round(H / 2);
+      let y = e.clientY - (this._PREVIEW_H >> 1);
 
-      if (x + W > vw - 8) x = e.clientX - W - OFFSET_X;
-      if (y < 8)           y = 8;
-      if (y + H > vh - 8)  y = vh - H - 8;
+      if (x + this._PREVIEW_W > vw - 8) x = e.clientX - this._PREVIEW_W - OFFSET_X;
+      if (y < 8)                          y = 8;
+      if (y + this._PREVIEW_H > vh - 8)   y = vh - this._PREVIEW_H - 8;
 
-      this.bgImage.style.left = x + 'px';
-      this.bgImage.style.top  = y + 'px';
+      this._previewTargetX = x;
+      this._previewTargetY = y;
+
+      if (!this._previewVisible || this._previewRafPending) return;
+      this._previewRafPending = true;
+      requestAnimationFrame(() => {
+        const tx = `translate(${this._previewTargetX}px,${this._previewTargetY}px)`;
+        this.bgImage.style.transform = tx;
+        if (this._enlargeLabel) {
+          this._enlargeLabel.style.transform = `translate(${this._previewTargetX}px,${this._previewTargetY + this._PREVIEW_H + 4}px)`;
+        }
+        this._previewRafPending = false;
+      });
     }
 
     // ── Polaroids title: pick a new random palette colour on each hover ────────

@@ -3327,9 +3327,10 @@ nav {
   top: 0;
   width: 200px;
   height: 260px;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: #001219;
   opacity: 0;
   z-index: 20;
   pointer-events: none;
@@ -3362,16 +3363,19 @@ nav {
 }
 
 .photo-enlarge-label {
-  position: absolute;
-  top: 100%;
+  position: fixed;
   left: 0;
-  right: 0;
-  margin-top: 4px;
+  top: 0;
+  width: 200px;
   padding: 4px 12px;
   background: rgba(255, 223, 0, 0.92);
   border-left: 3px solid #EE9B00;
   box-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
   pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.2s ease;
+  z-index: 20;
 }
 
 .photo-enlarge-text {
@@ -4532,9 +4536,6 @@ nav {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* min-width: 0 overrides the grid default of min-width: auto, which otherwise
-     prevents overflow:hidden from taking effect on grid children */
-  min-width: 0;
   line-height: 1;
   padding: 2px;
   position: relative;
