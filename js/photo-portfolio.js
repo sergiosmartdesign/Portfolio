@@ -69,6 +69,8 @@
       this._photoBorderStopTimer   = null;
       this._photoBorderPaused      = false;
 
+      this._previewVisible = false;
+
       // Subsystem instances — created in init()
       this.stream  = null;
       this.polaroid = null;
@@ -529,6 +531,7 @@
           gsap.set(item, { opacity: 0, y: 0 });
         });
       });
+      this._previewVisible       = false;
       this.bgImage.style.opacity = '0';
       this._bgElecOff();
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
@@ -570,6 +573,7 @@
         el.classList.remove('photo-glitch-load');
         el.classList.remove('glitch-ready');
       });
+      this._previewVisible       = false;
       this.bgImage.style.opacity = '0';
       this._bgElecOff();
       if (this.contentScroll) {
@@ -807,6 +811,9 @@
       document.querySelectorAll('.photo-project-item').forEach(item => {
         this._addHoverListeners(item);
       });
+      if (this.overlay) {
+        this.overlay.addEventListener('mousemove', e => this._movePreview(e), { passive: true });
+      }
     }
 
     _addHoverListeners(item) {
@@ -873,24 +880,35 @@
     }
 
     showBackgroundImage(imageUrl) {
-      if (this.photoSection) this.photoSection.style.zIndex = '1001';
-      this.bgImage.style.transition      = 'none';
-      this.bgImage.style.transform       = 'translate(-50%, -50%) scale(1.12)';
+      this._previewVisible               = true;
       this.bgImage.style.backgroundImage = `url("${imageUrl}")`;
       this.bgImage.style.opacity         = '1';
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.bgImage.style.transition = 'opacity 0.6s ease, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-          this.bgImage.style.transform  = 'translate(-50%, -50%) scale(1.0)';
-        });
-      });
       this._bgElecOn();
     }
 
     hideBackgroundImage() {
+      this._previewVisible       = false;
       this.bgImage.style.opacity = '0';
-      if (this.photoSection) this.photoSection.style.zIndex = '';
       this._bgElecOff();
+    }
+
+    _movePreview(e) {
+      if (!this._previewVisible) return;
+      const W  = this.bgImage.offsetWidth;
+      const H  = this.bgImage.offsetHeight;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const OFFSET_X = 24;
+
+      let x = e.clientX + OFFSET_X;
+      let y = e.clientY - Math.round(H / 2);
+
+      if (x + W > vw - 8) x = e.clientX - W - OFFSET_X;
+      if (y < 8)           y = 8;
+      if (y + H > vh - 8)  y = vh - H - 8;
+
+      this.bgImage.style.left = x + 'px';
+      this.bgImage.style.top  = y + 'px';
     }
 
     // ── Polaroids title: pick a new random palette colour on each hover ────────

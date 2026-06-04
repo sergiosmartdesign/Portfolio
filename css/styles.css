@@ -3314,19 +3314,18 @@ nav {
 /* Background hover image — inside overlay stacking context at z:1.
    Sits above text-block (z:0) and below accordion (z:2). */
 .photo-bg-image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 78vw;
-  height: 95vh;
-  transform: translate(-50%, -50%) scale(1);
-  background-size: contain;
+  position: fixed;
+  width: 200px;
+  height: 260px;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
-  z-index: 1;
+  z-index: 20;
   pointer-events: none;
-  will-change: transform, opacity;
+  will-change: opacity;
+  border-radius: 2px;
+  transition: opacity 0.2s ease;
 }
 
 .photo-bg-border {
