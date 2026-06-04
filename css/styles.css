@@ -1763,7 +1763,7 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 480px;    /* Move up (more negative) or down (more positive) */
+  top: 530px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
@@ -2694,7 +2694,7 @@ nav {
 .decoration-bar1 {
   width: 981.6px;
   height: 27.3px;
-  top: 950px;
+  top: 1000px;
   left: 160px;
   transform: translateX(-100px);
 }
@@ -2736,7 +2736,7 @@ nav {
   position: absolute;
   opacity: 0;
   height: 600px;
-  top: 1250px;
+  top: 1300px;
   left: 200px;
   transform: scale(0.8);
 }
@@ -3367,21 +3367,24 @@ nav {
   left: 0;
   right: 0;
   margin-top: 4px;
-  padding: 5px 10px;
+  padding: 4px 12px;
   background: rgba(255, 223, 0, 0.92);
   border-left: 3px solid #EE9B00;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
   pointer-events: none;
 }
 
 .photo-enlarge-text {
   display: block;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: rgb(10, 10, 10);
   white-space: nowrap;
   text-align: center;
+  line-height: 1;
 }
 
 /* Content overlay — text + accordion, scroll together, z:2 */
