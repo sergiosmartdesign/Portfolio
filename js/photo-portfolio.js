@@ -428,15 +428,17 @@
         <img class="photo-item-lb-img" alt="">
         <div class="photo-item-lb-border" aria-hidden="true"></div>`;
       document.body.appendChild(lb);
-      this._itemLb     = lb;
-      this._itemLbImg  = lb.querySelector('.photo-item-lb-img');
-      this._itemLbOpen = false;
+      this._itemLb       = lb;
+      this._itemLbImg    = lb.querySelector('.photo-item-lb-img');
+      this._itemLbOpen   = false;
+      this._itemLbOrigin = { x: 0, y: 0 }; // snapshot of open position for reverse
       lb.addEventListener('click', () => this._closeItemLightbox());
     }
 
     _openItemLightbox(src, startX, startY) {
       if (this._itemLbOpen || !this._itemLb) return;
       this._itemLbOpen = true;
+      this._itemLbOrigin = { x: startX, y: startY }; // snapshot for close reverse
 
       const lb = this._itemLb;
       this._itemLbImg.src = src;
@@ -452,28 +454,21 @@
       lb.setAttribute('aria-hidden', 'false');
 
       lb.classList.add('lb-expanding');
-      if (!this._photoBorderActive) {
-        this._photoBorderActive = true;
-        this._photoBorderFrame  = 0;
-        this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
-      }
+      this._startPhotoBorderTick();
 
-      // Force a reflow so the browser commits the start position before the
-      // CSS transition fires. Without this, start === end and no animation plays.
+      // Force reflow so browser commits start geometry before transition fires.
       void lb.offsetWidth;
 
-      // Animate to fullscreen via CSS transition (defined in stylesheet)
       lb.style.left   = '0px';
       lb.style.top    = '0px';
       lb.style.width  = window.innerWidth  + 'px';
       lb.style.height = window.innerHeight + 'px';
 
-      // Remove electric border once expand finishes (matches CSS transition duration)
       const onExpand = (e) => {
         if (e.propertyName !== 'width') return;
         lb.removeEventListener('transitionend', onExpand);
         lb.classList.remove('lb-expanding');
-        this._photoBorderActive = false;
+        this._stopPhotoBorderTick();
       };
       lb.addEventListener('transitionend', onExpand);
 
@@ -483,42 +478,59 @@
     _closeItemLightbox() {
       if (!this._itemLbOpen || !this._itemLb) return;
       this._itemLbOpen = false;
-      const lb = this._itemLb;
-      gsap.killTweensOf(lb);
-      gsap.to(lb, {
-        opacity:  0,
-        duration: 0.3,
-        ease:     'power2.in',
-        onComplete: () => {
-          lb.style.display  = 'none';
-          lb.style.opacity  = '';
-          lb.style.left     = '';
-          lb.style.top      = '';
-          lb.style.width    = '';
-          lb.style.height   = '';
-          lb.setAttribute('aria-hidden', 'true');
-          this._itemLbImg.src = '';
-        },
-      });
+
+      const lb      = this._itemLb;
+      const originX = this._itemLbOrigin.x;
+      const originY = this._itemLbOrigin.y;
+
+      // Activate electric border for the shrink
+      lb.classList.add('lb-expanding');
+      this._startPhotoBorderTick();
+
+      // Force reflow from current fullscreen state before transitioning
+      void lb.offsetWidth;
+
+      // Shrink back to thumbnail origin
+      lb.style.left   = originX + 'px';
+      lb.style.top    = originY + 'px';
+      lb.style.width  = this._PREVIEW_W  + 'px';
+      lb.style.height = this._PREVIEW_H + 'px';
+
+      const onShrink = (e) => {
+        if (e.propertyName !== 'width') return;
+        lb.removeEventListener('transitionend', onShrink);
+        lb.classList.remove('lb-expanding');
+        this._stopPhotoBorderTick();
+        lb.style.display  = 'none';
+        lb.style.opacity  = '';
+        lb.style.left     = '';
+        lb.style.top      = '';
+        lb.style.width    = '';
+        lb.style.height   = '';
+        lb.setAttribute('aria-hidden', 'true');
+        this._itemLbImg.src = '';
+      };
+      lb.addEventListener('transitionend', onShrink);
     }
 
     _forceCloseItemLightbox() {
       if (!this._itemLb) return;
       this._itemLbOpen = false;
       this._itemLb.classList.remove('lb-expanding');
-      this._photoBorderActive = false;
-      if (this._photoBorderRaf) {
-        cancelAnimationFrame(this._photoBorderRaf);
-        this._photoBorderRaf = null;
-      }
-      gsap.killTweensOf(this._itemLb);
-      this._itemLb.style.display  = 'none';
-      this._itemLb.style.opacity  = '';
-      this._itemLb.style.left     = '';
-      this._itemLb.style.top      = '';
-      this._itemLb.style.width    = '';
-      this._itemLb.style.height   = '';
-      this._itemLb.setAttribute('aria-hidden', 'true');
+      this._stopPhotoBorderTick();
+      // Clone-replace the node to shed any pending transitionend listeners
+      const fresh = this._itemLb.cloneNode(true);
+      this._itemLb.parentNode?.replaceChild(fresh, this._itemLb);
+      this._itemLb    = fresh;
+      this._itemLbImg = fresh.querySelector('.photo-item-lb-img');
+      fresh.addEventListener('click', () => this._closeItemLightbox());
+      fresh.style.display = 'none';
+      fresh.style.opacity = '';
+      fresh.style.left    = '';
+      fresh.style.top     = '';
+      fresh.style.width   = '';
+      fresh.style.height  = '';
+      fresh.setAttribute('aria-hidden', 'true');
       if (this._itemLbImg) this._itemLbImg.src = '';
     }
 
@@ -1101,6 +1113,18 @@
       if (this._photoBorderSettleTimer) { clearTimeout(this._photoBorderSettleTimer); this._photoBorderSettleTimer = null; }
       if (this._photoBorderStopTimer)   { clearTimeout(this._photoBorderStopTimer);   this._photoBorderStopTimer   = null; }
       this.bgImage.classList.remove('photo-bg-elec-active');
+      this._photoBorderActive = false;
+    }
+
+    _startPhotoBorderTick() {
+      if (!this._photoBorderActive) {
+        this._photoBorderActive = true;
+        this._photoBorderFrame  = 0;
+        this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
+      }
+    }
+
+    _stopPhotoBorderTick() {
       this._photoBorderActive = false;
     }
 
