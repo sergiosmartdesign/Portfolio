@@ -2110,6 +2110,8 @@ nav {
 /* #about p:not(.ending) sets 1.1rem with higher specificity — override it */
 #about .paul-rands-quote blockquote p {
   font-size: inherit;
+  position: relative;
+  top: -25px;
 }
 
 /* Prevent quote glitch on page load */
@@ -3349,6 +3351,29 @@ nav {
 .photo-bg-image.photo-bg-elec-active .photo-bg-border {
   opacity: 1;
   transition: opacity 0s;
+}
+
+.photo-preview-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  margin-top: 5px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: #001219;
+  background: #E9D8A6;
+  padding: 4px 10px;
+  white-space: nowrap;
+  pointer-events: none;
+  display: block;
+}
+
+/* Override default white glitch color — label sits on amber background */
+.photo-preview-label [data-char]::after {
+  color: #001219;
 }
 
 /* Content overlay — text + accordion, scroll together, z:2 */
