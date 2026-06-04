@@ -1763,7 +1763,7 @@ nav {
 
 /* Specific positioning for third paragraph */
 #aboutp3 {
-  top: 280px;    /* Move up (more negative) or down (more positive) */
+  top: 480px;    /* Move up (more negative) or down (more positive) */
   left: 0px;      /* Move left (negative) or right (positive) */
   width: 450px;   /* Change this value to make the paragraph wider or narrower */
 }
@@ -2694,7 +2694,7 @@ nav {
 .decoration-bar1 {
   width: 981.6px;
   height: 27.3px;
-  top: 750px;
+  top: 950px;
   left: 160px;
   transform: translateX(-100px);
 }
@@ -2736,7 +2736,7 @@ nav {
   position: absolute;
   opacity: 0;
   height: 600px;
-  top: 1050px;
+  top: 1250px;
   left: 200px;
   transform: scale(0.8);
 }
@@ -3323,6 +3323,8 @@ nav {
    Sits above text-block (z:0) and below accordion (z:2). */
 .photo-bg-image {
   position: fixed;
+  left: 0;
+  top: 0;
   width: 200px;
   height: 260px;
   background-size: cover;
@@ -3331,9 +3333,13 @@ nav {
   opacity: 0;
   z-index: 20;
   pointer-events: none;
-  will-change: opacity;
+  /* transform is the only property moved at runtime — promotes to compositor layer */
+  will-change: transform, opacity;
   border-radius: 2px;
   transition: opacity 0.2s ease;
+  box-shadow:
+    0 0 0 1px rgba(238, 155, 0, 0.45),
+    0 8px 32px rgba(0, 0, 0, 0.55);
 }
 
 .photo-bg-border {
@@ -3353,6 +3359,29 @@ nav {
 .photo-bg-image.photo-bg-elec-active .photo-bg-border {
   opacity: 1;
   transition: opacity 0s;
+}
+
+.photo-enlarge-label {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 5px 10px;
+  background: rgba(255, 223, 0, 0.92);
+  border-left: 3px solid #EE9B00;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.photo-enlarge-text {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: rgb(10, 10, 10);
+  white-space: nowrap;
+  text-align: center;
 }
 
 /* Content overlay — text + accordion, scroll together, z:2 */
