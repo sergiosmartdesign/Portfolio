@@ -159,6 +159,7 @@
       this._setupCategoryButtons();
       this._setupHoverListeners();
       this._setupTitleColorCycle();
+      this._setupItemLightbox();
 
       // Debounced resize — getBoundingClientRect forces layout; winH is cheap to update eagerly
       let _resizeTimer = null;
@@ -417,12 +418,118 @@
       }
     }
 
+    // ── Item lightbox — fullscreen expand from thumbnail position ───────────
+
+    _setupItemLightbox() {
+      const lb = document.createElement('div');
+      lb.className = 'photo-item-lightbox';
+      lb.setAttribute('aria-hidden', 'true');
+      lb.innerHTML = `
+        <img class="photo-item-lb-img" alt="">
+        <div class="photo-item-lb-border" aria-hidden="true"></div>`;
+      document.body.appendChild(lb);
+      this._itemLb     = lb;
+      this._itemLbImg  = lb.querySelector('.photo-item-lb-img');
+      this._itemLbOpen = false;
+      lb.addEventListener('click', () => this._closeItemLightbox());
+    }
+
+    _openItemLightbox(src, startX, startY) {
+      if (this._itemLbOpen || !this._itemLb) return;
+      this._itemLbOpen = true;
+
+      const lb = this._itemLb;
+      this._itemLbImg.src = src;
+
+      // Pin at thumbnail position — set ALL inline styles before display:block
+      // so the browser commits the start geometry in one layout pass.
+      lb.style.left    = startX + 'px';
+      lb.style.top     = startY + 'px';
+      lb.style.width   = this._PREVIEW_W + 'px';
+      lb.style.height  = this._PREVIEW_H + 'px';
+      lb.style.opacity = '1';
+      lb.style.display = 'block';
+      lb.setAttribute('aria-hidden', 'false');
+
+      lb.classList.add('lb-expanding');
+      if (!this._photoBorderActive) {
+        this._photoBorderActive = true;
+        this._photoBorderFrame  = 0;
+        this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
+      }
+
+      // Force a reflow so the browser commits the start position before the
+      // CSS transition fires. Without this, start === end and no animation plays.
+      void lb.offsetWidth;
+
+      // Animate to fullscreen via CSS transition (defined in stylesheet)
+      lb.style.left   = '0px';
+      lb.style.top    = '0px';
+      lb.style.width  = window.innerWidth  + 'px';
+      lb.style.height = window.innerHeight + 'px';
+
+      // Remove electric border once expand finishes (matches CSS transition duration)
+      const onExpand = (e) => {
+        if (e.propertyName !== 'width') return;
+        lb.removeEventListener('transitionend', onExpand);
+        lb.classList.remove('lb-expanding');
+        this._photoBorderActive = false;
+      };
+      lb.addEventListener('transitionend', onExpand);
+
+      this.hideBackgroundImage();
+    }
+
+    _closeItemLightbox() {
+      if (!this._itemLbOpen || !this._itemLb) return;
+      this._itemLbOpen = false;
+      const lb = this._itemLb;
+      gsap.killTweensOf(lb);
+      gsap.to(lb, {
+        opacity:  0,
+        duration: 0.3,
+        ease:     'power2.in',
+        onComplete: () => {
+          lb.style.display  = 'none';
+          lb.style.opacity  = '';
+          lb.style.left     = '';
+          lb.style.top      = '';
+          lb.style.width    = '';
+          lb.style.height   = '';
+          lb.setAttribute('aria-hidden', 'true');
+          this._itemLbImg.src = '';
+        },
+      });
+    }
+
+    _forceCloseItemLightbox() {
+      if (!this._itemLb) return;
+      this._itemLbOpen = false;
+      this._itemLb.classList.remove('lb-expanding');
+      this._photoBorderActive = false;
+      if (this._photoBorderRaf) {
+        cancelAnimationFrame(this._photoBorderRaf);
+        this._photoBorderRaf = null;
+      }
+      gsap.killTweensOf(this._itemLb);
+      this._itemLb.style.display  = 'none';
+      this._itemLb.style.opacity  = '';
+      this._itemLb.style.left     = '';
+      this._itemLb.style.top      = '';
+      this._itemLb.style.width    = '';
+      this._itemLb.style.height   = '';
+      this._itemLb.setAttribute('aria-hidden', 'true');
+      if (this._itemLbImg) this._itemLbImg.src = '';
+    }
+
     _cancelChain() {
       this.caption.clear();
       this.chainTimers.forEach(t => clearTimeout(t));
       this.chainTimers = [];
       this.chainActive = false;
       this.introAnimating = false;
+      document.querySelectorAll('.photo-accordion-item.list-animating')
+        .forEach(el => el.classList.remove('list-animating'));
       this._borderCount = 0;
       if (this._borderRaf) { cancelAnimationFrame(this._borderRaf); this._borderRaf = null; }
       if (this.accordion) this.accordion.classList.remove('accordion-animating');
@@ -546,6 +653,7 @@
       this.bgImage.style.opacity = '0';
       if (this._enlargeLabel) this._enlargeLabel.style.opacity = '0';
       this._bgElecOff();
+      this._forceCloseItemLightbox();
       document.querySelectorAll('.photo-ai-highlight').forEach(hl => hl.classList.remove('photo-ai-highlight--animate'));
       document.querySelector('.pgallery-hint')?.classList.remove('pgallery-hint--animate');
       document.querySelector('.photo-polaroid-hint')?.classList.remove('reveal');
@@ -589,6 +697,7 @@
       this.bgImage.style.opacity = '0';
       if (this._enlargeLabel) this._enlargeLabel.style.opacity = '0';
       this._bgElecOff();
+      this._forceCloseItemLightbox();
       if (this.contentScroll) {
         gsap.killTweensOf(this.contentScroll);
         this.contentScroll.scrollTop = 0;
@@ -881,6 +990,11 @@
 
         this.hideBackgroundImage();
         this.caption.return();
+      });
+
+      item.addEventListener('click', () => {
+        if (this.introAnimating || !item.dataset.image) return;
+        this._openItemLightbox(item.dataset.image, this._previewTargetX, this._previewTargetY);
       });
     }
 
