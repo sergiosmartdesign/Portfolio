@@ -41,9 +41,11 @@
       this._streamRotations = this._streamCards.map(card =>
         parseFloat(getComputedStyle(card).getPropertyValue('--ghost-rotate').trim()) || 0
       );
-      this._cardHidden     = new Array(this._streamCards.length).fill(true);
-      this._cardLastPhase  = new Array(this._streamCards.length).fill(-1);
-      this._cameraEl       = document.querySelector('.photo-polaroids-camera');
+      const CARD_SPACING   = 0.22;
+      this._cardHidden      = new Array(this._streamCards.length).fill(true);
+      this._cardLastPhase   = new Array(this._streamCards.length).fill(-1);
+      this._revealThreshold = this._streamCards.map((_, i) => i * CARD_SPACING);
+      this._cameraEl        = document.querySelector('.photo-polaroids-camera');
       this._updateStreamWidth();
       this._setupInfoStripClicks();
       this._setupStreamLightbox();
@@ -223,16 +225,27 @@
           continue;
         }
 
+        // Reveal gate: keep hidden until masterT reaches this card's natural
+        // entry time — the exact moment the loop brings it to t=0 (entry phase).
+        if (masterT < this._revealThreshold[i]) {
+          if (!this._cardHidden[i]) {
+            card.style.opacity   = '0';
+            card.style.transform = 'translateX(0) translateY(-50%) rotate(-90deg)';
+            this._cardHidden[i]  = true;
+          }
+          this._cardLastPhase[i] = -1;
+          continue;
+        }
+
         this._cardHidden[i] = false;
         const t        = offset;
         const finalRot = this._streamRotations[i] || 0;
         let x, rot;
 
-        // Detect eject moment: card crosses t=0.22 in either direction
-        const curPhase = t < 0.22 ? 0 : 1;
-        if (this._cardLastPhase[i] !== -1 && this._cardLastPhase[i] !== curPhase) {
-          this._ejectBounce();
-        }
+        // Camera bounce on every t=0.22 crossing (entry→rotation or reverse)
+        const curPhase    = t < 0.22 ? 0 : 1;
+        const phaseChange = this._cardLastPhase[i] !== -1 && this._cardLastPhase[i] !== curPhase;
+        if (phaseChange) this._ejectBounce();
         this._cardLastPhase[i] = curPhase;
 
         if (t < 0.22) {
