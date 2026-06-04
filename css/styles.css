@@ -2100,12 +2100,16 @@ nav {
 }
 
 .paul-rands-quote blockquote p {
-  font-size: inherit;
   margin: 0;
   display: inline-block;
   font-weight: 900;
   color: #000;
   white-space: nowrap;
+}
+
+/* #about p:not(.ending) sets 1.1rem with higher specificity — override it */
+#about .paul-rands-quote blockquote p {
+  font-size: inherit;
 }
 
 /* Prevent quote glitch on page load */
