@@ -2,15 +2,15 @@
     'use strict';
 
     const CERTS = [
-        { src: 'images/cert/certificadoplatzi1.png', alt: 'Platzi Professional Certificate 1 — Sergio Ayala' },
-        { src: 'images/cert/certificadoplatzi2.png', alt: 'Platzi Professional Certificate 2 — Sergio Ayala' },
-        { src: 'images/cert/certificadoplatzi3.png', alt: 'Platzi Professional Certificate 3 — Sergio Ayala' },
-        { src: 'images/cert/certificadoplatzi4.png', alt: 'Platzi Professional Certificate 4 — Sergio Ayala' },
-        { src: 'images/cert/certificadoplatzi5.png', alt: 'Platzi Professional Certificate 5 — Sergio Ayala' },
-        { src: 'images/cert/certificadoplatzi6.png', alt: 'Platzi Professional Certificate 6 — Sergio Ayala' },
-        { src: 'images/cert/certificadoyoast1.png',  alt: 'Yoast SEO Professional Certificate 1 — Sergio Ayala' },
-        { src: 'images/cert/certificadoyoast2.png',  alt: 'Yoast SEO Professional Certificate 2 — Sergio Ayala' },
-        { src: 'images/cert/certificadoyoast3.png',  alt: 'Yoast SEO Professional Certificate 3 — Sergio Ayala' },
+        { src: 'images/cert/sergio-ayala-platzi-software-engineering-fundamentals-certificate-2025.webp', alt: 'Sergio Ayala — Platzi Certificate: Software Engineering Fundamentals, September 2025' },
+        { src: 'images/cert/sergio-ayala-platzi-computer-networks-internet-certificate-2025.webp',        alt: 'Sergio Ayala — Platzi Certificate: Computer Networks & Internet, September 2025' },
+        { src: 'images/cert/sergio-ayala-platzi-prompt-engineering-certificate-2025.webp',                alt: 'Sergio Ayala — Platzi Certificate: Prompt Engineering & AI, August 2025' },
+        { src: 'images/cert/sergio-ayala-platzi-ai-image-generation-certificate-2025.webp',               alt: 'Sergio Ayala — Platzi Certificate: AI Image Generation (Midjourney, Stable Diffusion), August 2025' },
+        { src: 'images/cert/sergio-ayala-platzi-software-architecture-fundamentals-certificate-2025.webp', alt: 'Sergio Ayala — Platzi Certificate: Software Architecture Fundamentals, September 2025' },
+        { src: 'images/cert/sergio-ayala-platzi-terminal-command-line-certificate-2025.webp',             alt: 'Sergio Ayala — Platzi Certificate: Terminal & Command Line (Bash, Linux), October 2025' },
+        { src: 'images/cert/sergio-ayala-yoast-ecommerce-seo-certificate-2021.webp',                     alt: 'Sergio Ayala — Yoast SEO Academy Certificate: Ecommerce SEO, October 2021' },
+        { src: 'images/cert/sergio-ayala-yoast-local-seo-certificate-2021.webp',                         alt: 'Sergio Ayala — Yoast SEO Academy Certificate: Local SEO & Google Business Profile, August 2021' },
+        { src: 'images/cert/sergio-ayala-yoast-all-around-seo-certificate-2021.webp',                    alt: 'Sergio Ayala — Yoast SEO Academy Certificate: All-around SEO (Technical, Content, Link Building), September 2021' },
     ];
 
     const N           = CERTS.length;

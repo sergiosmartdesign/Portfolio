@@ -206,7 +206,7 @@
       const N            = this._streamCards.length;
       const CARD_SPACING = 0.22;
       const LOOP_LENGTH  = N * CARD_SPACING;
-      const CARD_W       = 195;
+      const CARD_W       = 156;
       const streamW      = parseFloat(
         this._stream.style.getPropertyValue('--ghost-stream-w')
       ) || 500;

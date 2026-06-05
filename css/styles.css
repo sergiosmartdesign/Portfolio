@@ -4176,8 +4176,8 @@ nav {
 
 .photo-polaroids-camera {
   display: block;
-  width: 40%;
-  margin: calc(20% - 90px) 0 -20%;
+  width: 19%;
+  margin: calc(10% + 7px) 0 -10%;
   transform: rotate(-90deg);
   transform-origin: left center;
   opacity: 0;
@@ -4212,10 +4212,10 @@ nav {
    then fading out before the right column border. */
 .photo-ghost-stream {
   position: absolute;
-  bottom: calc(clamp(0.5rem, 1vw, 1rem) + 48px);
+  bottom: calc(clamp(0.5rem, 1vw, 1rem) - 7px);
   left: 0;
   right: 0;
-  height: 320px;
+  height: 300px;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
     to right,
@@ -4242,10 +4242,10 @@ nav {
 /* Each mockup polaroid card — position/opacity driven by JS on every scroll tick */
 .photo-ghost-card {
   position: absolute;
-  top: 50%;
+  top: calc(50% + 25px);
   left: 0;
-  width: 195px;
-  height: 236px;
+  width: 156px;
+  height: 189px;
   opacity: 0;
   transform: translateX(0) translateY(-50%) rotate(-90deg);
   border: 2px solid rgba(233, 216, 166, 0.9);
@@ -4263,7 +4263,7 @@ nav {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 44px;
+  height: 35px;
   background: rgba(0, 18, 25, 0.82);
   border-top: 1px solid rgba(233, 216, 166, 0.55);
   z-index: 1;
