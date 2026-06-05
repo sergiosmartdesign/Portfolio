@@ -16,8 +16,10 @@
     '[ · s c r · ]', '[ · s c r o · ]', '[ · s c r o l · ]', '[ · s c r o l l · ]',
   ];
 
-  /* ── Generic hint controller ─────────────────────────────────────────────── */
-  function makeHintController(hintEl, textEl) {
+  /* ── Generic hint controller ────────────────────────────────────────────────
+     canShow (optional): extra predicate evaluated at show() time.
+     If it returns false the hint is silently skipped and rescheduled.        */
+  function makeHintController(hintEl, textEl, canShow) {
     let idleTimer       = null;
     let autoHideTimer   = null;
     let typewriterTimer = null;
@@ -42,6 +44,8 @@
 
     function show() {
       if (isVisible || !sectionActive) return;
+      // Evaluate canShow() at display time — conditions may have changed since scheduling
+      if (canShow && !canShow()) { scheduleShow(); return; }
       isVisible = true;
       hintEl.removeAttribute('aria-hidden');
       hintEl.classList.add('visible');
@@ -100,11 +104,47 @@
     const introTextEl = introHintEl && introHintEl.querySelector('.sc-text');
     const introCtrl   = introHintEl ? makeHintController(introHintEl, introTextEl) : null;
 
+    /* Photo section ─────────────────────────────────────────────────────────
+       Shows only when:  phase 3 active  AND  a category is expanded
+                         AND  items extend below the visible container area.
+       canShow() is evaluated at show() time — never at schedule time.        */
+    const photoHintEl   = document.getElementById('photo-scroll-hint');
+    const photoTextEl   = photoHintEl && photoHintEl.querySelector('.sc-text');
+    const photoScrollEl = document.querySelector('.photo-content-scroll');
+
+    const photoCanShow = () => {
+      if (!photoScrollEl) return false;
+      const accordion  = document.querySelector('.photo-accordion');
+      const isExpanded = accordion && accordion.classList.contains('has-open-category');
+      const hasOverflow = photoScrollEl.scrollHeight >
+        photoScrollEl.clientHeight + photoScrollEl.scrollTop + 32;
+      return isExpanded && hasOverflow;
+    };
+
+    const photoCtrl = photoHintEl
+      ? makeHintController(photoHintEl, photoTextEl, photoCanShow)
+      : null;
+
+    if (photoCtrl) {
+      // Phase 3 entry/exit
+      document.addEventListener('photoPhase3Active',   () => photoCtrl.setSectionActive(true));
+      document.addEventListener('photoPhase3Inactive', () => photoCtrl.setSectionActive(false));
+
+      // Accordion open/close — restart idle timer so hint can appear after category expands
+      document.addEventListener('photoAccordionChanged', () => photoCtrl.onActivity());
+
+      // Scrolling inside the photo container counts as activity
+      if (photoScrollEl) {
+        photoScrollEl.addEventListener('scroll', () => photoCtrl.onActivity(), { passive: true });
+      }
+    }
+
     const EVENTS = ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'];
     EVENTS.forEach(evt => {
       window.addEventListener(evt, () => {
         aboutCtrl && aboutCtrl.onActivity();
         introCtrl && introCtrl.onActivity();
+        photoCtrl && photoCtrl.onActivity();
       }, { passive: true });
     });
 
@@ -132,6 +172,7 @@
       if (!e.persisted) return;
       aboutCtrl && aboutCtrl.reset();
       introCtrl && introCtrl.reset();
+      photoCtrl && photoCtrl.reset();
     });
   });
 })();

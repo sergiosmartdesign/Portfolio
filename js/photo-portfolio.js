@@ -205,6 +205,7 @@
         document.dispatchEvent(new CustomEvent('photoPhase3Active'));
         this._triggerChain();
       } else {
+        document.dispatchEvent(new CustomEvent('photoPhase3Inactive'));
         this._cancelChain();
         this._triggerReverseChain();
       }
@@ -271,6 +272,7 @@
         const btnDelay = cursor;
         const t0 = setTimeout(() => {
           this.openCategories.add(cat);
+          this._syncOpenCategoryClass();
           btn.classList.add('active');
           btn.setAttribute('aria-expanded', 'true');
           if (list) list.style.display = 'flex';
@@ -344,6 +346,7 @@
         const closeAt = cursor + items.length * REV_STEP + 60;
         const tc = setTimeout(() => {
           this.openCategories.delete(cat);
+          this._syncOpenCategoryClass();
           btn.classList.remove('active');
           btn.setAttribute('aria-expanded', 'false');
           if (list) list.style.display = 'none';
@@ -592,6 +595,7 @@
 
       // Close any categories opened during the sequential intro
       this.openCategories.clear();
+      this._syncOpenCategoryClass();
       this.categoryBtns.forEach(btn => {
         gsap.killTweensOf(btn);
         gsap.set(btn, { y: 0 });
@@ -679,6 +683,7 @@
       }
 
       this.openCategories.clear();
+      this._syncOpenCategoryClass();
       this.categoryBtns.forEach(btn => {
         btn.classList.remove('active');
         btn.setAttribute('aria-expanded', 'false');
@@ -716,6 +721,7 @@
       this.overlay.style.pointerEvents = 'none';
 
       this.openCategories.clear();
+      this._syncOpenCategoryClass();
       this.categoryBtns.forEach(btn => {
         btn.classList.remove('active');
         btn.setAttribute('aria-expanded', 'false');
@@ -822,9 +828,21 @@
       });
     }
 
+    _syncOpenCategoryClass() {
+      if (this.accordion) {
+        const wasOpen = this.accordion.classList.contains('has-open-category');
+        const isOpen  = this.openCategories.size > 0;
+        this.accordion.classList.toggle('has-open-category', isOpen);
+        if (isOpen !== wasOpen) {
+          document.dispatchEvent(new CustomEvent('photoAccordionChanged', { detail: { open: isOpen } }));
+        }
+      }
+    }
+
     _openCategory(category, btn, list) {
       this._borderStart();
       this.openCategories.add(category);
+      this._syncOpenCategoryClass();
       btn.classList.add('active');
       btn.setAttribute('aria-expanded', 'true');
       list.style.display = 'flex';
@@ -840,6 +858,7 @@
     _closeCategory(category, btn, list) {
       this._borderStart();
       this.openCategories.delete(category);
+      this._syncOpenCategoryClass();
       btn.classList.remove('active');
       btn.setAttribute('aria-expanded', 'false');
 
@@ -857,6 +876,7 @@
     _forceCloseCategory(category, btn) {
       if (!this.openCategories.has(category)) return;
       this.openCategories.delete(category);
+      this._syncOpenCategoryClass();
       btn.classList.remove('active');
       btn.setAttribute('aria-expanded', 'false');
       const list = btn.closest('.photo-accordion-item')
