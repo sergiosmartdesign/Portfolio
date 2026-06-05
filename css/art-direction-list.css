@@ -11,8 +11,8 @@
    while the section occupies the full viewport. */
 #art-direction .ad-list {
   position: absolute;
-  left: calc(min(62.5vh, 62.5vw) + 780px);
-  top: min(37.5vh, 37.5vw);
+  left: calc(min(62.5vh, 62.5vw) + 730px);
+  top: calc(min(37.5vh, 37.5vw) - 35px);
   transform: translate(-50%, -50%);
   z-index: 10;
   pointer-events: none;
@@ -70,19 +70,6 @@ body.ad-section-live #art-direction .ad-list.ad-list-ready {
 #art-direction .ad-list-items li.is-active .ad-text-link {
   color: #EE9B00;
   --glitch-final-color: #EE9B00;
-}
-
-#art-direction .ad-list-items li.is-active::before {
-  content: '';
-  position: absolute;
-  left: -14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 5px;
-  background: #EE9B00;
-  border-radius: 50%;
-  animation: ad-list-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes ad-list-pulse {
