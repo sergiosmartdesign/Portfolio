@@ -2,12 +2,15 @@
     'use strict';
 
     const IMAGES = [
-        'images/illustration/the-fat-dragon-themberchaud-concept-art.jpg', // stop 0 — gallery title face; image hidden behind label
-        'images/illustration/the-fat-dragon-themberchaud-concept-art.jpg',
-        'images/illustration/Hada de los Andes.jpg',
-        'images/illustration/Meninas_Canido.jpg',
-        'images/illustration/Rocker Ghost Geisha.jpg',
-        'images/illustration/Prueba grafitti.jpg',
+        'images/illustration/sergio-ayala-themberchaud-dnd-dragon-concept-art.webp', // stop 0 — gallery title face; image hidden behind label
+        'images/illustration/sergio-ayala-themberchaud-dnd-dragon-concept-art.webp',
+        'images/illustration/sergio-ayala-hada-de-los-andes-andean-fairy-illustration-2024.webp',
+        'images/illustration/sergio-ayala-meninas-canido-tarot-illustration-ferrol-2024.webp',
+        'images/illustration/sergio-ayala-rocker-ghost-geisha-yurei-illustration-2024.webp',
+        'images/illustration/sergio-ayala-holy-vandal-canido-baroque-concept-art-2024.webp',
+        'images/illustration/sergio-ayala-mujer-crustaceo-surrealist-mixed-media-2014.webp',
+        'images/illustration/sergio-ayala-reconciliacion-watercolor-digital-2014.webp',
+        'images/art-direction/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
     ];
 
     const FACE_NAMES = IMAGES.map(src =>

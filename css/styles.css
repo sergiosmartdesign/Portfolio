@@ -1516,7 +1516,7 @@ nav {
   left: 50px;
   right: 50px;
   bottom: 0px;
-  background-image: url('../images/about.jpg');
+  background-image: url('../images/sergio-ayala-vintage-tin-robot-amber-duotone-about.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2911,13 +2911,14 @@ nav {
 #art-direction {
   background-color: #001219;
   overflow: hidden;
+  scroll-margin-top: var(--header-height, 60px);
 }
 
 /* ── Background image — animated entrance ───────────────────────────────── */
 #art-direction .art-bg-image {
   position: absolute;
   inset: 0;
-  background-image: url('../images/robot art direction background.jpeg');
+  background-image: url('../images/sergio-ayala-robot-dark-teal-duotone-art-direction-section.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3102,6 +3103,18 @@ nav {
   opacity: 0;
 }
 
+/* ── Left-edge skills bar — above all section layers (vignette z:8, list z:10) */
+#art-direction .ad-skills-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 37.5px;
+  height: auto;
+  z-index: 11;
+  pointer-events: none;
+  display: block;
+}
+
 /* ── SVG filter container ──────────────────────────────────────────────── */
 .art-glitch-filters {
   display: none;
@@ -3193,7 +3206,7 @@ nav {
    PHOTO SECTION
    ============================================================================ */
 #photo {
-  background: url('../images/photo background.jpeg') center/cover no-repeat;
+  background: url('../images/sergio-ayala-robot-camera-head-yellow-teal-photo-section.webp') center/cover no-repeat;
   position: fixed;
   top: 0;
   left: 0;
@@ -3260,6 +3273,8 @@ nav {
 .art-direction-bottom-static-line.active {
   opacity: 1;
 }
+
+/* Align art-direction glitch line to nav bottom, not viewport top */
 
 
 .photo-scroll-spacer {

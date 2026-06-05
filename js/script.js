@@ -466,7 +466,8 @@ class NavigationManager {
             e.preventDefault();
             const artTarget = document.getElementById('art-direction');
             if (artTarget) {
-              window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY);
+              const headerH = this.header ? this.header.offsetHeight : 0;
+              window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY - headerH);
             }
             if (App.playArtEntranceAnimation) App.playArtEntranceAnimation();
             this.setActiveButton('art-direction');
@@ -969,7 +970,7 @@ function initStaticLines() {
   const artDirBottomCanvas = document.querySelector('.art-direction-bottom-static-line');
   if (artDirBottomCanvas) {
     bindSectionEdge(artDirBottomCanvas, makeStaticLine(artDirBottomCanvas),
-      document.getElementById('art-direction'), 'bottom');
+      document.getElementById('art-direction'), 'top');
   }
 }
 
@@ -1201,7 +1202,10 @@ App.LanguageManager.ready.then(() => {
     if (location.hash === '#art-direction' && App.playArtEntranceAnimation) {
       safeInit('art-entrance-hash', () => {
         const artTarget = document.getElementById('art-direction');
-        if (artTarget) window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY);
+        if (artTarget) {
+          const hh = document.querySelector('header')?.offsetHeight || 0;
+          window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY - hh);
+        }
         App.playArtEntranceAnimation();
       });
     }
