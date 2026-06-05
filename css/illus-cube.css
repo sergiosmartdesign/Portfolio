@@ -29,8 +29,8 @@
 /* ── Sticky viewport wrapper ─────────────────────────────────────────────── */
 .illus-tunnel {
     position: sticky;
-    top: 0;
-    height: 100vh;
+    top: var(--header-height, 60px);
+    height: calc(100vh - var(--header-height, 60px));
     overflow: hidden;
     background: var(--illus-bg);
 }
@@ -593,17 +593,38 @@
     margin-block-start: 0.4rem;
 }
 
-/* ── Navigation dots (left-center) ──────────────────────────────────────── */
+/* ── Left bar SVG decoration ─────────────────────────────────────────────── */
+.illus-svg-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: auto;
+    display: block;
+    pointer-events: none;
+    user-select: none;
+    z-index: 3;
+}
+
+/* ── Navigation dots — switches side to stay opposite the active card ────── */
 .illus-strip {
     position: absolute;
-    left: calc(var(--illus-ui-inset) + 0.125rem);
+    left: 3.5rem;
     top: 50%;
     translate: -50% -50%;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     z-index: 20;
+    transition: left 0.45s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)),
+                translate 0.45s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1));
 }
+
+.illus-strip--right {
+    left: calc(100% - var(--illus-ui-inset));
+    translate: -100% -50%;
+}
+
 
 .illus-dot {
     position: relative;
@@ -624,62 +645,42 @@
     inset: -0.4rem;
 }
 
+.illus-dot::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    white-space: nowrap;
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 300;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--illus-muted);
+    opacity: 0.6;
+    pointer-events: none;
+    /* translateX: dot half-width (0.125rem) + gap — places label to the right */
+    transform: translateY(-50%) translateX(calc(0.125rem + 0.65rem));
+    transition: color 0.3s, opacity 0.3s,
+                transform 0.45s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1));
+}
+
+/* When strip is on the right, flip labels to the left */
+.illus-strip--right .illus-dot::after {
+    transform: translateY(-50%) translateX(calc(-100% - 0.125rem - 0.65rem));
+}
+
+
+
+.illus-dot.active::after {
+    color: var(--illus-accent);
+    opacity: 1;
+}
+
 .illus-dot.active {
     background: var(--illus-accent);
     scale: 1.8;
 }
 
-/* ── Hint HUD — persistent progress display, vertically centred ─────────── */
-.illus-hint-hud {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    /* Fill the gap between cube edge and viewport edge, capped at 18rem */
-    width: min(calc((100% - var(--cube-s)) / 2 - 2rem), 18rem);
-    z-index: 21;
-    pointer-events: none;
-    user-select: none;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--illus-muted);
-    text-transform: uppercase;
-}
-
-.illus-hint-hud--left  { left:  3.5rem; text-align: left; }
-.illus-hint-hud--right { right: 1rem;   text-align: right; }
-
-.illus-hint-hud-pct {
-    color: var(--illus-accent);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-}
-
-.illus-hint-hud-bar {
-    width: 100%;
-    height: var(--illus-hairline);
-    background: color-mix(in srgb, var(--illus-muted) 40%, transparent);
-    margin-block-start: 0.45rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.illus-hint-hud-fill {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    width: 0%;
-    background: var(--illus-accent);
-    transition: width 0.1s linear;
-}
-
-.illus-hint-hud-label {
-    font-size: 0.55rem;
-    color: var(--illus-muted);
-    margin-block-start: 0.35rem;
-    letter-spacing: 0.18em;
-    opacity: 0.75;
-}
 
 /* ── Face caption (bottom-center) ───────────────────────────────────────── */
 .illus-caption {
@@ -1222,13 +1223,14 @@
         right: 1rem;
     }
 
+    .illus-svg-bar {
+        display: none;
+    }
+
     .illus-strip {
         display: none;
     }
 
-    .illus-hint-hud {
-        display: none;
-    }
 
     .illus-caption {
         bottom: 1rem;
@@ -1268,8 +1270,7 @@
 #illustration.illus-intro-active .illus-scene,
 #illustration.illus-intro-active .illus-hud,
 #illustration.illus-intro-active .illus-strip,
-#illustration.illus-intro-active .illus-caption,
-#illustration.illus-intro-active .illus-hint-hud {
+#illustration.illus-intro-active .illus-caption {
     opacity: 0;
     transition: none;
     animation: none;
@@ -1320,36 +1321,11 @@
     animation: illus-enter-up 380ms ease 300ms both;
 }
 
-#illustration.illus-entering .illus-hint-hud {
-    animation: illus-enter-fade 380ms ease 300ms both;
-}
-
 /* Card wrapper — delay the opacity:0→1 transition so it lands after the cube */
 #illustration.illus-entering .illus-section[data-idx="0"] {
     transition-delay: 0.18s;
 }
 
-/* ── Illustration how-to-use SVG panel (inside hint hud) ────────────────── */
-.illus-hint-hud--right .illus-info-panel { text-align: left; }
-
-.illus-info-panel {
-    margin-block-start: 1rem;
-    width: 100%;
-}
-
-.illus-info-interface-svg {
-    width: 100%;
-    height: auto;
-    display: block;
-    filter:
-        drop-shadow(0 0 5px rgba(238, 155, 0, 0.5))
-        drop-shadow(0 0 16px rgba(238, 155, 0, 0.2));
-    animation: illus-neon-flicker 22s linear 3s infinite;
-}
-
-@media (max-height: 680px) {
-    .illus-info-panel { display: none; }
-}
 
 /* Card inner elements — extended stagger on first entry */
 #illustration.illus-entering .illus-section[data-idx="0"] .illus-h-line {

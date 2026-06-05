@@ -110,6 +110,7 @@
     const captionNum  = illus.querySelector('.illus-caption-num');
     const captionName = illus.querySelector('.illus-caption-name');
     const dots        = [...illus.querySelectorAll('.illus-dot')];
+    const strip       = illus.querySelector('.illus-strip');
     const lustEl      = illus.querySelector('.illus-lust-accent');
 
     // Scale section height to number of images (100vh per stop)
@@ -342,8 +343,6 @@
         const pct  = Math.round(s * 100);
         hudPct.textContent      = String(pct).padStart(3, '0') + '%';
         progFill.style.width    = pct + '%';
-        hintHudPct.textContent  = String(pct).padStart(3, '0') + '%';
-        hintHudFill.style.width = pct + '%';
 
         const stop = Math.min(N - 1, Math.round(s * (N - 1)));
         if (stop === lastStop) return;
@@ -362,7 +361,6 @@
         const name   = FACE_NAMES[stop] ?? '';
         const spaced = name.split('').join(' ');
 
-        hintHudLabel.textContent = name;
         sceneLabel.textContent   = name;
         captionNum.textContent = String(stop + 1).padStart(2, '0');
         captionName.textContent = '[ · ' + spaced + ' · ]';
@@ -503,35 +501,6 @@
         },
     };
 
-    // ── Scroll hint — opposite side of active card, after 3.5 s idle ─────────
-    const hintHud       = document.createElement('div');
-    const hintHudPct    = document.createElement('div');
-    const hintHudBar    = document.createElement('div');
-    const hintHudFill   = document.createElement('div');
-    const hintHudLabel  = document.createElement('div');
-
-    hintHud.className       = 'illus-hint-hud illus-hint-hud--right';
-    hintHudPct.className    = 'illus-hint-hud-pct';
-    hintHudBar.className    = 'illus-hint-hud-bar';
-    hintHudFill.className   = 'illus-hint-hud-fill';
-    hintHudLabel.className  = 'illus-hint-hud-label';
-
-    hintHud.setAttribute('aria-hidden', 'true');
-    hintHudPct.textContent    = '000%';
-    hintHudLabel.textContent  = 'TIMELESS';
-
-    // How-to-use SVG panel — horizontal bar, centered below the cube
-    const illusInfoPanel = document.createElement('div');
-    illusInfoPanel.className = 'illus-info-panel';
-    illusInfoPanel.setAttribute('aria-hidden', 'true');
-    illusInfoPanel.innerHTML = buildInfoPanelSVG('en');
-
-    hintHudBar.appendChild(hintHudFill);
-    hintHud.appendChild(hintHudLabel);
-    hintHud.appendChild(hintHudPct);
-    hintHud.appendChild(hintHudBar);
-    hintHud.appendChild(illusInfoPanel);
-    tunnel.appendChild(hintHud);
 
     // Flat 2D overlay — sits outside the 3D cube context so it is always upright
     // and always at the viewer-space bottom of the cube. Hidden at stop 0 via CSS
@@ -607,8 +576,8 @@
 
     function setHintSide(stop) {
         const hintRight = stop % 2 === 0;
-        hintHud.classList.toggle('illus-hint-hud--right', hintRight);
-        hintHud.classList.toggle('illus-hint-hud--left',  !hintRight);
+        strip.classList.toggle('illus-strip--right', hintRight);
+        strip.classList.toggle('illus-strip--left',  !hintRight);
         const isVisible = titleFloat.classList.contains('illus-title-float--visible');
         const wasRight  = titleFloat.classList.contains('illus-title-float--right');
         if (isVisible && wasRight !== hintRight) {
@@ -664,7 +633,6 @@
         expandHintSplit = false;
         if (wasExpandSplit) triggerExpandHintGlitch();
 
-        illusInfoPanel.innerHTML = buildInfoPanelSVG(lang);
     }
 
     document.addEventListener('languagechanged', e => {

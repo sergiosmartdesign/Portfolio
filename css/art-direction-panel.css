@@ -57,6 +57,122 @@
   100% { opacity: 1;    transform: translateY(-50%);             clip-path: inset(0 0 0 0); }
 }
 
+#art-direction .ad-intro-svg {
+  position: absolute;
+  left: calc(min(75vh, 75vw) + 2vw);
+  right: 0;
+  top: 50%;
+  transform: translateY(calc(-50% - 150px));
+  height: 56vh;
+  pointer-events: none;
+  z-index: 9;
+  filter: drop-shadow(0 0 6px #BB3E03) drop-shadow(0 0 18px rgba(155, 34, 38, 0.7));
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+
+body.ad-section-live #art-direction .ad-intro-svg {
+  animation: ad-frame-enter 0.7s var(--ease-expo-out) 1.0s forwards;
+}
+
+@keyframes ad-frame-enter {
+  0%   { opacity: 0;   clip-path: inset(0 100% 0 0); }
+  14%  { opacity: 0.5; clip-path: inset(0 62% 0 0); }
+  16%  { opacity: 0.2; clip-path: inset(12% 60% 8% 0); }
+  55%  { opacity: 0.9; clip-path: inset(0 10% 0 0); }
+  100% { opacity: 1;   clip-path: inset(0 0% 0 0); }
+}
+
+/* ── SVG internal elements — hidden until SVG frame finishes entering (~2.5s) ── */
+#art-direction .ad-intro-svg #animate_3 { opacity: 0; }
+#art-direction .ad-intro-svg #animate_2 { opacity: 0; }
+#art-direction .ad-intro-svg #animate1  { opacity: 0; }
+
+/* animate_3 — dashed vertical line: draws top→bottom, then pulses like a signal */
+body.ad-section-live #art-direction .ad-intro-svg #animate_3 {
+  animation:
+    adfrm-line-draw  1.4s ease-out  2.5s forwards,
+    adfrm-line-pulse 13s ease-in-out 3.9s infinite;
+}
+@keyframes adfrm-line-draw {
+  0%   { opacity: 1; clip-path: inset(0 0 100% 0); }
+  100% { opacity: 1; clip-path: inset(0 0 0% 0); }
+}
+@keyframes adfrm-line-pulse {
+  0%,100% { opacity: 1; }
+  18%     { opacity: 0.3; }
+  22%     { opacity: 1; }
+  55%     { opacity: 0.6; }
+  58%     { opacity: 0.1; }
+  62%     { opacity: 0.9; }
+}
+
+/* animate_2 — diagonal hatching: wipes in, then scans like a radar sweep */
+body.ad-section-live #art-direction .ad-intro-svg #animate_2 {
+  animation:
+    adfrm-hatch-wipe 0.5s ease-out   2.6s forwards,
+    adfrm-hatch-scan 17s ease-in-out 3.1s infinite;
+}
+@keyframes adfrm-hatch-wipe {
+  0%   { opacity: 1; clip-path: inset(0 0 0 100%); }
+  100% { opacity: 1; clip-path: inset(0 0 0 0%); }
+}
+@keyframes adfrm-hatch-scan {
+  0%,100% { opacity: 1; }
+  30%     { opacity: 0.4; }
+  35%     { opacity: 1; }
+  70%     { opacity: 0.6; }
+  73%     { opacity: 0.15; }
+  77%     { opacity: 1; }
+}
+
+/* animate1 — binary text: flickers on, then loops like live data streaming */
+body.ad-section-live #art-direction .ad-intro-svg #animate1 {
+  animation:
+    adfrm-binary-flicker 1s  ease-out  2.7s forwards,
+    adfrm-binary-stream  11s ease-in-out 3.7s infinite;
+}
+@keyframes adfrm-binary-flicker {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.9; }
+  20%  { opacity: 0.05; }
+  35%  { opacity: 1; }
+  40%  { opacity: 0.1; }
+  55%  { opacity: 1; }
+  60%  { opacity: 0.4; }
+  80%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+@keyframes adfrm-binary-stream {
+  0%,100% { opacity: 1; }
+  8%      { opacity: 0.5; }
+  10%     { opacity: 1; }
+  11%     { opacity: 0.05; }
+  13%     { opacity: 0.9; }
+  40%     { opacity: 0.7; }
+  42%     { opacity: 0.1; }
+  44%     { opacity: 1; }
+  78%     { opacity: 0.6; }
+  80%     { opacity: 0.15; }
+  82%     { opacity: 1; }
+}
+
+/* ── Skills bar entrance ── */
+#art-direction .ad-skills-bar {
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
+body.ad-section-live #art-direction .ad-skills-bar {
+  animation: slideDownFade 0.5s ease-out 0.1s forwards,
+             ad-skills-shimmer 2.5s ease-in-out 0.6s infinite;
+}
+
+@keyframes ad-skills-shimmer {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
 /* ── Type styles — text groups always visible inside their container ── */
 #art-direction .ad-intro-text .iad-header,
 #art-direction .ad-intro-text .iad-body,
@@ -106,10 +222,10 @@
 /* ── Works zone — wrapper that positions label + panel together ── */
 #art-direction .ad-works-zone {
   position: absolute;
-  left: calc(min(75vh, 75vw) + 2vw + 80px);
-  top: calc(50% - 150px);
+  left: calc(min(75vh, 75vw) + 2vw + 50px);
+  top: calc(50% - 100px);
   transform: translateY(-50%);
-  width: min(calc(100% - min(75vh, 75vw) - 4vw - 80px), 700px);
+  width: min(calc(100% - min(75vh, 75vw) - 4vw), 780px);
   max-height: clamp(380px, 82vh, 780px);
   z-index: 5;
   display: flex;
@@ -117,18 +233,6 @@
   gap: 16px;
 }
 
-/* ── Projects vertical label ── */
-#art-direction .ad-projects-label {
-  flex-shrink: 0;
-  width: 32px;
-  height: clamp(260px, 60vh, 480px);
-  pointer-events: none;
-  object-fit: fill;
-}
-
-#art-direction.ad-intro-active .ad-projects-label {
-  opacity: 0;
-}
 
 /* ── Works list panel ── */
 #art-direction .ad-works-panel {
@@ -139,6 +243,8 @@
   flex-direction: column;
   opacity: 0;
   transition: opacity 0.4s ease;
+  transform: scale(0.9);
+  transform-origin: top left;
 }
 
 #art-direction .ad-works-panel.ad-works-ready {
@@ -237,34 +343,36 @@
 /* ── HOW TO EXPLORE card — bottom-right zone, below project list, next to N ── */
 #art-direction .ad-explore-card {
   position: absolute;
-  left: calc(min(75vh, 75vw) + 2vw + 330px);
-  bottom: clamp(16px, 3vh, 36px);
-  width: clamp(140px, 18vw, 220px);
+  left: calc(min(75vh, 75vw) + 2vw + 400px);
+  right: clamp(12px, 2vw, 24px);
+  bottom: calc(clamp(16px, 3vh, 32px) + 80px);
+  height: min(25.7vh, 229px);
   z-index: 5;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.5s var(--ease-expo-out),
-              transform 0.5s var(--ease-expo-out),
-              width 0.5s var(--ease-expo-out);
+  overflow: hidden;
+  clip-path: inset(0 0 100% 0);
 }
 
+body.ad-section-live #art-direction .ad-explore-card,
 #art-direction .ad-explore-card.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-  width: clamp(260px, 36vw, 442px);
+  animation: ad-explore-enter 0.7s var(--ease-expo-out) forwards;
 }
 
-/* Hide explore card whenever the intro is active (initial load or section re-entry) */
-#art-direction.ad-intro-active .ad-explore-card {
-  opacity: 0 !important;
-  transform: translateY(12px) !important;
-  pointer-events: none;
+@keyframes ad-explore-enter {
+  0%   { opacity: 0;   clip-path: inset(0 0 100% 0); transform: translateY(8px); }
+  14%  { opacity: 0.5; clip-path: inset(0 0 55% 0);  transform: translateY(6px); }
+  16%  { opacity: 0.2; clip-path: inset(5% 0 52% 0);  transform: translateY(7px); }
+  60%  { opacity: 0.9; clip-path: inset(0 0 8% 0);   transform: translateY(2px); }
+  100% { opacity: 1;   clip-path: inset(0 0 0% 0);   transform: translateY(0); }
 }
+
 
 #art-direction .ad-explore-card img {
   display: block;
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
 }
 
@@ -391,7 +499,7 @@
     width: min(440px, 88vw);
   }
 
-  /* Works zone: centre; panel is already hidden at 1219px so only label shows */
+  /* Works zone: centre; panel + label are hidden at 1219px so zone is invisible here */
   #art-direction .ad-works-zone {
     left: 50%;
     top: 50%;
@@ -406,59 +514,6 @@
 }
 
 
-/* ══════════════════════════════════════════════════════════════════════════════
-   INTRO FRAME — 4-sided transparent orange rectangle wrapping the intro text.
-   No background fill. Lines inherit opacity from .ad-intro-text fade-in.
-   Bottom right corner ends in dashes.
-   ══════════════════════════════════════════════════════════════════════════════ */
-
-#art-direction .ad-intro-frame {
-  position: absolute;
-  inset: -14px -18px -14px -10px;
-  pointer-events: none;
-}
-
-#art-direction .ad-fline {
-  position: absolute;
-  background: #EE9B00;
-  box-shadow: 0 0 10px rgba(238,155,0,0.6);
-}
-
-#art-direction .ad-fline--top {
-  top: 0; left: 0;
-  height: 2px; width: 100%;
-}
-
-#art-direction .ad-fline--left {
-  top: 0; left: 0;
-  width: 2px; height: 100%;
-}
-
-#art-direction .ad-fline--right {
-  top: 0; right: 0;
-  width: 2px; height: 100%;
-}
-
-/* Solid part stops before the right end; dashed tail via ::after */
-#art-direction .ad-fline--bottom {
-  bottom: 0; left: 0;
-  height: 2px; width: calc(100% - 58px);
-}
-
-#art-direction .ad-fline--bottom::after {
-  content: '';
-  position: absolute;
-  left: 100%;
-  bottom: 0;
-  height: 2px;
-  width: 52px;
-  background: repeating-linear-gradient(
-    to right,
-    #EE9B00 0px, #EE9B00 6px,
-    transparent 6px, transparent 12px
-  );
-  box-shadow: 0 0 8px rgba(238,155,0,0.5);
-}
 
 /* ══════════════════════════════════════════════════════════════════════════════
    PROJECT DETAIL MODAL

@@ -163,9 +163,11 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         this._transitioning   = true;
         this.activeDiscipline = key;
 
-this.listItems.forEach(li =>
-            li.classList.toggle('is-active', li.dataset.discipline === key)
-        );
+        if (!immediate) {
+            this.listItems.forEach(li =>
+                li.classList.toggle('is-active', li.dataset.discipline === key)
+            );
+        }
 
         const activeSpan = this.listItems
             .find(li => li.dataset.discipline === key)
@@ -210,11 +212,7 @@ this.listItems.forEach(li =>
 
     _showExploreCard(immediate = false) {
         if (!this.exploreCard) return;
-        if (this.section?.classList.contains('ad-intro-active')) return;
-        if (immediate) {
-            this.exploreCard.classList.add('is-visible');
-            return;
-        }
+        if (immediate) return; // initial entrance handled by body.ad-section-live CSS
         this.exploreCard.classList.remove('is-visible');
         setTimeout(() => this.exploreCard.classList.add('is-visible'), 200);
     }
