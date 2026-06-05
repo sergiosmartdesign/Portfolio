@@ -4176,8 +4176,8 @@ nav {
 
 .photo-polaroids-camera {
   display: block;
-  width: 50%;
-  margin: calc(25% - 50px) 0 -25%;
+  width: 40%;
+  margin: calc(20% - 90px) 0 -20%;
   transform: rotate(-90deg);
   transform-origin: left center;
   opacity: 0;
@@ -4212,10 +4212,10 @@ nav {
    then fading out before the right column border. */
 .photo-ghost-stream {
   position: absolute;
-  bottom: calc(clamp(0.5rem, 1vw, 1rem) + 68px);
+  bottom: calc(clamp(0.5rem, 1vw, 1rem) + 48px);
   left: 0;
   right: 0;
-  height: 400px;
+  height: 320px;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
     to right,
@@ -4244,8 +4244,8 @@ nav {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 232px;
-  height: 280px;
+  width: 195px;
+  height: 236px;
   opacity: 0;
   transform: translateX(0) translateY(-50%) rotate(-90deg);
   border: 2px solid rgba(233, 216, 166, 0.9);
@@ -4263,7 +4263,7 @@ nav {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 52px;
+  height: 44px;
   background: rgba(0, 18, 25, 0.82);
   border-top: 1px solid rgba(233, 216, 166, 0.55);
   z-index: 1;

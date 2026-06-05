@@ -28,14 +28,16 @@
       this._infoAnimInterval = null;
       this._streamLbOpen     = false;
       this._streamLbHide     = null;
+      this._onCardClick      = null;
 
       this._cameraEl       = null;
       this._cardLastPhase  = null; // per-card: -1=hidden, 0=entering(t<0.22), 1=visible(t>=0.22)
       this._ejectRafPending = false;
     }
 
-    get canPlay()  { return this._streamCanPlay; }
-    set canPlay(v) { this._streamCanPlay = v; }
+    get canPlay()      { return this._streamCanPlay; }
+    set canPlay(v)     { this._streamCanPlay = v; }
+    set onCardClick(fn){ this._onCardClick = fn; }
 
     init() {
       this._streamRotations = this._streamCards.map(card =>
@@ -204,7 +206,7 @@
       const N            = this._streamCards.length;
       const CARD_SPACING = 0.22;
       const LOOP_LENGTH  = N * CARD_SPACING;
-      const CARD_W       = 232;
+      const CARD_W       = 195;
       const streamW      = parseFloat(
         this._stream.style.getPropertyValue('--ghost-stream-w')
       ) || 500;
@@ -332,6 +334,18 @@
       this._streamCards.forEach(card => {
         card.addEventListener('click', () => {
           if (!card.dataset.image) return;
+
+          if (this._onCardClick) {
+            const all  = Array.from(document.querySelectorAll('.photo-project-item[data-image]'));
+            const item = all.find(el => el.dataset.image === card.dataset.image);
+            if (item) {
+              const rect = card.getBoundingClientRect();
+              this._onCardClick(item, rect);
+              return;
+            }
+          }
+
+          // Fallback to built-in stream lightbox
           lbShow(card.dataset.image, card.dataset.alt || '');
         });
       });

@@ -109,6 +109,8 @@
         Array.from(document.querySelectorAll('.photo-ghost-card'))
       );
       this.stream.init();
+      this.stream.onCardClick = (item, rect) =>
+        this._openItemLightbox(item, rect.left, rect.top, rect.width, rect.height);
 
       this.polaroid = new window.Photo.PolaroidReveal(this);
       this.polaroid.setupClick();
