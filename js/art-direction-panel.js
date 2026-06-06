@@ -14,7 +14,11 @@ const WORKS_DATA = {
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-01-2021.webp',
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-02-2021.webp',
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-login-2021.webp',
-        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-streaming-2021.webp'
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-streaming-2021.webp',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-homepage-screen-2021.jpg',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-login-screen-2021.jpg',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-streaming-screen-2021.jpg',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-streaming-logos-screen-2021.jpg'
       ]
     },
     {
@@ -27,7 +31,14 @@ const WORKS_DATA = {
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-new-year-event-landing-2020.webp',
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-invitation-email-animated-2020.webp',
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-save-the-date-animated-2020.webp',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-event-logo-animated-2020logo.webp'
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-event-logo-animated-2020logo.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-login-animation-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-save-the-date-animation-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-menu-animation-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-02-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-03-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-web-experience-2020.jpg',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-welcome-kit-2020.jpg'
       ]
     },
     {
@@ -39,7 +50,8 @@ const WORKS_DATA = {
         'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-01-2021.webp',
         'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-02-2021.webp',
         'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
-        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp'
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp',
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-poster-2021.png'
       ]
     },
     {
@@ -56,13 +68,27 @@ const WORKS_DATA = {
       num: '05', cat: 'Web', title: 'Reality Shift', sub: 'Platzi × Lovable AI contest website',
       specs: [['Scope','Web Design · UI · AI Build'],['Tools','Lovable · Figma'],['Year','2025'],['Mode','Contest']],
       tags: ['AI Build','Web','Contest'],
-      bg: 'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-2025.webp'
+      bg: 'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-2025.webp',
+      images: [
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-2025.webp',
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-detail-2025.png'
+      ]
     },
     {
       num: '06', cat: 'Web', title: 'Global Trading Website', sub: 'Web design for food ingredients brand',
       specs: [['Scope','Web Design · UI · Responsive'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Client']],
       tags: ['Web','Responsive','Brand'],
       bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-design-desktop-mobile-2021.webp'
+    },
+    {
+      num: '07', cat: 'Web', title: 'Siemens — Pollaya', sub: 'Copa América prediction game for Siemens employees',
+      specs: [['Scope','Web Design · UI · Game'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Agency']],
+      tags: ['Web','Game','UX/UI'],
+      bg: 'images/art-direction/Sieemens/pollaya/sergio-ayala-siemens-healthineers-pollaya-copa-america-dashboard-2021.png',
+      images: [
+        'images/art-direction/Sieemens/pollaya/sergio-ayala-siemens-healthineers-pollaya-copa-america-dashboard-2021.png',
+        'images/art-direction/Sieemens/pollaya/sergio-ayala-siemens-healthineers-pollaya-copa-america-registro-2021.png'
+      ]
     }
   ],
   editorial: [
@@ -105,7 +131,10 @@ const WORKS_DATA = {
       bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
       images: [
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
-        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-kitchen-brothers-flyer-2026.webp'
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-kitchen-brothers-flyer-2026.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-booth-photo-2026.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-event-photo-2026.png',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-product-info-sheet-2026.png'
       ]
     }
   ],
@@ -118,7 +147,9 @@ const WORKS_DATA = {
       images: [
         'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-logo-brand-identity-colombia-chile.webp',
         'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-letterhead-brand-identity-colombia-chile.webp',
-        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-presentation-folder-brand-identity-colombia-chile.webp'
+        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-presentation-folder-brand-identity-colombia-chile.webp',
+        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-presentation-folder-mockup-brand-identity-2020.png',
+        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-letterhead-mockup-brand-identity-2020.png'
       ]
     },
     {
@@ -179,6 +210,38 @@ const WORKS_DATA = {
         'images/art-direction/draconic love/sergio-ayala-draconic-love-merchandise-mockup-2019.webp',
         'images/art-direction/draconic love/sergio-ayala-draconic-love-merchandise-web-banner-2019.webp'
       ]
+    },
+    {
+      num: '02', cat: 'Motion', title: 'Siemens — Event Motion', sub: 'Animated UI, emails & save-the-date for Couch Party',
+      specs: [['Scope','UI Animation · Email · Identity'],['Tools','After Effects · Photoshop'],['Year','2020'],['Mode','Agency']],
+      tags: ['Animation','Email','UI Motion'],
+      bg: 'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-login-animation-2020.gif',
+      images: [
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-login-animation-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-save-the-date-animation-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-menu-animation-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-02-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-03-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-invitation-email-animated-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-save-the-date-animated-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-event-logo-animated-2020logo.webp'
+      ]
+    },
+    {
+      num: '03', cat: 'Motion', title: 'Siemens — Together Land Motion', sub: 'Animated invitation email & event for Together Land',
+      specs: [['Scope','Email · UI Animation · Event'],['Tools','After Effects · Photoshop'],['Year','2021'],['Mode','Agency']],
+      tags: ['Animation','Email','Virtual Event'],
+      bg: 'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
+      images: [
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp'
+      ]
+    },
+    {
+      num: '04', cat: 'Motion', title: 'Animated Personal Logo', sub: '169-frame brand animation, 8 seconds',
+      specs: [['Scope','Identity · Motion · Brand'],['Tools','After Effects · Illustrator'],['Year','2019'],['Mode','Personal']],
+      tags: ['Identity','Motion','Brand'],
+      bg: 'images/art-direction/sergio-ayala-animated-portfolio-logo-art-direction.webp'
     }
   ]
 };

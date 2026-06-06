@@ -1275,7 +1275,8 @@
 #illustration.illus-intro-active .illus-hud,
 #illustration.illus-intro-active .illus-strip,
 #illustration.illus-intro-active .illus-caption,
-#illustration.illus-intro-active .illus-info-svg {
+#illustration.illus-intro-active .illus-info-svg,
+#illustration.illus-intro-active .illus-svg-bar {
     opacity: 0;
     transition: none;
     animation: none;
@@ -1328,6 +1329,15 @@
 
 #illustration.illus-entering .illus-info-svg {
     animation: illus-enter-up 400ms ease 380ms both;
+}
+
+#illustration.illus-entering .illus-svg-bar {
+    animation: illus-svgbar-enter 900ms var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 60ms both;
+}
+
+@keyframes illus-svgbar-enter {
+    from { opacity: 0; translate: -100% 0; }
+    to   { opacity: 1; translate: 0 0; }
 }
 
 /* Card wrapper — delay the opacity:0→1 transition so it lands after the cube */
@@ -1383,65 +1393,183 @@
 #ilsv-row-02,
 #ilsv-row-03,
 #ilsv-row-04,
-#ilsv-binary,
 #ilsv-footer { opacity: 0; }
 
 /* Reveal: triggered once by JS adding .illus-info-revealed to .illus-tunnel */
 .illus-tunnel.illus-info-revealed .illus-info-svg {
-    animation: ilsv-frame-enter 0.65s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 0.3s both;
+    animation: ilsv-frame-enter 0.7s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 0.3s forwards;
 }
+
+/* Dashed line — draws top→bottom, then pulses like a signal */
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-vline {
-    animation: ilsv-fade-in 0.4s ease 0.85s both;
+    animation:
+        ilsv-line-draw  1.4s ease-out   1.5s forwards,
+        ilsv-line-pulse 13s  ease-in-out 2.9s infinite;
 }
+
+/* Header + rows + footer — wipe in left→right, then scan */
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-hdr-group {
-    animation: ilsv-fade-in 0.35s ease 0.95s both;
+    animation:
+        ilsv-hatch-wipe 0.5s ease-out   1.6s forwards,
+        ilsv-hatch-scan 17s  ease-in-out 2.1s infinite;
 }
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 {
-    animation: ilsv-fade-in 0.35s ease 1.10s both;
+    animation:
+        ilsv-hatch-wipe 0.5s ease-out   1.8s forwards,
+        ilsv-hatch-scan 17s  ease-in-out 2.3s infinite;
 }
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 {
-    animation: ilsv-fade-in 0.35s ease 1.25s both;
+    animation:
+        ilsv-hatch-wipe 0.5s ease-out   2.0s forwards,
+        ilsv-hatch-scan 17s  ease-in-out 2.5s infinite;
 }
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 {
-    animation: ilsv-fade-in 0.35s ease 1.40s both;
+    animation:
+        ilsv-hatch-wipe 0.5s ease-out   2.2s forwards,
+        ilsv-hatch-scan 17s  ease-in-out 2.7s infinite;
 }
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 {
-    animation: ilsv-fade-in 0.35s ease 1.55s both;
+    animation:
+        ilsv-hatch-wipe 0.5s ease-out   2.4s forwards,
+        ilsv-hatch-scan 17s  ease-in-out 2.9s infinite;
 }
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-binary {
-    animation: ilsv-fade-in 0.35s ease 1.75s both,
-               ilsv-binary-scan 4s linear 2.5s infinite;
-}
+
+/* Footer — wipe in then scan */
 .illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-footer {
-    animation: ilsv-fade-in 0.35s ease 1.90s both,
-               ilsv-footer-pulse 6s ease-in-out 3.2s infinite;
+    animation:
+        ilsv-hatch-wipe 0.5s ease-out   2.6s forwards,
+        ilsv-hatch-scan 17s  ease-in-out 3.1s infinite;
 }
+
+/* ── Keyframes ── */
 
 @keyframes ilsv-frame-enter {
     0%   { opacity: 0;   clip-path: inset(0 100% 0 0); }
     14%  { opacity: 0.5; clip-path: inset(0 62% 0 0); }
-    16%  { opacity: 0.2; clip-path: inset(8% 58% 6% 0); }
+    16%  { opacity: 0.2; clip-path: inset(12% 60% 8% 0); }
     55%  { opacity: 0.9; clip-path: inset(0 10% 0 0); }
     100% { opacity: 1;   clip-path: inset(0 0% 0 0); }
 }
 
-@keyframes ilsv-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+@keyframes ilsv-line-draw {
+    0%   { opacity: 1; clip-path: inset(0 0 100% 0); }
+    100% { opacity: 1; clip-path: inset(0 0 0%   0); }
+}
+@keyframes ilsv-line-pulse {
+    0%,100% { opacity: 1; }
+    18%     { opacity: 0.3; }
+    22%     { opacity: 1; }
+    55%     { opacity: 0.6; }
+    58%     { opacity: 0.1; }
+    62%     { opacity: 0.9; }
 }
 
-@keyframes ilsv-binary-scan {
-    0%   { opacity: 0.22; }
-    47%  { opacity: 0.22; }
-    50%  { opacity: 0.65; }
-    53%  { opacity: 0.22; }
-    100% { opacity: 0.22; }
+@keyframes ilsv-hatch-wipe {
+    0%   { opacity: 1; clip-path: inset(0 0 0 100%); }
+    100% { opacity: 1; clip-path: inset(0 0 0 0%  ); }
+}
+@keyframes ilsv-hatch-scan {
+    0%,100% { opacity: 1; }
+    30%     { opacity: 0.4; }
+    35%     { opacity: 1; }
+    70%     { opacity: 0.6; }
+    73%     { opacity: 0.15; }
+    77%     { opacity: 1; }
 }
 
-@keyframes ilsv-footer-pulse {
-    0%   { opacity: 1; }
-    45%  { opacity: 1; }
-    50%  { opacity: 0.4; }
-    55%  { opacity: 1; }
-    100% { opacity: 1; }
+/* ── Row highlight cycle — sequential scanner effect ──────────────────────
+   Each row has the same 8s period but staggered 2s apart, creating a
+   continuous top→bottom sweep after the panel finishes its reveal (~3.5s).
+   Background rect uses var(--illus-lust-accent) so it shifts with the cube.
+   Text flips to #001219 (dark) for contrast against the bright rect fill.
+─────────────────────────────────────────────────────────────────────────── */
+
+/* Trigger only after panel is revealed */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-hl-rect {
+    animation: ilsv-row-bg-cycle 8s ease-in-out 3.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-hl-rect {
+    animation: ilsv-row-bg-cycle 8s ease-in-out 5.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-hl-rect {
+    animation: ilsv-row-bg-cycle 8s ease-in-out 7.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-hl-rect {
+    animation: ilsv-row-bg-cycle 8s ease-in-out 9.5s infinite;
+}
+
+/* Action text → dark while highlighted */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-act {
+    animation: ilsv-row-act-cycle 8s ease-in-out 3.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-act {
+    animation: ilsv-row-act-cycle 8s ease-in-out 5.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-act {
+    animation: ilsv-row-act-cycle 8s ease-in-out 7.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-act {
+    animation: ilsv-row-act-cycle 8s ease-in-out 9.5s infinite;
+}
+
+/* Step number → dark while highlighted (resets to accent color) */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-num {
+    animation: ilsv-row-num-cycle 8s ease-in-out 3.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-num {
+    animation: ilsv-row-num-cycle 8s ease-in-out 5.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-num {
+    animation: ilsv-row-num-cycle 8s ease-in-out 7.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-num {
+    animation: ilsv-row-num-cycle 8s ease-in-out 9.5s infinite;
+}
+
+/* Sub-text → dark + more opaque while highlighted */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-sub {
+    animation: ilsv-row-sub-cycle 8s ease-in-out 3.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-sub {
+    animation: ilsv-row-sub-cycle 8s ease-in-out 5.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-sub {
+    animation: ilsv-row-sub-cycle 8s ease-in-out 7.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-sub {
+    animation: ilsv-row-sub-cycle 8s ease-in-out 9.5s infinite;
+}
+
+/* ── Keyframes ── */
+
+@keyframes ilsv-row-bg-cycle {
+    0%    { fill-opacity: 0; }
+    4%    { fill-opacity: 0.88; }
+    21%   { fill-opacity: 0.88; }
+    25%   { fill-opacity: 0; }
+    100%  { fill-opacity: 0; }
+}
+
+@keyframes ilsv-row-act-cycle {
+    0%    { fill: #EE9B00; }
+    4%    { fill: #E9D8A6; }
+    21%   { fill: #E9D8A6; }
+    25%   { fill: #EE9B00; }
+    100%  { fill: #EE9B00; }
+}
+
+@keyframes ilsv-row-num-cycle {
+    0%    { fill: var(--illus-lust-accent, #EE9B00); }
+    4%    { fill: #E9D8A6; }
+    21%   { fill: #E9D8A6; }
+    25%   { fill: var(--illus-lust-accent, #EE9B00); }
+    100%  { fill: var(--illus-lust-accent, #EE9B00); }
+}
+
+@keyframes ilsv-row-sub-cycle {
+    0%    { fill: #EE9B00; fill-opacity: 0.5; }
+    4%    { fill: #E9D8A6; fill-opacity: 0.85; }
+    21%   { fill: #E9D8A6; fill-opacity: 0.85; }
+    25%   { fill: #EE9B00; fill-opacity: 0.5; }
+    100%  { fill: #EE9B00; fill-opacity: 0.5; }
 }
