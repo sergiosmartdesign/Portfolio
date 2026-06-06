@@ -166,7 +166,7 @@
           const introFooter = section.querySelector('.iad-footer[data-content]');
           if (introHeader) scrambleItem(introHeader, 0);
           if (introFooter) scrambleItem(introFooter, 200);
-        }, 2700);
+        }, 2000);
       };
 
       const resetAdList = () => {

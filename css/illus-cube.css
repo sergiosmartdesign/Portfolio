@@ -277,8 +277,8 @@
     transition: opacity 0.35s ease;
 }
 
-.illus-title-float--left  { left: 13%;  text-align: left; }
-.illus-title-float--right { right: 13%; text-align: right; }
+.illus-title-float--left  { left: 3.5rem;  text-align: left; }
+.illus-title-float--right { right: 2rem; text-align: right; }
 
 .illus-title-float--visible {
     animation: illus-title-float-enter 0.7s var(--ease-expo-out) 1 both;
@@ -606,12 +606,12 @@
     z-index: 3;
 }
 
-/* ── Navigation dots — switches side to stay opposite the active card ────── */
+/* ── Navigation dots — mirrors titleFloat anchor just below it ────────────── */
 .illus-strip {
     position: absolute;
+    top: calc(50% - 8rem + 0.75rem); /* just below titleFloat bottom edge */
     left: 3.5rem;
-    top: 50%;
-    translate: -50% -50%;
+    translate: 0 0;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -620,9 +620,10 @@
                 translate 0.45s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1));
 }
 
+/* Right side: right edge at 2rem from right — matches titleFloat--right */
 .illus-strip--right {
-    left: calc(100% - var(--illus-ui-inset));
-    translate: -100% -50%;
+    left: calc(100% - 2rem);
+    translate: -100% 0;
 }
 
 
@@ -1231,6 +1232,9 @@
         display: none;
     }
 
+    .illus-info-svg {
+        display: none;
+    }
 
     .illus-caption {
         bottom: 1rem;
@@ -1270,7 +1274,8 @@
 #illustration.illus-intro-active .illus-scene,
 #illustration.illus-intro-active .illus-hud,
 #illustration.illus-intro-active .illus-strip,
-#illustration.illus-intro-active .illus-caption {
+#illustration.illus-intro-active .illus-caption,
+#illustration.illus-intro-active .illus-info-svg {
     opacity: 0;
     transition: none;
     animation: none;
@@ -1321,6 +1326,10 @@
     animation: illus-enter-up 380ms ease 300ms both;
 }
 
+#illustration.illus-entering .illus-info-svg {
+    animation: illus-enter-up 400ms ease 380ms both;
+}
+
 /* Card wrapper — delay the opacity:0→1 transition so it lands after the cube */
 #illustration.illus-entering .illus-section[data-idx="0"] {
     transition-delay: 0.18s;
@@ -1343,4 +1352,96 @@
 #illustration.illus-entering .illus-section[data-idx="0"] .illus-cta,
 #illustration.illus-entering .illus-section[data-idx="0"] .illus-cta-back {
     transition-delay: 0.70s;
+}
+
+
+/* ── Illustration how-to info panel (vertical SVG) ──────────────────────── */
+.illus-info-svg {
+    position: absolute;
+    top: calc(50% + 2rem);
+    left: 3.5rem;
+    width: 16.5rem;
+    height: auto;
+    translate: 0 0;
+    display: block;
+    pointer-events: none;
+    user-select: none;
+    z-index: 4;
+    opacity: 0;
+    transition: left  0.45s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)),
+                translate 0.45s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1));
+}
+.illus-info-svg--right {
+    left: calc(100% - 2rem);
+    translate: -100% 0;
+}
+
+/* Internal elements — hidden until animated in */
+#ilsv-vline,
+#ilsv-hdr-group,
+#ilsv-row-01,
+#ilsv-row-02,
+#ilsv-row-03,
+#ilsv-row-04,
+#ilsv-binary,
+#ilsv-footer { opacity: 0; }
+
+/* Reveal: triggered once by JS adding .illus-info-revealed to .illus-tunnel */
+.illus-tunnel.illus-info-revealed .illus-info-svg {
+    animation: ilsv-frame-enter 0.65s var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 0.3s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-vline {
+    animation: ilsv-fade-in 0.4s ease 0.85s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-hdr-group {
+    animation: ilsv-fade-in 0.35s ease 0.95s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 {
+    animation: ilsv-fade-in 0.35s ease 1.10s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 {
+    animation: ilsv-fade-in 0.35s ease 1.25s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 {
+    animation: ilsv-fade-in 0.35s ease 1.40s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 {
+    animation: ilsv-fade-in 0.35s ease 1.55s both;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-binary {
+    animation: ilsv-fade-in 0.35s ease 1.75s both,
+               ilsv-binary-scan 4s linear 2.5s infinite;
+}
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-footer {
+    animation: ilsv-fade-in 0.35s ease 1.90s both,
+               ilsv-footer-pulse 6s ease-in-out 3.2s infinite;
+}
+
+@keyframes ilsv-frame-enter {
+    0%   { opacity: 0;   clip-path: inset(0 100% 0 0); }
+    14%  { opacity: 0.5; clip-path: inset(0 62% 0 0); }
+    16%  { opacity: 0.2; clip-path: inset(8% 58% 6% 0); }
+    55%  { opacity: 0.9; clip-path: inset(0 10% 0 0); }
+    100% { opacity: 1;   clip-path: inset(0 0% 0 0); }
+}
+
+@keyframes ilsv-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes ilsv-binary-scan {
+    0%   { opacity: 0.22; }
+    47%  { opacity: 0.22; }
+    50%  { opacity: 0.65; }
+    53%  { opacity: 0.22; }
+    100% { opacity: 0.22; }
+}
+
+@keyframes ilsv-footer-pulse {
+    0%   { opacity: 1; }
+    45%  { opacity: 1; }
+    50%  { opacity: 0.4; }
+    55%  { opacity: 1; }
+    100% { opacity: 1; }
 }

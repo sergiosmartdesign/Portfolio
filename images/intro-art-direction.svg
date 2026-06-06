@@ -12,10 +12,62 @@
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    <style>
+      /* ── Highlight rects — hidden at rest ── */
+      .iad-hl { opacity: 0; }
+
+      /* ── 15s cycle: 5 slots × 3s each, staggered by delay ── */
+      .iad-hl-0 { animation: iad-cycle 15s ease-in-out 0s  infinite; }
+      .iad-hl-1 { animation: iad-cycle 15s ease-in-out 3s  infinite; }
+      .iad-hl-2 { animation: iad-cycle 15s ease-in-out 6s  infinite; }
+      .iad-hl-3 { animation: iad-cycle 15s ease-in-out 9s  infinite; }
+      .iad-hl-4 { animation: iad-cycle 15s ease-in-out 12s infinite; }
+
+      @keyframes iad-cycle {
+        0%   { opacity: 0; }
+        4%   { opacity: 1; }
+        16%  { opacity: 1; }
+        20%  { opacity: 0; }
+        100% { opacity: 0; }
+      }
+
+      /* ── Text fill animation — same stagger ── */
+      .iad-block-0 text { animation: iad-txt 15s ease-in-out 0s  infinite; }
+      .iad-block-1 text { animation: iad-txt 15s ease-in-out 3s  infinite; }
+      .iad-block-2 text { animation: iad-txt 15s ease-in-out 6s  infinite; }
+      .iad-block-3 text { animation: iad-txt 15s ease-in-out 9s  infinite; }
+      .iad-block-4 text { animation: iad-txt 15s ease-in-out 12s infinite; }
+
+      @keyframes iad-txt {
+        0%   { fill: #EE9B00; }
+        4%   { fill: #001219; }
+        16%  { fill: #001219; }
+        20%  { fill: #EE9B00; }
+        100% { fill: #EE9B00; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .iad-hl-0, .iad-hl-1, .iad-hl-2, .iad-hl-3, .iad-hl-4 { animation: none; opacity: 0; }
+        .iad-block-0 text, .iad-block-1 text, .iad-block-2 text,
+        .iad-block-3 text, .iad-block-4 text { animation: none; }
+      }
+    </style>
   </defs>
 
   <!-- Dark backdrop -->
   <rect x="0" y="0" width="564.09" height="406.8" fill="#001219" fill-opacity="0.36" clip-path="url(#iad-bg-clip)"/>
+
+  <!-- ── Highlight rects — painted above backdrop, below all text ── -->
+  <!-- Block 0: HOW TO EXPLORE header -->
+  <rect class="iad-hl iad-hl-0" x="2" y="8"   width="524" height="50" fill="#EE9B00" clip-path="url(#iad-bg-clip)"/>
+  <!-- Block 1: Step 01 -->
+  <rect class="iad-hl iad-hl-1" x="2" y="62"  width="524" height="62" fill="#EE9B00" clip-path="url(#iad-bg-clip)"/>
+  <!-- Block 2: Step 02 -->
+  <rect class="iad-hl iad-hl-2" x="2" y="126" width="524" height="58" fill="#EE9B00" clip-path="url(#iad-bg-clip)"/>
+  <!-- Block 3: Step 03 -->
+  <rect class="iad-hl iad-hl-3" x="2" y="186" width="524" height="58" fill="#EE9B00" clip-path="url(#iad-bg-clip)"/>
+  <!-- Block 4: Step 04 -->
+  <rect class="iad-hl iad-hl-4" x="2" y="246" width="524" height="58" fill="#EE9B00" clip-path="url(#iad-bg-clip)"/>
 
   <!-- Border with glow filter -->
   <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" filter="url(#iad-border-glow)"/>
@@ -24,29 +76,39 @@
   <!-- Right side accent -->
   <polygon points="545.41 162.3 564.09 149.42 564.09 16.17 545.28 1 545.41 162.3" fill="#EE9B00"/>
 
-  <!-- Header -->
-  <text x="30" y="40" font-family="'Courier New', monospace" font-size="26" fill="#EE9B00" letter-spacing="1">[ · HOW TO EXPLORE · ]</text>
+  <!-- ── Header ── -->
+  <g class="iad-block-0">
+    <text x="30" y="40" font-family="'Courier New', monospace" font-size="26" fill="#EE9B00" letter-spacing="1">[ · HOW TO EXPLORE · ]</text>
+  </g>
   <!-- Divider -->
   <line x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
 
-  <!-- Step 01 -->
-  <text x="30" y="86" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 01 · SELECT A DISCIPLINE</text>
-  <text x="30" y="108" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       pick from the menu on the left</text>
+  <!-- ── Step 01 ── -->
+  <g class="iad-block-1">
+    <text x="30" y="86"  font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 01 · SELECT A DISCIPLINE</text>
+    <text x="30" y="108" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       pick from the menu on the left</text>
+  </g>
 
-  <!-- Step 02 -->
-  <text x="30" y="146" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 02 · BROWSE THE WORK</text>
-  <text x="30" y="168" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       projects load top panel</text>
+  <!-- ── Step 02 ── -->
+  <g class="iad-block-2">
+    <text x="30" y="146" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 02 · BROWSE THE WORK</text>
+    <text x="30" y="168" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       projects load top panel</text>
+  </g>
 
-  <!-- Step 03 -->
-  <text x="30" y="206" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 03 · OPEN A PROJECT</text>
-  <text x="30" y="228" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       click any for full detail</text>
+  <!-- ── Step 03 ── -->
+  <g class="iad-block-3">
+    <text x="30" y="206" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 03 · OPEN A PROJECT</text>
+    <text x="30" y="228" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       click any for full detail</text>
+  </g>
 
-  <!-- Step 04 -->
-  <text x="30" y="266" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 04 · RESET</text>
-  <text x="30" y="288" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       choose another category anytime</text>
+  <!-- ── Step 04 ── -->
+  <g class="iad-block-4">
+    <text x="30" y="266" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 04 · RESET</text>
+    <text x="30" y="288" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">       choose another category anytime</text>
+  </g>
 
   <!-- Bottom divider -->
   <line x1="14" y1="316" x2="530" y2="316" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
-  <!-- Footer -->
+  <!-- Footer — static, not part of the cycle -->
   <text x="30" y="354" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.7">  start by selecting a discipline ·</text>
 </svg>

@@ -8,14 +8,14 @@
       }
 
       .st1, .st2 {
-        stroke: #EE9B00;
+        stroke: #AE2012;
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 2px;
       }
 
       .st3 {
-        fill: #0A9396;
+        fill: #AE2012;
       }
 
       .st4, .st5 {

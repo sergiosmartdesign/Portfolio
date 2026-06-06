@@ -4,116 +4,181 @@
    ─────────────────────────────────────────────────────────────────────────── */
 
 const WORKS_DATA = {
-  branding: [
-    {
-      num: '01', cat: 'Branding', title: 'Brand Identity Systems', sub: 'From strategy to production',
-      specs: [['Scope','Logo · System · Guidelines'],['Tools','Figma · Illustrator'],['Year','2021 – 2024'],['Mode','Freelance · Studio']],
-      tags: ['Multi-brand','Identity','Print'],
-      bg: 'images/photo/Petra.webp'
-    },
-    {
-      num: '02', cat: 'Branding', title: 'Retail Brand Refresh', sub: 'Visual repositioning at scale',
-      specs: [['Scope','Identity · Packaging'],['Tools','Illustrator · InDesign'],['Year','2022'],['Mode','Agency']],
-      tags: ['Packaging','Retail','System'],
-      bg: 'images/photo/Kotor Montenegro.webp'
-    },
-    {
-      num: '03', cat: 'Branding', title: 'Startup Visual Language', sub: 'Zero to brand from scratch',
-      specs: [['Scope','Logo · Motion · Web'],['Tools','Figma · After Effects'],['Year','2023'],['Mode','Freelance']],
-      tags: ['Startup','Motion','Guidelines'],
-      bg: 'images/photo/Sevilla.webp'
-    },
-    {
-      num: '04', cat: 'Branding', title: 'Heritage Rebranding', sub: 'Tradition meets modernity',
-      specs: [['Scope','Logo · Print · Digital'],['Tools','Illustrator · Figma'],['Year','2024'],['Mode','Studio']],
-      tags: ['Heritage','Print','Identity'],
-      bg: 'images/photo/Goreme.webp'
-    }
-  ],
   web: [
     {
-      num: '01', cat: 'Web', title: 'Digital Product Design', sub: 'UX direction & interface',
-      specs: [['Scope','UX · UI · Design Systems'],['Tools','Figma · CSS'],['Year','2020 – 2024'],['Mode','Freelance · Agency']],
-      tags: ['UX','Design Systems','Frontend'],
-      bg: 'images/photo/Istanbul ships.webp'
+      num: '01', cat: 'Web', title: 'Alquería Virtual Event', sub: 'UX/UI for virtual event platform',
+      specs: [['Scope','Landing · Login · UX/UI'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Studio']],
+      tags: ['UX/UI','Landing','Virtual Event'],
+      bg: 'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-01-2021.webp',
+      images: [
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-01-2021.webp',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-02-2021.webp',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-login-2021.webp',
+        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-streaming-2021.webp'
+      ]
     },
     {
-      num: '02', cat: 'Web', title: 'E-Commerce Platform', sub: 'Conversion-driven UX',
-      specs: [['Scope','UX · Research · UI'],['Tools','Figma · Framer'],['Year','2022 – 2023'],['Mode','Agency']],
-      tags: ['E-Commerce','Research','UI'],
-      bg: 'images/photo/London Bridge.webp'
+      num: '02', cat: 'Web', title: 'Siemens Couch Party', sub: 'New Year virtual event, Siemens Healthineers',
+      specs: [['Scope','Landing · Email · Motion'],['Tools','Figma · After Effects'],['Year','2020'],['Mode','Agency']],
+      tags: ['Virtual Event','Motion','Email Design'],
+      bg: 'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-virtual-event-mockup-2020.webp',
+      images: [
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-virtual-event-mockup-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-new-year-event-landing-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-invitation-email-animated-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-save-the-date-animated-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-event-logo-animated-2020logo.webp'
+      ]
     },
     {
-      num: '03', cat: 'Web', title: 'SaaS Dashboard', sub: 'Complex data made simple',
-      specs: [['Scope','UX · Data Viz · Frontend'],['Tools','Figma · React'],['Year','2023 – 2024'],['Mode','Freelance']],
-      tags: ['SaaS','Data','Dashboard'],
-      bg: 'images/photo/Rovinj Croatia.webp'
+      num: '03', cat: 'Web', title: 'Siemens Together Land', sub: 'Virtual event platform, Siemens Healthineers',
+      specs: [['Scope','Landing · Email · Motion'],['Tools','Figma · After Effects'],['Year','2021'],['Mode','Agency']],
+      tags: ['Virtual Event','Motion','Landing'],
+      bg: 'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-01-2021.webp',
+      images: [
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-01-2021.webp',
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-02-2021.webp',
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp'
+      ]
+    },
+    {
+      num: '04', cat: 'Web', title: 'CAF-LIF Contest', sub: 'Entrepreneurship contest landing page',
+      specs: [['Scope','Landing · UX · Art Direction'],['Tools','Figma · Photoshop'],['Year','2020'],['Mode','Freelance']],
+      tags: ['Landing','Contest','Innovation'],
+      bg: 'images/art-direction/caflif/sergio-ayala-caf-lif-entrepreneurship-contest-landing-mockup-2020.webp',
+      images: [
+        'images/art-direction/caflif/sergio-ayala-caf-lif-entrepreneurship-contest-landing-mockup-2020.webp',
+        'images/art-direction/caflif/sergio-ayala-caf-lif-entrepreneurship-contest-landing-2020.webp'
+      ]
+    },
+    {
+      num: '05', cat: 'Web', title: 'Reality Shift', sub: 'Platzi × Lovable AI contest website',
+      specs: [['Scope','Web Design · UI · AI Build'],['Tools','Lovable · Figma'],['Year','2025'],['Mode','Contest']],
+      tags: ['AI Build','Web','Contest'],
+      bg: 'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-2025.webp'
+    },
+    {
+      num: '06', cat: 'Web', title: 'Global Trading Website', sub: 'Web design for food ingredients brand',
+      specs: [['Scope','Web Design · UI · Responsive'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Client']],
+      tags: ['Web','Responsive','Brand'],
+      bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-design-desktop-mobile-2021.webp'
     }
   ],
   editorial: [
     {
-      num: '01', cat: 'Editorial', title: 'Print & Layout Direction', sub: 'Publication & visual systems',
-      specs: [['Scope','Layout · Typography'],['Tools','InDesign · Illustrator'],['Year','2019 – 2023'],['Mode','Studio · Client']],
-      tags: ['Print','Typography','Layout'],
-      bg: 'images/photo/Dubrovnik.webp'
+      num: '01', cat: 'Editorial', title: 'Global Trading — General Catalog', sub: 'Product catalog for Alimentec food fair',
+      specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2026'],['Mode','Client']],
+      tags: ['Print','Catalog','Food Industry'],
+      bg: 'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-01-2026.webp',
+      images: [
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-01-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-02-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-03-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-04-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-05-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-06-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-07-2026.webp',
+        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-08-2026.webp'
+      ]
     },
     {
-      num: '02', cat: 'Editorial', title: 'Annual Report Design', sub: 'Data storytelling through layout',
-      specs: [['Scope','Print · Infographic'],['Tools','InDesign · Figma'],['Year','2021'],['Mode','Client']],
-      tags: ['Annual Report','Infographics','Data'],
-      bg: 'images/photo/Ojo Sevillano.webp'
+      num: '02', cat: 'Editorial', title: 'Global Trading — Bakery Catalog', sub: 'Specialty catalog for baking ingredients',
+      specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2026'],['Mode','Client']],
+      tags: ['Print','Bakery','Catalog'],
+      bg: 'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-01-2026.webp',
+      images: [
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-01-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-02-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-03-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-04-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-05-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-06-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-07-2026.webp',
+        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-08-2026.webp'
+      ]
     },
     {
-      num: '03', cat: 'Editorial', title: 'Cultural Magazine', sub: 'Six-issue visual identity',
-      specs: [['Scope','Art Direction · Layout'],['Tools','InDesign · Photoshop'],['Year','2020 – 2021'],['Mode','Studio']],
-      tags: ['Magazine','Culture','Series'],
-      bg: 'images/photo/Streets of Istanbul.webp'
-    },
-    {
-      num: '04', cat: 'Editorial', title: 'Book Cover Series', sub: 'Narrative through typography',
-      specs: [['Scope','Cover · Typography'],['Tools','Illustrator · Photoshop'],['Year','2022'],['Mode','Freelance']],
-      tags: ['Book','Series','Typography'],
-      bg: 'images/photo/Old tombs.webp'
-    },
-    {
-      num: '05', cat: 'Editorial', title: 'Corporate Brochure', sub: 'Brand voice in print',
-      specs: [['Scope','Layout · Print'],['Tools','InDesign'],['Year','2023'],['Mode','Agency']],
-      tags: ['Corporate','Print','Brand'],
-      bg: 'images/photo/Perast.webp'
+      num: '03', cat: 'Editorial', title: 'Global Trading — Trade Fair Print', sub: 'Flyer & lightbox banner for Alimentec',
+      specs: [['Scope','Flyer · Large Format'],['Tools','Illustrator · Photoshop'],['Year','2026'],['Mode','Client']],
+      tags: ['Print','Large Format','Trade Fair'],
+      bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
+      images: [
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-kitchen-brothers-flyer-2026.webp'
+      ]
     }
   ],
   identity: [
     {
-      num: '01', cat: 'Identity', title: 'Visual Language Systems', sub: 'Coherent design at scale',
-      specs: [['Scope','System · Guidelines'],['Tools','Figma · Illustrator'],['Year','2022 – 2024'],['Mode','Freelance']],
-      tags: ['System','Guidelines','Color'],
-      bg: 'images/photo/Cajon del Maipo.webp'
+      num: '01', cat: 'Identity', title: 'Travels Gourmet', sub: 'Full brand identity for culinary tourism',
+      specs: [['Scope','Logo · Stationery · Print'],['Tools','Illustrator · InDesign'],['Year','2020'],['Mode','Freelance']],
+      tags: ['Logo','Identity','Print'],
+      bg: 'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-logo-brand-identity-colombia-chile.webp',
+      images: [
+        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-logo-brand-identity-colombia-chile.webp',
+        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-letterhead-brand-identity-colombia-chile.webp',
+        'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-presentation-folder-brand-identity-colombia-chile.webp'
+      ]
     },
     {
-      num: '02', cat: 'Identity', title: 'Brand Tone & Voice', sub: 'Language as design material',
-      specs: [['Scope','Strategy · Copy · Visual'],['Tools','Figma'],['Year','2023'],['Mode','Studio']],
-      tags: ['Strategy','Tone','Messaging'],
-      bg: 'images/photo/Wandering Fox Street photo.webp'
+      num: '02', cat: 'Identity', title: 'Cata — Event Manager', sub: 'Business card & stationery system',
+      specs: [['Scope','Business Card · Stationery'],['Tools','Illustrator · InDesign'],['Year','2021'],['Mode','Freelance']],
+      tags: ['Stationery','Print','Identity'],
+      bg: 'images/art-direction/Cata/sergio-ayala-event-manager-business-card-design-2021.webp',
+      images: [
+        'images/art-direction/Cata/sergio-ayala-event-manager-business-card-design-2021.webp',
+        'images/art-direction/Cata/sergio-ayala-event-manager-business-card-mockup-2021.webp'
+      ]
+    },
+    {
+      num: '03', cat: 'Identity', title: 'Animated Personal Logo', sub: '169-frame brand animation, 8 seconds',
+      specs: [['Scope','Identity · Motion · Brand'],['Tools','After Effects · Illustrator'],['Year','2019'],['Mode','Personal']],
+      tags: ['Identity','Motion','Brand'],
+      bg: 'images/art-direction/sergio-ayala-animated-portfolio-logo-art-direction.webp'
+    },
+    {
+      num: '04', cat: 'Identity', title: 'Bon Appétit', sub: 'Logo design for bakery food brand',
+      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2019'],['Mode','Freelance']],
+      tags: ['Logo','Bakery','Food Brand'],
+      bg: 'images/art-direction/logos/sergio-ayala-bon-apetit-bakery-logo-design-colombia-2019.webp'
+    },
+    {
+      num: '05', cat: 'Identity', title: 'Ceres', sub: 'Logo for natural products e-commerce',
+      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2020'],['Mode','Freelance']],
+      tags: ['Logo','Organic','E-Commerce'],
+      bg: 'images/art-direction/logos/sergio-ayala-ceres-natural-products-ecommerce-logo-2020.webp'
+    },
+    {
+      num: '06', cat: 'Identity', title: 'Magistrado', sub: 'Logo for Latin experimental music band',
+      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
+      tags: ['Logo','Music','Identity'],
+      bg: 'images/art-direction/logos/sergio-ayala-magistrado-latin-experimental-music-band-logo-2017.webp'
+    },
+    {
+      num: '07', cat: 'Identity', title: 'Quindiorellanas', sub: 'Logo for mushroom food startup',
+      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
+      tags: ['Logo','Startup','Food Brand'],
+      bg: 'images/art-direction/logos/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp'
+    },
+    {
+      num: '08', cat: 'Identity', title: 'RetroTech', sub: 'Logo for recycled tech furniture brand',
+      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2022'],['Mode','Freelance']],
+      tags: ['Logo','Sustainable','Identity'],
+      bg: 'images/art-direction/logos/sergio-ayala-retrotech-recycled-tech-furniture-brand-logo-2022.webp'
     }
   ],
   motion: [
     {
-      num: '01', cat: 'Motion', title: 'Animation & Moving Image', sub: 'Brand animation & interaction',
-      specs: [['Scope','Animation · Interaction'],['Tools','After Effects · CSS'],['Year','2021 – 2024'],['Mode','Freelance']],
-      tags: ['Animation','Brand','UI Motion'],
-      bg: 'images/photo/Dali Desert.webp'
-    },
-    {
-      num: '02', cat: 'Motion', title: 'Intro Sequences', sub: 'Title animation for broadcast',
-      specs: [['Scope','Motion · Compositing'],['Tools','After Effects · Cinema 4D'],['Year','2022'],['Mode','Studio']],
-      tags: ['Broadcast','Compositing','3D'],
-      bg: 'images/photo/Laguna Azul Chile.webp'
-    },
-    {
-      num: '03', cat: 'Motion', title: 'UI Micro-interactions', sub: 'Delightful product animation',
-      specs: [['Scope','UI · CSS · JS'],['Tools','Figma · CSS'],['Year','2023 – 2024'],['Mode','Freelance']],
-      tags: ['UI','CSS','Micro'],
-      bg: 'images/photo/Laguna Blanca Andes Bolivianos.webp'
+      num: '01', cat: 'Motion', title: 'Draconic Love', sub: 'Commercial illustration & merchandise design',
+      specs: [['Scope','Illustration · Merchandise'],['Tools','Photoshop · Illustrator'],['Year','2019'],['Mode','Personal']],
+      tags: ['Illustration','Merchandise','Fantasy'],
+      bg: 'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
+      images: [
+        'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
+        'images/art-direction/draconic love/sergio-ayala-draconic-love-merchandise-mockup-2019.webp',
+        'images/art-direction/draconic love/sergio-ayala-draconic-love-merchandise-web-banner-2019.webp'
+      ]
     }
   ]
 };
@@ -143,11 +208,12 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
             });
         });
 
-        // Show intro card; pre-populate branding data silently so first click is instant
+        // Show intro card; pre-populate identity data silently so first click is instant
         if (this.section) this.section.classList.add('ad-intro-active');
         this.panel.classList.add('ad-works-ready');
         this._initModal();
-        this.selectDiscipline('branding', true);
+        this._initRowPreview();
+        this.selectDiscipline('identity', true);
     }
 
     _dismissIntro() {
@@ -276,7 +342,9 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
             row.addEventListener('mouseenter', () => {
                 const titleEl = row.querySelector('.ad-work-title');
                 if (titleEl) this._scrambleText(titleEl);
+                if (works[i].bg) this._showRowPreview(works[i].bg);
             });
+            row.addEventListener('mouseleave', () => this._hideRowPreview());
         });
     }
 
@@ -309,21 +377,78 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         this.table.style.opacity = '1';
     }
 
+    // ── Floating row preview ──────────────────────────────────────────────────
+
+    _initRowPreview() {
+        this._preview          = document.getElementById('adRowPreview');
+        this._previewVisible   = false;
+        this._previewTargetX   = 0;
+        this._previewTargetY   = 0;
+        this._previewRafPending = false;
+        this._PREVIEW_W        = 200;
+        this._PREVIEW_H        = 260;
+
+        const zone = document.querySelector('#art-direction .ad-works-zone');
+        if (zone) {
+            zone.addEventListener('mousemove', e => this._moveRowPreview(e), { passive: true });
+        }
+    }
+
+    _showRowPreview(imageUrl) {
+        if (!this._preview) return;
+        this._preview.style.backgroundImage = `url('${imageUrl}')`;
+        this._preview.style.transform       = `translate(${this._previewTargetX}px,${this._previewTargetY}px)`;
+        this._preview.style.opacity         = '1';
+        this._preview.classList.add('is-visible');
+        this._previewVisible = true;
+    }
+
+    _hideRowPreview() {
+        if (!this._preview) return;
+        this._preview.style.opacity = '0';
+        this._preview.classList.remove('is-visible');
+        this._previewVisible = false;
+    }
+
+    _moveRowPreview(e) {
+        const OFFSET_X = 24;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        let x = e.clientX + OFFSET_X;
+        let y = e.clientY - (this._PREVIEW_H >> 1);
+
+        if (x + this._PREVIEW_W > vw - 8) x = e.clientX - this._PREVIEW_W - OFFSET_X;
+        if (y < 8)                         y = 8;
+        if (y + this._PREVIEW_H > vh - 8)  y = vh - this._PREVIEW_H - 8;
+
+        this._previewTargetX = x;
+        this._previewTargetY = y;
+
+        if (!this._previewVisible || this._previewRafPending) return;
+        this._previewRafPending = true;
+        requestAnimationFrame(() => {
+            this._preview.style.transform = `translate(${this._previewTargetX}px,${this._previewTargetY}px)`;
+            this._previewRafPending = false;
+        });
+    }
+
     // ── Modal ─────────────────────────────────────────────────────────────────
 
     _initModal() {
         this.modal     = document.querySelector('#art-direction .ad-project-modal');
         if (!this.modal) return;
 
-        this.modalBg    = this.modal.querySelector('.ad-pm-bg');
-        this.modalNum   = this.modal.querySelector('.ad-pm-num');
-        this.modalCat   = this.modal.querySelector('.ad-pm-cat');
-        this.modalTitle = this.modal.querySelector('.ad-pm-title');
-        this.modalSub   = this.modal.querySelector('.ad-pm-sub');
-        this.modalSpecs = this.modal.querySelector('.ad-pm-specs');
-        this.modalTags  = this.modal.querySelector('.ad-pm-tags');
-        this.modalClose = this.modal.querySelector('.ad-pm-close');
-        this._triggerEl = null;
+        this.modalBg     = this.modal.querySelector('.ad-pm-bg');
+        this.modalNum    = this.modal.querySelector('.ad-pm-num');
+        this.modalCat    = this.modal.querySelector('.ad-pm-cat');
+        this.modalTitle  = this.modal.querySelector('.ad-pm-title');
+        this.modalSub    = this.modal.querySelector('.ad-pm-sub');
+        this.modalSpecs  = this.modal.querySelector('.ad-pm-specs');
+        this.modalTags   = this.modal.querySelector('.ad-pm-tags');
+        this.modalThumbs = this.modal.querySelector('.ad-pm-thumbs');
+        this.modalClose  = this.modal.querySelector('.ad-pm-close');
+        this._triggerEl  = null;
 
         this.modalClose.addEventListener('click', () => this._closeModal());
 
@@ -387,11 +512,45 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         this.modalTags.innerHTML = work.tags.map(t => `
             <span class="ad-pm-tag"><span class="ad-pm-dot"></span>${t}</span>`).join('');
 
+        if (this.modalThumbs) {
+            const imgs = work.images;
+            if (imgs && imgs.length > 1) {
+                this.modalThumbs.innerHTML = imgs.map((src, i) =>
+                    `<div class="ad-pm-thumb${i === 0 ? ' is-active' : ''}" role="listitem"
+                          style="background-image:url('${src}')"
+                          tabindex="0"
+                          aria-label="Image ${i + 1} of ${imgs.length}"></div>`
+                ).join('');
+                this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((thumb, i) => {
+                    thumb.addEventListener('click', () => this._switchModalImage(imgs[i], i));
+                    thumb.addEventListener('keydown', e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this._switchModalImage(imgs[i], i);
+                        }
+                    });
+                });
+            } else {
+                this.modalThumbs.innerHTML = '';
+            }
+        }
+
         this.modal.setAttribute('aria-hidden', 'false');
         this.modal.classList.add('is-open');
         document.body.style.overflow = 'hidden';
 
         requestAnimationFrame(() => this.modalClose.focus());
+    }
+
+    _switchModalImage(src, index) {
+        if (this.modalBg) {
+            this.modalBg.style.backgroundImage = `url('${src}')`;
+        }
+        if (this.modalThumbs) {
+            this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((t, i) => {
+                t.classList.toggle('is-active', i === index);
+            });
+        }
     }
 
     _closeModal() {

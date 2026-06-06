@@ -611,6 +611,15 @@ body.ad-section-live #art-direction .ad-explore-card,
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.42s ease 0.38s, transform 0.42s ease 0.38s;
+  display: flex;
+  align-items: flex-end;
+  gap: 40px;
+}
+
+/* Text block — left side */
+.ad-pm-text {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .ad-project-modal.is-open .ad-pm-content {
@@ -618,7 +627,7 @@ body.ad-section-live #art-direction .ad-explore-card,
   transform: translateY(0);
 }
 
-/* Large faint project number — top-right of content area */
+/* Large faint project number — top-right of text block */
 .ad-pm-num {
   position: absolute;
   bottom: calc(100% + 8px);
@@ -726,6 +735,50 @@ body.ad-section-live #art-direction .ad-explore-card,
   flex-shrink: 0;
 }
 
+/* ── Thumbnail strip — right side of content block ── */
+.ad-pm-thumbs {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 2px;
+  min-width: 0;
+}
+
+.ad-pm-thumbs:empty {
+  display: none;
+}
+
+.ad-pm-thumb {
+  width: 80px;
+  height: 56px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 18, 25, 0.8);
+  cursor: pointer;
+  opacity: 0.45;
+  border: 1px solid rgba(238, 155, 0, 0.22);
+  border-radius: 2px;
+  transition: opacity 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  list-style: none;
+}
+
+.ad-pm-thumb:hover {
+  opacity: 0.85;
+  border-color: rgba(238, 155, 0, 0.6);
+  transform: scale(1.06);
+}
+
+.ad-pm-thumb.is-active {
+  opacity: 1;
+  border-color: #EE9B00;
+  box-shadow: 0 0 0 1px rgba(238, 155, 0, 0.35), 0 0 10px rgba(238, 155, 0, 0.3);
+  transform: none;
+}
+
 /* ── Close button — top-right of frame ── */
 .ad-pm-close {
   position: absolute;
@@ -755,4 +808,45 @@ body.ad-section-live #art-direction .ad-explore-card,
   background: rgba(238, 155, 0, 0.12);
   border-color: #EE9B00;
   color: #E9D8A6;
+}
+
+/* ── Floating row preview — cursor-following thumbnail ────────────────────── */
+.ad-row-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 260px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #001219;
+  opacity: 0;
+  z-index: 1050;
+  pointer-events: none;
+  will-change: transform, opacity;
+  border-radius: 2px;
+  transition: opacity 0.2s ease;
+  box-shadow:
+    0 0 0 1px rgba(238, 155, 0, 0.45),
+    0 8px 32px rgba(0, 0, 0, 0.55);
+}
+
+.ad-row-preview-border {
+  position: absolute;
+  inset: -5px;
+  border: 2px solid #EE9B00;
+  box-shadow:
+    0 0  8px rgba(238, 155,   0, 0.85),
+    0 0 24px rgba(238, 155,   0, 0.40),
+    0 0 52px rgba(10,  147, 150, 0.18);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 2px;
+}
+
+.ad-row-preview.is-visible .ad-row-preview-border {
+  opacity: 1;
+  transition: opacity 0s;
 }

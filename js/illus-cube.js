@@ -107,10 +107,9 @@
     const hudPct      = illus.querySelector('.illus-hud-pct');
     const progFill    = illus.querySelector('.illus-progress-fill');
     const sceneLabel  = illus.querySelector('.illus-scene-label');
-    const captionNum  = illus.querySelector('.illus-caption-num');
-    const captionName = illus.querySelector('.illus-caption-name');
     const dots        = [...illus.querySelectorAll('.illus-dot')];
     const strip       = illus.querySelector('.illus-strip');
+    const infoSvg     = illus.querySelector('.illus-info-svg');
     const lustEl      = illus.querySelector('.illus-lust-accent');
 
     // Scale section height to number of images (100vh per stop)
@@ -362,15 +361,13 @@
         const spaced = name.split('').join(' ');
 
         sceneLabel.textContent   = name;
-        captionNum.textContent = String(stop + 1).padStart(2, '0');
-        captionName.textContent = '[ · ' + spaced + ' · ]';
-        captionName.classList.remove('illus-name-glitch');
-        void captionName.offsetWidth;
-        captionName.classList.add('illus-name-glitch');
 
         imgGlitchPending = true;
         // Hide the image-name caption on the gallery-title face (stop 0 has no photo)
         tunnel.classList.toggle('illus-stop-zero', stop === 0);
+        if (!tunnel.classList.contains('illus-info-revealed')) {
+            tunnel.classList.add('illus-info-revealed');
+        }
         // Float title: entry animation on first reveal from stop 0; hide on return.
         if (stop === 0) {
             titleFloat.classList.remove('illus-title-float--visible');
@@ -578,6 +575,10 @@
         const hintRight = stop % 2 === 0;
         strip.classList.toggle('illus-strip--right', hintRight);
         strip.classList.toggle('illus-strip--left',  !hintRight);
+        if (infoSvg) {
+            infoSvg.classList.toggle('illus-info-svg--right', hintRight);
+            infoSvg.classList.toggle('illus-info-svg--left',  !hintRight);
+        }
         const isVisible = titleFloat.classList.contains('illus-title-float--visible');
         const wasRight  = titleFloat.classList.contains('illus-title-float--right');
         if (isVisible && wasRight !== hintRight) {
