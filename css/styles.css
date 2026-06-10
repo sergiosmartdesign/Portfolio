@@ -871,8 +871,11 @@ nav {
     height: 200px;
   }
   100% {
-    transform: translateX(0) translateY(-300px);
-    height: 870px;
+    /* Viewport-relative stretch: pins the frame top at 140px (below the fixed
+       header) and the bottom 24px above the viewport edge — below the
+       info-interface badge (bottom: 40px), so the bottom line never crosses it. */
+    transform: translateX(0) translateY(calc(240px - 50vh));
+    height: max(200px, calc(100vh - 164px));
   }
 }
 
@@ -1011,9 +1014,14 @@ nav {
 
 /* Right vertical line */
 .panel-line--right {
-  bottom: 62px;
-  left: calc(100vw - 45px);
-  height: calc(100% - 62px);
+  /* Stops 108px above the frame bottom (frame bottom is 24px above the
+     viewport edge) so the line ends clear above the social icons. */
+  bottom: 108px;
+  /* The panel body sits 20px from the viewport's left edge (16px panel offset
+     + 4px sidebar), so subtract it here to land 45px from the right edge —
+     where the top line ends. */
+  left: calc(100vw - 65px);
+  height: calc(100% - 108px);
   width: var(--border-medium);
   transform-origin: bottom;
   scale: 1 0;
