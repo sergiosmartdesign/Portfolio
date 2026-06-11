@@ -122,6 +122,20 @@
         svg.removeAttribute('id');
         svg.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
         holder.appendChild(svg);
+        // The poses are scattered around the artboard (only frame 1 sits
+        // inside the viewBox) — center each one horizontally and align all
+        // platforms to the bottom edge. getBBox needs a rendered element.
+        requestAnimationFrame(() => {
+          const vb = svg.viewBox.baseVal;
+          frames.forEach(g => {
+            try {
+              const b  = g.getBBox();
+              const dx = (vb.width - b.width) / 2 - b.x;
+              const dy = vb.height - (b.y + b.height);
+              g.setAttribute('transform', `translate(${dx.toFixed(1)} ${dy.toFixed(1)})`);
+            } catch (e) { /* not rendered yet — frame keeps source position */ }
+          });
+        });
       })
       .catch(err => console.error('[contact] capsule DNA failed to load:', err));
   }

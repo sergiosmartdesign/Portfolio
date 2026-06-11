@@ -141,6 +141,7 @@ const WORKS_DATA = {
   identity: [
     {
       num: '01', cat: 'Identity', title: 'Travels Gourmet', sub: 'Full brand identity for culinary tourism',
+      desc: 'Complete identity for a culinary tourism venture operating between Colombia and Chile — logo system, stationery and print collateral built around a warm gastronomic palette. The mark pairs travel iconography with kitchen craft, extended across <a href="#" target="_blank" rel="noopener noreferrer">letterhead</a> and a <a href="#" target="_blank" rel="noopener noreferrer">presentation folder</a>.',
       specs: [['Scope','Logo · Stationery · Print'],['Tools','Illustrator · InDesign'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Identity','Print'],
       bg: 'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-logo-brand-identity-colombia-chile.webp',
@@ -199,51 +200,24 @@ const WORKS_DATA = {
       bg: 'images/art-direction/logos/sergio-ayala-retrotech-recycled-tech-furniture-brand-logo-2022.webp'
     }
   ],
-  motion: [
-    {
-      num: '01', cat: 'Motion', title: 'Draconic Love', sub: 'Commercial illustration & merchandise design',
-      specs: [['Scope','Illustration · Merchandise'],['Tools','Photoshop · Illustrator'],['Year','2019'],['Mode','Personal']],
-      tags: ['Illustration','Merchandise','Fantasy'],
-      bg: 'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
-      images: [
-        'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
-        'images/art-direction/draconic love/sergio-ayala-draconic-love-merchandise-mockup-2019.webp',
-        'images/art-direction/draconic love/sergio-ayala-draconic-love-merchandise-web-banner-2019.webp'
-      ]
-    },
-    {
-      num: '02', cat: 'Motion', title: 'Siemens — Event Motion', sub: 'Animated UI, emails & save-the-date for Couch Party',
-      specs: [['Scope','UI Animation · Email · Identity'],['Tools','After Effects · Photoshop'],['Year','2020'],['Mode','Agency']],
-      tags: ['Animation','Email','UI Motion'],
-      bg: 'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-login-animation-2020.gif',
-      images: [
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-login-animation-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-save-the-date-animation-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-menu-animation-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-02-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-03-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-invitation-email-animated-2020.webp',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-save-the-date-animated-2020.webp',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-event-logo-animated-2020logo.webp'
-      ]
-    },
-    {
-      num: '03', cat: 'Motion', title: 'Siemens — Together Land Motion', sub: 'Animated invitation email & event for Together Land',
-      specs: [['Scope','Email · UI Animation · Event'],['Tools','After Effects · Photoshop'],['Year','2021'],['Mode','Agency']],
-      tags: ['Animation','Email','Virtual Event'],
-      bg: 'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
-      images: [
-        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
-        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp'
-      ]
-    },
-    {
-      num: '04', cat: 'Motion', title: 'Animated Personal Logo', sub: '169-frame brand animation, 8 seconds',
-      specs: [['Scope','Identity · Motion · Brand'],['Tools','After Effects · Illustrator'],['Year','2019'],['Mode','Personal']],
-      tags: ['Identity','Motion','Brand'],
-      bg: 'images/art-direction/sergio-ayala-animated-portfolio-logo-art-direction.webp'
-    }
-  ]
+  // 3D works are being curated — entries follow the same shape as the other
+  // disciplines ({ num, cat: '3D', title, sub, specs, tags, bg, images }).
+  '3d': []
+};
+
+// Shown in the project modal when an entry has no `desc` yet.
+// `desc` is an HTML string — inline <a> tags become linked words in the paragraph.
+const AD_PM_DESC_PLACEHOLDER =
+  'Short description of the brief, the concept and the craft behind this project — ' +
+  'mockup copy for now. References like <a href="#" target="_blank" rel="noopener noreferrer">linked words</a> ' +
+  'and <a href="#" target="_blank" rel="noopener noreferrer">related work</a> sit inline within the paragraph.';
+
+// Display labels — '3d' can't be derived by capitalising the key.
+const DISCIPLINE_LABELS = {
+  identity:  'Identity',
+  web:       'Web',
+  editorial: 'Editorial',
+  '3d':      '3D'
 };
 
 class ArtWorksPanel {
@@ -302,7 +276,7 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
             .find(li => li.dataset.discipline === key)
             ?.querySelector('.ad-text-link');
 
-        const label = `· ${key.charAt(0).toUpperCase() + key.slice(1)} ·`;
+        const label = `· ${DISCIPLINE_LABELS[key] ?? (key.charAt(0).toUpperCase() + key.slice(1))} ·`;
 
         if (immediate) {
             this._renderRows(key);
@@ -381,6 +355,15 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
 
     _renderRows(key) {
         const works = WORKS_DATA[key];
+
+        if (!works.length) {
+            this.table.innerHTML = `
+            <div class="ad-works-empty" aria-live="polite">
+                <span class="ad-works-empty-text">· s e l e c t i o n &nbsp;i n &nbsp;p r o g r e s s ·</span>
+            </div>`;
+            return;
+        }
+
         this.table.innerHTML = works.map(w => {
             const scope = w.specs.find(s => s[0] === 'Scope')?.[1] ?? '—';
             const tools = w.specs.find(s => s[0] === 'Tools')?.[1] ?? '—';
@@ -413,7 +396,12 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
 
     _animateRowsIn() {
         const rows = [...this.table.querySelectorAll('.ad-work-item')];
-        if (!rows.length) { this._transitioning = false; return; }
+        if (!rows.length) {
+            // Empty discipline — still un-hide the table so the empty state shows.
+            this.table.style.opacity = '1';
+            this._transitioning = false;
+            return;
+        }
 
         rows.forEach((row, i) => {
             row.style.setProperty('--row-index', i);
@@ -507,6 +495,7 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         this.modalCat    = this.modal.querySelector('.ad-pm-cat');
         this.modalTitle  = this.modal.querySelector('.ad-pm-title');
         this.modalSub    = this.modal.querySelector('.ad-pm-sub');
+        this.modalDesc   = this.modal.querySelector('.ad-pm-desc');
         this.modalSpecs  = this.modal.querySelector('.ad-pm-specs');
         this.modalTags   = this.modal.querySelector('.ad-pm-tags');
         this.modalThumbs = this.modal.querySelector('.ad-pm-thumbs');
@@ -565,6 +554,10 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         this.modalCat.textContent   = `· ${work.cat.toUpperCase()} ·`;
         this.modalTitle.textContent = work.title;
         this.modalSub.textContent   = work.sub;
+
+        if (this.modalDesc) {
+            this.modalDesc.innerHTML = work.desc ?? AD_PM_DESC_PLACEHOLDER;
+        }
 
         this.modalSpecs.innerHTML = work.specs.map(([k, v]) => `
             <div class="ad-pm-spec-row">

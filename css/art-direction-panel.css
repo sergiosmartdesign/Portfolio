@@ -340,6 +340,23 @@ body.ad-section-live #art-direction .ad-skills-bar {
   transition: opacity 0.15s ease-in, transform 0.15s ease-in;
 }
 
+/* ── Empty discipline state — shown while a category has no works yet ── */
+#art-direction .ad-works-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(10, 147, 150, 0.1);
+}
+
+#art-direction .ad-works-empty-text {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgba(233, 216, 166, 0.4);
+  animation: ad-works-pulse 2.4s ease-in-out infinite;
+}
+
 /* ── HOW TO EXPLORE card — bottom-right zone, below project list, next to N ── */
 #art-direction .ad-explore-card {
   position: absolute;
@@ -669,8 +686,38 @@ body.ad-section-live #art-direction .ad-explore-card,
   font-size: 13px;
   font-weight: 300;
   color: rgba(233, 216, 166, 0.55);
-  margin: 0 0 24px 0;
+  margin: 0 0 14px 0;
   letter-spacing: 0.04em;
+}
+
+/* Project description — short paragraph with inline links, between subtitle and specs */
+.ad-pm-desc {
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(233, 216, 166, 0.78);
+  max-width: 46ch;
+  margin: 0 0 22px 0;
+  letter-spacing: 0.02em;
+}
+
+.ad-pm-desc a {
+  color: #EE9B00;
+  text-decoration: underline;
+  text-decoration-color: rgba(238, 155, 0, 0.45);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.ad-pm-desc a:hover {
+  color: #E9D8A6;
+  text-decoration-color: #E9D8A6;
+}
+
+.ad-pm-desc a:focus-visible {
+  outline: 1px solid #EE9B00;
+  outline-offset: 2px;
 }
 
 /* Specs grid */
