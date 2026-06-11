@@ -112,6 +112,7 @@
           const band = TAG_BANDS.findIndex(([y0, y1]) => y >= y0 && y <= y1);
           if (band !== -1) tagRows[band].push(p);
         });
+        const tagGroups = [];
         tagRows.forEach((paths, i) => {
           if (!paths.length) return;
           const g = document.createElementNS(SVG_NS, 'g');
@@ -119,6 +120,7 @@
           g.style.setProperty('--tag-index', i);
           paths[0].parentNode.insertBefore(g, paths[0]);
           paths.forEach(p => g.appendChild(p));
+          tagGroups[i] = g;
         });
 
         imgElement.parentNode.replaceChild(svgElement, imgElement);
@@ -139,6 +141,62 @@
               g.insertBefore(hit, g.firstChild);
             } catch (e) { /* not rendered yet — row stays glyph-hover only */ }
           });
+        });
+
+        // ── Alternate portraits ──────────────────────────────────────────
+        // Hovering a tag row swaps the ID_character portrait for the row's
+        // own illustration. Rows: 0 book reader · 1 guitar player ·
+        // 2 certified tattoo artist · 3 freelancer · 4 time traveler.
+        // Drop a file in and add one entry here when new artwork lands;
+        // rows without an entry keep just the amber text hover.
+        const ALT_CHARACTERS = {
+          0: { name: 'book-reader',   url: 'images/reader.svg' },
+          1: { name: 'guitar-player', url: 'images/guitar electric.svg' },
+          2: { name: 'tattoo-artist', url: 'images/tattoo.svg' },
+          3: { name: 'freelancer',    url: 'images/freelance.svg' },
+          4: { name: 'time-traveler', url: 'images/time.svg' },
+        };
+
+        // ID_character's portrait frame rect in id1.svg user units —
+        // alternates are contain-fitted and centered into this box.
+        const FRAME = { x: 324, y: 13.6, w: 208.3, h: 312.5 };
+
+        Object.entries(ALT_CHARACTERS).forEach(([rowIdx, conf]) => {
+          const tagGroup = tagGroups[rowIdx];
+          if (!tagGroup || !face) return;
+
+          fetch(conf.url)
+            .then(r => r.text())
+            .then(text => {
+              const altRoot = parser.parseFromString(text, 'image/svg+xml').documentElement;
+              const vb = (altRoot.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+              if (vb.length !== 4 || vb.some(isNaN)) return;
+
+              const s  = Math.min(FRAME.w / vb[2], FRAME.h / vb[3]);
+              const tx = FRAME.x + (FRAME.w - vb[2] * s) / 2 - vb[0] * s;
+              const ty = FRAME.y + (FRAME.h - vb[3] * s) / 2 - vb[1] * s;
+
+              const altGroup = document.createElementNS(SVG_NS, 'g');
+              altGroup.setAttribute('class', 'id1-alt');
+              altGroup.setAttribute('data-alt', conf.name);
+              altGroup.setAttribute('transform', `translate(${tx} ${ty}) scale(${s})`);
+              Array.from(altRoot.childNodes).forEach(n =>
+                altGroup.appendChild(document.importNode(n, true)));
+              // Strip ids from imported artwork — avoids document collisions
+              altGroup.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+
+              face.parentNode.insertBefore(altGroup, face.nextSibling);
+
+              tagGroup.addEventListener('mouseenter', () => {
+                svgElement.classList.add('id1-alt-on');
+                altGroup.classList.add('id1-alt-active');
+              });
+              tagGroup.addEventListener('mouseleave', () => {
+                svgElement.classList.remove('id1-alt-on');
+                altGroup.classList.remove('id1-alt-active');
+              });
+            })
+            .catch(err => console.error('[ID1 SVG] alt portrait failed:', conf.url, err));
         });
 
         _setupID1Observer();

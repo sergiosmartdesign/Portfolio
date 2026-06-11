@@ -2640,6 +2640,26 @@ img#id1svg {
   fill: #EE9B00;
 }
 
+/* --- ID1 alternate portraits — tag-row hover swaps the ID character ---
+   svg-inline.js fits each alternate into the ID_character frame box and
+   toggles id1-alt-on (root) + id1-alt-active (the matching group). */
+#id1svg .id1-alt {
+  fill: #001219;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+#id1svg .id1-alt.id1-alt-active {
+  opacity: 1;
+}
+
+/* Hide the robot portrait while an alternate is up — but keep the group's
+   frame rect so the portrait window stays outlined. */
+#id1svg.id1-alt-on .id1-face > :not(rect) {
+  display: none;
+}
+
 /* Animate ID1 SVG when element becomes visible in viewport - Multi-stage animation */
 #about #id1svg.element-exit {
   animation: slideUpFade 0.4s ease-in 0s forwards;

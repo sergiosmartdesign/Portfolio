@@ -2950,7 +2950,8 @@
                 <!-- Comms-console contact form.
                      Transport is mocked in contact.js (sendTransmission) until
                      a real mail endpoint is wired up. -->
-                <form class="ct-form" id="ct-form" novalidate>
+                <div class="ct-form-row">
+                    <form class="ct-form" id="ct-form" novalidate>
                     <div class="ct-form-head" aria-hidden="true">
                         <span class="ct-form-title">// NEW_MESSAGE</span>
                         <span class="ct-form-feed">BOGOTÁ ▸ WORLDWIDE<i class="ct-form-dot"></i></span>
@@ -2997,6 +2998,8 @@
                                 aria-label="Send another message">[ · s e n d &nbsp; a n o t h e r · ]</button>
                     </div>
                 </form>
+                    <img class="ct-capsule" src="images/dnacapsule1.svg" alt="" aria-hidden="true">
+                </div><!-- /.ct-form-row -->
 
                 <nav class="ct-links ct-links--mini" aria-label="Contact Sergio Ayala directly">
                     <a href="mailto:sergionook@gmail.com" class="ct-link"
@@ -3120,5 +3123,5 @@
     </div>
 
     <script defer src="js/inf-bracket.js"></script>
-<script src="js/temp-probe.js"></script></body>
+</body>
 </html>

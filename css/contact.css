@@ -502,10 +502,41 @@
 }
 
 /* ── Comms-console form ───────────────────────────────────────────────────── */
+.ct-form-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vmin, 2.5rem);
+  margin-top: clamp(0.6rem, 1.6vmin, 1.2rem);
+}
+
+/* DNA capsule — decorative line art beside the form, light-blue glow */
+.ct-capsule {
+  width: clamp(126px, 20vmin, 215px);
+  height: auto;
+  flex-shrink: 0;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 5px rgba(0, 255, 255, 0.55))
+    drop-shadow(0 0 16px rgba(0, 255, 255, 0.28));
+  animation: ct-capsule-glow 3.4s ease-in-out infinite;
+}
+
+@keyframes ct-capsule-glow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 5px rgba(0, 255, 255, 0.55))
+      drop-shadow(0 0 16px rgba(0, 255, 255, 0.28));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 8px rgba(0, 255, 255, 0.8))
+      drop-shadow(0 0 26px rgba(0, 255, 255, 0.45));
+  }
+}
+
 .ct-form {
   position: relative;
   width: min(580px, 88vw);
-  margin-top: clamp(0.6rem, 1.6vmin, 1.2rem);
   padding: clamp(0.8rem, 2vmin, 1.3rem) clamp(0.9rem, 2.4vmin, 1.5rem);
   pointer-events: all;
   text-align: left;
@@ -850,6 +881,7 @@
   .ct-form-dot,
   .ct-form-log::after,
   .ct-form.is-sending .ct-send::after,
+  .ct-capsule,
   #contact .scanlines,
   #contact .vhs-static {
     animation: none;
@@ -874,9 +906,13 @@
   /* Every vertical pixel counts: the sky area is ~58% of a phone screen */
   .ct-section-label { display: none; }
 
+  /* No room beside the form on phones */
+  .ct-capsule { display: none; }
+  .ct-form-row { margin-top: 0.5rem; }
+
   .ct-form {
     width: min(420px, 86vw);
-    margin-top: 0.5rem;
+    margin-top: 0;
     padding: 0.7rem 0.8rem;
   }
 
