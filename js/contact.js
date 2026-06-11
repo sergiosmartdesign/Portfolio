@@ -143,6 +143,62 @@
   injectCapsuleDna();
 
   /* ════════════════════════════════════════════════════════════════════════
+     STACKED TITLE — per-letter split + staggered reveal
+     (local replacement for the lettering.js + TimelineMax reference)
+     ════════════════════════════════════════════════════════════════════════ */
+
+  const titleEl    = section.querySelector('.ct-stack');
+  const titleBtn   = section.querySelector('.ct-stack-btn');
+  const motionOk   = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function splitChars(el) {
+    const text = el.textContent;
+    el.textContent = '';
+    el.setAttribute('aria-hidden', 'true');   // h2 carries an aria-label
+    const frag = document.createDocumentFragment();
+    for (const ch of text) {
+      const span = document.createElement('span');
+      span.className = 'ct-stack-char';
+      span.textContent = ch;
+      frag.appendChild(span);
+    }
+    el.appendChild(frag);
+  }
+
+  if (titleEl) {
+    titleEl.querySelectorAll('.ct-stack-line').forEach(splitChars);
+    if (titleBtn) splitChars(titleBtn);
+  }
+
+  /* Appends the letter drop-in + button reveal to a timeline.
+     Under reduced motion everything just snaps visible. */
+  function appendTitleReveal(tl) {
+    if (!titleEl) return;
+    const chars = titleEl.querySelectorAll('.ct-stack-char');
+    if (!chars.length) return;
+
+    if (!motionOk()) {
+      tl.set(chars, { opacity: 1, yPercent: 0 });
+      if (titleBtn) tl.set(titleBtn, { autoAlpha: 1 });
+      return;
+    }
+
+    if (titleBtn) tl.set(titleBtn, { autoAlpha: 0 });
+    tl.fromTo(chars,
+      { opacity: 0, yPercent: 130 },
+      { opacity: 1, yPercent: 0, duration: 0.5, ease: 'back.out(1.7)', stagger: 0.05 }
+    );
+    if (titleBtn) tl.to(titleBtn, { autoAlpha: 1, duration: 0.2 });
+  }
+
+  function replayTitle() {
+    if (typeof gsap === 'undefined') return;
+    appendTitleReveal(gsap.timeline());
+  }
+
+  if (titleBtn) titleBtn.addEventListener('click', replayTitle);
+
+  /* ════════════════════════════════════════════════════════════════════════
      BOOT SEQUENCE — GSAP timeline
      ════════════════════════════════════════════════════════════════════════ */
 
@@ -197,11 +253,18 @@
       glitchIn(tl, '.ct-ground','+=0.08', { withY: true });
       glitchIn(tl, '.ct-cockpit', '+=0.10');
 
+      // Hide title letters before the content fades in so they don't flash.
+      // Scoped to the h2 — the button's chars are handled via autoAlpha on
+      // the button element itself.
+      tl.set('.ct-stack .ct-stack-char', { opacity: 0 }, 0);
+
       tl.fromTo('.ct-content',
         { opacity: 0, y: 22 },
         { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
         '+=0.08'
       );
+
+      appendTitleReveal(tl);
 
     }, section);
   }

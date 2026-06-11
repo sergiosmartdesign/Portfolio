@@ -3007,16 +3007,23 @@
 
             <!-- ── Contact content (sky layer, z:50) ───── -->
             <div class="ct-content">
-                <p class="ct-section-label" aria-hidden="true">[ · c o n t a c t · ]</p>
-                <address class="ct-address">
-                    <h2 class="ct-name" id="ct-name-heading">SERGIO AYALA</h2>
-                    <p class="ct-role">Senior Art Director · Photographer · UX/UI</p>
-                </address>
 
                 <!-- Comms-console contact form.
                      Transport is mocked in contact.js (sendTransmission) until
                      a real mail endpoint is wired up. -->
                 <div class="ct-form-row">
+
+                    <!-- Stacked rotated title — letters split + staggered in
+                         by contact.js (GSAP); button replays the animation -->
+                    <div class="ct-title">
+                        <h2 class="ct-stack" id="ct-name-heading" aria-label="Sergio Ayala — Contact">
+                            <span class="ct-stack-line">Sergio</span>
+                            <span class="ct-stack-line">Ayala</span>
+                            <span class="ct-stack-line ct-stack-line--tag">[·Contact·]</span>
+                        </h2>
+                        <button type="button" class="ct-stack-btn" aria-label="Let's get in touch — replay animation">Let's get in touch!</button>
+                    </div>
+
                     <form class="ct-form" id="ct-form" novalidate>
                     <div class="ct-form-head" aria-hidden="true">
                         <span class="ct-form-title">// NEW_MESSAGE</span>

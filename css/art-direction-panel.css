@@ -623,9 +623,10 @@ body.ad-section-live #art-direction .ad-explore-card,
    close button (z:4). pointer-events:none lets clicks pass through to both. ── */
 .ad-pm-deco {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 100px;
+  right: 100px;
+  width: 65%;
+  height: 65%;
   z-index: 3;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(155, 34, 38, 0.6));

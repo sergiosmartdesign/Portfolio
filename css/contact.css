@@ -466,39 +466,83 @@
   );
 }
 
-.ct-section-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.65rem, 1vw, 0.85rem);
-  color: rgba(148, 210, 189, 0.5);
-  letter-spacing: 0.1em;
-  margin-bottom: 1.5rem;
+/* ── Stacked rotated title (left of the form) ──────────────────────────────
+   Reference: rotated lines + skewed letters + layered hard shadows; letters
+   are split into .ct-stack-char spans and staggered in by contact.js. */
+.ct-title {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  pointer-events: all;
 }
 
-.ct-name {
+.ct-stack {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: 'Funnel Display', sans-serif;
   font-weight: 800;
-  font-size: clamp(2.5rem, 8vmin, 5.5rem);
-  color: var(--ct-sun-warm);
-  letter-spacing: 0.06em;
-  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ct-stack-line {
+  display: block;
+  transform: rotate(-10deg);
+  font-size: clamp(2.6rem, 6.6vmin, 4.4rem);
+  line-height: 1.12;
+  white-space: nowrap;
+  color: var(--ct-sun-warm);            /* line 1 — site amber   */
+}
+
+.ct-stack-line:nth-child(2) {
+  color: var(--ct-grid-line);           /* line 2 — light teal   */
+}
+
+.ct-stack-line--tag {
+  font-size: clamp(1.25rem, 2.9vmin, 1.95rem);
+  letter-spacing: 0.1em;
+  margin-top: 0.35em;
+  color: var(--ct-star-color);          /* line 3 — warm sand    */
+}
+
+.ct-stack-char {
+  display: inline-block;
+  transform: skew(-10deg);
+  white-space: pre;
   text-shadow:
-    0 0 30px var(--ct-sun-glow),
-    0 0 60px rgba(238, 155, 0, 0.3);
-  margin-bottom: 0.5rem;
+    1px 1px #001219, 2px 2px #001219, 3px 3px #001219,
+    4px 4px #001219, 5px 5px #001219, 6px 6px #001219;
 }
 
-.ct-address {
-  display: contents;
-  font-style: normal;
-}
-
-.ct-role {
+/* Replay button — revealed by the timeline after the letters land */
+.ct-stack-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--ct-accent);
-  letter-spacing: 0.08em;
-  text-align: center;
-  margin-bottom: 0.35rem;
+  transform: rotate(-10deg);
+  opacity: 0;
+  visibility: hidden;
+  transition: color 0.25s ease;
+}
+
+.ct-stack-btn .ct-stack-char {
+  text-shadow: 1px 1px #001219, 2px 2px #001219, 3px 3px #001219;
+}
+
+.ct-stack-btn:hover,
+.ct-stack-btn:focus-visible {
+  color: #fff;
+  outline: none;
 }
 
 /* ── Comms-console form ───────────────────────────────────────────────────── */
@@ -951,17 +995,18 @@
      bottom ~45% and the frame pillars eat into the sides. */
   .ct-content { bottom: 42%; }
 
-  .ct-name {
-    font-size: clamp(1.4rem, 7vw, 2.2rem);
-    margin-bottom: 0.25rem;
+  /* No room beside the form on phones: capsule hidden, title stacks on top */
+  .ct-capsule { display: none; }
+  .ct-form-row {
+    margin-top: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
   }
 
-  /* Every vertical pixel counts: the sky area is ~58% of a phone screen */
-  .ct-section-label { display: none; }
-
-  /* No room beside the form on phones */
-  .ct-capsule { display: none; }
-  .ct-form-row { margin-top: 0.5rem; }
+  .ct-title { gap: 0.6rem; }
+  .ct-stack-line { font-size: clamp(1.3rem, 6.5vw, 1.8rem); }
+  .ct-stack-line--tag { font-size: clamp(0.75rem, 3.5vw, 1rem); }
 
   .ct-form {
     width: min(420px, 86vw);
@@ -1005,9 +1050,8 @@
 
 /* Short viewports — tighten vertical rhythm so the panel clears the dashboard */
 @media (max-height: 720px) {
-  .ct-section-label { display: none; }
-  .ct-name { margin-bottom: 0.25rem; }
-  .ct-role { margin-bottom: 0; }
+  .ct-stack-line { font-size: clamp(1.6rem, 4vmin, 2.4rem); }
+  .ct-title { gap: 1rem; }
   .ct-field textarea { height: 52px; }
   .ct-field-err { min-height: 0; }
   .ct-field-err:empty { display: none; }
