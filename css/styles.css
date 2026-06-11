@@ -831,7 +831,8 @@ nav {
   backdrop-filter: saturate(180%) blur(6px);
   transform: translateX(-100%);
   mask: linear-gradient(var(--white), hsl(0 0% 100% / 0.6) 15% 95%, var(--white));
-  transition: transform var(--transition-base) var(--easing-ease-out);
+  /* 0.6s — whole frame sequence runs at half speed (user request 2026-06-10) */
+  transition: transform 0.6s var(--easing-ease-out);
   cursor: pointer;
   box-shadow: var(--glow-orange);
 }
@@ -858,7 +859,7 @@ nav {
 }
 
 .cyber-panel.active .cyber-panel__body {
-  animation: panelSlideAndStretch 0.9s var(--easing-ease-out) 0.3s forwards;
+  animation: panelSlideAndStretch 1.8s var(--easing-ease-out) 0.6s forwards;
 }
 
 @keyframes panelSlideAndStretch {
@@ -871,11 +872,12 @@ nav {
     height: 200px;
   }
   100% {
-    /* Viewport-relative stretch: pins the frame top at 140px (below the fixed
-       header) and the bottom 24px above the viewport edge — below the
-       info-interface badge (bottom: 40px), so the bottom line never crosses it. */
-    transform: translateX(0) translateY(calc(240px - 50vh));
-    height: max(200px, calc(100vh - 164px));
+    /* Viewport-relative stretch: pins the frame top at 110px (~30px below the
+       fixed header — half the original gap) and the bottom 24px above the
+       viewport edge — below the info-interface badge (bottom: 40px), so the
+       bottom line never crosses it. */
+    transform: translateX(0) translateY(calc(210px - 50vh));
+    height: max(200px, calc(100vh - 134px));
   }
 }
 
@@ -963,7 +965,7 @@ nav {
 
 /* Delay date glitch animation until after panel animations complete */
 .date.glitch-text[data-splitting] [data-char]:after {
-  animation-delay: 3.5s; /* Starts after panel body stretch (2s + 0.3s + 0.9s = 3.2s) + small buffer */
+  animation-delay: 4.7s; /* Starts after panel body stretch (2s + 0.6s + 1.8s = 4.4s) + small buffer */
   color: #9B2226 !important; /* Override white glitch color with burgundy red */
 }
 
@@ -1043,19 +1045,19 @@ nav {
 
 /* Animate lines after panel extends - Uses performant scale property */
 .cyber-panel.active .panel-line--top {
-  animation: drawLineHorizontal 0.4s var(--easing-ease-out) 1.2s forwards;
+  animation: drawLineHorizontal 0.8s var(--easing-ease-out) 2.4s forwards;
 }
 
 .cyber-panel.active .panel-line--bottom {
-  animation: drawLineHorizontal 0.4s var(--easing-ease-out) 1.3s forwards;
+  animation: drawLineHorizontal 0.8s var(--easing-ease-out) 2.6s forwards;
 }
 
 .cyber-panel.active .panel-line--right {
-  animation: drawLineVertical var(--duration-base) var(--easing-ease-out) 1.4s forwards;
+  animation: drawLineVertical 1s var(--easing-ease-out) 2.8s forwards;
 }
 
 .cyber-panel.active .panel-line--right::before {
-  animation: fadeIn var(--duration-quick) var(--easing-ease-out) 1.6s forwards;
+  animation: fadeIn 0.4s var(--easing-ease-out) 3.2s forwards;
 }
 
 @keyframes drawLineHorizontal {
@@ -1307,7 +1309,8 @@ nav {
 
 /* Animate icons when panel becomes active */
 .cyber-panel.active ~ .social-media-icons {
-  animation: socialIconsGrow var(--duration-moderate) var(--easing-ease-out) 1.5s forwards;
+  /* 3s — keeps "icons after bottom line passes" order at the half-speed timeline */
+  animation: socialIconsGrow var(--duration-moderate) var(--easing-ease-out) 3s forwards;
 }
 
 @keyframes socialIconsGrow {
@@ -1323,7 +1326,7 @@ nav {
 
 /* Auto-play hover animation on load */
 .cyber-panel.active ~ .social-media-icons li a {
-  animation: iconColorChange var(--duration-slow) var(--easing-ease-in-out) 1.5s;
+  animation: iconColorChange var(--duration-slow) var(--easing-ease-in-out) 3s;
 }
 
 @keyframes iconColorChange {

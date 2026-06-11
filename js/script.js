@@ -622,10 +622,11 @@ function initCyberPanel(delay = TIMING.CYBER_PANEL_DELAY) {
   setTimeout(() => {
     panel.classList.add('active');
 
-    // Info interface slides in last — after social icons (~1500 ms).
+    // Info interface slides in last — after social icons (~3000 ms on the
+    // half-speed frame timeline).
     const infoInterface = document.getElementById('infoInterface');
     if (infoInterface) {
-      setTimeout(() => infoInterface.classList.add('active'), 2000);
+      setTimeout(() => infoInterface.classList.add('active'), 4000);
     }
   }, delay);
 }
@@ -641,7 +642,9 @@ function initIntroObserver() {
         introSection.classList.remove('paused-animations');
 
         // Don't start JS canvas animations while preloader is still showing
-        // (Orb3D is excluded — its CSS animations run freely during preloading)
+        // (Orb3D is excluded — its CSS animations run freely during preloading.
+        // App.ParticleSystem is the INTRO swarm; the preloader has its own
+        // self-managed instance — see particle-system.js.)
         if (!document.body.classList.contains('preloading')) {
           if (App.ParticleSystem?.resume) App.ParticleSystem.resume();
           if (App.BarcodeAnimation?.start) App.BarcodeAnimation.start();
@@ -1195,7 +1198,9 @@ App.LanguageManager.ready.then(() => {
     initCyberPanel(800);
   }, { once: true });
 
-  // Orb3D excluded — runs since page load, visible above the preloader
+  // Orb3D excluded — runs since page load, visible above the preloader.
+  // App.ParticleSystem is the intro swarm (the preloader's own instance
+  // destroys itself on this same event — see particle-system.js).
   window.addEventListener('preloaderDone', () => {
     if (App.ParticleSystem?.resume)    App.ParticleSystem.resume();
     if (App.BarcodeAnimation?.start)   App.BarcodeAnimation.start();

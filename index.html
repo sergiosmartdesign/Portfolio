@@ -2928,48 +2928,9 @@
                 <!-- Ground: perspective grid via ::before, vignette via ::after -->
                 <div class="ct-ground"></div>
 
-                <!-- Scene-level flash for flux capacitor departure -->
-                <div class="ct-flash" aria-hidden="true"></div>
-
-                <!-- DeLorean (CSS rear-view car — pure CSS, no images) -->
-                <div class="ct-delorean ct-del--hidden">
-                    <div class="ct-del-car">
-                        <div class="ct-del-shadow"></div>
-                        <div class="ct-del-underglow"></div>
-                        <div class="ct-del-mirror ct-del-mirror--l"></div>
-                        <div class="ct-del-mirror ct-del-mirror--r"></div>
-                        <div class="ct-del-louvers">
-                            <div class="ct-del-door-line ct-del-door-line--l"></div>
-                            <div class="ct-del-door-line ct-del-door-line--r"></div>
-                            <div class="ct-del-window"></div>
-                        </div>
-                        <div class="ct-del-lights">
-                            <div class="ct-del-lights-frame"></div>
-                            <div class="ct-del-light ct-del-light--l"></div>
-                            <div class="ct-del-light ct-del-light--r"></div>
-                            <div class="ct-del-light-glow"></div>
-                            <div class="ct-del-plate">
-                                <span class="ct-del-plate-text">OUTATIME</span>
-                            </div>
-                            <div class="ct-del-light-refl ct-del-light-refl--l"></div>
-                            <div class="ct-del-light-refl ct-del-light-refl--r"></div>
-                        </div>
-                        <div class="ct-del-bumper">
-                            <div class="ct-del-bumper-refl"></div>
-                            <div class="ct-del-bumper-logo"></div>
-                            <div class="ct-del-bumper-hole ct-del-bumper-hole--1"></div>
-                            <div class="ct-del-bumper-hole ct-del-bumper-hole--2"></div>
-                            <div class="ct-del-bumper-sticker"></div>
-                        </div>
-                        <div class="ct-del-wheel-arch ct-del-wheel-arch--l"></div>
-                        <div class="ct-del-wheel-arch ct-del-wheel-arch--r"></div>
-                        <div class="ct-del-wheel ct-del-wheel--l"></div>
-                        <div class="ct-del-wheel ct-del-wheel--r"></div>
-                    </div>
-                </div>
-
-                <!-- Asteroid field + explosion canvas -->
-                <canvas class="ct-asteroids" aria-hidden="true"></canvas>
+                <!-- Ship cockpit frame (inline SVG injected by contact.js;
+                     transparent windshield reveals the synthwave scene) -->
+                <div class="ct-cockpit" aria-hidden="true"></div>
 
                 <!-- VHS / CRT overlay stack (same as intro section) -->
                 <div class="ct-grain"></div>
@@ -3004,6 +2965,10 @@
                     </a>
                 </nav>
             </div>
+
+            <footer class="ct-footer">
+                <p data-i18n="footer.rights">© 2026 All rights reserved — Sergio Ayala, Senior Art Director &amp; Photographer, Bogotá, Colombia</p>
+            </footer>
 
         </section>
     </main>
@@ -3054,10 +3019,6 @@
       <span></span>
       <span></span>
     </div>
-    
-    <footer>
-        <p data-i18n="footer.rights">© 2026 All rights reserved — Sergio Ayala, Senior Art Director &amp; Photographer, Bogotá, Colombia</p>
-    </footer>
     
     <!-- App registry — must be first; all modules write/read App.* -->
     <!-- defer on all scripts: parallel downloads, preserved execution order, unblocks rendering -->

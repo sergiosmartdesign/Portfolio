@@ -32,6 +32,12 @@
   background: transparent;
   overflow: hidden;
 
+  /* Same pattern as #illustration's .illus-tunnel: the section fills the
+     viewport minus the fixed menu bar, so at full scroll the cockpit's top
+     edge sits flush against the bottom of the header. */
+  min-height: calc(100vh - var(--header-height, 60px));
+  scroll-margin-top: var(--header-height, 60px);
+
   /* Palette — mapped 1-to-1 from the project's design tokens */
   --ct-sky-dark:   #001219;   /* --grid-color-1  darkest background */
   --ct-sky-mid:    #003040;   /* between grid-1 and grid-2           */
@@ -365,660 +371,31 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DELOREAN  (CSS rear-view car — pure CSS, no images)
-   Structure mirrors the reference pen; all names prefixed ct-del-
-   z-layout: body z:2 sits above wheels z:1, grain z:5 above both
+   SHIP COCKPIT  (inline SVG injected by contact.js into .ct-cockpit)
+   Transparent windshield reveals the scene; sits above landscape layers,
+   below .ct-content (z:50, separate stacking context).
    ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Asteroid + explosion canvas — above everything */
-.ct-asteroids {
+.ct-cockpit {
   position: absolute;
   inset: 0;
-  z-index: 25;
-  pointer-events: none;
-}
-
-/* Wrapper — state machine handles all animation via JS-toggled classes */
-.ct-delorean {
-  position: absolute;
-  bottom: 4vmin;          /* raises the chassis so wheels touch ground */
-  left: 0;
-  right: 0;
   z-index: 20;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  perspective: 1000px;
   pointer-events: none;
 }
 
-/* ── Car root (all children are absolutely or block-positioned within) ── */
-.ct-del-car {
-  position: relative;
-  width: 42vmin;
+.ct-cockpit svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* ── Ground shadow ──────────────────────────────────────────────────────── */
-.ct-del-shadow {
-  position: absolute;
-  bottom: -4.5vmin;
-  left: 14%;
-  right: 14%;
-  height: 3vmin;
-  background: radial-gradient(ellipse, rgba(0,0,0,0.85) 0%, transparent 70%);
-  filter: blur(8px);
-  z-index: 0;
+/* Glow lights named in Illustrator ("glow lights top, left blink") */
+#glow_ligths_top_x2C__left_blink {
+  animation: ct-cockpit-blink 2.6s ease-in-out infinite;
 }
 
-/* ── Neon underglow (synthwave chassis glow) ────────────────────────────── */
-.ct-del-underglow {
-  position: absolute;
-  bottom: -1.5vmin;
-  left: 8%;
-  right: 8%;
-  height: 2.5vmin;
-  background: var(--ct-sun-glow);
-  filter: blur(14px);
-  opacity: 0.6;
-  z-index: 0;
-  animation: ct-del-glow-pulse 3s ease-in-out infinite;
-}
-
-@keyframes ct-del-glow-pulse {
-  0%, 100% { opacity: 0.6; filter: blur(14px); }
-  50%       { opacity: 0.45; filter: blur(18px); }
-}
-
-/* ── Side mirrors ───────────────────────────────────────────────────────── */
-.ct-del-mirror {
-  position: absolute;
-  top: 2.6vmin;
-  width: 2.3vmin;
-  height: 1.3vmin;
-  background: linear-gradient(160deg, #3e3e44 0%, #222226 100%);
-  border-radius: 0.3vmin 0.3vmin 0 0;
-  z-index: 3;
-}
-.ct-del-mirror--l {
-  left: -2vmin;
-  transform: perspective(200px) rotateY(22deg);
-  transform-origin: right bottom;
-}
-.ct-del-mirror--r {
-  right: -2vmin;
-  transform: perspective(200px) rotateY(-22deg);
-  transform-origin: left bottom;
-}
-/* Mirror arm */
-.ct-del-mirror--l::after,
-.ct-del-mirror--r::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 1.2vmin;
-  height: 0.6vmin;
-  background: #1e1e22;
-}
-.ct-del-mirror--l::after { right: 0; }
-.ct-del-mirror--r::after { left: 0; }
-
-/* ── Engine louver section (top of rear deck) ───────────────────────────── */
-.ct-del-louvers {
-  position: relative;
-  height: 6vmin;
-  overflow: hidden;
-  border-radius: 1.2vmin 1.2vmin 0 0;
-  z-index: 2;
-  /* Brushed steel base */
-  background: linear-gradient(
-    to right,
-    #28282c 0%, #363639 20%, #3e3e42 50%, #363639 80%, #28282c 100%
-  );
-  box-shadow:
-    inset 0 0.4vmin 0.8vmin rgba(255,255,255,0.07),
-    0 0 0 0.1vmin #3a3a3f;
-}
-
-/* Louver slats via repeating-gradient overlay */
-.ct-del-louvers::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.72) 0,
-    rgba(0,0,0,0.72) 0.4vmin,
-    transparent      0.4vmin,
-    transparent      1.05vmin
-  );
-}
-
-/* Chrome edge highlight at top of each louver */
-.ct-del-louvers::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent      0,
-    transparent      0.4vmin,
-    rgba(255,255,255,0.07) 0.4vmin,
-    rgba(255,255,255,0.07) 0.44vmin,
-    transparent      0.44vmin,
-    transparent      1.05vmin
-  );
-}
-
-/* Gull-wing door crease lines */
-.ct-del-door-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 0.1vmin;
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.18),
-    rgba(255,255,255,0.06) 60%,
-    transparent
-  );
-  z-index: 1;
-}
-.ct-del-door-line--l { left: 31%; }
-.ct-del-door-line--r { right: 31%; }
-
-/* ── Rear window ────────────────────────────────────────────────────────── */
-.ct-del-window {
-  position: absolute;
-  top: 0.8vmin;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 14vmin;
-  height: 3.2vmin;
-  background: linear-gradient(135deg, #0a1520 0%, #051018 60%, #0d1f35 100%);
-  border-radius: 0.4vmin 0.4vmin 0 0;
-  border: 0.08vmin solid #1e2830;
-  box-shadow: inset 0 0 2vmin rgba(110,204,238,0.08);
-  z-index: 1;
-}
-
-/* Window glare */
-.ct-del-window::before {
-  content: "";
-  position: absolute;
-  top: 0.25vmin;
-  left: 0.8vmin;
-  width: 38%;
-  height: 36%;
-  background: rgba(255,255,255,0.05);
-  border-radius: 0.2vmin;
-  transform: skewX(-3deg);
-}
-
-/* ── Taillight strip ────────────────────────────────────────────────────── */
-.ct-del-lights {
-  position: relative;
-  height: 2.8vmin;
-  background: linear-gradient(to bottom, #1c1c20, #181819);
-  border-top: 0.1vmin solid #2e2e33;
-  z-index: 2;
-}
-
-/* Top + bottom chrome lines on light strip */
-.ct-del-lights-frame {
-  position: absolute;
-  inset: 0;
-  border-top:    0.08vmin solid rgba(255,255,255,0.1);
-  border-bottom: 0.08vmin solid rgba(255,255,255,0.06);
-  pointer-events: none;
-}
-
-/* Individual taillights */
-.ct-del-light {
-  position: absolute;
-  top: 0.35vmin;
-  bottom: 0.35vmin;
-  width: 12.5vmin;
-  border-radius: 0.15vmin;
-  animation: ct-del-light-pulse 2.5s ease-in-out infinite;
-}
-.ct-del-light--l {
-  left: 0.4vmin;
-  /* grid-color-10 → grid-color-9 → grid-color-8 */
-  background: linear-gradient(to right, #9B2226 0%, #AE2012 45%, #BB3E03 80%, #CA6702 100%);
-  box-shadow:
-    0 0 0.8vmin rgba(174,32,18,0.95),
-    0 0 2.5vmin rgba(174,32,18,0.55),
-    0 0 6vmin   rgba(187,62,3,0.3),
-    inset 0 0 0.5vmin rgba(202,103,2,0.35);
-}
-.ct-del-light--r {
-  right: 0.4vmin;
-  background: linear-gradient(to left, #9B2226 0%, #AE2012 45%, #BB3E03 80%, #CA6702 100%);
-  box-shadow:
-    0 0 0.8vmin rgba(174,32,18,0.95),
-    0 0 2.5vmin rgba(174,32,18,0.55),
-    0 0 6vmin   rgba(187,62,3,0.3),
-    inset 0 0 0.5vmin rgba(202,103,2,0.35);
-}
-
-@keyframes ct-del-light-pulse {
+@keyframes ct-cockpit-blink {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.82; }
-}
-
-/* Taillight glow spread on body */
-.ct-del-light-glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 55% 130% at 16% 50%, rgba(174,32,18,0.14) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 130% at 84% 50%, rgba(174,32,18,0.14) 0%, transparent 70%);
-}
-
-/* License plate */
-.ct-del-plate {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 5.5vmin;
-  height: 1.6vmin;
-  background: #d2d2c2;
-  border-radius: 0.12vmin;
-  box-shadow: 0 0 0.3vmin rgba(0,0,0,0.7), 0 0 1.5vmin rgba(238,155,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ct-del-plate-text {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(4px, 0.65vmin, 8px);
-  color: #111;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-}
-
-/* Taillight-to-body light reflections */
-.ct-del-light-refl {
-  position: absolute;
-  bottom: 0;
-  height: 0.9vmin;
-  width: 12vmin;
-  background: linear-gradient(to right, transparent, rgba(174,32,18,0.18), transparent);
-  filter: blur(2px);
-}
-.ct-del-light-refl--l { left: 0.4vmin; }
-.ct-del-light-refl--r { right: 0.4vmin; }
-
-/* ── Rear bumper ────────────────────────────────────────────────────────── */
-.ct-del-bumper {
-  position: relative;
-  height: 3.2vmin;
-  background: linear-gradient(
-    to bottom,
-    #242428 0%,
-    #1c1c1f 55%,
-    #151517 100%
-  );
-  border-top: 0.1vmin solid #2e2e32;
-  border-radius: 0 0 0.5vmin 0.5vmin;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-/* Chrome strip at bumper top */
-.ct-del-bumper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 0.1vmin;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255,255,255,0.2) 20%,
-    rgba(255,255,255,0.32) 50%,
-    rgba(255,255,255,0.2) 80%,
-    transparent
-  );
-}
-
-/* Second chrome line lower on bumper */
-.ct-del-bumper::after {
-  content: "";
-  position: absolute;
-  bottom: 0.4vmin;
-  left: 6%;
-  right: 6%;
-  height: 0.08vmin;
-  background: rgba(255,255,255,0.06);
-}
-
-/* Paint-match chrome band */
-.ct-del-bumper-refl {
-  position: absolute;
-  top: 0.55vmin;
-  left: 10%;
-  right: 10%;
-  height: 0.08vmin;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255,255,255,0.11) 30%,
-    rgba(255,255,255,0.17) 50%,
-    rgba(255,255,255,0.11) 70%,
-    transparent
-  );
-}
-
-/* DMC logo plate */
-.ct-del-bumper-logo {
-  width: 4.5vmin;
-  height: 1.6vmin;
-  border: 0.08vmin solid rgba(255,255,255,0.12);
-  border-radius: 0.18vmin;
-  background: rgba(255,255,255,0.03);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
-}
-.ct-del-bumper-logo::after {
-  content: "DMC";
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(4px, 0.58vmin, 8px);
-  color: rgba(255,255,255,0.32);
-  letter-spacing: 0.14em;
-}
-
-/* Ventilation slots */
-.ct-del-bumper-hole {
-  position: absolute;
-  height: 0.52vmin;
-  width: 4.2vmin;
-  background: #0a0a0c;
-  border-radius: 0.12vmin;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: inset 0 0.1vmin 0.3vmin rgba(0,0,0,0.9);
-}
-.ct-del-bumper-hole--1 { left: 17%; }
-.ct-del-bumper-hole--2 { right: 17%; }
-
-/* Amber centre reflector */
-.ct-del-bumper-sticker {
-  position: absolute;
-  bottom: 0.45vmin;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1.3vmin;
-  height: 0.65vmin;
-  background: rgba(238,155,0,0.55);
-  border-radius: 0.1vmin;
-  box-shadow: 0 0 0.6vmin rgba(238,155,0,0.35);
-}
-
-/* ── Wheel arches + wheels ──────────────────────────────────────────────── */
-
-/*
-  Geometry:
-  • .ct-del-car has no explicit height → sized by body content = 12vmin
-  • .ct-delorean { bottom: 4vmin } → car body bottom is 4vmin above scene bottom
-  • Wheel arches: position absolute, bottom: 0 in car → arch bottom = car body bottom
-    arch height: 5vmin → arch spans (car bottom − 5vmin) to (car bottom)
-  • Wheels: bottom: -4vmin → wheel bottom = car bottom + 4vmin = scene bottom ✓
-    wheel height: 9vmin → wheel top = scene bottom − 9vmin
-    arch covers upper 5vmin of wheel (z:2 > z:1)
-    lower 4vmin of wheel visible below body ✓
-*/
-
-.ct-del-wheel-arch {
-  position: absolute;
-  bottom: 0;
-  width: 11vmin;
-  height: 5vmin;
-  background: linear-gradient(to bottom, #111115, #0c0c0f);
-  border-radius: 50% 50% 0 0;
-  border: 0.1vmin solid #252528;
-  border-bottom: none;
-  z-index: 2;
-}
-.ct-del-wheel-arch--l { left: 0.5vmin; }
-.ct-del-wheel-arch--r { right: 0.5vmin; }
-
-.ct-del-wheel {
-  position: absolute;
-  bottom: -4vmin;   /* extends below car body to scene ground */
-  width: 9vmin;
-  height: 9vmin;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 36%,
-    #383838 0%, #202020 35%, #121212 70%, #080808 100%
-  );
-  border: 0.25vmin solid #242424;
-  z-index: 1;
-}
-.ct-del-wheel--l { left: 1vmin; }
-.ct-del-wheel--r { right: 1vmin; }
-
-/* Wheel rim ring */
-.ct-del-wheel::before {
-  content: "";
-  position: absolute;
-  inset: 16%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 38%, #3a3a3a, #1c1c1c 50%, #0e0e0e);
-  border: 0.14vmin solid #2c2c2c;
-  box-shadow: inset 0 0 1.5vmin rgba(0,0,0,0.7);
-}
-
-/* Hub cap */
-.ct-del-wheel::after {
-  content: "";
-  position: absolute;
-  inset: 35%;
-  border-radius: 50%;
-  background: radial-gradient(circle, #2e2e2e, #111);
-  box-shadow: inset 0 0 0.6vmin rgba(0,0,0,0.9);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   DELOREAN STATE MACHINE — entrance · tracking · departure
-   JS toggles: ct-del--hidden | ct-del--entering | ct-del--tracking | ct-del--departing
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Parked at the grid vanishing point — invisible dot at the horizon */
-.ct-del--hidden {
-  transform: translateY(52vmin) scale(0.05);
-  opacity: 0;
-  animation: none !important;
-}
-
-/* Rushing toward camera from horizon depth */
-.ct-del--entering {
-  animation: ct-del-arrive 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Arrival light burst — amber/cyan radial centered on car */
-.ct-del--entering::before {
-  content: '';
-  position: absolute;
-  inset: -60%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(238, 155, 0, 0.55) 0%,
-    rgba(0, 220, 255, 0.22) 45%,
-    transparent 70%
-  );
-  animation: ct-del-flash-in 0.9s ease-out forwards;
-  animation-delay: 0.96s;
-  opacity: 0;
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Underglow activates as car approaches */
-.ct-del--entering .ct-del-underglow {
-  animation: ct-del-glow-arrive 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Mouse-tracking flight mode — GSAP drives the transform */
-.ct-del--tracking {
-  opacity: 1;
-}
-
-/* Departing: GSAP drives the main transform; CSS sub-effects still fire */
-.ct-del--departing {
-  animation: none;
-}
-
-/* Exhaust flame trail */
-.ct-del--departing::after {
-  content: '';
-  position: absolute;
-  bottom: 2vmin;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40vmin;
-  height: 2.4vmin;
-  background: linear-gradient(to right,
-    transparent 0%,
-    rgba(155, 34, 38, 0.5)  10%,
-    rgba(238, 155, 0, 0.9)  35%,
-    rgba(255, 215, 70, 1)   50%,
-    rgba(238, 155, 0, 0.9)  65%,
-    rgba(155, 34, 38, 0.5)  90%,
-    transparent 100%
-  );
-  filter: blur(4px);
-  opacity: 0;
-  animation: ct-del-trail 0.85s linear forwards;
-  pointer-events: none;
-}
-
-/* Underglow flares at launch */
-.ct-del--departing .ct-del-underglow {
-  animation: ct-del-glow-charge 0.85s linear forwards;
-}
-
-/* Taillights blaze then cut */
-.ct-del--departing .ct-del-light--l,
-.ct-del--departing .ct-del-light--r {
-  animation: ct-del-brakelight 0.85s linear forwards;
-}
-
-/* ── Keyframes ───────────────────────────────────────────────────────────── */
-
-/* Entrance: tiny dot at horizon → rushes to camera → bounce settle */
-/* Entrance: banking diagonal flight from top-left corner to ground */
-@keyframes ct-del-arrive {
-  0%   { transform: translate(-78vmin, -90vmin) scale(0.22) rotate(20deg);           opacity: 0;    filter: blur(10px); }
-  6%   { transform: translate(-68vmin, -76vmin) scale(0.28) rotate(18deg);           opacity: 0.5;  filter: blur(5px);  }
-  /* Cutting diagonally across the sky — levels out mid-flight */
-  42%  { transform: translate(-18vmin, -28vmin) scale(0.72) rotate(6deg);            opacity: 1;    filter: blur(1px);  }
-  /* Overshoots slightly left of center then corrects */
-  70%  { transform: translate(5vmin, 3vmin)     scale(1.06) rotate(-4deg);                          filter: blur(0); }
-  79%  { transform: translate(-3vmin, -1.5vmin) scale(0.97) rotate(1.5deg); }
-  88%  { transform: translate(1.5vmin, 0.8vmin) scale(1.02) rotate(-0.8deg); }
-  95%  { transform: translate(-0.5vmin, 0)      scale(0.99) rotate(0.3deg); }
-  100% { transform: translate(0, 0)             scale(1)    rotate(0deg);             opacity: 1;    filter: blur(0); }
-}
-
-/* Arrival flash burst */
-@keyframes ct-del-flash-in {
-  0%   { opacity: 0; transform: scale(0.3); }
-  18%  { opacity: 0.9; transform: scale(1); }
-  100% { opacity: 0; transform: scale(2.8); }
-}
-
-/* Underglow fades in as car arrives */
-@keyframes ct-del-glow-arrive {
-  0%,  60% { opacity: 0; filter: blur(20px); }
-  70%       { opacity: 0.9; filter: blur(8px); }
-  80%       { opacity: 1.1; filter: blur(6px); }
-  100%      { opacity: 0.6; filter: blur(14px); }
-}
-
-/* Idle: gentle hover drift */
-
-/* Exhaust trail: drags left as car banks right */
-@keyframes ct-del-trail {
-  0%,  44% { opacity: 0; transform: translateX(-50%) scaleX(0.2); }
-  52%       { opacity: 0.9; transform: translateX(-50%) scaleX(1.1); filter: blur(3px); }
-  65%       { opacity: 0.6; transform: translateX(-30%) scaleX(1.8) scaleY(1.8); filter: blur(5px); }
-  80%       { opacity: 0.2; transform: translateX(-15%) scaleX(1.1) scaleY(1.2); }
-  100%      { opacity: 0;   transform: translateX(0%)   scaleX(0.5); }
-}
-
-/* Underglow: pulsed flares during charge then blinds white at launch */
-@keyframes ct-del-glow-charge {
-  0%,  30% { opacity: 0.6; filter: blur(14px); transform: scaleX(1); }
-  36%       { opacity: 1;   filter: blur(8px);  transform: scaleX(1.25); }
-  41%       { opacity: 0.5; filter: blur(14px); transform: scaleX(1); }
-  46%       { opacity: 1.6; filter: blur(4px);  transform: scaleX(2); }
-  52%       { opacity: 2.5; filter: blur(2px);  transform: scaleX(2.5); }
-  58%       { opacity: 1;   transform: scaleX(1.5); }
-  65%       { opacity: 0; }
-  100%      { opacity: 0; }
-}
-
-/* Taillights build to red-hot then cut at launch */
-@keyframes ct-del-brakelight {
-  0%, 40% {
-    opacity: 1;
-    box-shadow:
-      0 0 0.8vmin rgba(174,32,18,0.95),
-      0 0 2.5vmin rgba(174,32,18,0.55),
-      0 0 6vmin   rgba(187,62,3,0.3);
-    filter: brightness(1);
-  }
-  46% {
-    opacity: 1;
-    box-shadow:
-      0 0 2vmin  rgba(255,100,0,1),
-      0 0 8vmin  rgba(255,180,0,0.9),
-      0 0 20vmin rgba(255,150,0,0.7);
-    filter: brightness(2);
-  }
-  52% {
-    opacity: 1;
-    box-shadow:
-      0 0 3vmin  rgba(255,200,100,1),
-      0 0 12vmin rgba(255,220,0,1),
-      0 0 32vmin rgba(255,200,50,0.85);
-    filter: brightness(5);
-  }
-  62% { opacity: 0.5; filter: brightness(2); }
-  70% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-/* ── Scene-level flash element ─────────────────────────────────────────── */
-.ct-flash {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 30;
-  opacity: 0;
-}
-
-.ct-flash--active {
-  animation: ct-scene-flash 0.85s ease-out forwards;
-}
-
-@keyframes ct-scene-flash {
-  0%   { opacity: 0; background: transparent; }
-  12%  { opacity: 0.85; background: rgba(255, 220, 100, 0.6); }
-  28%  { opacity: 0.5;  background: rgba(0, 200, 255, 0.35); }
-  100% { opacity: 0;  background: transparent; }
+  50%      { opacity: 0.2; }
 }
 
 /* ── CSS scanline grain (replaces external noise.svg) ─────────────────────── */
@@ -1062,6 +439,7 @@
 .ct-scene--boot .ct-mountains--near,
 .ct-scene--boot .ct-sun,
 .ct-scene--boot .ct-ground,
+.ct-scene--boot .ct-cockpit,
 .ct-scene--boot .ct-content { opacity: 0; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1171,18 +549,32 @@
   outline: none;
 }
 
+/* ── Site footer — overlaid on the cockpit dashboard bottom edge ─────────── */
+.ct-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  padding: 0.5em 1em;
+  text-align: center;
+  pointer-events: none;
+}
+
+.ct-footer p {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  color: rgba(233, 216, 166, 0.45);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    PERFORMANCE — pause all animations when section is off-screen
    Entry/departure are exempt so they can complete through the scroll boundary.
    ═══════════════════════════════════════════════════════════════════════════ */
 #contact.ct-paused * {
   animation-play-state: paused !important;
-}
-#contact.ct-paused .ct-del--entering,
-#contact.ct-paused .ct-del--entering *,
-#contact.ct-paused .ct-del--departing,
-#contact.ct-paused .ct-del--departing * {
-  animation-play-state: running !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1194,26 +586,10 @@
   .ct-sun::before,
   .ct-ground::before,
   .ct-s1, .ct-s2, .ct-s3,
-  .ct-delorean,
-  .ct-del-light--l,
-  .ct-del-light--r,
-  .ct-del-underglow,
+  #glow_ligths_top_x2C__left_blink,
   #contact .scanlines,
   #contact .vhs-static {
     animation: none;
-  }
-  /* Show car at rest immediately, skip entrance/exit motion */
-  .ct-del--hidden,
-  .ct-del--entering,
-  .ct-del--tracking {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .ct-del--departing {
-    animation: none !important;
-    opacity: 0 !important;
-    transform: none !important;
   }
 }
 
@@ -1223,7 +599,14 @@
 @media (max-width: 640px) {
   .ct-ground { flex: 0 0 28%; }
 
-  .ct-content { bottom: 28%; }
+  /* Keep content inside the windshield: the cockpit dashboard fills the
+     bottom ~45% and the frame pillars eat into the sides. */
+  .ct-content { bottom: 42%; }
 
-  .ct-del-car { width: 60vw; }
+  .ct-name { font-size: clamp(1.4rem, 7vw, 2.2rem); }
+
+  .ct-links {
+    max-width: 78vw;
+    margin-inline: auto;
+  }
 }

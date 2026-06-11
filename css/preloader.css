@@ -1,5 +1,8 @@
-/* ═══ PRELOADER — Equalizer bars + glitch text ════════════════════════════════
-   No external dependencies.
+/* ═══ PRELOADER — label · electric progress line · glitch % counter ═══════════
+   No external dependencies. Layout (top → bottom): "[ · L O A D I N G · ]"
+   label building letter by letter, the electric line growing from center
+   (50px corridor at viewport center), the % counter. Multicolor particle
+   canvas behind everything (injected by particle-system.js).
    ══════════════════════════════════════════════════════════════════════════ */
 
 body.preloading {
@@ -39,118 +42,129 @@ body.preloading header *::after {
   pointer-events: none;
 }
 
-/* ── Stage: flex column — label · bars · pct stacked vertically ──────────── */
+/* ── Stage ───────────────────────────────────────────────────────────────── */
+/* Centered column: label above, % counter below. The 90px gap straddles the
+   electric line's 50px corridor (the line runs through the viewport center,
+   which is also the stage's center). */
 .preloader-stage {
   position: relative;
-  width: 100%;
+  z-index: 1; /* above the #particleCanvas injected by particle-system.js */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-}
-
-/* ── Bars ────────────────────────────────────────────────────────────────── */
-.preloader-bars {
-  position: relative;
-  width: 100%;
-  height: 130px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 5px;
-  overflow: hidden;
+  gap: 90px;
 }
 
-.preloader-bars span {
-  display: block;
-  width: 7px;
-  height: 8%;
-  border-radius: 0;
-  flex-shrink: 0;
-  position: relative;
-  /* Angular chip shape: diagonal cuts at top-left and bottom-right */
-  clip-path: polygon(
-    0 2px, 2px 0,
-    100% 0,
-    100% calc(100% - 2px), calc(100% - 2px) 100%,
-    0 100%
-  );
-  /* Scan-line texture over the bar colour (set as backgroundColor in JS) */
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0)    0px,
-    rgba(0, 0, 0, 0)    2px,
-    rgba(0, 0, 0, 0.14) 2px,
-    rgba(0, 0, 0, 0.14) 3px
-  );
-  animation: pl-load 2.5s steps(1, end) infinite;
-  animation-fill-mode: backwards;
-}
-
-/* Bright LED cap at the top of each bar */
-.preloader-bars span::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.85) 0%,
-    rgba(255, 255, 255, 0)    100%
-  );
-  pointer-events: none;
-}
-
-/* ── Text labels (direct children of stage, above and below bars) ─────────── */
+/* ── Label (above the line) + percentage counter (below it) ─────────────── */
 .preloader-label,
 .preloader-pct {
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   display: flex;
   align-items: center;
   white-space: nowrap;
+  text-shadow: 0 0 12px rgba(0, 18, 25, 0.9), 0 2px 8px rgba(0, 0, 0, 0.85);
 }
 
-/* Color + shadow for the \u00a0 space text-nodes between glitch spans */
-.preloader-label { color: #94D2BD; text-shadow: 0 0 12px rgba(0,18,25,0.9), 0 2px 8px rgba(0,0,0,0.85); }
-.preloader-pct   { color: #EE9B00; text-shadow: 0 0 12px rgba(0,18,25,0.9), 0 2px 8px rgba(0,0,0,0.85); }
+.preloader-label {
+  font-size: 1.15rem;
+  color: #94D2BD;
+  /* Reserve the final label's height so layout never shifts as chars land */
+  min-height: 1.4em;
+}
+
+.preloader-pct {
+  font-size: 1.5rem;
+  color: #EE9B00;
+}
+/* ── Electric progress lines ─────────────────────────────────────────────── */
+/* Three bolts, all driven by scaleX(count/100) from JS:
+   --center : full width, center origin — grows center → both borders
+   --left   : half width, left origin   — grows left border → center
+   --right  : half width, right origin  — grows right border → center
+   The border pair shares a second random color and its own filter instance
+   (#preloader-electric-2) so the two colors arc independently. */
+.preloader-line {
+  position: absolute;
+  /* The element IS the 50px electric corridor: 25px above and 25px below the
+     viewport centerline. The visible filament is a 2px gradient stripe at its
+     middle; the displacement filter throws it around inside this box. Keeping
+     the bbox 50px tall keeps the filter-region percentages in the moderate,
+     proven range — extreme regions on a 2px bbox can fail to render at all. */
+  top: calc(50% - 25px);
+  height: 50px;
+  background: linear-gradient(
+    to bottom,
+    transparent              calc(50% - 1px),
+    var(--line-color, #EE9B00) calc(50% - 1px),
+    var(--line-color, #EE9B00) calc(50% + 1px),
+    transparent              calc(50% + 1px)
+  );
+  transform: scaleX(0);
+  /* Melts the 1%-steps (26ms ticks) into continuous liquid growth */
+  transition: transform 0.12s linear;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Glow via drop-shadow chained after the displacement, so it hugs the
+   lightning arcs themselves (box-shadow would outline the invisible box) */
+.preloader-line--center {
+  left: 0;
+  right: 0;
+  transform-origin: center;
+  filter:
+    url(#preloader-electric)
+    drop-shadow(0 0 6px var(--line-color, #EE9B00))
+    drop-shadow(0 0 16px color-mix(in srgb, var(--line-color, #EE9B00) 45%, transparent));
+}
+
+.preloader-line--left {
+  left: 0;
+  width: 50%;
+  transform-origin: left;
+  filter:
+    url(#preloader-electric-2)
+    drop-shadow(0 0 6px var(--line-color, #EE9B00))
+    drop-shadow(0 0 16px color-mix(in srgb, var(--line-color, #EE9B00) 45%, transparent));
+}
+
+.preloader-line--right {
+  right: 0;
+  width: 50%;
+  transform-origin: right;
+  filter:
+    url(#preloader-electric-2)
+    drop-shadow(0 0 6px var(--line-color, #EE9B00))
+    drop-shadow(0 0 16px color-mix(in srgb, var(--line-color, #EE9B00) 45%, transparent));
+}
 
 /* ── Glitch chars ────────────────────────────────────────────────────────── */
 /* Each span has data-char=actual, --char-0=actual, --char-1..9=random glitch */
 
-.preloader-label [data-char],
-.preloader-pct [data-char] {
+.preloader-pct [data-char],
+.preloader-label [data-char] {
   color: transparent;
   position: relative;
   display: inline-block;
+  /* Fixed slot per glyph. Funnel Display is proportional and the glitch swaps
+     glyphs of wildly different widths — without a constant slot the whole row
+     re-flows on every counter tick and the brackets dance around. */
+  width: 0.68em;
+  text-align: center;
 }
 
-/* Loading label: teal, slow infinite glitch — mostly real char, brief flashes */
+/* Brief glitch per character change then settles on real char.
+   glitch-switch keyframes are defined in styles.css. */
+.preloader-pct [data-char]::after,
 .preloader-label [data-char]::after {
-  content: var(--char-0);
-  color: #94D2BD;
-  position: absolute;
-  left: 0;
-  top: 0;
-  text-shadow: 0 0 12px rgba(0, 18, 25, 0.9), 0 2px 8px rgba(0, 0, 0, 0.85);
-  animation-name: pl-glitch;
-  animation-duration: 2.4s;
-  animation-timing-function: steps(1);
-  animation-delay: var(--pl-delay, 0s);
-  animation-iteration-count: infinite;
-  animation-fill-mode: backwards;
-}
-
-/* Percentage: amber, brief glitch per digit change then settles on real char */
-.preloader-pct [data-char]::after {
   content: var(--char-0);
   color: #EE9B00;
   position: absolute;
-  left: 0;
-  top: 0;
+  inset: 0 auto auto 0;
+  width: 100%; /* span the slot so text-align centers whichever glyph shows */
   text-shadow: 0 0 12px rgba(0, 18, 25, 0.9), 0 2px 8px rgba(0, 0, 0, 0.85);
   animation-name: glitch-switch;
   animation-duration: 0.2s;
@@ -160,59 +174,12 @@ body.preloading header *::after {
   animation-fill-mode: both;
 }
 
-/* ── Keyframes ───────────────────────────────────────────────────────────── */
-
-/*
- * pl-glitch: mostly shows var(--char-0) = real character (81% of the cycle),
- * then rapid flashes of random chars around t=80–92%, staggered per character.
- */
-@keyframes pl-glitch {
-  0%, 80%  { content: var(--char-0); }
-  81%      { content: var(--char-1); }
-  82%      { content: var(--char-2); }
-  83%      { content: var(--char-3); }
-  84%      { content: var(--char-1); }
-  85%, 89% { content: var(--char-0); }
-  90%      { content: var(--char-4); }
-  91%      { content: var(--char-0); }
-  92%      { content: var(--char-5); }
-  93%, 100%{ content: var(--char-0); }
+.preloader-label [data-char]::after {
+  color: #94D2BD;
 }
 
-/* Bar equalizer: discrete steps + glitch dropouts at rise, peak and fall.
-   steps(1,end) makes every transition a hard jump — no interpolation.
-   0% is invisible so animation-fill-mode:backwards hides bars during their delay,
-   making them appear from centre outward as the cascade fires. */
-@keyframes pl-load {
-  /* Hidden — held during delay by animation-fill-mode: backwards */
-  0%  { height:  0%; opacity: 0;    }
-  1%  { height:  6%; opacity: 0.25; }   /* snap in     */
-  /* — Rise — */
-  7%  { height: 32%; opacity: 0.9;  }
-  8%  { height: 22%; opacity: 0.2;  }   /* dropout     */
-  9%  { height: 42%; opacity: 1;    }   /* overshoot   */
-  19% { height: 56%; opacity: 0.85; }
-  20% { height: 44%; opacity: 0.2;  }   /* glitch dip  */
-  21% { height: 63%; opacity: 1;    }
-  31% { height: 76%; opacity: 0.9;  }
-  32% { height: 63%; opacity: 0.35; }   /* stutter     */
-  33% { height: 80%; opacity: 1;    }
-  43% { height: 92%; opacity: 0.85; }
-  44% { height: 80%; opacity: 0.45; }   /* pre-peak    */
-  /* — Peak — */
-  50% { height:100%; opacity: 1;    }
-  51% { height:100%; opacity: 0.12; }   /* white-out   */
-  52% { height: 95%; opacity: 1;    }
-  53% { height:100%; opacity: 1;    }
-  /* — Fall — */
-  62% { height: 78%; opacity: 0.85; }
-  63% { height: 88%; opacity: 0.2;  }   /* glitch up   */
-  64% { height: 70%; opacity: 1;    }
-  74% { height: 46%; opacity: 0.75; }
-  75% { height: 58%; opacity: 0.2;  }   /* stutter up  */
-  76% { height: 38%; opacity: 0.9;  }
-  86% { height: 18%; opacity: 0.5;  }
-  87% { height: 27%; opacity: 0.65; }   /* bounce      */
-  88% { height: 12%; opacity: 0.3;  }
-  100%{ height:  6%; opacity: 0.25; }
+/* Already-revealed label chars: frozen on their real glyph — only the
+   newest character of each build step plays the glitch (see renderLabel) */
+.preloader-label [data-char].pl-settled::after {
+  animation: none;
 }

@@ -2,6 +2,13 @@
  * Particle System Animation
  * Modern ES6 class implementation with performance optimizations
  * Original concept by Alex Andrix
+ *
+ * Two instances run (see the DOMContentLoaded block at the bottom):
+ *  - #preloader: every particle wears a different palette color (round-robin);
+ *    destroyed for good when `preloaderDone` fires and the overlay is removed.
+ *  - #intro: the whole swarm wears ONE palette color, hopping to a different
+ *    random palette color every 6s; paused/resumed by the intro
+ *    IntersectionObserver in script.js via App.ParticleSystem.
  */
 
 // Project color palette — hex converted to {h, s} for HSL; lum varies per particle
@@ -18,7 +25,20 @@ const PARTICLE_PALETTE = [
 ];
 
 class ParticleSystem {
-  constructor() {
+  constructor(options = {}) {
+    this.opts = Object.assign({
+      hostId: 'intro',          // element the canvas is injected into (as first child)
+      canvasId: '',             // optional id (intro uses #particleCanvas for its CSS)
+      // 'single': whole swarm wears one palette color, hopping to a different
+      //           random color every colorHopMs.
+      // 'multi':  each particle takes the next palette color at birth.
+      colorMode: 'single',
+      colorHopMs: 6000,
+      bgInit: 'rgba(0, 0, 0, 1)',      // initial canvas fill
+      bgFade: 'rgba(0, 0, 0, 0.1)',    // per-frame fade (trail dissolve)
+      inlinePosition: false,    // set position:absolute/inset inline (no CSS rule)
+    }, options);
+
     // Detect Safari for performance optimizations
     const isSafari = App.BrowserDetect ? App.BrowserDetect.isSafariBased() : false;
 
@@ -46,9 +66,14 @@ class ParticleSystem {
     this.lastFrameTime = 0;
     this.frameInterval = 1000 / this.config.targetFPS;
 
-    // Palette cycling — one color active at a time, advances every N frames
-    this.paletteIndex = 0;
-    this.paletteInterval = 400;
+    // 'multi' mode: each birth takes the next palette color in turn
+    this.birthCount = 0;
+    // 'single' mode: index of the color the whole swarm currently wears
+    this.colorIndex = Math.floor(Math.random() * PARTICLE_PALETTE.length);
+    this.colorTimer = null;
+
+    // Set when the host is gone — stops the rAF loop permanently
+    this.destroyed = false;
 
     // Color cache for performance
     this.colorCache = new Map();
@@ -56,7 +81,7 @@ class ParticleSystem {
     // DOM elements (cached)
     this.canvas = null;
     this.ctx = null;
-    this.introSection = null;
+    this.host = null;
 
     // Canvas dimensions (cached)
     this.width = 0;
@@ -70,14 +95,38 @@ class ParticleSystem {
     this.gridMaxIndex = 0;
 
     this.setup();
-    this.startAnimationLoop();
+    if (!this.destroyed) {
+      this.startAnimationLoop();
+      if (this.opts.colorMode === 'single') {
+        this.colorTimer = setInterval(() => this.hopColor(), this.opts.colorHopMs);
+      }
+    }
+  }
+
+  /**
+   * 'single' mode: pick a different random palette color and recolor the
+   * living swarm so the switch reads as one clean hop (births follow suit).
+   */
+  hopColor() {
+    let next;
+    do {
+      next = Math.floor(Math.random() * PARTICLE_PALETTE.length);
+    } while (next === this.colorIndex && PARTICLE_PALETTE.length > 1);
+    this.colorIndex = next;
+
+    const { h, s } = PARTICLE_PALETTE[next];
+    this.particles.forEach(p => { p.hue = h; p.sat = s; });
   }
 
   /**
    * Initial setup - creates canvas and builds motion grid
    */
   setup() {
-    this.createCanvas();
+    if (!this.createCanvas()) {
+      // Preloader already gone (or absent) — nothing to animate, ever.
+      this.destroyed = true;
+      return;
+    }
     this.buildMotionGrid();
     this.initDraw();
     this.attachResizeListener();
@@ -87,10 +136,22 @@ class ParticleSystem {
    * Creates and configures canvas element
    */
   createCanvas() {
+    // Bail cleanly if the host element doesn't exist (or is already gone)
+    this.host = document.getElementById(this.opts.hostId);
+    if (!this.host) return false;
+
     this.canvas = document.createElement('canvas');
-    this.canvas.id = 'particleCanvas';
+    if (this.opts.canvasId) this.canvas.id = this.opts.canvasId;
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
+
+    // Hosts without a CSS rule for the canvas get inline positioning
+    // (e.g. the preloader overlay — canvas under the z-index:1 stage)
+    if (this.opts.inlinePosition) {
+      this.canvas.style.position = 'absolute';
+      this.canvas.style.inset = '0';
+      this.canvas.style.pointerEvents = 'none';
+    }
 
     // Cache canvas dimensions
     this.width = this.canvas.width;
@@ -98,17 +159,15 @@ class ParticleSystem {
     this.xC = this.width / 2;
     this.yC = this.height / 2;
 
-    // Insert as first child of intro section
-    this.introSection = document.getElementById('intro');
-    if (this.introSection) {
-      this.introSection.insertBefore(this.canvas, this.introSection.firstChild);
-    }
+    // Insert as first child so the host's content paints above it
+    this.host.insertBefore(this.canvas, this.host.firstChild);
 
     // Get context and disable smoothing for sharper particles
     this.ctx = this.canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.webkitImageSmoothingEnabled = false;
     this.ctx.msImageSmoothingEnabled = false;
+    return true;
   }
 
   /**
@@ -156,9 +215,6 @@ class ParticleSystem {
    */
   evolve() {
     this.stepCount++;
-    if (this.stepCount % this.paletteInterval === 0) {
-      this.paletteIndex = (this.paletteIndex + 1) % PARTICLE_PALETTE.length;
-    }
     this.updateGridAges();
 
     // Birth new particles when needed
@@ -196,7 +252,11 @@ class ParticleSystem {
     const gridSpotIndex = Math.floor(Math.random() * this.gridMaxIndex);
     const gridSpot = this.grid[gridSpotIndex];
     const { x, y } = gridSpot;
-    const paletteEntry = PARTICLE_PALETTE[this.paletteIndex];
+    // 'multi': round-robin so the full palette is always on screen at once.
+    // 'single': every birth wears the swarm's current color.
+    const paletteEntry = this.opts.colorMode === 'multi'
+      ? PARTICLE_PALETTE[this.birthCount++ % PARTICLE_PALETTE.length]
+      : PARTICLE_PALETTE[this.colorIndex];
 
     this.particles.push({
       hue: paletteEntry.h,
@@ -336,7 +396,7 @@ class ParticleSystem {
    * Initial canvas clear
    */
   initDraw() {
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    this.ctx.fillStyle = this.opts.bgInit;
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
@@ -347,8 +407,8 @@ class ParticleSystem {
     this.drawnInLastFrame = 0;
     if (!this.particles.length) return;
 
-    // Fade effect for trails
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    // Fade effect for trails — fades toward the host's background color
+    this.ctx.fillStyle = this.opts.bgFade;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     // Batch drawing operations
@@ -450,6 +510,7 @@ class ParticleSystem {
    */
   startAnimationLoop() {
     const frame = (currentTime) => {
+      if (this.destroyed) return; // overlay gone — stop scheduling for good
       requestAnimationFrame(frame);
 
       if (!this.isRunning) return;
@@ -477,15 +538,49 @@ class ParticleSystem {
   resume() {
     this.isRunning = true;
   }
+
+  /**
+   * Permanently stop — the rAF loop ends and never restarts.
+   * Called when the canvas host (e.g. the preloader overlay) is removed.
+   */
+  destroy() {
+    this.destroyed = true;
+    this.isRunning = false;
+    if (this.colorTimer) {
+      clearInterval(this.colorTimer);
+      this.colorTimer = null;
+    }
+  }
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready. The preloader overlay exists from the first
+// line of <body> until ~100%, so it's always present at DOMContentLoaded.
 document.addEventListener('DOMContentLoaded', () => {
-  const particleSystem = new ParticleSystem();
+  // Preloader swarm — all 9 palette colors at once; dies with the overlay
+  const preloaderParticles = new ParticleSystem({
+    hostId: 'preloader',
+    colorMode: 'multi',
+    bgInit: 'rgba(0, 18, 25, 1)',   // matches the overlay bg (#001219)
+    bgFade: 'rgba(0, 18, 25, 0.1)',
+    inlinePosition: true,
+  });
+  window.addEventListener('preloaderDone', () => preloaderParticles.destroy(), { once: true });
 
-  // Expose globally for animation optimizer
+  // Intro swarm — one palette color at a time, hops to a different random
+  // color every 6s. Uses #particleCanvas so the existing CSS rule applies.
+  const introParticles = new ParticleSystem({
+    hostId: 'intro',
+    canvasId: 'particleCanvas',
+    colorMode: 'single',
+    colorHopMs: 6000,
+  });
+
+  // Registry points at the intro instance — its pause/resume is driven by
+  // the intro IntersectionObserver in script.js. The preloader instance
+  // manages its own lifecycle above.
   App.ParticleSystem = {
-    pause: () => particleSystem.pause(),
-    resume: () => particleSystem.resume()
+    pause: () => introParticles.pause(),
+    resume: () => introParticles.resume(),
+    destroy: () => introParticles.destroy()
   };
 });

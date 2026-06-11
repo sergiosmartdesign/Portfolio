@@ -12,7 +12,7 @@
  * Contract (all slots are optional-chained at read sites):
  *
  *   App.BrowserDetect            {isSafari, isIOS, isSafariBased(), getPerformanceTier()}
- *   App.ParticleSystem           {pause(), resume()}
+ *   App.ParticleSystem           {pause(), resume(), destroy()}   — intro swarm (preloader instance is self-managed)
  *   App.Orb3D                    {pause(), resume()}
  *   App.BarcodeAnimation         {start(), stop()}
  *   App.LanguageManager          {init(), setLanguage(), …}
