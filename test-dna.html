@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="css/contact.css">
+<body style="background:#003040">
+<div class="ct-capsule-dna" style="position:absolute;left:20px;top:20px;width:280px;height:560px;inset:auto"></div>
+<script>
+fetch('images/roptando%201.svg').then(r => r.text()).then(text => {
+  const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+  const svg = doc.documentElement;
+  svg.removeAttribute('width'); svg.removeAttribute('height'); svg.removeAttribute('style');
+  const frames = Array.from(svg.children).filter(n => n.nodeName === 'g');
+  frames.forEach((g, i) => {
+    g.classList.add('ct-dna-frame');
+    if (i === 0) g.classList.add('ct-dna-first');
+    g.style.setProperty('--dna-frame', i);
+  });
+  svg.style.setProperty('--ct-dna-count', frames.length);
+  document.querySelector('.ct-capsule-dna').appendChild(svg);
+  const samples = [];
+  const iv = setInterval(() => {
+    const ops = frames.map(g => getComputedStyle(g).opacity);
+    samples.push(Math.round(performance.now()) + '→' + ops.findIndex(o => o === '1') + '(' + ops.filter(o => o === '1').length + ')');
+  }, 40);
+  setTimeout(() => {
+    clearInterval(iv);
+    document.body.setAttribute('data-probe', samples.join(' '));
+  }, 2000);
+});
+</script>

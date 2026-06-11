@@ -109,6 +109,15 @@
         svg.removeAttribute('width');
         svg.removeAttribute('height');
         svg.removeAttribute('style');
+        // The numbered top-level groups (1, 2, 3, 3.5, 4 … 8) are rotation
+        // frames in document order — tag them so CSS can flipbook-cycle them.
+        const frames = Array.from(svg.children).filter(n => n.nodeName === 'g');
+        frames.forEach((g, i) => {
+          g.classList.add('ct-dna-frame');
+          if (i === 0) g.classList.add('ct-dna-first');
+          g.style.setProperty('--dna-frame', i);
+        });
+        svg.style.setProperty('--ct-dna-count', frames.length);
         // Strip ids — Illustrator exports reuse Layer_1 etc. across files
         svg.removeAttribute('id');
         svg.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));

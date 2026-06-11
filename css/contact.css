@@ -549,6 +549,30 @@
   fill: #cdedf9;
 }
 
+/* ── DNA rotation flipbook ──────────────────────────────────────────────────
+   The injected SVG's numbered groups are rotation frames. Each frame is
+   visible for one slice (1/9) of the cycle; negative delays stagger them so
+   they play in numbered order with no startup wait. step-end = hard cuts. */
+.ct-capsule-dna {
+  --ct-dna-step: 0.1s;   /* per-frame hold; 9 frames ≈ 0.9s per rotation */
+}
+
+.ct-dna-frame {
+  opacity: 0;
+  animation: ct-dna-spin calc(var(--ct-dna-count, 9) * var(--ct-dna-step))
+             step-end infinite;
+  animation-delay: calc((var(--dna-frame, 0) - var(--ct-dna-count, 9)) * var(--ct-dna-step));
+}
+
+/* Static fallback frame (reduced motion / animation off) */
+.ct-dna-first { opacity: 1; }
+
+@keyframes ct-dna-spin {
+  0%      { opacity: 1; }
+  11.111% { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
 @keyframes ct-capsule-glow {
   0%, 100% {
     filter:
@@ -910,6 +934,7 @@
   .ct-form-log::after,
   .ct-form.is-sending .ct-send::after,
   .ct-capsule,
+  .ct-dna-frame,
   #contact .scanlines,
   #contact .vhs-static {
     animation: none;
