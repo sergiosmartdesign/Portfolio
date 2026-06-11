@@ -618,6 +618,51 @@ body.ad-section-live #art-direction .ad-explore-card,
   z-index: 1;
 }
 
+/* ── Decorative cyber frame — inlined red variant of the intro frame.
+   z:3 — in front of the content text and thumbnail gallery (z:2), below the
+   close button (z:4). pointer-events:none lets clicks pass through to both. ── */
+.ad-pm-deco {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(155, 34, 38, 0.6));
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
+}
+
+.ad-project-modal.is-open .ad-pm-deco {
+  opacity: 1;
+}
+
+/* Internal elements hidden until the frame has faded in.
+   Keyframes (adfrm-*) are shared with the intro frame in art-direction-list.css. */
+.ad-pm-deco #adpmf-line,
+.ad-pm-deco #adpmf-hatch,
+.ad-pm-deco #adpmf-binary {
+  opacity: 0;
+}
+
+.ad-project-modal.is-open .ad-pm-deco #adpmf-line {
+  animation:
+    adfrm-line-draw  1.2s ease-out     0.9s forwards,
+    adfrm-line-pulse 13s  ease-in-out  2.2s infinite;
+}
+
+.ad-project-modal.is-open .ad-pm-deco #adpmf-hatch {
+  animation:
+    adfrm-hatch-wipe 0.5s ease-out     1.0s forwards,
+    adfrm-hatch-scan 17s  ease-in-out  1.5s infinite;
+}
+
+.ad-project-modal.is-open .ad-pm-deco #adpmf-binary {
+  animation:
+    adfrm-binary-flicker 1s   ease-out    1.1s forwards,
+    adfrm-binary-stream  11s  ease-in-out 2.1s infinite;
+}
+
 /* ── Content block — bottom-left ── */
 .ad-pm-content {
   position: absolute;
@@ -840,7 +885,7 @@ body.ad-section-live #art-direction .ad-explore-card,
   letter-spacing: 0.18em;
   cursor: pointer;
   padding: 7px 14px;
-  z-index: 3;
+  z-index: 4; /* above the decorative frame (z:3) */
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   opacity: 0;
