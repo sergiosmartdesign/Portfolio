@@ -11,7 +11,7 @@
 
     <!-- ═══ SECURITY HEADERS (HTML-deliverable subset) ══════════════════════ -->
     <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self';">
+          content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self';">
     <meta name="referrer" content="strict-origin-when-cross-origin">
 
     <!-- ═══ PRIMARY SEO ══════════════════════════════════════════════════════ -->
@@ -3003,9 +3003,11 @@
                      transparent windshield reveals the synthwave scene) -->
                 <div class="ct-cockpit" aria-hidden="true"></div>
 
-                <!-- Pilot's left hand on the controls (inline SVG injected by
-                     contact.js; sits on top of the cockpit, bottom-left) -->
+                <!-- Pilot's hands on the controls (inline SVGs injected by
+                     contact.js; parked off-screen, slide in to point at the
+                     dashboard while form / social links are hovered) -->
                 <div class="ct-hand" aria-hidden="true"></div>
+                <div class="ct-hand ct-hand--right" aria-hidden="true"></div>
 
                 <!-- VHS / CRT overlay stack (same as intro section) -->
                 <div class="ct-grain"></div>
@@ -3025,14 +3027,17 @@
                     <!-- Stacked rotated title — letters split + staggered in
                          by contact.js (GSAP); button replays the animation -->
                     <div class="ct-title">
-                        <h2 class="ct-stack" id="ct-name-heading" aria-label="Sergio Ayala — Contact">
+                        <h2 class="ct-stack" id="ct-name-heading" aria-label="Sergio Ayala — Let's get in touch">
                             <span class="ct-stack-line">Sergio</span>
                             <span class="ct-stack-line">Ayala</span>
-                            <span class="ct-stack-line ct-stack-line--tag">[·Contact·]</span>
+                            <span class="ct-stack-line ct-stack-line--tag">Let's get</span>
+                            <span class="ct-stack-line ct-stack-line--tag">in touch!</span>
                         </h2>
-                        <button type="button" class="ct-stack-btn" aria-label="Let's get in touch — replay animation">Let's get in touch!</button>
                     </div>
 
+                    <!-- Column so the form and the social-links row below it
+                         share the exact same width -->
+                    <div class="ct-form-col">
                     <form class="ct-form" id="ct-form" novalidate>
                     <div class="ct-form-head" aria-hidden="true">
                         <span class="ct-form-title">// NEW_MESSAGE</span>
@@ -3080,6 +3085,28 @@
                                 aria-label="Send another message">[ · s e n d &nbsp; a n o t h e r · ]</button>
                     </div>
                 </form>
+
+                    <nav class="ct-links ct-links--mini" aria-label="Contact Sergio Ayala directly">
+                        <a href="mailto:sergionook@gmail.com" class="ct-link"
+                           aria-label="Send Sergio Ayala an email">
+                            [ · e m a i l · ]
+                        </a>
+                        <a href="https://www.instagram.com/sersh01/" class="ct-link"
+                           target="_blank" rel="noopener noreferrer me"
+                           aria-label="Sergio Ayala on Instagram">
+                            [ · i n s t a g r a m · ]
+                        </a>
+                        <a href="https://www.linkedin.com/in/sergio-ayala-ai" class="ct-link"
+                           target="_blank" rel="noopener noreferrer me"
+                           aria-label="Sergio Ayala on LinkedIn">
+                            [ · l i n k e d i n · ]
+                        </a>
+                    </nav>
+                    </div><!-- /.ct-form-col -->
+
+                    <!-- Vertical section banner, height-matched to the capsule -->
+                    <img class="ct-contact-bar" src="images/contact.svg" alt="" aria-hidden="true">
+
                     <!-- DNA capsule: line-art shell + DNA art fetch-injected
                          inline by contact.js so it can be recolored to match -->
                     <div class="ct-capsule" aria-hidden="true">
@@ -3087,23 +3114,6 @@
                         <div class="ct-capsule-dna"></div>
                     </div>
                 </div><!-- /.ct-form-row -->
-
-                <nav class="ct-links ct-links--mini" aria-label="Contact Sergio Ayala directly">
-                    <a href="mailto:sergionook@gmail.com" class="ct-link"
-                       aria-label="Send Sergio Ayala an email">
-                        [ · e m a i l · ]
-                    </a>
-                    <a href="https://www.instagram.com/sersh01/" class="ct-link"
-                       target="_blank" rel="noopener noreferrer me"
-                       aria-label="Sergio Ayala on Instagram">
-                        [ · i n s t a g r a m · ]
-                    </a>
-                    <a href="https://www.linkedin.com/in/sergio-ayala-ai" class="ct-link"
-                       target="_blank" rel="noopener noreferrer me"
-                       aria-label="Sergio Ayala on LinkedIn">
-                        [ · l i n k e d i n · ]
-                    </a>
-                </nav>
             </div>
 
             <footer class="ct-footer">
@@ -3169,6 +3179,9 @@
 
     <script defer src="js/lib/splitting.min.js"></script>
     <script defer src="js/lib/scroll-out.min.js"></script>
+    <!-- model-viewer web component (vendored) — interactive 3D stage in the
+         art-direction project modal. Draco decoder vendored at js/lib/draco/. -->
+    <script type="module" src="js/lib/model-viewer.min.js"></script>
     <script defer src="js/art-direction-panel.js"></script>
     <script defer src="js/particle-system.js"></script>
     <script defer src="js/orb-3d.js"></script>

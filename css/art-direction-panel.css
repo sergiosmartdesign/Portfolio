@@ -705,6 +705,21 @@ body.ad-section-live #art-direction .ad-explore-card,
   display: none;
 }
 
+/* ── 3D model stage — interactive <model-viewer> fills the stage panel.
+   The stage is pointer-events:none for images; 3D needs orbit/zoom gestures. ── */
+.ad-pm-stage.has-model {
+  pointer-events: auto;
+}
+
+.ad-pm-model {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  --poster-color: transparent;
+  --progress-bar-color: #EE9B00;
+  --progress-bar-height: 2px;
+}
+
 /* ── White media surface — projects flagged whiteBg in WORKS_DATA.
    Transparent artwork (logos, stationery) reads against white instead of
    vanishing into the dark backdrop. ── */

@@ -100,12 +100,14 @@
 
   injectCockpit();
 
-  /* Pilot's left hand — injected inline (groups: #color, #left_handline,
-     plus a #pointer_invisible fingertip anchor for future interactions). */
-  function injectHand() {
-    const handEl = section.querySelector('.ct-hand');
+  /* Pilot's hands — injected inline (groups: #color, #left_handline, plus a
+     #pointer_invisible fingertip anchor used by the hand-pointer logic).
+     Each copy gets its own id prefix and .stN class scope: the cockpit and
+     both hands reuse the same Illustrator ids/class names, and inline
+     <style> blocks are document-global. */
+  function injectHandSvg(handEl, url, prefix, scopeSel) {
     if (!handEl) return;
-    fetch('images/mano%20izq.svg')
+    fetch(url)
       .then(res => res.text())
       .then(text => {
         const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
@@ -113,44 +115,81 @@
         if (svg.nodeName !== 'svg') throw new Error('bad SVG payload');
         svg.removeAttribute('width');
         svg.removeAttribute('height');
-        // Prefix ids — the cockpit already uses Layer_1 etc.
         svg.querySelectorAll('[id]').forEach(el =>
-          el.setAttribute('id', 'hand-' + el.getAttribute('id')));
+          el.setAttribute('id', prefix + el.getAttribute('id')));
         svg.removeAttribute('id');
-        // Scope the .stN classes — the cockpit defines the same class names
-        // with different colors, and inline <style> blocks are document-global
         svg.querySelectorAll('style').forEach(st => {
-          st.textContent = st.textContent.replace(/\.st(\d+)\b/g, '.ct-hand .st$1');
+          st.textContent = st.textContent.replace(/\.st(\d+)\b/g, `${scopeSel} .st$1`);
         });
         handEl.appendChild(svg);
       })
-      .catch(err => console.error('[contact] hand SVG failed to load:', err));
+      .catch(err => console.error('[contact] hand SVG failed to load:', url, err));
   }
 
-  injectHand();
+  const handLeftEl  = section.querySelector('.ct-hand:not(.ct-hand--right)');
+  const handRightEl = section.querySelector('.ct-hand--right');
+
+  injectHandSvg(handLeftEl,  'images/mano%20izq.svg', 'hand-',  '.ct-hand');
+  injectHandSvg(handRightEl, 'images/mano%20der.svg', 'handr-', '.ct-hand--right');
 
   /* ════════════════════════════════════════════════════════════════════════
      HAND POINTER — hovering/focusing a form element moves the hand so the
      fingertip (#hand-pointer_invisible) lands on a dashboard hover rect
      ════════════════════════════════════════════════════════════════════════ */
 
-  function initHandPointer() {
-    const form   = document.getElementById('ct-form');
-    const handEl = section.querySelector('.ct-hand');
-    if (!form || !handEl) return;
+  /* Builds a pointer controller for one hand: pointAt(rectId) translates the
+     hand so its fingertip anchor lands on the rect; reset() clears the inline
+     transform so the CSS parked state slides the hand back off-screen. */
+  /* Glow layer: a clone of the cockpit's #lines group, recolored by CSS and
+     clipped to the active hover rect — so exactly the line art inside that
+     rect glows, independent of how the source paths are grouped. The clip
+     rect copies the hover rect's attributes (same user-space coordinates,
+     same parent), so it needs no recomputation on resize. */
+  function buildLitLayer(svg, key) {
+    const lines = svg.querySelector('#lines');
+    const hover = svg.querySelector('#hover');
+    if (!lines || !hover || !hover.parentNode) return null;
+    const NS = 'http://www.w3.org/2000/svg';
 
-    /* form element id → cockpit dashboard rect (left button column) */
-    const HAND_TARGETS = {
-      'ct-f-name':  'hover1',
-      'ct-f-email': 'hover2',
-      'ct-f-msg':   'hover3',
-    };
-    const SEND_TARGET = 'hover4';
+    const clip = document.createElementNS(NS, 'clipPath');
+    clip.setAttribute('id', 'ct-lit-clip-' + key);
+    const clipRect = document.createElementNS(NS, 'rect');
+    clip.appendChild(clipRect);
 
-    function pointHandAt(rectId) {
-      const tip    = section.querySelector('#hand-pointer_invisible');
+    const layer = document.createElementNS(NS, 'g');
+    layer.setAttribute('class', 'ct-lit-layer');
+    layer.setAttribute('clip-path', `url(#ct-lit-clip-${key})`);
+    const clone = lines.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+    layer.appendChild(clone);
+
+    const parent = hover.parentNode;
+    parent.appendChild(clip);
+    parent.appendChild(layer);
+    return { layer, clipRect };
+  }
+
+  function makeHandPointer(handEl, tipSelector, key) {
+    let lit = null;
+
+    /* Glow on the line art under the fingertip — the rect stays invisible */
+    function light(rectEl, cls) {
+      if (!lit && cockpitSvg) lit = buildLitLayer(cockpitSvg, key);
+      if (!lit) return;
+      lit.layer.classList.remove('ct-lit-on', 'ct-lit--amber', 'ct-lit--cyan');
+      if (!rectEl) return;
+      ['x', 'y', 'width', 'height'].forEach(a =>
+        lit.clipRect.setAttribute(a, rectEl.getAttribute(a)));
+      lit.layer.classList.add('ct-lit-on', cls);
+    }
+
+    function pointAt(rectId) {
+      const tip    = section.querySelector(tipSelector);
       const target = section.querySelector('#' + rectId);
-      if (!tip || !target) return;          // SVGs not injected yet
+      if (!handEl || !tip || !target) return;   // SVGs not injected yet
+
+      light(target, rectId.startsWith('hover_') ? 'ct-lit--cyan' : 'ct-lit--amber');
 
       const tipBox = tip.getBoundingClientRect();
       const tgtBox = target.getBoundingClientRect();
@@ -174,9 +213,27 @@
         `translate(${(tgtX - restX).toFixed(1)}px, ${(tgtY - restY).toFixed(1)}px)`;
     }
 
-    /* Clearing the inline transform lets the CSS parked state take over,
-       so the hand slides back out of the viewport. */
-    const resetHand = () => { handEl.style.transform = ''; };
+    const reset = () => {
+      light(null, null);
+      if (handEl) handEl.style.transform = '';
+    };
+
+    return { pointAt, reset };
+  }
+
+  /* Left hand ← form fields (fixed mapping to the left button column) */
+  function initHandPointer() {
+    const form = document.getElementById('ct-form');
+    if (!form || !handLeftEl) return;
+
+    const ptr = makeHandPointer(handLeftEl, '#hand-pointer_invisible', 'l');
+
+    const HAND_TARGETS = {
+      'ct-f-name':  'hover1',
+      'ct-f-email': 'hover2',
+      'ct-f-msg':   'hover3',
+    };
+    const SEND_TARGET = 'hover4';
 
     function targetFor(node) {
       if (!(node instanceof Element)) return null;
@@ -189,21 +246,56 @@
 
     form.addEventListener('pointerover', (e) => {
       const t = targetFor(e.target);
-      if (t) pointHandAt(t); else resetHand();
+      if (t) ptr.pointAt(t); else ptr.reset();
     });
-    form.addEventListener('pointerleave', resetHand);
+    form.addEventListener('pointerleave', ptr.reset);
 
     /* keyboard parity */
     form.addEventListener('focusin', (e) => {
       const t = targetFor(e.target);
-      if (t) pointHandAt(t);
+      if (t) ptr.pointAt(t);
     });
     form.addEventListener('focusout', (e) => {
-      if (!form.contains(e.relatedTarget)) resetHand();
+      if (!form.contains(e.relatedTarget)) ptr.reset();
     });
   }
 
   initHandPointer();
+
+  /* Right hand ← social links (random pick from the right screen cluster) */
+  function initRightHandPointer() {
+    const nav = section.querySelector('.ct-links--mini');
+    if (!nav || !handRightEl) return;
+
+    const ptr = makeHandPointer(handRightEl, '#handr-pointer_invisible', 'r');
+    const SCREENS = ['hover_5', 'hover_6', 'hover_7', 'hover_8'];
+    let lastLink = null;
+
+    function pointRandom(link) {
+      if (link === lastLink) return;        // re-aim only on a new link
+      lastLink = link;
+      ptr.pointAt(SCREENS[Math.floor(Math.random() * SCREENS.length)]);
+    }
+
+    const leave = () => { lastLink = null; ptr.reset(); };
+
+    nav.addEventListener('pointerover', (e) => {
+      const link = e.target instanceof Element && e.target.closest('.ct-link');
+      if (link) pointRandom(link);
+    });
+    nav.addEventListener('pointerleave', leave);
+
+    /* keyboard parity */
+    nav.addEventListener('focusin', (e) => {
+      const link = e.target instanceof Element && e.target.closest('.ct-link');
+      if (link) pointRandom(link);
+    });
+    nav.addEventListener('focusout', (e) => {
+      if (!nav.contains(e.relatedTarget)) leave();
+    });
+  }
+
+  initRightHandPointer();
 
   /* DNA art inside the capsule next to the form — injected inline so CSS can
      recolor the (black) source paths to the shell's light blue. */

@@ -205,9 +205,22 @@ const WORKS_DATA = {
       bg: 'images/art-direction/logos/sergio-ayala-retrotech-recycled-tech-furniture-brand-logo-2022.webp'
     }
   ],
-  // 3D works are being curated — entries follow the same shape as the other
-  // disciplines ({ num, cat: '3D', title, sub, specs, tags, bg, images }).
-  '3d': []
+  // 3D entries carry a `model` (GLB) instead of bg/images — the modal stage
+  // renders an interactive <model-viewer> for them. No bg → no hover preview.
+  '3d': [
+    {
+      num: '01', cat: '3D', title: 'Pikapool', sub: 'Stylized character mashup — interactive 3D model',
+      specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
+      tags: ['3D','Character','Real-Time'],
+      model: 'images/3D/Pikapool-web.glb'
+    },
+    {
+      num: '02', cat: '3D', title: 'Tib', sub: 'Original character — interactive 3D model',
+      specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
+      tags: ['3D','Character','Real-Time'],
+      model: 'images/3D/Tib-web.glb'
+    }
+  ]
 };
 
 // Shown in the project modal when an entry has no `desc` yet.
@@ -223,7 +236,8 @@ const AD_PM_DESC_PLACEHOLDER =
 const DISCIPLINE_BACKDROPS = {
   identity:  'images/sergio-ayala-identity-projects-backdrop-art-direction.webp',
   web:       'images/sergio-ayala-web-projects-backdrop-art-direction.webp',
-  editorial: 'images/sergio-ayala-editorial-projects-backdrop-art-direction.webp'
+  editorial: 'images/sergio-ayala-editorial-projects-backdrop-art-direction.webp',
+  '3d':      'images/sergio-ayala-3d-projects-backdrop-art-direction.webp'
 };
 
 // Display labels — '3d' can't be derived by capitalising the key.
@@ -279,6 +293,10 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
 
         this._transitioning   = true;
         this.activeDiscipline = key;
+
+        // Discipline contains 3D models — start fetching the viewer bundle now
+        // so the modal opens without a library-download stall.
+        if (WORKS_DATA[key].some(w => w.model)) this._ensureModelViewer();
 
         if (!immediate) {
             this.listItems.forEach(li =>
@@ -506,6 +524,7 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         if (!this.modal) return;
 
         this.modalBg     = this.modal.querySelector('.ad-pm-bg');
+        this.modalStage  = this.modal.querySelector('.ad-pm-stage');
         this.modalStageImg = this.modal.querySelector('.ad-pm-stage-img');
         this.modalNum    = this.modal.querySelector('.ad-pm-num');
         this.modalCat    = this.modal.querySelector('.ad-pm-cat');
@@ -570,9 +589,19 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
             this.modalBg.style.backgroundImage = backdrop ? `url('${backdrop}')` : 'none';
         }
 
+        // Stage media — interactive 3D model or static image
+        clearTimeout(this._mvTeardownTimer);
+        this._teardownModelViewer();
+        if (work.model) this._mountModelViewer(work);
+
         if (this.modalStageImg) {
-            this.modalStageImg.src = work.bg || '';
-            this.modalStageImg.alt = work.bg ? `${work.title} — project image` : '';
+            if (work.bg && !work.model) {
+                this.modalStageImg.src = work.bg;
+                this.modalStageImg.alt = `${work.title} — project image`;
+            } else {
+                this.modalStageImg.removeAttribute('src');
+                this.modalStageImg.alt = '';
+            }
         }
 
         this.modalNum.textContent   = work.num;
@@ -644,6 +673,46 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         document.body.style.overflow = '';
         this._triggerEl?.focus();
         this._triggerEl = null;
+        // Free the WebGL context once the fade-out (0.22s) has finished.
+        this._mvTeardownTimer = setTimeout(() => this._teardownModelViewer(), 240);
+    }
+
+    // ── 3D model stage ────────────────────────────────────────────────────────
+
+    // Lazy-load the self-hosted <model-viewer> bundle on first need.
+    // The Draco decoder location must be configured before the module runs —
+    // the default points at Google's CDN, which this site's CSP blocks.
+    _ensureModelViewer() {
+        if (this._mvRequested || customElements.get('model-viewer')) return;
+        this._mvRequested = true;
+        self.ModelViewerElement = Object.assign(self.ModelViewerElement || {}, {
+            dracoDecoderLocation: 'js/lib/draco/'
+        });
+        const s = document.createElement('script');
+        s.type = 'module';
+        s.src  = 'js/lib/model-viewer.min.js';
+        document.head.appendChild(s);
+    }
+
+    _mountModelViewer(work) {
+        if (!this.modalStage) return;
+        this._ensureModelViewer();
+        const mv = document.createElement('model-viewer');
+        mv.className = 'ad-pm-model';
+        mv.setAttribute('src', work.model);
+        mv.setAttribute('alt', `${work.title} — interactive 3D model`);
+        mv.setAttribute('camera-controls', '');
+        mv.setAttribute('auto-rotate', '');
+        mv.setAttribute('shadow-intensity', '1');
+        mv.setAttribute('touch-action', 'pan-y');
+        this.modalStage.classList.add('has-model');
+        this.modalStage.appendChild(mv);
+    }
+
+    _teardownModelViewer() {
+        if (!this.modalStage) return;
+        this.modalStage.classList.remove('has-model');
+        this.modalStage.querySelector('.ad-pm-model')?.remove();
     }
 }
 
