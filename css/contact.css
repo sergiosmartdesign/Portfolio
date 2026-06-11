@@ -509,16 +509,44 @@
   margin-top: clamp(0.6rem, 1.6vmin, 1.2rem);
 }
 
-/* DNA capsule — decorative line art beside the form, light-blue glow */
+/* DNA capsule — decorative line art beside the form, light-blue glow.
+   The glow filter sits on the container so shell + DNA glow as one piece. */
 .ct-capsule {
-  width: clamp(126px, 20vmin, 215px);
-  height: auto;
+  position: relative;
+  width: clamp(176px, 28vmin, 300px);
   flex-shrink: 0;
   pointer-events: none;
   filter:
     drop-shadow(0 0 5px rgba(0, 255, 255, 0.55))
     drop-shadow(0 0 16px rgba(0, 255, 255, 0.28));
   animation: ct-capsule-glow 3.4s ease-in-out infinite;
+}
+
+.ct-capsule-shell {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* DNA art inlaid in the capsule body (below the cap bars, inside the walls);
+   SVG is injected inline by contact.js and contain-fitted to this box */
+.ct-capsule-dna {
+  position: absolute;
+  inset: 13% 11% 6%;
+}
+
+.ct-capsule-dna svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Match the shell's line-art color (#cdedf9) — source art is black */
+.ct-capsule-dna path,
+.ct-capsule-dna polygon,
+.ct-capsule-dna rect,
+.ct-capsule-dna circle {
+  fill: #cdedf9;
 }
 
 @keyframes ct-capsule-glow {

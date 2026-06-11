@@ -95,6 +95,30 @@
 
   injectCockpit();
 
+  /* DNA art inside the capsule next to the form — injected inline so CSS can
+     recolor the (black) source paths to the shell's light blue. */
+  function injectCapsuleDna() {
+    const holder = section.querySelector('.ct-capsule-dna');
+    if (!holder) return;
+    fetch('images/roptando%201.svg')
+      .then(res => res.text())
+      .then(text => {
+        const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+        const svg = doc.documentElement;
+        if (svg.nodeName !== 'svg') throw new Error('bad SVG payload');
+        svg.removeAttribute('width');
+        svg.removeAttribute('height');
+        svg.removeAttribute('style');
+        // Strip ids — Illustrator exports reuse Layer_1 etc. across files
+        svg.removeAttribute('id');
+        svg.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+        holder.appendChild(svg);
+      })
+      .catch(err => console.error('[contact] capsule DNA failed to load:', err));
+  }
+
+  injectCapsuleDna();
+
   /* ════════════════════════════════════════════════════════════════════════
      BOOT SEQUENCE — GSAP timeline
      ════════════════════════════════════════════════════════════════════════ */

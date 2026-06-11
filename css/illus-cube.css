@@ -54,8 +54,8 @@
     animation-play-state: paused !important;
 }
 
-/* ── WebGL shader background ─────────────────────────────────────────────── */
-#illus-shader-bg {
+/* ── Particle background (canvas injected by particle-system.js) ─────────── */
+#illus-particle-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -1270,7 +1270,7 @@
    Sections and card children start at opacity:0 by their own default CSS,
    so only the elements that are naturally visible need suppressing here.
 ──────────────────────────────────────────────────────────────────────────── */
-#illustration.illus-intro-active #illus-shader-bg,
+#illustration.illus-intro-active #illus-particle-canvas,
 #illustration.illus-intro-active .illus-scene,
 #illustration.illus-intro-active .illus-hud,
 #illustration.illus-intro-active .illus-strip,
@@ -1310,7 +1310,7 @@
    transition-delay is overridden here to create the intro stagger.
 ──────────────────────────────────────────────────────────────────────────── */
 
-#illustration.illus-entering #illus-shader-bg {
+#illustration.illus-entering #illus-particle-canvas {
     animation: illus-enter-fade 400ms ease 0ms both;
 }
 

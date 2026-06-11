@@ -3,12 +3,15 @@
  * Modern ES6 class implementation with performance optimizations
  * Original concept by Alex Andrix
  *
- * Two instances run (see the DOMContentLoaded block at the bottom):
+ * Three instances run (see the DOMContentLoaded block at the bottom):
  *  - #preloader: every particle wears a different palette color (round-robin);
  *    destroyed for good when `preloaderDone` fires and the overlay is removed.
  *  - #intro: the whole swarm wears ONE palette color, hopping to a different
  *    random palette color every 6s; paused/resumed by the intro
  *    IntersectionObserver in script.js via App.ParticleSystem.
+ *  - #illus-tunnel: background swarm for the illustration cube gallery,
+ *    same single-color/hop config as #intro; paused/resumed by its own
+ *    IntersectionObserver on #illustration below.
  */
 
 // Project color palette — hex converted to {h, s} for HSL; lum varies per particle
@@ -575,9 +578,29 @@ document.addEventListener('DOMContentLoaded', () => {
     colorHopMs: 6000,
   });
 
+  // Illustration swarm — background for the cube gallery, injected into the
+  // sticky .illus-tunnel viewport (canvas styled by #illus-particle-canvas in
+  // illus-cube.css). Starts paused; its own observer wakes it only while the
+  // section is on screen.
+  const illusParticles = new ParticleSystem({
+    hostId: 'illus-tunnel',
+    canvasId: 'illus-particle-canvas',
+    colorMode: 'single',
+    colorHopMs: 6000,
+    bgInit: 'rgba(0, 18, 25, 1)',   // matches --illus-bg (#001219)
+    bgFade: 'rgba(0, 18, 25, 0.1)',
+  });
+  const illusSection = document.getElementById('illustration');
+  if (illusSection && !illusParticles.destroyed) {
+    illusParticles.pause();
+    new IntersectionObserver(entries => {
+      entries[0].isIntersecting ? illusParticles.resume() : illusParticles.pause();
+    }, { threshold: 0 }).observe(illusSection);
+  }
+
   // Registry points at the intro instance — its pause/resume is driven by
   // the intro IntersectionObserver in script.js. The preloader instance
-  // manages its own lifecycle above.
+  // and the illustration instance manage their own lifecycles above.
   App.ParticleSystem = {
     pause: () => introParticles.pause(),
     resume: () => introParticles.resume(),

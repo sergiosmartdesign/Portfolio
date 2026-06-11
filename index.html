@@ -2243,13 +2243,12 @@
                 </figure>
             </div>
 
-            <div class="illus-tunnel">
+            <div class="illus-tunnel" id="illus-tunnel">
+
+                <!-- Particle background canvas is injected here by particle-system.js -->
 
                 <!-- Left bar SVG -->
                 <img src="images/illust.svg" class="illus-svg-bar" aria-hidden="true" role="presentation">
-
-                <!-- WebGL shader background -->
-                <canvas id="illus-shader-bg" aria-hidden="true"></canvas>
 
                 <!-- VHS / CRT overlay -->
                 <div class="scanlines" aria-hidden="true"></div>
@@ -2998,7 +2997,12 @@
                                 aria-label="Send another message">[ · s e n d &nbsp; a n o t h e r · ]</button>
                     </div>
                 </form>
-                    <img class="ct-capsule" src="images/dnacapsule1.svg" alt="" aria-hidden="true">
+                    <!-- DNA capsule: line-art shell + DNA art fetch-injected
+                         inline by contact.js so it can be recolored to match -->
+                    <div class="ct-capsule" aria-hidden="true">
+                        <img class="ct-capsule-shell" src="images/dnacapsule1.svg" alt="">
+                        <div class="ct-capsule-dna"></div>
+                    </div>
                 </div><!-- /.ct-form-row -->
 
                 <nav class="ct-links ct-links--mini" aria-label="Contact Sergio Ayala directly">
@@ -3107,7 +3111,6 @@
     <script defer src="js/ascii-ripple.js"></script>
     <script defer src="js/contact.js"></script>
     <script defer src="js/illustration-ink-cursor.js"></script>
-    <script defer src="js/illus-shader-bg.js"></script>
     <script defer src="js/illus-cube.js"></script>
 
     <!-- Info bracket overlay — contextual { indicator for info-interface hotspots -->
