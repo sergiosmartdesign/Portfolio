@@ -49,6 +49,17 @@
         svgElement.querySelectorAll('[filter]').forEach(el => rewriteUrlAttr(el, 'filter'));
         svgElement.querySelectorAll('[mask]').forEach(el => rewriteUrlAttr(el, 'mask'));
 
+        // The current Illustrator export applies gradient fills via a <style>
+        // block (.st0 { fill: url(#radial-gradient); }) instead of fill
+        // attributes — rewrite url(#...) there too, and scope the generic .stN
+        // selectors so they can't collide with other inline SVGs once this
+        // stylesheet becomes document-global.
+        svgElement.querySelectorAll('style').forEach(styleEl => {
+          styleEl.textContent = styleEl.textContent
+            .replace(/url\(#([^)]+)\)/g, (_, id) => `url(#${idMap[id] || id})`)
+            .replace(/\.st(\d+)\b/g, `#${imgElement.id} .st$1`);
+        });
+
         // Convert deprecated xlink:href → href for gradient inheritance in Chrome 79+.
         const XLINK_NS = 'http://www.w3.org/1999/xlink';
         svgElement.querySelectorAll('*').forEach(el => {
@@ -65,13 +76,16 @@
         svgElement.setAttribute('id', imgElement.id);
         if (imgElement.className) svgElement.setAttribute('class', imgElement.className);
 
-        // Add animation classes to internal elements (selectors use prefixed IDs)
-        const border      = svgElement.querySelector(`#${ID_PREFIX}border`);
-        const face        = svgElement.querySelector(`#${ID_PREFIX}face`);
-        const hexagons    = svgElement.querySelectorAll('polygon[points*="39.43"], polygon[points*="77.83"], polygon[points*="116.41"], polygon[points*="154.28"]');
-        const circles     = svgElement.querySelectorAll('circle[cx="27.6"], circle[cx="66"], circle[cx="104.57"]');
-        const sideCircles = svgElement.querySelectorAll('circle[cx="49.26"]');
-        const stars       = svgElement.querySelectorAll('polygon[points*="442.2"], polygon[points*="410.07"], polygon[points*="377.94"], polygon[points*="345.32"], polygon[points*="506.54"], polygon[points*="474.82"]');
+        // Add animation classes to internal elements. Selectors match the
+        // current Illustrator export: coords rounded to 1 decimal, character
+        // group named ID_character, outer card frame has no id (matched by
+        // its path data instead).
+        const border      = svgElement.querySelector('path[d^="M10.5,239.4"]');
+        const face        = svgElement.querySelector(`#${ID_PREFIX}ID_character`);
+        const hexagons    = svgElement.querySelectorAll('polygon[points*="39.4 "], polygon[points*="77.8 "], polygon[points*="116.4 "], polygon[points*="154.3 "]');
+        const circles     = svgElement.querySelectorAll('circle[cx="27.6"], circle[cx="66"], circle[cx="104.6"]');
+        const sideCircles = svgElement.querySelectorAll('circle[cx="49.3"]');
+        const stars       = svgElement.querySelectorAll('polygon[points*="442.2 "], polygon[points*="410.1 "], polygon[points*="377.9 "], polygon[points*="345.3 "], polygon[points*="506.5 "], polygon[points*="474.8 "]');
         const rects       = svgElement.querySelectorAll('rect');
 
         if (border) border.classList.add('id1-border');
@@ -82,7 +96,50 @@
         stars.forEach((s, i)       => { s.classList.add('id1-star');           s.style.setProperty('--star-index', i); });
         rects.forEach((r, i)       => { r.classList.add('id1-rect');           r.style.setProperty('--rect-index', i); });
 
+        // Group the five role/hobby text rows (outlined glyph paths in five
+        // y-bands beside the side circles, x 60–300) into <g class="id1-tag">
+        // wrappers so each row is a single hoverable element. Paths within a
+        // row are contiguous siblings, so wrapping preserves paint order.
+        const SVG_NS    = 'http://www.w3.org/2000/svg';
+        const TAG_BANDS = [[200, 217], [230, 245], [259, 273], [286, 301], [315, 330]];
+        const tagRows   = TAG_BANDS.map(() => []);
+        svgElement.querySelectorAll('path.st18').forEach(p => {
+          const m = /^M([\d.]+),([\d.]+)/.exec(p.getAttribute('d') || '');
+          if (!m) return;
+          const x = parseFloat(m[1]);
+          const y = parseFloat(m[2]);
+          if (x < 60 || x > 300) return;
+          const band = TAG_BANDS.findIndex(([y0, y1]) => y >= y0 && y <= y1);
+          if (band !== -1) tagRows[band].push(p);
+        });
+        tagRows.forEach((paths, i) => {
+          if (!paths.length) return;
+          const g = document.createElementNS(SVG_NS, 'g');
+          g.classList.add('id1-tag');
+          g.style.setProperty('--tag-index', i);
+          paths[0].parentNode.insertBefore(g, paths[0]);
+          paths.forEach(p => g.appendChild(p));
+        });
+
         imgElement.parentNode.replaceChild(svgElement, imgElement);
+
+        // Transparent hit-area rect behind each tag row — the hover target
+        // becomes the full row box, not just the thin glyph strokes.
+        // getBBox() needs a rendered element, hence after insertion + rAF.
+        requestAnimationFrame(() => {
+          svgElement.querySelectorAll('g.id1-tag').forEach(g => {
+            try {
+              const b   = g.getBBox();
+              const hit = document.createElementNS(SVG_NS, 'rect');
+              hit.setAttribute('class', 'id1-tag-hit');
+              hit.setAttribute('x',      b.x - 5);
+              hit.setAttribute('y',      b.y - 4);
+              hit.setAttribute('width',  b.width + 10);
+              hit.setAttribute('height', b.height + 8);
+              g.insertBefore(hit, g.firstChild);
+            } catch (e) { /* not rendered yet — row stays glyph-hover only */ }
+          });
+        });
 
         _setupID1Observer();
       })

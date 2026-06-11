@@ -2599,9 +2599,45 @@ nav {
   opacity: 0;
   transform: translateY(-100px);
   transform-origin: bottom left;
-  /* Apply capsule color #001219 */
-  filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%);
   animation-fill-mode: forwards;
+}
+
+/* Pre-conversion <img> fallback only — once svg-inline.js swaps in the inline
+   SVG, color comes from the per-class overrides below instead of a filter
+   (a root filter would flatten the .id1-tag amber hover to #001219 too). */
+img#id1svg {
+  filter: brightness(0) saturate(100%) invert(5%) sepia(17%) saturate(4526%) hue-rotate(157deg) brightness(96%) contrast(103%);
+}
+
+/* Flat badge color #001219 — same result the old filter produced. Two #ids
+   beat the SVG's own injected scoped stylesheet (#id1svg .stN). st6/st16/st17
+   are fill:none outline classes, so they only get the stroke override. */
+#about #id1svg .st18,
+#about #id1svg :is(.st0, .st1, .st2, .st3, .st4, .st5, .st7, .st8, .st9, .st10, .st11, .st12, .st13, .st14, .st15) {
+  fill: #001219;
+}
+
+#about #id1svg :is(.st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11, .st12, .st13, .st14, .st15, .st16, .st17) {
+  stroke: #001219;
+}
+
+/* --- ID1 role/hobby tag rows — amber marker hover --- */
+#id1svg .id1-tag {
+  cursor: pointer;
+}
+
+#id1svg .id1-tag-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+#id1svg .id1-tag path {
+  transition: fill 0.25s ease;
+}
+
+#about #id1svg .id1-tag:hover path {
+  fill: #EE9B00;
 }
 
 /* Animate ID1 SVG when element becomes visible in viewport - Multi-stage animation */

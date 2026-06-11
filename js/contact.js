@@ -185,4 +185,155 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(buildStars, 250);
   });
+
+  /* ════════════════════════════════════════════════════════════════════════
+     CONTACT FORM — comms-console uplink
+     Transport is mocked for now: sendTransmission() resolves after a delay
+     and logs the payload. Swap its body for a real endpoint when ready.
+     ════════════════════════════════════════════════════════════════════════ */
+
+  function initContactForm() {
+    const form      = document.getElementById('ct-form');
+    if (!form) return;
+
+    const logText   = form.querySelector('.ct-log-text');
+    const srStatus  = document.getElementById('ct-sr-status');
+    const sendBtn   = form.querySelector('.ct-send');
+    const successEl = document.getElementById('ct-form-success');
+    const resetBtn  = form.querySelector('.ct-success-reset');
+    const honeypot  = form.querySelector('.ct-hp');
+
+    const fields = [
+      { el: document.getElementById('ct-f-name'),  empty: 'ERR: name is required' },
+      { el: document.getElementById('ct-f-email'), empty: 'ERR: email is required', invalid: 'ERR: invalid email address' },
+      { el: document.getElementById('ct-f-msg'),   empty: 'ERR: message is empty' },
+    ];
+    if (!sendBtn || !successEl || fields.some(f => !f.el)) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+
+    /* MOCK TRANSPORT — replace with e.g.
+       return fetch('/api/contact', { method: 'POST', body: JSON.stringify(payload), … })
+       once a mail backend exists. */
+    function sendTransmission(payload) {
+      console.info('[contact] mock transmission:', payload);
+      return wait(1500);
+    }
+
+    function announce(msg) {
+      if (srStatus) srStatus.textContent = msg;
+    }
+
+    /* Types into the decorative log; instant under reduced motion. */
+    let typeToken = 0;
+    function typeLog(text, speed = 16) {
+      const token = ++typeToken;
+      if (!logText) return Promise.resolve();
+      if (reducedMotion.matches) {
+        logText.textContent = text;
+        return Promise.resolve();
+      }
+      logText.textContent = '';
+      return new Promise(resolve => {
+        let i = 0;
+        (function tick() {
+          if (token !== typeToken) return resolve();
+          logText.textContent = text.slice(0, ++i);
+          if (i < text.length) setTimeout(tick, speed);
+          else resolve();
+        })();
+      });
+    }
+
+    function setFieldError(field, msg) {
+      const wrap = field.el.closest('.ct-field');
+      if (wrap) {
+        wrap.classList.toggle('is-invalid', !!msg);
+        const err = wrap.querySelector('.ct-field-err');
+        if (err) err.textContent = msg || '';
+      }
+      field.el.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    }
+
+    function validate() {
+      let firstBad = null;
+      fields.forEach(f => {
+        let msg = '';
+        if (!f.el.value.trim())          msg = f.empty;
+        else if (!f.el.checkValidity())  msg = f.invalid || f.empty;
+        setFieldError(f, msg);
+        if (msg && !firstBad) firstBad = f.el;
+      });
+      if (firstBad) firstBad.focus();
+      return !firstBad;
+    }
+
+    fields.forEach(f => {
+      f.el.addEventListener('input', () => setFieldError(f, ''));
+    });
+
+    let sending = false;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (sending) return;
+      if (honeypot && honeypot.value) return;   // bot — drop silently
+
+      if (!validate()) {
+        typeLog('> ERROR :: CHECK FIELDS');
+        announce('Some fields need attention.');
+        return;
+      }
+
+      sending = true;
+      form.classList.add('is-sending');
+      sendBtn.disabled = true;
+      announce('Sending message…');
+
+      const payload = {
+        name:    fields[0].el.value.trim(),
+        email:   fields[1].el.value.trim(),
+        message: fields[2].el.value.trim(),
+        sentAt:  new Date().toISOString(),
+      };
+
+      try {
+        await typeLog('> CONNECTING…');
+        await wait(reducedMotion.matches ? 0 : 250);
+        await typeLog('> SENDING MESSAGE…');
+        await sendTransmission(payload);
+        await typeLog('> MESSAGE SENT ✓');
+
+        form.classList.add('is-sent');
+        successEl.hidden = false;
+        announce('Message sent. Expect a reply within 24 hours.');
+        const title = successEl.querySelector('.ct-success-title');
+        if (title) title.focus();
+      } catch (err) {
+        console.error('[contact] transmission failed:', err);
+        await typeLog('> SEND FAILED — RETRY OR USE EMAIL LINK');
+        announce('Sending failed. Please retry or use the email link below.');
+      } finally {
+        sending = false;
+        form.classList.remove('is-sending');
+        sendBtn.disabled = form.classList.contains('is-sent');
+      }
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        form.reset();
+        fields.forEach(f => setFieldError(f, ''));
+        form.classList.remove('is-sent');
+        successEl.hidden = true;
+        sendBtn.disabled = false;
+        typeLog('> READY');
+        announce('');
+        fields[0].el.focus();
+      });
+    }
+  }
+
+  initContactForm();
 })();

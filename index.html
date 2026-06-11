@@ -469,7 +469,7 @@
           "description": "A commercial illustration by Sergio Ayala, 2019. Two stylized dragons — one blue, one red — curl together to form a heart around bold hand-lettered typography. Created for a private client's branded merchandise campaign, applied to apparel and accessories. Vibrant pastel palette, fantasy character design, expressive lettering. Photoshop / Illustrator.",
           "image": {
             "@type": "ImageObject",
-            "url": "https://sergioayala.design/images/art-direction/sergio-ayala-draconic-love-dragon-illustration-2019.webp",
+            "url": "https://sergioayala.design/images/art-direction/draconic%20love/sergio-ayala-draconic-love-dragon-illustration-2019.webp",
             "name": "Draconic Love — Dragon Illustration and Merchandise Design by Sergio Ayala, 2019",
             "description": "Two dragons forming a heart with bold hand-lettered typography — commercial illustration by Sergio Ayala for branded merchandise, 2019.",
             "encodingFormat": "image/webp",
@@ -2226,7 +2226,7 @@
                 </figure>
                 <figure itemscope itemtype="https://schema.org/VisualArtwork">
                     <img
-                        src="images/art-direction/sergio-ayala-draconic-love-dragon-illustration-2019.webp"
+                        src="images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp"
                         alt="Two stylized dragons — one blue, one red — curl together to form a heart around bold hand-lettered typography. Commercial illustration for branded merchandise by Sergio Ayala, 2019."
                         itemprop="image"
                         loading="lazy"
@@ -2952,27 +2952,27 @@
                      a real mail endpoint is wired up. -->
                 <form class="ct-form" id="ct-form" novalidate>
                     <div class="ct-form-head" aria-hidden="true">
-                        <span class="ct-form-title">// SEND_TRANSMISSION</span>
+                        <span class="ct-form-title">// NEW_MESSAGE</span>
                         <span class="ct-form-feed">BOGOTÁ ▸ WORLDWIDE<i class="ct-form-dot"></i></span>
                     </div>
 
                     <div class="ct-form-grid">
                         <div class="ct-field">
-                            <label for="ct-f-name">&gt; OPERATOR / NAME</label>
+                            <label for="ct-f-name">&gt; NAME</label>
                             <input id="ct-f-name" name="name" type="text" required
                                    autocomplete="name" spellcheck="false" maxlength="80"
                                    placeholder="_" aria-describedby="ct-f-name-err">
                             <p class="ct-field-err" id="ct-f-name-err"></p>
                         </div>
                         <div class="ct-field">
-                            <label for="ct-f-email">&gt; RETURN_SIGNAL / EMAIL</label>
+                            <label for="ct-f-email">&gt; EMAIL</label>
                             <input id="ct-f-email" name="email" type="email" required
                                    autocomplete="email" spellcheck="false" maxlength="120"
                                    placeholder="_" aria-describedby="ct-f-email-err">
                             <p class="ct-field-err" id="ct-f-email-err"></p>
                         </div>
                         <div class="ct-field ct-field--msg">
-                            <label for="ct-f-msg">&gt; MESSAGE / PAYLOAD</label>
+                            <label for="ct-f-msg">&gt; MESSAGE</label>
                             <textarea id="ct-f-msg" name="message" required
                                       maxlength="2000" placeholder="_"
                                       aria-describedby="ct-f-msg-err"></textarea>
@@ -2981,8 +2981,8 @@
                     </div>
 
                     <div class="ct-form-foot">
-                        <button type="submit" class="ct-send" aria-label="Send message">[ ▸ t r a n s m i t ]</button>
-                        <p class="ct-form-log"><span class="ct-log-text" aria-hidden="true">&gt; AWAITING INPUT</span></p>
+                        <button type="submit" class="ct-send" aria-label="Send message">[ ▸ s e n d ]</button>
+                        <p class="ct-form-log"><span class="ct-log-text" aria-hidden="true">&gt; READY</span></p>
                     </div>
 
                     <!-- Screen-reader status mirror (typed log is decorative) -->
@@ -2991,10 +2991,10 @@
                     <input class="ct-hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
 
                     <div class="ct-form-success" id="ct-form-success" hidden>
-                        <p class="ct-success-title" tabindex="-1">✓ TRANSMISSION RECEIVED</p>
-                        <p class="ct-success-sub">Return signal within 24h — check your inbox.</p>
+                        <p class="ct-success-title" tabindex="-1">✓ MESSAGE SENT</p>
+                        <p class="ct-success-sub">Thanks — I'll get back to you within 24h.</p>
                         <button type="button" class="ct-link ct-success-reset"
-                                aria-label="Send another message">[ · n e w &nbsp; t r a n s m i s s i o n · ]</button>
+                                aria-label="Send another message">[ · s e n d &nbsp; a n o t h e r · ]</button>
                     </div>
                 </form>
 
@@ -3120,5 +3120,5 @@
     </div>
 
     <script defer src="js/inf-bracket.js"></script>
-</body>
+<script src="js/temp-probe.js"></script></body>
 </html>

@@ -10,7 +10,7 @@
         'images/illustration/sergio-ayala-holy-vandal-canido-baroque-concept-art-2024.webp',
         'images/illustration/sergio-ayala-mujer-crustaceo-surrealist-mixed-media-2014.webp',
         'images/illustration/sergio-ayala-reconciliacion-watercolor-digital-2014.webp',
-        'images/art-direction/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
+        'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
     ];
 
     const FACE_NAMES = IMAGES.map(src =>
