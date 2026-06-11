@@ -388,7 +388,9 @@
   height: 100%;
 }
 
-/* Glow lights named in Illustrator ("glow lights top, left blink") */
+/* Glow lights named in Illustrator ("glow lights top, left blink").
+   NOTE: group no longer exists in the current SVG export — kept in case the
+   blink group returns in a future export. */
 #glow_ligths_top_x2C__left_blink {
   animation: ct-cockpit-blink 2.6s ease-in-out infinite;
 }
@@ -396,6 +398,63 @@
 @keyframes ct-cockpit-blink {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.2; }
+}
+
+/* ── Cockpit entrance states (classes flipped by the boot timeline) ────────
+   1. .ct-lines-teal + .ct-no-colors  → teal glowing wireframe only
+   2. remove .ct-no-colors            → color art fades in underneath
+   3. remove .ct-lines-teal           → lines transition back to source colors */
+.ct-cockpit svg #lines path {
+  transition: fill 1s ease;
+}
+
+.ct-cockpit.ct-lines-teal svg #lines path {
+  fill: #94D2BD;                       /* --ct-grid-line light teal */
+}
+
+/* Zero-size base shadows so the glow interpolates smoothly to "off" */
+.ct-cockpit svg #lines {
+  filter:
+    drop-shadow(0 0 0 rgba(148, 210, 189, 0))
+    drop-shadow(0 0 0 rgba(148, 210, 189, 0));
+  transition: filter 1s ease;
+}
+
+.ct-cockpit.ct-lines-teal svg #lines {
+  filter:
+    drop-shadow(0 0 6px rgba(148, 210, 189, 0.85))
+    drop-shadow(0 0 16px rgba(148, 210, 189, 0.45));
+}
+
+.ct-cockpit svg #colors {
+  transition: opacity 1.1s ease;
+}
+
+.ct-cockpit.ct-no-colors svg #colors {
+  opacity: 0;
+}
+
+/* ── Pilot's left hand — bottom-left, on top of the cockpit (z:20) ──────────
+   contact.js translates it so the fingertip (#hand-pointer_invisible) lands
+   on the dashboard hover rects while form elements are hovered/focused. */
+.ct-hand {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 21;
+  width: clamp(260px, 38vmin, 520px);
+  pointer-events: none;
+  /* Parked out of the viewport (down-left); contact.js slides it in by
+     setting an inline transform when a form element is hovered/focused */
+  transform: translate(-35%, 110%);
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+.ct-hand svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ── CSS scanline grain (replaces external noise.svg) ─────────────────────── */
@@ -492,7 +551,7 @@
 .ct-stack-line {
   display: block;
   transform: rotate(-10deg);
-  font-size: clamp(2.6rem, 6.6vmin, 4.4rem);
+  font-size: clamp(3.4rem, 8.6vmin, 5.7rem);
   line-height: 1.12;
   white-space: nowrap;
   color: var(--ct-sun-warm);            /* line 1 — site amber   */
@@ -503,7 +562,7 @@
 }
 
 .ct-stack-line--tag {
-  font-size: clamp(1.25rem, 2.9vmin, 1.95rem);
+  font-size: clamp(1.6rem, 3.8vmin, 2.55rem);
   letter-spacing: 0.1em;
   margin-top: 0.35em;
   color: var(--ct-star-color);          /* line 3 — warm sand    */
@@ -525,7 +584,7 @@
   padding: 0;
   cursor: pointer;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  font-size: clamp(1.1rem, 1.8vw, 1.45rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--ct-accent);
@@ -983,6 +1042,14 @@
   #contact .vhs-static {
     animation: none;
   }
+
+  /* Cockpit entrance states snap instead of cross-fading */
+  .ct-cockpit svg #lines path,
+  .ct-cockpit svg #lines,
+  .ct-cockpit svg #colors,
+  .ct-hand {
+    transition: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -997,6 +1064,7 @@
 
   /* No room beside the form on phones: capsule hidden, title stacks on top */
   .ct-capsule { display: none; }
+  .ct-hand { display: none; }
   .ct-form-row {
     margin-top: 0.5rem;
     flex-direction: column;

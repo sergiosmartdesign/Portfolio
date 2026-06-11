@@ -93,7 +93,117 @@
       .catch(err => console.error('[contact] cockpit SVG failed to load:', err));
   }
 
+  /* Entrance start state: teal glowing wireframe, color art hidden.
+     The boot timeline removes these classes in sequence (CSS transitions
+     do the smoothing) — works even though the SVG injection is async. */
+  if (cockpitEl) cockpitEl.classList.add('ct-lines-teal', 'ct-no-colors');
+
   injectCockpit();
+
+  /* Pilot's left hand — injected inline (groups: #color, #left_handline,
+     plus a #pointer_invisible fingertip anchor for future interactions). */
+  function injectHand() {
+    const handEl = section.querySelector('.ct-hand');
+    if (!handEl) return;
+    fetch('images/mano%20izq.svg')
+      .then(res => res.text())
+      .then(text => {
+        const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+        const svg = doc.documentElement;
+        if (svg.nodeName !== 'svg') throw new Error('bad SVG payload');
+        svg.removeAttribute('width');
+        svg.removeAttribute('height');
+        // Prefix ids — the cockpit already uses Layer_1 etc.
+        svg.querySelectorAll('[id]').forEach(el =>
+          el.setAttribute('id', 'hand-' + el.getAttribute('id')));
+        svg.removeAttribute('id');
+        // Scope the .stN classes — the cockpit defines the same class names
+        // with different colors, and inline <style> blocks are document-global
+        svg.querySelectorAll('style').forEach(st => {
+          st.textContent = st.textContent.replace(/\.st(\d+)\b/g, '.ct-hand .st$1');
+        });
+        handEl.appendChild(svg);
+      })
+      .catch(err => console.error('[contact] hand SVG failed to load:', err));
+  }
+
+  injectHand();
+
+  /* ════════════════════════════════════════════════════════════════════════
+     HAND POINTER — hovering/focusing a form element moves the hand so the
+     fingertip (#hand-pointer_invisible) lands on a dashboard hover rect
+     ════════════════════════════════════════════════════════════════════════ */
+
+  function initHandPointer() {
+    const form   = document.getElementById('ct-form');
+    const handEl = section.querySelector('.ct-hand');
+    if (!form || !handEl) return;
+
+    /* form element id → cockpit dashboard rect (left button column) */
+    const HAND_TARGETS = {
+      'ct-f-name':  'hover1',
+      'ct-f-email': 'hover2',
+      'ct-f-msg':   'hover3',
+    };
+    const SEND_TARGET = 'hover4';
+
+    function pointHandAt(rectId) {
+      const tip    = section.querySelector('#hand-pointer_invisible');
+      const target = section.querySelector('#' + rectId);
+      if (!tip || !target) return;          // SVGs not injected yet
+
+      const tipBox = tip.getBoundingClientRect();
+      const tgtBox = target.getBoundingClientRect();
+      const secBox = section.getBoundingClientRect();
+
+      // Fingertip layout position = current position minus the live
+      // transform (covers the parked state and mid-transition measurements)
+      let ex = 0, ey = 0;
+      const tr = getComputedStyle(handEl).transform;
+      if (tr && tr !== 'none') {
+        const m = new DOMMatrixReadOnly(tr);
+        ex = m.e; ey = m.f;
+      }
+      const restX = tipBox.left + tipBox.width  / 2 - ex;
+      const restY = tipBox.top  + tipBox.height / 2 - ey;
+      const tgtX  = tgtBox.left + tgtBox.width  / 2;
+      // hover4/hover_8 extend below the viewBox — keep the hand on screen
+      const tgtY  = Math.min(tgtBox.top + tgtBox.height / 2, secBox.bottom - 40);
+
+      handEl.style.transform =
+        `translate(${(tgtX - restX).toFixed(1)}px, ${(tgtY - restY).toFixed(1)}px)`;
+    }
+
+    /* Clearing the inline transform lets the CSS parked state take over,
+       so the hand slides back out of the viewport. */
+    const resetHand = () => { handEl.style.transform = ''; };
+
+    function targetFor(node) {
+      if (!(node instanceof Element)) return null;
+      if (node.closest('.ct-send')) return SEND_TARGET;
+      const field = node.closest('.ct-field');
+      if (!field) return null;
+      const input = field.querySelector('input, textarea');
+      return (input && HAND_TARGETS[input.id]) || null;
+    }
+
+    form.addEventListener('pointerover', (e) => {
+      const t = targetFor(e.target);
+      if (t) pointHandAt(t); else resetHand();
+    });
+    form.addEventListener('pointerleave', resetHand);
+
+    /* keyboard parity */
+    form.addEventListener('focusin', (e) => {
+      const t = targetFor(e.target);
+      if (t) pointHandAt(t);
+    });
+    form.addEventListener('focusout', (e) => {
+      if (!form.contains(e.relatedTarget)) resetHand();
+    });
+  }
+
+  initHandPointer();
 
   /* DNA art inside the capsule next to the form — injected inline so CSS can
      recolor the (black) source paths to the shell's light blue. */
@@ -252,6 +362,13 @@
       glitchIn(tl, '.ct-sun',   '+=0.08', { withScaleY: true });
       glitchIn(tl, '.ct-ground','+=0.08', { withY: true });
       glitchIn(tl, '.ct-cockpit', '+=0.10');
+
+      // Cockpit build: wireframe glitched in above — now fade the color art
+      // in, then let the lines settle back to their original colors.
+      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-no-colors'),
+              null, '+=0.35');
+      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-lines-teal'),
+              null, '+=1.3');
 
       // Hide title letters before the content fades in so they don't flash.
       // Scoped to the h2 — the button's chars are handled via autoAlpha on

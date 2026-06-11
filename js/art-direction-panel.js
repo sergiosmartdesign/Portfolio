@@ -58,6 +58,7 @@ const WORKS_DATA = {
       num: '04', cat: 'Web', title: 'CAF-LIF Contest', sub: 'Entrepreneurship contest landing page',
       specs: [['Scope','Landing · UX · Art Direction'],['Tools','Figma · Photoshop'],['Year','2020'],['Mode','Freelance']],
       tags: ['Landing','Contest','Innovation'],
+      whiteBg: true, // artwork has transparency — render on a white surface
       bg: 'images/art-direction/caflif/sergio-ayala-caf-lif-entrepreneurship-contest-landing-mockup-2020.webp',
       images: [
         'images/art-direction/caflif/sergio-ayala-caf-lif-entrepreneurship-contest-landing-mockup-2020.webp',
@@ -144,6 +145,7 @@ const WORKS_DATA = {
       desc: 'Complete identity for a culinary tourism venture operating between Colombia and Chile — logo system, stationery and print collateral built around a warm gastronomic palette. The mark pairs travel iconography with kitchen craft, extended across <a href="#" target="_blank" rel="noopener noreferrer">letterhead</a> and a <a href="#" target="_blank" rel="noopener noreferrer">presentation folder</a>.',
       specs: [['Scope','Logo · Stationery · Print'],['Tools','Illustrator · InDesign'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Identity','Print'],
+      whiteBg: true, // artwork has transparency — render on a white surface
       bg: 'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-logo-brand-identity-colombia-chile.webp',
       images: [
         'images/art-direction/travels gourmet/sergio-ayala-travels-gourmet-logo-brand-identity-colombia-chile.webp',
@@ -179,18 +181,21 @@ const WORKS_DATA = {
       num: '05', cat: 'Identity', title: 'Ceres', sub: 'Logo for natural products e-commerce',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Organic','E-Commerce'],
+      whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/logos/sergio-ayala-ceres-natural-products-ecommerce-logo-2020.webp'
     },
     {
       num: '06', cat: 'Identity', title: 'Magistrado', sub: 'Logo for Latin experimental music band',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
       tags: ['Logo','Music','Identity'],
+      whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/logos/sergio-ayala-magistrado-latin-experimental-music-band-logo-2017.webp'
     },
     {
       num: '07', cat: 'Identity', title: 'Quindiorellanas', sub: 'Logo for mushroom food startup',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
       tags: ['Logo','Startup','Food Brand'],
+      whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/logos/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp'
     },
     {
@@ -211,6 +216,15 @@ const AD_PM_DESC_PLACEHOLDER =
   'Short description of the brief, the concept and the craft behind this project — ' +
   'mockup copy for now. References like <a href="#" target="_blank" rel="noopener noreferrer">linked words</a> ' +
   'and <a href="#" target="_blank" rel="noopener noreferrer">related work</a> sit inline within the paragraph.';
+
+// Shared modal backdrop per discipline — when set, the full-bleed background
+// behind the deco frame uses this image for every project in the category
+// (and stays fixed while thumbnails swap the stage image).
+const DISCIPLINE_BACKDROPS = {
+  identity:  'images/sergio-ayala-identity-projects-backdrop-art-direction.webp',
+  web:       'images/sergio-ayala-web-projects-backdrop-art-direction.webp',
+  editorial: 'images/sergio-ayala-editorial-projects-backdrop-art-direction.webp'
+};
 
 // Display labels — '3d' can't be derived by capitalising the key.
 const DISCIPLINE_LABELS = {
@@ -388,7 +402,7 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
             row.addEventListener('mouseenter', () => {
                 const titleEl = row.querySelector('.ad-work-title');
                 if (titleEl) this._scrambleText(titleEl);
-                if (works[i].bg) this._showRowPreview(works[i].bg);
+                if (works[i].bg) this._showRowPreview(works[i].bg, works[i].whiteBg);
             });
             row.addEventListener('mouseleave', () => this._hideRowPreview());
         });
@@ -445,8 +459,9 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         }
     }
 
-    _showRowPreview(imageUrl) {
+    _showRowPreview(imageUrl, whiteBg = false) {
         if (!this._preview) return;
+        this._preview.classList.toggle('is-white', !!whiteBg);
         this._preview.style.backgroundImage = `url('${imageUrl}')`;
         this._preview.style.transform       = `translate(${this._previewTargetX}px,${this._previewTargetY}px)`;
         this._preview.style.opacity         = '1';
@@ -491,6 +506,7 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         if (!this.modal) return;
 
         this.modalBg     = this.modal.querySelector('.ad-pm-bg');
+        this.modalStageImg = this.modal.querySelector('.ad-pm-stage-img');
         this.modalNum    = this.modal.querySelector('.ad-pm-num');
         this.modalCat    = this.modal.querySelector('.ad-pm-cat');
         this.modalTitle  = this.modal.querySelector('.ad-pm-title');
@@ -546,8 +562,17 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
 
         this._triggerEl = document.activeElement;
 
+        this.modal.classList.toggle('is-white-media', !!work.whiteBg);
+        this._fixedBackdrop = DISCIPLINE_BACKDROPS[this.activeDiscipline] ?? null;
+
         if (this.modalBg) {
-            this.modalBg.style.backgroundImage = work.bg ? `url('${work.bg}')` : 'none';
+            const backdrop = this._fixedBackdrop || work.bg;
+            this.modalBg.style.backgroundImage = backdrop ? `url('${backdrop}')` : 'none';
+        }
+
+        if (this.modalStageImg) {
+            this.modalStageImg.src = work.bg || '';
+            this.modalStageImg.alt = work.bg ? `${work.title} — project image` : '';
         }
 
         this.modalNum.textContent   = work.num;
@@ -599,8 +624,11 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
     }
 
     _switchModalImage(src, index) {
-        if (this.modalBg) {
+        if (this.modalBg && !this._fixedBackdrop) {
             this.modalBg.style.backgroundImage = `url('${src}')`;
+        }
+        if (this.modalStageImg) {
+            this.modalStageImg.src = src;
         }
         if (this.modalThumbs) {
             this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((t, i) => {

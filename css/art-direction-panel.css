@@ -664,6 +664,63 @@ body.ad-section-live #art-direction .ad-explore-card,
     adfrm-binary-stream  11s  ease-in-out 2.1s infinite;
 }
 
+/* ── Image stage — active gallery image, uncropped, inside the deco frame.
+   Geometry mirrors .ad-pm-deco; padding keeps the image within the drawn
+   panel. z:4 — above the frame so artwork shows true-colour, untinted by
+   the panel's red wash. ── */
+.ad-pm-stage {
+  position: absolute;
+  top: 100px;
+  right: 100px;
+  width: 65%;
+  height: 65%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4% 5%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease 0.45s, transform 0.4s ease 0.45s;
+}
+
+.ad-project-modal.is-open .ad-pm-stage {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ad-pm-stage-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 32px rgba(0, 0, 0, 0.55));
+}
+
+/* Hide the stage entirely until JS sets a source */
+.ad-pm-stage-img:not([src]),
+.ad-pm-stage-img[src=""] {
+  display: none;
+}
+
+/* ── White media surface — projects flagged whiteBg in WORKS_DATA.
+   Transparent artwork (logos, stationery) reads against white instead of
+   vanishing into the dark backdrop. ── */
+.ad-project-modal.is-white-media .ad-pm-stage-img {
+  background: #fff;
+  padding: clamp(10px, 1.5vw, 22px);
+}
+
+.ad-project-modal.is-white-media .ad-pm-thumb {
+  background-color: #fff;
+}
+
+.ad-row-preview.is-white {
+  background-color: #fff;
+}
+
 /* ── Content block — bottom-left ── */
 .ad-pm-content {
   position: absolute;
@@ -886,7 +943,7 @@ body.ad-section-live #art-direction .ad-explore-card,
   letter-spacing: 0.18em;
   cursor: pointer;
   padding: 7px 14px;
-  z-index: 4; /* above the decorative frame (z:3) */
+  z-index: 5; /* above the decorative frame (z:3) and image stage (z:4) */
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   opacity: 0;
