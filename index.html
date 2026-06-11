@@ -2945,10 +2945,60 @@
                 <address class="ct-address">
                     <h2 class="ct-name" id="ct-name-heading">SERGIO AYALA</h2>
                     <p class="ct-role">Senior Art Director · Photographer · UX/UI</p>
-                    <p class="ct-tagline">Let's work together</p>
-                    <p class="ct-location-text">Bogotá, Colombia — Available worldwide</p>
                 </address>
-                <nav class="ct-links" aria-label="Contact Sergio Ayala">
+
+                <!-- Comms-console contact form.
+                     Transport is mocked in contact.js (sendTransmission) until
+                     a real mail endpoint is wired up. -->
+                <form class="ct-form" id="ct-form" novalidate>
+                    <div class="ct-form-head" aria-hidden="true">
+                        <span class="ct-form-title">// SEND_TRANSMISSION</span>
+                        <span class="ct-form-feed">BOGOTÁ ▸ WORLDWIDE<i class="ct-form-dot"></i></span>
+                    </div>
+
+                    <div class="ct-form-grid">
+                        <div class="ct-field">
+                            <label for="ct-f-name">&gt; OPERATOR / NAME</label>
+                            <input id="ct-f-name" name="name" type="text" required
+                                   autocomplete="name" spellcheck="false" maxlength="80"
+                                   placeholder="_" aria-describedby="ct-f-name-err">
+                            <p class="ct-field-err" id="ct-f-name-err"></p>
+                        </div>
+                        <div class="ct-field">
+                            <label for="ct-f-email">&gt; RETURN_SIGNAL / EMAIL</label>
+                            <input id="ct-f-email" name="email" type="email" required
+                                   autocomplete="email" spellcheck="false" maxlength="120"
+                                   placeholder="_" aria-describedby="ct-f-email-err">
+                            <p class="ct-field-err" id="ct-f-email-err"></p>
+                        </div>
+                        <div class="ct-field ct-field--msg">
+                            <label for="ct-f-msg">&gt; MESSAGE / PAYLOAD</label>
+                            <textarea id="ct-f-msg" name="message" required
+                                      maxlength="2000" placeholder="_"
+                                      aria-describedby="ct-f-msg-err"></textarea>
+                            <p class="ct-field-err" id="ct-f-msg-err"></p>
+                        </div>
+                    </div>
+
+                    <div class="ct-form-foot">
+                        <button type="submit" class="ct-send" aria-label="Send message">[ ▸ t r a n s m i t ]</button>
+                        <p class="ct-form-log"><span class="ct-log-text" aria-hidden="true">&gt; AWAITING INPUT</span></p>
+                    </div>
+
+                    <!-- Screen-reader status mirror (typed log is decorative) -->
+                    <span class="ct-sr" role="status" id="ct-sr-status"></span>
+                    <!-- Honeypot — bots fill it, humans never see it -->
+                    <input class="ct-hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                    <div class="ct-form-success" id="ct-form-success" hidden>
+                        <p class="ct-success-title" tabindex="-1">✓ TRANSMISSION RECEIVED</p>
+                        <p class="ct-success-sub">Return signal within 24h — check your inbox.</p>
+                        <button type="button" class="ct-link ct-success-reset"
+                                aria-label="Send another message">[ · n e w &nbsp; t r a n s m i s s i o n · ]</button>
+                    </div>
+                </form>
+
+                <nav class="ct-links ct-links--mini" aria-label="Contact Sergio Ayala directly">
                     <a href="mailto:sergionook@gmail.com" class="ct-link"
                        aria-label="Send Sergio Ayala an email">
                         [ · e m a i l · ]
