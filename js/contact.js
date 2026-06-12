@@ -89,6 +89,7 @@
         cockpitEl.appendChild(svg);
         cockpitSvg = svg;
         updateCockpitAspect();
+        buildFluxFx(svg);
       })
       .catch(err => console.error('[contact] cockpit SVG failed to load:', err));
   }
@@ -97,6 +98,80 @@
      The boot timeline removes these classes in sequence (CSS transitions
      do the smoothing) — works even though the SVG injection is async. */
   if (cockpitEl) cockpitEl.classList.add('ct-lines-teal', 'ct-no-colors');
+
+  /* Flux capacitor FX — energy pulses traveling the three Y-arms into the
+     core ("condensador de flujo", bottom-centre of the dashboard).
+     Coordinates are viewBox user units measured off the artwork. */
+  function buildFluxFx(svg) {
+    const hover  = svg.querySelector('#hover');
+    const parent = hover ? hover.parentNode : svg;
+    const NS     = 'http://www.w3.org/2000/svg';
+
+    const CENTER = [501.5, 958];
+    const KNOBS  = [[457.5, 898], [543.5, 898], [502.5, 1013]];
+
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'ct-flux');
+
+    KNOBS.forEach(([x, y]) => {
+      for (let k = 0; k < 2; k++) {          // two pulses per arm = steady flow
+        const c = document.createElementNS(NS, 'circle');
+        c.setAttribute('class', 'ct-flux-dot');
+        c.setAttribute('cx', x);
+        c.setAttribute('cy', y);
+        c.setAttribute('r', 5);
+        c.style.setProperty('--fx', (CENTER[0] - x) + 'px');
+        c.style.setProperty('--fy', (CENTER[1] - y) + 'px');
+        if (k) c.style.animationDelay = '-0.45s';
+        g.appendChild(c);
+      }
+    });
+
+    const core = document.createElementNS(NS, 'circle');
+    core.setAttribute('class', 'ct-flux-core');
+    core.setAttribute('cx', CENTER[0]);
+    core.setAttribute('cy', CENTER[1]);
+    core.setAttribute('r', 7);
+    g.appendChild(core);
+
+    parent.appendChild(g);
+
+    /* Capsule-style breathing glow in the artwork's own colors:
+       flux capacitor housing + the 1,000,000 power readout */
+    buildGlowFx(svg, parent, 'flux',  415, 815, 185, 209);
+    buildGlowFx(svg, parent, 'power', 588, 890, 315, 102);
+  }
+
+  /* A blurred, screen-blended clone of the artwork clipped to a region —
+     the region appears to emit light in its original colors, breathing
+     like the DNA capsule's glow. */
+  function buildGlowFx(svg, parent, key, x, y, w, h) {
+    const NS = 'http://www.w3.org/2000/svg';
+
+    const clip = document.createElementNS(NS, 'clipPath');
+    clip.setAttribute('id', 'ct-glow-clip-' + key);
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', x);
+    r.setAttribute('y', y);
+    r.setAttribute('width', w);
+    r.setAttribute('height', h);
+    clip.appendChild(r);
+
+    const layer = document.createElementNS(NS, 'g');
+    layer.setAttribute('class', 'ct-glow-layer');
+    layer.setAttribute('clip-path', `url(#ct-glow-clip-${key})`);
+    ['#colors', '#lines'].forEach(sel => {
+      const src = svg.querySelector(sel);
+      if (!src) return;
+      const clone = src.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      layer.appendChild(clone);
+    });
+
+    parent.appendChild(clip);
+    parent.appendChild(layer);
+  }
 
   injectCockpit();
 
@@ -174,14 +249,14 @@
     let lit = null;
 
     /* Glow on the line art under the fingertip — the rect stays invisible */
-    function light(rectEl, cls) {
+    function light(rectEl) {
       if (!lit && cockpitSvg) lit = buildLitLayer(cockpitSvg, key);
       if (!lit) return;
-      lit.layer.classList.remove('ct-lit-on', 'ct-lit--amber', 'ct-lit--cyan');
+      lit.layer.classList.remove('ct-lit-on');
       if (!rectEl) return;
       ['x', 'y', 'width', 'height'].forEach(a =>
         lit.clipRect.setAttribute(a, rectEl.getAttribute(a)));
-      lit.layer.classList.add('ct-lit-on', cls);
+      lit.layer.classList.add('ct-lit-on');
     }
 
     function pointAt(rectId) {
@@ -189,7 +264,7 @@
       const target = section.querySelector('#' + rectId);
       if (!handEl || !tip || !target) return;   // SVGs not injected yet
 
-      light(target, rectId.startsWith('hover_') ? 'ct-lit--cyan' : 'ct-lit--amber');
+      light(target);
 
       const tipBox = tip.getBoundingClientRect();
       const tgtBox = target.getBoundingClientRect();
@@ -214,7 +289,7 @@
     }
 
     const reset = () => {
-      light(null, null);
+      light(null);
       if (handEl) handEl.style.transform = '';
     };
 

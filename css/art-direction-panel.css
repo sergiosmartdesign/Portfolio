@@ -718,6 +718,23 @@ body.ad-section-live #art-direction .ad-explore-card,
   --poster-color: transparent;
   --progress-bar-color: #EE9B00;
   --progress-bar-height: 2px;
+  /* Hidden until the GLB is ready — JS adds .is-loaded after the red deco
+     frame has drawn, so the model always enters on top of the frame. */
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.ad-pm-model.is-loaded {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-pm-model {
+    transform: none;
+    transition: opacity 0.6s ease;
+  }
 }
 
 /* ── White media surface — projects flagged whiteBg in WORKS_DATA.

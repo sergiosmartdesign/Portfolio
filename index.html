@@ -3179,9 +3179,10 @@
 
     <script defer src="js/lib/splitting.min.js"></script>
     <script defer src="js/lib/scroll-out.min.js"></script>
-    <!-- model-viewer web component (vendored) — interactive 3D stage in the
-         art-direction project modal. Draco decoder vendored at js/lib/draco/. -->
-    <script type="module" src="js/lib/model-viewer.min.js"></script>
+    <!-- model-viewer (vendored, ~1MB) is lazy-loaded by art-direction-panel.js
+         on first 3D selection — do NOT load it here: the Draco decoder location
+         (js/lib/draco/) must be configured before the module evaluates, or it
+         locks to Google's CDN which CSP blocks and models never load. -->
     <script defer src="js/art-direction-panel.js"></script>
     <script defer src="js/particle-system.js"></script>
     <script defer src="js/orb-3d.js"></script>

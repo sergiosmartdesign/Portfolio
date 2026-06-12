@@ -205,8 +205,9 @@ const WORKS_DATA = {
       bg: 'images/art-direction/logos/sergio-ayala-retrotech-recycled-tech-furniture-brand-logo-2022.webp'
     }
   ],
-  // 3D entries carry a `model` (GLB) instead of bg/images — the modal stage
-  // renders an interactive <model-viewer> for them. No bg → no hover preview.
+  // 3D entries carry a `model` (GLB) — the modal stage renders an interactive
+  // <model-viewer> for them. An optional `bg` feeds the row hover preview only;
+  // the modal backdrop stays the shared discipline image.
   '3d': [
     {
       num: '01', cat: '3D', title: 'Pikapool', sub: 'Stylized character mashup — interactive 3D model',
@@ -219,6 +220,13 @@ const WORKS_DATA = {
       specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
       tags: ['3D','Character','Real-Time'],
       model: 'images/3D/Tib-web.glb'
+    },
+    {
+      num: '03', cat: '3D', title: 'Throg', sub: 'Creature character sculpt — interactive 3D model',
+      specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
+      tags: ['3D','Character','Real-Time'],
+      bg: 'images/art-direction/3d/sergio-ayala-throg-3d-character-sculpt-2026.png',
+      model: 'images/3D/Throg-web.glb'
     }
   ]
 };
@@ -683,10 +691,19 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
     // The Draco decoder location must be configured before the module runs —
     // the default points at Google's CDN, which this site's CSP blocks.
     _ensureModelViewer() {
-        if (this._mvRequested || customElements.get('model-viewer')) return;
+        const DRACO_PATH = 'js/lib/draco/';
+        const Defined = customElements.get('model-viewer');
+        if (Defined) {
+            // Module already evaluated (e.g. loaded eagerly elsewhere) — the
+            // global-object config was consumed at eval time with the CDN
+            // default; repoint the decoder via the class's static setter.
+            Defined.dracoDecoderLocation = DRACO_PATH;
+            return;
+        }
+        if (this._mvRequested) return;
         this._mvRequested = true;
         self.ModelViewerElement = Object.assign(self.ModelViewerElement || {}, {
-            dracoDecoderLocation: 'js/lib/draco/'
+            dracoDecoderLocation: DRACO_PATH
         });
         const s = document.createElement('script');
         s.type = 'module';
@@ -701,10 +718,30 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         mv.className = 'ad-pm-model';
         mv.setAttribute('src', work.model);
         mv.setAttribute('alt', `${work.title} — interactive 3D model`);
+        mv.setAttribute('loading', 'eager');
         mv.setAttribute('camera-controls', '');
         mv.setAttribute('auto-rotate', '');
+        mv.setAttribute('auto-rotate-delay', '0');
+        mv.setAttribute('rotation-per-second', '32deg');
         mv.setAttribute('shadow-intensity', '1');
         mv.setAttribute('touch-action', 'pan-y');
+
+        // Reveal sequence: the red deco frame draws first; the model fades in
+        // only once the GLB has loaded AND the frame has had time to appear —
+        // so a cached model still enters after the frame, never before.
+        // Fail-open: on 'error' or a stalled load (10s), reveal anyway so the
+        // stage can never be stranded invisible.
+        const frameDrawn = new Promise(r => setTimeout(r, 900));
+        const modelReady = new Promise(r => {
+            mv.addEventListener('load',  r, { once: true });
+            mv.addEventListener('error', e => {
+                console.warn('[ad-3d] model failed to load:', work.model, e.detail);
+                r();
+            }, { once: true });
+            setTimeout(r, 10000);
+        });
+        Promise.all([frameDrawn, modelReady]).then(() => mv.classList.add('is-loaded'));
+
         this.modalStage.classList.add('has-model');
         this.modalStage.appendChild(mv);
     }
