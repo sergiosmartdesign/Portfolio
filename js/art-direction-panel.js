@@ -263,9 +263,9 @@ class ArtWorksPanel {
 
         this.table         = this.panel.querySelector('.ad-works-table');
         this.discName      = this.panel.querySelector('.ad-works-disc-name');
-        this.exploreCard   = document.querySelector('#art-direction .ad-explore-card');
         this.section       = document.getElementById('art-direction');
-this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-items li[data-discipline]')];
+        this.navSvg        = document.querySelector('#art-direction .ad-explore-card .ad-nav-svg');
+        this.navItems      = [...document.querySelectorAll('#art-direction .ad-explore-card .adnav-cat[data-discipline]')];
 
         this.activeDiscipline = null;
         this._transitioning   = false;
@@ -274,10 +274,17 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
     }
 
     init() {
-        this.listItems.forEach(li => {
-            li.addEventListener('click', () => {
+        this.navItems.forEach(item => {
+            const choose = () => {
                 this._dismissIntro();
-                this.selectDiscipline(li.dataset.discipline);
+                this.selectDiscipline(item.dataset.discipline);
+            };
+            item.addEventListener('click', choose);
+            item.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    choose();
+                }
             });
         });
 
@@ -307,14 +314,19 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         if (WORKS_DATA[key].some(w => w.model)) this._ensureModelViewer();
 
         if (!immediate) {
-            this.listItems.forEach(li =>
-                li.classList.toggle('is-active', li.dataset.discipline === key)
-            );
+            // First real selection ends the nav card's attract cycle — the
+            // amber highlight becomes a pure active-state indicator.
+            this.navSvg?.classList.add('has-active');
+            this.navItems.forEach(item => {
+                const active = item.dataset.discipline === key;
+                item.classList.toggle('is-active', active);
+                item.setAttribute('aria-pressed', String(active));
+            });
         }
 
-        const activeSpan = this.listItems
-            .find(li => li.dataset.discipline === key)
-            ?.querySelector('.ad-text-link');
+        const activeSpan = this.navItems
+            .find(item => item.dataset.discipline === key)
+            ?.querySelector('.adnav-label');
 
         const label = `· ${DISCIPLINE_LABELS[key] ?? (key.charAt(0).toUpperCase() + key.slice(1))} ·`;
 
@@ -322,7 +334,6 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
             this._renderRows(key);
             this._animateRowsIn();
             if (this.discName) this.discName.textContent = label;
-            this._showExploreCard(true);
             return;
         }
 
@@ -350,14 +361,6 @@ this.listItems     = [...document.querySelectorAll('#art-direction .ad-list-item
         });
 
         if (this.discName) this._scrambleText(this.discName, null, label);
-        this._showExploreCard();
-    }
-
-    _showExploreCard(immediate = false) {
-        if (!this.exploreCard) return;
-        if (immediate) return; // initial entrance handled by body.ad-section-live CSS
-        this.exploreCard.classList.remove('is-visible');
-        setTimeout(() => this.exploreCard.classList.add('is-visible'), 200);
     }
 
     // ── Scramble animation ────────────────────────────────────────────────────

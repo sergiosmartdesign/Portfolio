@@ -142,24 +142,53 @@
     buildGlowFx(svg, parent, 'power', 588, 890, 315, 102);
   }
 
-  /* A blurred, screen-blended clone of the artwork clipped to a region —
+  /* A soft-edged luminance mask: a blurred white rect. Used instead of a
+     clipPath because clipping is applied AFTER CSS filters — a hard clip
+     rect slices the blurred glow off at its edges. The mask's own blur
+     makes the region dissolve out like real emitted light.
+     Returns the mask rect so callers can (re)position the region. */
+  function buildSoftMask(parent, id, feather) {
+    const NS = 'http://www.w3.org/2000/svg';
+
+    const filt = document.createElementNS(NS, 'filter');
+    filt.setAttribute('id', id + '-soft');
+    /* widen the filter region so the feather isn't clipped by its own box */
+    filt.setAttribute('x', '-40%');
+    filt.setAttribute('y', '-40%');
+    filt.setAttribute('width', '180%');
+    filt.setAttribute('height', '180%');
+    const blur = document.createElementNS(NS, 'feGaussianBlur');
+    blur.setAttribute('stdDeviation', feather);
+    filt.appendChild(blur);
+
+    const mask = document.createElementNS(NS, 'mask');
+    mask.setAttribute('id', id);
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('fill', '#fff');
+    rect.setAttribute('filter', `url(#${id}-soft)`);
+    mask.appendChild(rect);
+
+    parent.appendChild(filt);
+    parent.appendChild(mask);
+    return rect;
+  }
+
+  /* A blurred, screen-blended clone of the artwork limited to a region —
      the region appears to emit light in its original colors, breathing
-     like the DNA capsule's glow. */
+     like the DNA capsule's glow. Bounded by a soft mask so the glow
+     dissolves at the edges. */
   function buildGlowFx(svg, parent, key, x, y, w, h) {
     const NS = 'http://www.w3.org/2000/svg';
 
-    const clip = document.createElementNS(NS, 'clipPath');
-    clip.setAttribute('id', 'ct-glow-clip-' + key);
-    const r = document.createElementNS(NS, 'rect');
-    r.setAttribute('x', x);
-    r.setAttribute('y', y);
-    r.setAttribute('width', w);
-    r.setAttribute('height', h);
-    clip.appendChild(r);
+    const maskRect = buildSoftMask(parent, 'ct-glow-mask-' + key, 14);
+    maskRect.setAttribute('x', x);
+    maskRect.setAttribute('y', y);
+    maskRect.setAttribute('width', w);
+    maskRect.setAttribute('height', h);
 
     const layer = document.createElementNS(NS, 'g');
     layer.setAttribute('class', 'ct-glow-layer');
-    layer.setAttribute('clip-path', `url(#ct-glow-clip-${key})`);
+    layer.setAttribute('mask', `url(#ct-glow-mask-${key})`);
     ['#colors', '#lines'].forEach(sel => {
       const src = svg.querySelector(sel);
       if (!src) return;
@@ -169,7 +198,6 @@
       layer.appendChild(clone);
     });
 
-    parent.appendChild(clip);
     parent.appendChild(layer);
   }
 
@@ -216,33 +244,30 @@
      hand so its fingertip anchor lands on the rect; reset() clears the inline
      transform so the CSS parked state slides the hand back off-screen. */
   /* Glow layer: a clone of the cockpit's #lines group, recolored by CSS and
-     clipped to the active hover rect — so exactly the line art inside that
-     rect glows, independent of how the source paths are grouped. The clip
-     rect copies the hover rect's attributes (same user-space coordinates,
-     same parent), so it needs no recomputation on resize. */
+     soft-masked to the active hover rect — so the line art inside that
+     area glows and dissolves out at the edges, independent of how the
+     source paths are grouped. The mask rect copies the hover rect's
+     attributes (same user-space coordinates, same parent), so it needs no
+     recomputation on resize. */
   function buildLitLayer(svg, key) {
     const lines = svg.querySelector('#lines');
     const hover = svg.querySelector('#hover');
     if (!lines || !hover || !hover.parentNode) return null;
     const NS = 'http://www.w3.org/2000/svg';
+    const parent = hover.parentNode;
 
-    const clip = document.createElementNS(NS, 'clipPath');
-    clip.setAttribute('id', 'ct-lit-clip-' + key);
-    const clipRect = document.createElementNS(NS, 'rect');
-    clip.appendChild(clipRect);
+    const maskRect = buildSoftMask(parent, 'ct-lit-mask-' + key, 10);
 
     const layer = document.createElementNS(NS, 'g');
     layer.setAttribute('class', 'ct-lit-layer');
-    layer.setAttribute('clip-path', `url(#ct-lit-clip-${key})`);
+    layer.setAttribute('mask', `url(#ct-lit-mask-${key})`);
     const clone = lines.cloneNode(true);
     clone.removeAttribute('id');
     clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
     layer.appendChild(clone);
 
-    const parent = hover.parentNode;
-    parent.appendChild(clip);
     parent.appendChild(layer);
-    return { layer, clipRect };
+    return { layer, maskRect };
   }
 
   function makeHandPointer(handEl, tipSelector, key) {
@@ -255,7 +280,7 @@
       lit.layer.classList.remove('ct-lit-on');
       if (!rectEl) return;
       ['x', 'y', 'width', 'height'].forEach(a =>
-        lit.clipRect.setAttribute(a, rectEl.getAttribute(a)));
+        lit.maskRect.setAttribute(a, rectEl.getAttribute(a)));
       lit.layer.classList.add('ct-lit-on');
     }
 
@@ -528,14 +553,23 @@
       glitchIn(tl, '.ct-mountains--near', '+=0.05', { withY: true });
       glitchIn(tl, '.ct-sun',   '+=0.08', { withScaleY: true });
       glitchIn(tl, '.ct-ground','+=0.08', { withY: true });
-      glitchIn(tl, '.ct-cockpit', '+=0.10');
+
+      // Cockpit entrance overlaps the landscape build: the glitch runs in a
+      // sub-timeline so it can sit at an absolute position while the
+      // background tweens keep appending sequentially after it.
+      const COCKPIT_AT = 0.45;
+      const cockpitTl = gsap.timeline({ defaults: { ease: 'none' } });
+      glitchIn(cockpitTl, '.ct-cockpit', 0);
+      tl.add(cockpitTl, COCKPIT_AT);
 
       // Cockpit build: wireframe glitched in above — now fade the color art
-      // in, then let the lines settle back to their original colors.
+      // in, then let the lines settle back to their original colors, all
+      // while the landscape finishes building behind the windshield.
+      const cockpitEnd = COCKPIT_AT + cockpitTl.duration();
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-no-colors'),
-              null, '+=0.35');
+              null, cockpitEnd + 0.35);
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-lines-teal'),
-              null, '+=1.3');
+              null, cockpitEnd + 0.35 + 1.3);
 
       // Hide title letters before the content fades in so they don't flash.
       // Scoped to the h2 — the button's chars are handled via autoAlpha on

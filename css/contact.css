@@ -436,8 +436,9 @@
 
 /* ── Dashboard hotspot glow — lights the line art under the pointing finger ─
    The #hover rects stay invisible. contact.js keeps a recolored clone of the
-   #lines group clipped to the pointed rect (.ct-lit-layer), so exactly the
-   line art inside that area glows — independent of how paths are grouped.
+   #lines group soft-masked to the pointed rect (.ct-lit-layer), so the line
+   art inside that area glows and dissolves at the edges — independent of how
+   paths are grouped.
    Left button column → amber, right screen cluster → cyan. */
 .ct-lit-layer {
   display: none;
@@ -506,8 +507,8 @@
 }
 
 /* ── Breathing glow in the artwork's own colors (flux device + 1,000,000) ──
-   A blurred clone of the art, screen-blended over itself and clipped to the
-   region, glows exactly like the DNA capsule's breathing halo. */
+   A blurred clone of the art, screen-blended over itself and soft-masked to
+   the region, glows exactly like the DNA capsule's breathing halo. */
 .ct-glow-layer {
   pointer-events: none;
   mix-blend-mode: screen;

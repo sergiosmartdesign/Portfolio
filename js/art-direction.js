@@ -5,7 +5,7 @@
  *   • Scroll-driven letter reveal (clip-path per .art-cell)
  *   • Nav-triggered timed animation (App.playArtEntranceAnimation)
  *   • Background image glitch entrance (.art-bg-image)
- *   • Ad list character scramble (.ad-list / .ad-text-link)
+ *   • Discipline nav scramble (.ad-explore-card / .adnav-label)
  *
  * Subsystems communicate via CustomEvent('artEntrancePlay') dispatched on
  * the section element — no monkey-patching of App.playArtEntranceAnimation.
@@ -44,7 +44,7 @@
     });
 
     // Timed animation — used when nav button is clicked.
-    // Dispatches 'artEntrancePlay' so bg / ad-list subsystems react independently.
+    // Dispatches 'artEntrancePlay' so bg / nav subsystems react independently.
     App.playArtEntranceAnimation = () => {
       playing = true;
       cells.forEach(cell => {
@@ -119,13 +119,16 @@
       }, { threshold: 0 }).observe(section);
     }
 
-    // ── Ad list scramble ───────────────────────────────────────────────────────
+    // ── Discipline nav scramble ────────────────────────────────────────────────
+    // The nav card (.ad-explore-card inline SVG) replaced the old .ad-list rail.
+    // This block also owns the body.ad-section-live gate that drives the skills
+    // bar, intro frame and nav card entrances.
 
-    const adList      = section.querySelector('.ad-list');
-    const adListLinks = [...section.querySelectorAll('.ad-text-link')];
+    const navCard   = section.querySelector('.ad-explore-card');
+    const navLabels = [...section.querySelectorAll('.ad-explore-card .adnav-label[data-content]')];
 
-    if (adList && adListLinks.length) {
-      let adListDone = false;
+    if (navCard && navLabels.length) {
+      let sectionLive = false;
       const FRAME_MS = 45;
 
       const scrambleItem = (el, delay) => {
@@ -155,11 +158,10 @@
         }, delay);
       };
 
-      const triggerAdList = () => {
-        adListDone = true;
-        adList.classList.add('ad-list-ready');
+      const triggerSectionLive = () => {
+        sectionLive = true;
         document.body.classList.add('ad-section-live');
-        adListLinks.forEach((link, i) => scrambleItem(link, i * 120));
+        navLabels.forEach((label, i) => scrambleItem(label, i * 120));
         setTimeout(() => {
           section.classList.add('ad-intro-animate');
           const introHeader = section.querySelector('.iad-header[data-content]');
@@ -169,36 +171,35 @@
         }, 2000);
       };
 
-      const resetAdList = () => {
-        adListDone = false;
-        adList.classList.remove('ad-list-ready');
+      const resetSectionLive = () => {
+        sectionLive = false;
         document.body.classList.remove('ad-section-live');
         section.classList.remove('ad-intro-animate');
         section.classList.add('ad-intro-active');
-        adListLinks.forEach(link => { link.textContent = link.getAttribute('data-content'); });
+        navLabels.forEach(label => { label.textContent = label.getAttribute('data-content'); });
         ['.iad-header[data-content]', '.iad-footer[data-content]'].forEach(sel => {
           const el = section.querySelector(sel);
           if (el) el.textContent = el.getAttribute('data-content');
         });
       };
 
-      // Nav button — letters play first, then list scrambles after they finish
+      // Nav button — letters play first, then nav card scrambles after they finish
       const lettersDone = (TOTAL - 1) * 120 + 400;
       section.addEventListener('artEntrancePlay', () => {
-        resetAdList();
-        setTimeout(triggerAdList, lettersDone);
+        resetSectionLive();
+        setTimeout(triggerSectionLive, lettersDone);
       });
 
       // Scroll path — fire once letters are fully revealed (section top at viewport top)
       window.addEventListener('scroll', () => {
-        if (adListDone) return;
+        if (sectionLive) return;
         const rect = section.getBoundingClientRect();
-        if ((window.innerHeight - rect.top) / window.innerHeight >= 1) triggerAdList();
+        if ((window.innerHeight - rect.top) / window.innerHeight >= 1) triggerSectionLive();
       }, { passive: true });
 
       // Reset on section exit so the sequence replays on next visit
       new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (!entry.isIntersecting) resetAdList(); });
+        entries.forEach(entry => { if (!entry.isIntersecting) resetSectionLive(); });
       }, { threshold: 0 }).observe(section);
     }
   }
