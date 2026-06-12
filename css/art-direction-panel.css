@@ -143,6 +143,63 @@ body.ad-section-live #art-direction .ad-intro-svg #animate1 {
   80%  { opacity: 1; }
   100% { opacity: 1; }
 }
+/* adfrm-arrow — HUD-style down indicator pointing at the DISCIPLINES nav card.
+   Visible only while the intro is active (ad-intro-active drops on first
+   discipline selection); enters with the other frame internals (~2.8s), then
+   the three chevrons pulse top-to-bottom — a data-stream "descend" cue. */
+#art-direction .ad-intro-svg #adfrm-arrow {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg #adfrm-arrow {
+  animation: adfrm-arrow-in 0.6s ease-out 2.8s forwards;
+}
+
+@keyframes adfrm-arrow-in {
+  0%   { opacity: 0; }
+  35%  { opacity: 0.9; }
+  45%  { opacity: 0.1; }
+  60%  { opacity: 1; }
+  70%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+#art-direction .ad-intro-svg .adfrm-chev {
+  opacity: 0.15;
+}
+
+body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-0 {
+  animation: adfrm-chev-seq 1.4s linear 3.40s infinite;
+}
+body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-1 {
+  animation: adfrm-chev-seq 1.4s linear 3.58s infinite;
+}
+body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-2 {
+  animation: adfrm-chev-seq 1.4s linear 3.76s infinite;
+}
+
+@keyframes adfrm-chev-seq {
+  0%   { opacity: 0.15; }
+  16%  { opacity: 1; }
+  42%  { opacity: 1; }
+  46%  { opacity: 0.3; }
+  50%  { opacity: 0.9; }
+  68%  { opacity: 0.15; }
+  100% { opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg #adfrm-arrow {
+    animation: none;
+    opacity: 1;
+  }
+  #art-direction .ad-intro-svg .adfrm-chev {
+    opacity: 0.8;
+    animation: none !important;
+  }
+}
+
 @keyframes adfrm-binary-stream {
   0%,100% { opacity: 1; }
   8%      { opacity: 0.5; }
@@ -199,8 +256,8 @@ body.ad-section-live #art-direction .ad-skills-bar {
 
 #art-direction .ad-intro-text .iad-footer {
   font-family: 'Share Tech Mono', 'Courier New', monospace;
-  font-size: clamp(11px, 0.95vw, 14px);
-  color: rgba(238, 155, 0, 0.65);
+  font-size: clamp(15px, 1.4vw, 20px);
+  color: rgba(238, 155, 0, 0.75);
   letter-spacing: 0.06em;
 }
 

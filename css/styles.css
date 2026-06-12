@@ -2987,7 +2987,7 @@ img#id1svg {
   inset: 0;
   background-image: url('../images/sergio-ayala-robot-dark-teal-duotone-art-direction-section.webp');
   background-size: cover;
-  background-position: center;
+  background-position: calc(50% - 40px) calc(50% + 40px);
   background-repeat: no-repeat;
   z-index: 0;
   opacity: 0;

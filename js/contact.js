@@ -90,14 +90,18 @@
         cockpitSvg = svg;
         updateCockpitAspect();
         buildFluxFx(svg);
+        initHoloBlink(svg);
       })
       .catch(err => console.error('[contact] cockpit SVG failed to load:', err));
   }
 
-  /* Entrance start state: teal glowing wireframe, color art hidden.
+  /* Entrance start state: only the holo windshield beam (ct-hide-lines +
+     ct-no-colors hide the artwork), then teal glowing wireframe, then color.
      The boot timeline removes these classes in sequence (CSS transitions
      do the smoothing) — works even though the SVG injection is async. */
-  if (cockpitEl) cockpitEl.classList.add('ct-lines-teal', 'ct-no-colors');
+  if (cockpitEl) {
+    cockpitEl.classList.add('ct-lines-teal', 'ct-no-colors', 'ct-hide-lines');
+  }
 
   /* Flux capacitor FX — energy pulses traveling the three Y-arms into the
      core ("condensador de flujo", bottom-centre of the dashboard).
@@ -139,7 +143,8 @@
     /* Capsule-style breathing glow in the artwork's own colors:
        flux capacitor housing + the 1,000,000 power readout */
     buildGlowFx(svg, parent, 'flux',  415, 815, 185, 209);
-    buildGlowFx(svg, parent, 'power', 588, 890, 315, 102);
+    /* Power readout: only the 1,000,000 digits glow — no region glow */
+    buildDigitGlow(svg, parent, 588, 890, 315, 102, 'var(--ct-star-color)');
   }
 
   /* A soft-edged luminance mask: a blurred white rect. Used instead of a
@@ -199,6 +204,80 @@
     });
 
     parent.appendChild(layer);
+  }
+
+  /* Power-readout digits — no glowing region: only the number glyphs glow.
+     Every small near-black shape whose box sits inside the readout area is
+     cloned (a crisp lit copy + a blurred bloom copy), recolored and
+     screen-blended, so the digits read as a lit display with a halo while
+     the panel around them stays dark. Boxes are measured in the parent's
+     user space (via CTM) so nested group transforms can't misplace clones. */
+  function buildDigitGlow(svg, parent, x, y, w, h, color) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const ref = parent.getScreenCTM();
+    if (!ref) return;
+    const toParent = ref.inverse();
+    const maxArea  = w * h * 0.65;        /* bigger = panel background, skip */
+
+    const glyphs = document.createElementNS(NS, 'g');
+
+    ['#colors', '#lines'].forEach(sel => {
+      const src = svg.querySelector(sel);
+      if (!src) return;
+      src.querySelectorAll('path, polygon, rect, circle, polyline').forEach(el => {
+        let b, m;
+        try { b = el.getBBox(); m = toParent.multiply(el.getScreenCTM()); }
+        catch (e) { return; }
+        const p1 = new DOMPoint(b.x, b.y).matrixTransform(m);
+        const p2 = new DOMPoint(b.x + b.width, b.y + b.height).matrixTransform(m);
+        const bx = Math.min(p1.x, p2.x), by = Math.min(p1.y, p2.y);
+        const bw = Math.abs(p2.x - p1.x), bh = Math.abs(p2.y - p1.y);
+        if (bx < x || by < y || bx + bw > x + w || by + bh > y + h) return;
+        if (bw * bh > maxArea) return;
+        const f = /rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)/.exec(getComputedStyle(el).fill);
+        if (!f) return;
+        if (0.2126 * f[1] + 0.7152 * f[2] + 0.0722 * f[3] >= 64) return;
+
+        const clone = el.cloneNode(false);
+        clone.removeAttribute('id');
+        clone.removeAttribute('class');
+        clone.setAttribute('transform',
+          `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.e} ${m.f})`);
+        clone.style.fill = color;
+        glyphs.appendChild(clone);
+      });
+    });
+
+    if (!glyphs.childNodes.length) return;
+
+    const layer = document.createElementNS(NS, 'g');
+    layer.setAttribute('class', 'ct-glow-layer ct-glow-layer--digits');
+    const bloom = glyphs.cloneNode(true);
+    bloom.setAttribute('class', 'ct-glow-bloom');
+    layer.appendChild(bloom);
+    layer.appendChild(glyphs);
+    parent.appendChild(layer);
+  }
+
+  /* Holo windshield beam — flickers once every 8, 10 or 15 seconds (picked
+     at random each cycle). The blink itself is a short CSS steps() flicker;
+     skipped while the section is off-screen or under reduced motion, but
+     the clock keeps ticking so blinks stay aperiodic. */
+  function initHoloBlink(svg) {
+    const holo = svg.querySelector('#holo');
+    if (!holo) return;
+    const DELAYS = [8000, 10000, 15000];
+    holo.addEventListener('animationend', () =>
+      holo.classList.remove('ct-holo-blink'));
+    (function schedule() {
+      const wait = DELAYS[Math.floor(Math.random() * DELAYS.length)];
+      setTimeout(() => {
+        const skip = section.classList.contains('ct-paused') ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!skip) holo.classList.add('ct-holo-blink');
+        schedule();
+      }, wait);
+    })();
   }
 
   injectCockpit();
@@ -554,22 +633,26 @@
       glitchIn(tl, '.ct-sun',   '+=0.08', { withScaleY: true });
       glitchIn(tl, '.ct-ground','+=0.08', { withY: true });
 
-      // Cockpit entrance overlaps the landscape build: the glitch runs in a
-      // sub-timeline so it can sit at an absolute position while the
-      // background tweens keep appending sequentially after it.
-      const COCKPIT_AT = 0.45;
-      const cockpitTl = gsap.timeline({ defaults: { ease: 'none' } });
-      glitchIn(cockpitTl, '.ct-cockpit', 0);
-      tl.add(cockpitTl, COCKPIT_AT);
+      // Cockpit entrance overlaps the landscape build and leads with the
+      // holo windshield beam: the container glitches in while #lines and
+      // #colors are still class-hidden, so only #holo shows. The glitch
+      // runs in a sub-timeline so it can sit at an absolute position while
+      // the background tweens keep appending sequentially after it.
+      const HOLO_AT = 0.1;
+      const holoTl = gsap.timeline({ defaults: { ease: 'none' } });
+      glitchIn(holoTl, '.ct-cockpit', 0);
+      tl.add(holoTl, HOLO_AT);
 
-      // Cockpit build: wireframe glitched in above — now fade the color art
-      // in, then let the lines settle back to their original colors, all
-      // while the landscape finishes building behind the windshield.
-      const cockpitEnd = COCKPIT_AT + cockpitTl.duration();
+      // Cockpit build: holo beam above — then the teal wireframe fades in,
+      // the color art underneath, and finally the lines settle back to
+      // their original colors, all while the landscape finishes behind.
+      const holoEnd = HOLO_AT + holoTl.duration();
+      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-lines'),
+              null, holoEnd + 0.3);
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-no-colors'),
-              null, cockpitEnd + 0.35);
+              null, holoEnd + 1.3);
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-lines-teal'),
-              null, cockpitEnd + 0.35 + 1.3);
+              null, holoEnd + 2.6);
 
       // Hide title letters before the content fades in so they don't flash.
       // Scoped to the h2 — the button's chars are handled via autoAlpha on

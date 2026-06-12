@@ -401,11 +401,16 @@
 }
 
 /* ── Cockpit entrance states (classes flipped by the boot timeline) ────────
-   1. .ct-lines-teal + .ct-no-colors  → teal glowing wireframe only
-   2. remove .ct-no-colors            → color art fades in underneath
-   3. remove .ct-lines-teal           → lines transition back to source colors */
+   1. .ct-hide-lines + .ct-no-colors  → only the #holo windshield beam shows
+   2. remove .ct-hide-lines           → teal glowing wireframe fades in
+   3. remove .ct-no-colors            → color art fades in underneath
+   4. remove .ct-lines-teal           → lines transition back to source colors */
 .ct-cockpit svg #lines path {
   transition: fill 1s ease;
+}
+
+.ct-cockpit.ct-hide-lines svg #lines {
+  opacity: 0;
 }
 
 .ct-cockpit.ct-lines-teal svg #lines path {
@@ -417,7 +422,7 @@
   filter:
     drop-shadow(0 0 0 rgba(148, 210, 189, 0))
     drop-shadow(0 0 0 rgba(148, 210, 189, 0));
-  transition: filter 1s ease;
+  transition: filter 1s ease, opacity 0.8s ease;
 }
 
 .ct-cockpit.ct-lines-teal svg #lines {
@@ -432,6 +437,24 @@
 
 .ct-cockpit.ct-no-colors svg #colors {
   opacity: 0;
+}
+
+/* ── Holo windshield beam (blue-gradient #holo polygon) ────────────────────
+   Random flicker: contact.js adds .ct-holo-blink every 8/10/15 s at random;
+   the class is removed on animationend so it can re-trigger. */
+#holo.ct-holo-blink {
+  animation: ct-holo-flicker 0.7s steps(1) both;
+}
+
+@keyframes ct-holo-flicker {
+  0%   { opacity: 0.15; }
+  12%  { opacity: 1; }
+  22%  { opacity: 0.3; }
+  38%  { opacity: 1; }
+  52%  { opacity: 0.1; }
+  64%  { opacity: 0.85; }
+  78%  { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 
 /* ── Dashboard hotspot glow — lights the line art under the pointing finger ─
@@ -514,6 +537,17 @@
   mix-blend-mode: screen;
   filter: blur(7px) saturate(1.5) brightness(1.7);
   animation: ct-glow-breathe 3.4s ease-in-out infinite;
+}
+
+/* Digit glow (1,000,000 readout) — the layer holds only the number glyphs:
+   a crisp lit copy over a blurred bloom copy. No region blur, so nothing
+   rectangular glows; the panel around the digits stays dark. */
+.ct-glow-layer--digits {
+  filter: saturate(1.4) brightness(1.5);
+}
+
+.ct-glow-layer--digits .ct-glow-bloom {
+  filter: blur(6px);
 }
 
 @keyframes ct-glow-breathe {
@@ -823,8 +857,8 @@
 .ct-form {
   position: relative;
   width: 100%;
-  min-width: min(620px, 88vw);
-  padding: clamp(1rem, 2.5vmin, 1.7rem) clamp(1.1rem, 3vmin, 2rem);
+  min-width: min(700px, 90vw);
+  padding: clamp(1.2rem, 3vmin, 2.1rem) clamp(1.3rem, 3.5vmin, 2.4rem);
   pointer-events: all;
   text-align: left;
   background: linear-gradient(to bottom, rgba(0, 18, 25, 0.78), rgba(0, 9, 18, 0.68));
@@ -897,7 +931,7 @@
 .ct-field label {
   display: block;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.7rem, 0.95vw, 0.8rem);
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
   letter-spacing: 0.08em;
   color: rgba(148, 210, 189, 0.75);
   margin-bottom: 0.35em;
@@ -908,7 +942,7 @@
   display: block;
   width: 100%;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
   color: var(--ct-star-color);
   caret-color: var(--ct-sun-warm);
   background: rgba(0, 0, 0, 0.38);
@@ -922,7 +956,7 @@
 }
 
 .ct-field textarea {
-  height: clamp(80px, 15vmin, 140px);
+  height: clamp(96px, 16vmin, 160px);
   resize: none;
 }
 
@@ -969,12 +1003,12 @@
   overflow: hidden;
   cursor: pointer;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
   letter-spacing: 0.06em;
   color: var(--ct-sun-warm);
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(238, 155, 0, 0.45);
-  padding: 0.55em 1.4em;
+  padding: 0.6em 1.6em;
   transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -1124,8 +1158,8 @@
 }
 
 .ct-links--mini .ct-link {
-  font-size: clamp(0.7rem, 1vw, 0.85rem);
-  padding: 0.45em 1em;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  padding: 0.6em 1.3em;
   border-color: rgba(238, 155, 0, 0.3);
   background: rgba(0, 0, 0, 0.28);
   white-space: nowrap;

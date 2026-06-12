@@ -1377,6 +1377,17 @@
                     </g>
                   </g>
                 </g>
+                <!-- Down indicator — points at the DISCIPLINES nav card below the frame;
+                     HUD target brackets + dashed feed line + chevron cascade (waterfall
+                     pulse driven by .adfrm-chev-N CSS). Intro state only. -->
+                <g id="adfrm-arrow">
+                  <line class="adfrm-1" x1="674" y1="462" x2="674" y2="490"/>
+                  <polyline class="adfrm-2" points="646 498 634 498 634 596 646 596"/>
+                  <polyline class="adfrm-2" points="702 498 714 498 714 596 702 596"/>
+                  <polygon class="adfrm-6 adfrm-chev adfrm-chev-0" points="652 502 674 518 696 502 696 512 674 528 652 512"/>
+                  <polygon class="adfrm-6 adfrm-chev adfrm-chev-1" points="652 528 674 544 696 528 696 538 674 554 652 538"/>
+                  <polygon class="adfrm-6 adfrm-chev adfrm-chev-2" points="652 554 674 570 696 554 696 564 674 580 652 564"/>
+                </g>
                 <rect class="adfrm-2" x="36.4" y="42.6" width="79.2" height="20.3"/>
               </g>
             </svg>
@@ -1434,38 +1445,38 @@
                   <!-- Header -->
                   <g class="adnav-block adnav-block-0">
                     <rect class="adnav-hl adnav-hl-0" x="2" y="8" width="524" height="50" fill="#EE9B00" clip-path="url(#adnav-clip)"/>
-                    <text x="30" y="40" font-family="'Courier New', monospace" font-size="26" fill="#EE9B00" letter-spacing="1">[ · DISCIPLINES · ]</text>
+                    <text x="30" y="42" font-family="'Courier New', monospace" font-size="32" fill="#EE9B00" letter-spacing="1">[ · DISCIPLINES · ]</text>
                   </g>
                   <line x1="14" y1="54" x2="530" y2="54" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
 
                   <!-- Category rows — the hl rect doubles as the full-band hit area -->
                   <g class="adnav-cat adnav-block adnav-block-1" data-discipline="identity" role="button" tabindex="0" aria-label="Show identity projects">
                     <rect class="adnav-hl adnav-hl-1" x="2" y="62" width="524" height="62" fill="#EE9B00" clip-path="url(#adnav-clip)"/>
-                    <text class="adnav-label" data-content="· 01 · IDENTITY" x="30" y="86" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 01 · IDENTITY</text>
-                    <text class="adnav-sub" x="30" y="108" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">logos · brand systems · stationery</text>
+                    <text class="adnav-label" data-content="· 01 · IDENTITY" x="30" y="88" font-family="'Courier New', monospace" font-size="30" fill="#EE9B00">· 01 · IDENTITY</text>
+                    <text class="adnav-sub" x="30" y="110" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" opacity="0.55">logos · brand systems · stationery</text>
                   </g>
 
                   <g class="adnav-cat adnav-block adnav-block-2" data-discipline="web" role="button" tabindex="0" aria-label="Show web projects">
                     <rect class="adnav-hl adnav-hl-2" x="2" y="126" width="524" height="58" fill="#EE9B00" clip-path="url(#adnav-clip)"/>
-                    <text class="adnav-label" data-content="· 02 · WEB" x="30" y="146" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 02 · WEB</text>
-                    <text class="adnav-sub" x="30" y="168" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">landings · virtual events · ux/ui</text>
+                    <text class="adnav-label" data-content="· 02 · WEB" x="30" y="148" font-family="'Courier New', monospace" font-size="30" fill="#EE9B00">· 02 · WEB</text>
+                    <text class="adnav-sub" x="30" y="170" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" opacity="0.55">landings · virtual events · ux/ui</text>
                   </g>
 
                   <g class="adnav-cat adnav-block adnav-block-3" data-discipline="editorial" role="button" tabindex="0" aria-label="Show editorial projects">
                     <rect class="adnav-hl adnav-hl-3" x="2" y="186" width="524" height="58" fill="#EE9B00" clip-path="url(#adnav-clip)"/>
-                    <text class="adnav-label" data-content="· 03 · EDITORIAL" x="30" y="206" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 03 · EDITORIAL</text>
-                    <text class="adnav-sub" x="30" y="228" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">catalogs · print · large format</text>
+                    <text class="adnav-label" data-content="· 03 · EDITORIAL" x="30" y="208" font-family="'Courier New', monospace" font-size="30" fill="#EE9B00">· 03 · EDITORIAL</text>
+                    <text class="adnav-sub" x="30" y="230" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" opacity="0.55">catalogs · print · large format</text>
                   </g>
 
                   <g class="adnav-cat adnav-block adnav-block-4" data-discipline="3d" role="button" tabindex="0" aria-label="Show 3D projects">
                     <rect class="adnav-hl adnav-hl-4" x="2" y="246" width="524" height="58" fill="#EE9B00" clip-path="url(#adnav-clip)"/>
-                    <text class="adnav-label" data-content="· 04 · 3D" x="30" y="266" font-family="'Courier New', monospace" font-size="24" fill="#EE9B00">· 04 · 3D</text>
-                    <text class="adnav-sub" x="30" y="288" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.55">characters · interactive models</text>
+                    <text class="adnav-label" data-content="· 04 · 3D" x="30" y="268" font-family="'Courier New', monospace" font-size="30" fill="#EE9B00">· 04 · 3D</text>
+                    <text class="adnav-sub" x="30" y="290" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" opacity="0.55">characters · interactive models</text>
                   </g>
 
                   <!-- Bottom divider + footer -->
                   <line x1="14" y1="316" x2="530" y2="316" stroke="#EE9B00" stroke-width="1" opacity="0.35"/>
-                  <text x="30" y="354" font-family="'Courier New', monospace" font-size="19" fill="#EE9B00" opacity="0.7">· click a category to load its projects ·</text>
+                  <text x="30" y="354" font-family="'Courier New', monospace" font-size="22" fill="#EE9B00" opacity="0.7">· click a category to load projects ·</text>
 
                   <!-- Border with glow + accents -->
                   <path d="M10.47,239.39c0,36.11,0,72.21,0,108.12,0,7.59-9.47,14.36-9.47,21.95v25.23s529.07,0,529.07,0l15.34-16-.13-.21V1c-177.56,0-355.11,0-532.67,0L1,21.32v204.24l9.47,13.83Z" fill="none" stroke="#EE9B00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" filter="url(#adnav-border-glow)"/>
