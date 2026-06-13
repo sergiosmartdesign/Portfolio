@@ -490,6 +490,20 @@ class NavigationManager {
             return;
           }
 
+          if (sectionId === 'blog') {
+            // Offset by the fixed header so the masthead's top edge kisses the
+            // bottom of the menu bar instead of hiding behind it.
+            e.preventDefault();
+            const blogTarget = document.getElementById('blog');
+            if (blogTarget) {
+              const headerH = this.header ? this.header.offsetHeight : 0;
+              window.scrollTo(0, blogTarget.getBoundingClientRect().top + window.scrollY - headerH);
+            }
+            this.setActiveButton('blog');
+            history.pushState(null, '', '#blog');
+            return;
+          }
+
           // General rule: all other sections scroll instantly to their top
           // and activate entrance animations through IntersectionObserver re-entry.
           e.preventDefault();

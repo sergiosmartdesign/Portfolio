@@ -9,6 +9,10 @@
   color: #E9D8A6;
   font-family: 'Share Tech Mono', monospace;
 
+  /* Keep the masthead clear of the fixed header on hash / back-forward nav
+     (nav-button clicks subtract the header height in script.js). */
+  scroll-margin-top: var(--header-height, 60px);
+
   --b-bg:         #070808;
   --b-surface:    #0e0e0b;
   --b-paper:      #E9D8A6;
