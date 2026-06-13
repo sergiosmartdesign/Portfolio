@@ -724,12 +724,20 @@
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
-    /* MOCK TRANSPORT — replace with e.g.
-       return fetch('/api/contact', { method: 'POST', body: JSON.stringify(payload), … })
-       once a mail backend exists. */
+    /* TRANSPORT — no server backend yet, so the message is handed off to the
+       visitor's mail client as a prefilled email to mail@sergioayala.studio.
+       Swap the body for e.g. fetch('/api/contact', …) once a mail backend exists. */
+    const CONTACT_EMAIL = 'mail@sergioayala.studio';
     function sendTransmission(payload) {
-      console.info('[contact] mock transmission:', payload);
-      return wait(1500);
+      const subject = `Portfolio contact — ${payload.name}`;
+      const body =
+        `Name: ${payload.name}\n` +
+        `Email: ${payload.email}\n\n` +
+        `${payload.message}\n`;
+      const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+      window.location.href = href;
+      return wait(1000);
     }
 
     function announce(msg) {

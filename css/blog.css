@@ -68,54 +68,33 @@
 
 .blog-masthead__center {
   text-align: center;
-  padding-block: 1.25rem 0.9rem;
+  padding-block: clamp(1.4rem, 4vw, 2.6rem);
 }
 
-.blog-masthead__name {
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 800;
-  font-size: clamp(3rem, 10vw, 8rem);
-  line-height: 0.87;
-  letter-spacing: -0.025em;
-  color: var(--b-paper);
-  text-transform: uppercase;
-  margin: 0;
-  /* Subtle text shadow gives it weight on the rust bg */
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), 0 4px 20px rgba(0, 0, 0, 0.2);
+/* ── Voxel wordmark (isometric pixel "[ · b l o g · ]") ──────────────────── */
+.blog-voxel {
+  display: block;
+  width: clamp(15rem, 46vw, 34rem);
+  height: auto;
+  margin-inline: auto;
+  /* Soft drop so the cubes read as floating above the rust paper */
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.32));
+  /* Scroll-in reveal (toggled by blog-voxel-title.js) */
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.blog-masthead__sub {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(0.48rem, 1.1vw, 0.62rem);
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(233, 216, 166, 0.58);
-  margin-block-start: 0.7rem;
+.blog-voxel.is-in {
+  opacity: 1;
+  transform: none;
 }
 
-.blog-masthead__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-block: 0.55rem;
-  border-top: 1px solid rgba(233, 216, 166, 0.22);
-}
-
-.blog-visit-link {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--b-paper);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(233, 216, 166, 0.45);
-  padding-bottom: 1px;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.blog-visit-link:hover {
-  color: var(--b-amber);
-  border-color: var(--b-amber);
+@media (prefers-reduced-motion: reduce) {
+  .blog-voxel {
+    transition: none;
+    transform: none;
+  }
 }
 
 /* ── Separators ──────────────────────────────────────────────────────────── */
@@ -159,54 +138,126 @@
   margin-inline: var(--b-gutter);
 }
 
-/* ── Hero: latest post ────────────────────────────────────────────────────── */
+/* ── Hero: vault portal + text (2-col editorial) ──────────────────────────── */
 .blog-hero {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: start;
   padding-right: var(--b-gutter);
 }
 
-.blog-hero__img-wrap {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  flex-shrink: 0;
+.blog-hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
 }
 
-.blog-hero__img {
+/* ── Vault portal: hover/focus opens the doors (frames driven by JS) ──────── */
+.blog-vault {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #0B0D13;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 0 0 1px var(--b-rule-hot),
+    0 0 22px rgba(238, 155, 0, 0.10),
+    0 18px 40px rgba(0, 0, 0, 0.55);
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
+  cursor: pointer;
+}
+
+.blog-vault:hover,
+.blog-vault:focus-visible {
+  outline: none;
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px var(--b-amber),
+    0 0 34px rgba(238, 155, 0, 0.28),
+    0 0 72px rgba(187, 62, 3, 0.18),
+    0 22px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* Stacked frames — JS toggles .is-active; one frame visible at a time */
+.blog-vault__frame {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  filter: contrast(1.12) brightness(0.76) saturate(0.72);
-  transition: filter 0.55s ease, transform 0.65s ease;
+  opacity: 0;
+  z-index: 1;
 }
 
-.blog-hero:hover .blog-hero__img {
-  filter: contrast(1.0) brightness(0.92) saturate(1.0);
-  transform: scale(1.02);
+.blog-vault__frame.is-active {
+  opacity: 1;
 }
 
-/* Scanline overlay on hero image */
-.blog-hero__img-wrap::after {
+/* Scanline overlay, consistent with the rest of the section */
+.blog-vault::after {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 2;
+  pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
     transparent 0px,
     transparent 2px,
-    rgba(0, 0, 0, 0.18) 2px,
-    rgba(0, 0, 0, 0.18) 4px
+    rgba(0, 0, 0, 0.16) 2px,
+    rgba(0, 0, 0, 0.16) 4px
   );
-  pointer-events: none;
-  z-index: 2;
   transition: opacity 0.5s ease;
 }
 
-.blog-hero:hover .blog-hero__img-wrap::after {
-  opacity: 0.4;
+.blog-vault:hover::after,
+.blog-vault:focus-visible::after {
+  opacity: 0.5;
+}
+
+/* "Enter" prompt — fades up on hover/focus */
+.blog-vault__enter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 0.6rem 0.7rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--b-paper);
+  background: linear-gradient(to top, rgba(7, 8, 8, 0.88), transparent);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.blog-vault:hover .blog-vault__enter,
+.blog-vault:focus-visible .blog-vault__enter {
+  opacity: 1;
+  transform: none;
+}
+
+.blog-vault__enter::after {
+  content: '\2192';
+  transition: transform 0.35s ease;
+}
+
+.blog-vault:hover .blog-vault__enter::after,
+.blog-vault:focus-visible .blog-vault__enter::after {
+  transform: translateX(4px);
 }
 
 .blog-badge {
@@ -259,6 +310,19 @@
 
 .blog-hero:hover .blog-hero__headline {
   color: var(--b-amber);
+}
+
+/* Headline is itself a link to the post (Fitts's law: biggest text = biggest target) */
+.blog-hero__headline a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.blog-hero__headline a:hover,
+.blog-hero__headline a:focus-visible {
+  color: var(--b-amber);
+  outline: none;
 }
 
 .blog-hero__excerpt {
@@ -429,137 +493,6 @@
   color: var(--b-amber);
 }
 
-/* ── Secondary 3-column grid ─────────────────────────────────────────────── */
-.blog-secondary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  padding-inline: var(--b-pad);
-  border-top: 1px solid var(--b-rule);
-}
-
-.blog-card {
-  padding: var(--b-gutter);
-  border-right: 1px solid var(--b-rule);
-}
-
-.blog-card:last-child {
-  border-right: none;
-}
-
-.blog-card__link {
-  display: block;
-  text-decoration: none;
-}
-
-.blog-card__img-wrap {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.blog-card__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: contrast(1.12) brightness(0.74) saturate(0.68);
-  transition: filter 0.55s ease, transform 0.65s ease;
-}
-
-.blog-card__link:hover .blog-card__img {
-  filter: contrast(1.0) brightness(0.92) saturate(1.0);
-  transform: scale(1.04);
-}
-
-/* Scanlines on cards */
-.blog-card__img-wrap::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 2px,
-    rgba(0, 0, 0, 0.15) 2px,
-    rgba(0, 0, 0, 0.15) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
-  transition: opacity 0.5s ease;
-}
-
-.blog-card__link:hover .blog-card__img-wrap::after {
-  opacity: 0.35;
-}
-
-.blog-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.blog-card__headline {
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 800;
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
-  line-height: 0.93;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  color: var(--b-paper);
-  margin: 0;
-  transition: color 0.25s ease;
-}
-
-.blog-card__link:hover .blog-card__headline {
-  color: var(--b-amber);
-}
-
-.blog-card__excerpt {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.67rem;
-  line-height: 1.82;
-  color: var(--b-muted);
-  margin: 0;
-}
-
-/* ── Footer bar ──────────────────────────────────────────────────────────── */
-.blog-footer-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 0.85rem var(--b-pad);
-  border-top: 1px solid var(--b-rule-hot);
-  background: rgba(187, 62, 3, 0.06);
-}
-
-.blog-footer-bar__copy {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.52rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--b-dim);
-}
-
-.blog-footer-bar__cta {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--b-amber);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(238, 155, 0, 0.38);
-  padding-bottom: 1px;
-  transition: letter-spacing 0.35s ease, border-color 0.2s;
-}
-
-.blog-footer-bar__cta:hover {
-  letter-spacing: 0.3em;
-  border-color: var(--b-amber);
-}
-
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (width <= 56.25em) {
   .blog-grid {
@@ -571,6 +504,8 @@
   }
 
   .blog-hero {
+    /* portal gives up a little width to the text column on tablet */
+    grid-template-columns: minmax(0, 0.68fr) minmax(0, 1fr);
     padding-right: 0;
     padding-bottom: var(--b-gutter);
     border-bottom: 1px solid var(--b-rule-hot);
@@ -589,25 +524,39 @@
 }
 
 @media (width <= 37.5em) {
-  .blog-masthead__name {
-    font-size: clamp(2.4rem, 13vw, 4rem);
-  }
-
-  .blog-secondary {
+  /* Stack the hero: portal on top, capped so it doesn't dominate the fold */
+  .blog-hero {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+    justify-items: center;
   }
 
-  .blog-card {
-    border-right: none;
-    border-bottom: 1px solid var(--b-rule);
-    padding-inline: 0;
+  .blog-vault {
+    max-width: 22rem;
   }
 
-  .blog-card:last-child {
-    border-bottom: none;
+  .blog-hero__text {
+    width: 100%;
   }
 
   .blog-sidebar {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────
+   The vault stays on its closed poster frame; the lift/glow transitions are
+   removed. JS additionally skips the frame sequence (see blog-vault.js).        */
+@media (prefers-reduced-motion: reduce) {
+  .blog-vault,
+  .blog-vault::after,
+  .blog-vault__frame,
+  .blog-vault__enter {
+    transition: none;
+  }
+
+  .blog-vault:hover,
+  .blog-vault:focus-visible {
+    transform: none;
   }
 }

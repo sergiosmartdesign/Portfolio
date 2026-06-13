@@ -2807,13 +2807,9 @@
                     <span class="blog-masthead__date">SYS:2026-04-27</span>
                 </div>
                 <div class="blog-masthead__center">
-                    <p class="blog-masthead__name">The Digital Dispatch</p>
-                    <p class="blog-masthead__sub">Art Direction &nbsp;·&nbsp; Design &nbsp;·&nbsp; Technology &nbsp;·&nbsp; Photography</p>
-                </div>
-                <div class="blog-masthead__bottom">
-                    <a href="#" class="blog-visit-link" rel="noopener noreferrer" target="_blank">
-                        Visit the Full Blog &nbsp;↗
-                    </a>
+                    <h2 class="sr-only">[ · blog · ] — The Digital Dispatch</h2>
+                    <canvas class="blog-voxel" role="img"
+                            aria-label="blog — The Digital Dispatch"></canvas>
                 </div>
             </header>
 
@@ -2830,43 +2826,50 @@
                 <!-- Hero: latest post -->
                 <article class="blog-hero"
                          itemscope itemtype="https://schema.org/BlogPosting">
-                    <link itemprop="url" href="#">
+                    <link itemprop="url" href="#" data-blog-post-link>
                     <meta itemprop="author" content="Sergio Ayala">
 
-                    <a href="#" rel="noopener noreferrer" target="_blank"
-                       aria-label="Read: The Death of the Average: Why AI Is Pushing Designers Toward the Extremes">
-                        <div class="blog-hero__img-wrap">
-                            <img src="images/photo/Kotor landscape.webp"
-                                 alt="Kotor Montenegro landscape — panoramic view of the medieval walled city against rugged mountains at dusk"
-                                 class="blog-hero__img"
-                                 loading="lazy"
-                                 itemprop="image">
-                            <span class="blog-badge" aria-label="Latest post">Latest Post</span>
-                        </div>
+                    <!-- VAULT-90s portal: hover/focus opens the doors (blog-vault.js).
+                         frame-01 is the closed-door poster; 02–17 preload on approach. -->
+                    <a href="#" class="blog-vault" data-blog-post-link
+                       rel="noopener noreferrer" target="_blank"
+                       aria-label="Open the vault — read: The Death of the Average: Why AI Is Pushing Designers Toward the Extremes">
+                        <img src="images/blog/frames/frame-01.webp"
+                             alt="VAULT-90s — a retro-futuristic blast door labelled 'Enter the 90s', sealed over a server tunnel"
+                             class="blog-vault__frame is-active"
+                             width="800" height="1067"
+                             loading="lazy" decoding="async"
+                             itemprop="image">
+                        <span class="blog-badge" aria-label="Latest post">Latest Post</span>
+                        <span class="blog-vault__enter" aria-hidden="true">Enter the Archive</span>
                     </a>
 
-                    <div class="blog-hero__meta">
-                        <span class="blog-tag" itemprop="keywords">Design Theory</span>
-                        <time class="blog-time" datetime="2026-04-20" itemprop="datePublished">SYS:2026-04-20</time>
-                    </div>
+                    <div class="blog-hero__text">
+                        <div class="blog-hero__meta">
+                            <span class="blog-tag" itemprop="keywords">Design Theory</span>
+                            <time class="blog-time" datetime="2026-04-20" itemprop="datePublished">SYS:2026-04-20</time>
+                        </div>
 
-                    <h2 class="blog-hero__headline" itemprop="headline">
-                        The Death of the Average: Why AI Is Pushing Designers Toward the Extremes
-                    </h2>
+                        <h2 class="blog-hero__headline" itemprop="headline">
+                            <a href="#" data-blog-post-link rel="noopener noreferrer" target="_blank">
+                                The Death of the Average: Why AI Is Pushing Designers Toward the Extremes
+                            </a>
+                        </h2>
 
-                    <p class="blog-hero__excerpt" itemprop="description">
-                        Mediocrity has always been the enemy of good design. But in an era where artificial intelligence can generate the adequate on demand, the adequate has become worthless overnight. What does this mean for practitioners who built careers in the middle ground?
-                    </p>
+                        <p class="blog-hero__excerpt" itemprop="description">
+                            Mediocrity has always been the enemy of good design. But in an era where artificial intelligence can generate the adequate on demand, the adequate has become worthless overnight. What does this mean for practitioners who built careers in the middle ground?
+                        </p>
 
-                    <div class="blog-hero__footer">
-                        <span class="blog-author">By
-                            <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-                                <span itemprop="name">Sergio Ayala</span>
+                        <div class="blog-hero__footer">
+                            <span class="blog-author">By
+                                <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                                    <span itemprop="name">Sergio Ayala</span>
+                                </span>
                             </span>
-                        </span>
-                        <a href="#" class="blog-read-more" rel="noopener noreferrer" target="_blank">
-                            Read Full Transmission &nbsp;→
-                        </a>
+                            <a href="#" class="blog-read-more" data-blog-post-link rel="noopener noreferrer" target="_blank">
+                                Read Full Transmission &nbsp;→
+                            </a>
+                        </div>
                     </div>
                 </article>
 
@@ -2946,98 +2949,6 @@
                 </aside>
 
             </div><!-- /.blog-grid -->
-
-            <!-- ── Separator ─────────────────────────────────────────────── -->
-            <div class="blog-sep" role="separator" aria-hidden="true">
-                <div class="blog-sep__line"></div>
-                <span class="blog-sep__label">More from the Archive</span>
-                <div class="blog-sep__line"></div>
-            </div>
-
-            <!-- ── Secondary 3-col grid ──────────────────────────────────── -->
-            <div class="blog-secondary">
-
-                <article class="blog-card"
-                         itemscope itemtype="https://schema.org/BlogPosting">
-                    <a href="#" class="blog-card__link"
-                       rel="noopener noreferrer" target="_blank" itemprop="url">
-                        <div class="blog-card__img-wrap">
-                            <img src="images/photo/Mt Saint Michel.webp"
-                                 alt="Mont Saint-Michel — the iconic island abbey rising above morning mist on the Normandy coast"
-                                 class="blog-card__img"
-                                 loading="lazy"
-                                 itemprop="image">
-                        </div>
-                        <div class="blog-card__body">
-                            <span class="blog-tag" itemprop="keywords">Branding</span>
-                            <h3 class="blog-card__headline" itemprop="headline">
-                                Brand DNA vs AI Aesthetics: Winning the Battle for Visual Identity
-                            </h3>
-                            <p class="blog-card__excerpt" itemprop="description">
-                                Brands that lean into AI-generated output without anchoring their own DNA become indistinguishable from the noise.
-                            </p>
-                            <time class="blog-time" datetime="2025-12-05" itemprop="datePublished">SYS:2025-12-05</time>
-                        </div>
-                    </a>
-                </article>
-
-                <article class="blog-card"
-                         itemscope itemtype="https://schema.org/BlogPosting">
-                    <a href="#" class="blog-card__link"
-                       rel="noopener noreferrer" target="_blank" itemprop="url">
-                        <div class="blog-card__img-wrap">
-                            <img src="images/photo/Cajon del Maipo.webp"
-                                 alt="Cajón del Maipo — dramatic Andean canyon with jagged peaks and turquoise river in Chile"
-                                 class="blog-card__img"
-                                 loading="lazy"
-                                 itemprop="image">
-                        </div>
-                        <div class="blog-card__body">
-                            <span class="blog-tag" itemprop="keywords">UX</span>
-                            <h3 class="blog-card__headline" itemprop="headline">
-                                Why the Best UX Is Invisible — Until It Isn't
-                            </h3>
-                            <p class="blog-card__excerpt" itemprop="description">
-                                The sign of great user experience isn't delight. It's the absence of friction. When users feel an interface, something has already gone wrong.
-                            </p>
-                            <time class="blog-time" datetime="2025-11-18" itemprop="datePublished">SYS:2025-11-18</time>
-                        </div>
-                    </a>
-                </article>
-
-                <article class="blog-card"
-                         itemscope itemtype="https://schema.org/BlogPosting">
-                    <a href="#" class="blog-card__link"
-                       rel="noopener noreferrer" target="_blank" itemprop="url">
-                        <div class="blog-card__img-wrap">
-                            <img src="images/photo/Wandering Fox Street photo.webp"
-                                 alt="Wandering Fox — street photography capturing a fox navigating an urban environment at dusk"
-                                 class="blog-card__img"
-                                 loading="lazy"
-                                 itemprop="image">
-                        </div>
-                        <div class="blog-card__body">
-                            <span class="blog-tag" itemprop="keywords">Global Design</span>
-                            <h3 class="blog-card__headline" itemprop="headline">
-                                From Bogotá to Everywhere: Designing Without Borders
-                            </h3>
-                            <p class="blog-card__excerpt" itemprop="description">
-                                Working across Latin America, Europe, and North America has taught me that good design speaks in cultural registers most clients don't know they're listening for.
-                            </p>
-                            <time class="blog-time" datetime="2025-10-30" itemprop="datePublished">SYS:2025-10-30</time>
-                        </div>
-                    </a>
-                </article>
-
-            </div><!-- /.blog-secondary -->
-
-            <!-- ── Footer bar ─────────────────────────────────────────────── -->
-            <div class="blog-footer-bar">
-                <span class="blog-footer-bar__copy">© Sergio Ayala MMXXVI &nbsp;—&nbsp; All Transmissions Reserved</span>
-                <a href="#" class="blog-footer-bar__cta" rel="noopener noreferrer" target="_blank">
-                    Enter the Full Archive &nbsp;↗
-                </a>
-            </div>
 
         </section>
 
@@ -3284,5 +3195,7 @@
     </div>
 
     <script defer src="js/inf-bracket.js"></script>
+    <script defer src="js/blog-voxel-title.js"></script>
+    <script defer src="js/blog-vault.js"></script>
 </body>
 </html>
