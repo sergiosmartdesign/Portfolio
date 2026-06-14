@@ -29,27 +29,28 @@
   const MARGIN = DEPTH + 4; // padding around the wordmark
 
   // Per-colour cube faces: f = front, t = top (lighter), r = right (darker).
-  const AMBER  = { f: '#EE9B00', t: '#FFC23D', r: '#B36F00' }; // letters
-  const ORANGE = { f: '#CA6702', t: '#EE8A28', r: '#8F4900' }; // brackets
-  const PAPER  = { f: '#E9D8A6', t: '#F6ECCB', r: '#BCA877' }; // mid-dots
+  // Project palette only (front = token; top/right are tints of the same hue),
+  // chosen to contrast on the paper (#E9D8A6) masthead band.
+  const RUST   = { f: '#BB3E03', t: '#E2581A', r: '#7A2802' }; // letters — rust  (--b-rust)
+  const INK    = { f: '#070808', t: '#2A2A22', r: '#000000' }; // brackets — ink  (--b-bg)
+  const ORANGE = { f: '#CA6702', t: '#EE8A28', r: '#8F4900' }; // mid-dots — orange (--b-orange)
 
   // ─── Pixel font (7 rows tall; '#' = cube, '.' = empty) ─────────────────────
   const GLYPHS = {
-    '[': { color: ORANGE, rows: ['##', '#.', '#.', '#.', '#.', '#.', '##'] },
-    ']': { color: ORANGE, rows: ['##', '.#', '.#', '.#', '.#', '.#', '##'] },
-    '.': { color: PAPER,  rows: ['..', '..', '..', '##', '##', '..', '..'] }, // mid-dot
-    'b': { color: AMBER,  rows: ['#..', '#..', '##.', '#.#', '#.#', '#.#', '##.'] },
-    'l': { color: AMBER,  rows: ['#', '#', '#', '#', '#', '#', '#'] },
-    'o': { color: AMBER,  rows: ['...', '...', '###', '#.#', '#.#', '#.#', '###'] },
-    'g': { color: AMBER,  rows: ['...', '...', '###', '#.#', '###', '..#', '###'] },
+    '[': { color: INK,    rows: ['##', '#.', '#.', '#.', '#.', '#.', '##'] },
+    ']': { color: INK,    rows: ['##', '.#', '.#', '.#', '.#', '.#', '##'] },
+    '.': { color: ORANGE, rows: ['..', '..', '..', '##', '##', '..', '..'] }, // mid-dot
+    'b': { color: RUST,   rows: ['#..', '#..', '##.', '#.#', '#.#', '#.#', '##.'] },
+    'l': { color: RUST,   rows: ['#', '#', '#', '#', '#', '#', '#'] },
+    'o': { color: RUST,   rows: ['...', '...', '###', '#.#', '#.#', '#.#', '###'] },
+    'g': { color: RUST,   rows: ['...', '...', '###', '#.#', '###', '..#', '###'] },
   };
 
   // Glyph order for "[ · b l o g · ]" — the source string's spaces are expressed
   // by the mid-dots plus inter-glyph gaps, so only drawing glyphs are listed.
   const SEQUENCE = ['[', '.', 'b', 'l', 'o', 'g', '.', ']'];
 
-  let canvas = null;
-  let rendered = false;
+  const SPEED = 75;   // marquee scroll speed in CSS px/second
 
   // ─── Compose the glyph bitmaps into one flat (col,row) pixel grid ───────────
   function buildPixels() {
@@ -76,15 +77,14 @@
     return { pixels, maxCol };
   }
 
-  // ─── Draw the wordmark into the visible canvas ─────────────────────────────
-  function paint() {
-    if (rendered || !canvas) return;
+  // ─── Draw the wordmark into a given canvas (returns false if nothing to draw) ─
+  function paintInto(cv) {
     const { pixels, maxCol } = buildPixels();
-    if (!pixels.length) return;
+    if (!pixels.length) return false;
 
-    canvas.width  = (maxCol + 1) * STEP + MARGIN * 2;
-    canvas.height = ROWS * STEP + MARGIN * 2;
-    const ctx = canvas.getContext('2d');
+    cv.width  = (maxCol + 1) * STEP + MARGIN * 2;
+    cv.height = ROWS * STEP + MARGIN * 2;
+    const ctx = cv.getContext('2d');
 
     const ox = MARGIN;
     const oy = MARGIN + DEPTH; // headroom for the upward extrusion of the top row
@@ -118,31 +118,88 @@
       ctx.fillRect(x0, y0, FRONT, FRONT);
     }
 
-    rendered = true;
+    return true;
   }
 
-  // ─── Init: paint + reveal when the masthead enters the viewport ────────────
-  function init() {
-    canvas = document.querySelector('.blog-voxel');
-    if (!canvas) return;
+  // ─── Marquee builder ───────────────────────────────────────────────────────
+  // Fills `track` with enough wordmark copies to seamlessly loop: two identical
+  // halves, each wide enough to cover the viewport, with a uniform per-item gap
+  // baked into every copy (so the -50% CSS wrap is gap-continuous).
+  let track  = null;   // the scrolling flex track
+  let master = null;   // the painted source canvas (track's first child)
+  let center = null;   // clipping viewport (.blog-masthead__center)
 
-    const reveal = () => {
-      paint();
-      requestAnimationFrame(() => canvas.classList.add('is-in'));
+  function build() {
+    const itemW = master.getBoundingClientRect().width;
+    if (!itemW) return;
+    const containerW = center.clientWidth || itemW;
+    const gap     = Math.round(itemW * 0.45);   // breathing space between repeats
+    const perHalf = Math.max(2, Math.ceil(containerW / (itemW + gap)) + 1);
+    const total   = perHalf * 2;
+
+    // Reset to just the master, then (re)build the clones.
+    while (track.children.length > 1) track.removeChild(track.lastChild);
+    master.style.marginInlineEnd = gap + 'px';
+
+    for (let i = 1; i < total; i++) {
+      const cv = document.createElement('canvas');
+      cv.className = 'blog-voxel';
+      cv.setAttribute('aria-hidden', 'true');   // decorative duplicate of the labelled master
+      cv.width  = master.width;
+      cv.height = master.height;
+      cv.style.marginInlineEnd = gap + 'px';
+      cv.getContext('2d').drawImage(master, 0, 0);
+      track.appendChild(cv);
+    }
+
+    // One full -50% step travels exactly one half-track; pace it by SPEED.
+    track.style.animationDuration = ((perHalf * (itemW + gap)) / SPEED).toFixed(2) + 's';
+  }
+
+  // ─── Init: paint, then either a static title (reduced motion) or the band ───
+  function init() {
+    master = document.querySelector('.blog-voxel');
+    if (!master) return;
+    center = master.closest('.blog-masthead__center') || master.parentElement;
+    if (!paintInto(master)) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // Reduced motion: keep the single, centred, static wordmark (original behaviour).
+    if (reduce.matches) {
+      requestAnimationFrame(() => master.classList.add('is-in'));
+      return;
+    }
+
+    // Wrap the master in the scrolling track.
+    track = document.createElement('div');
+    track.className = 'blog-voxel-marquee';
+    center.insertBefore(track, master);
+    track.appendChild(master);
+
+    const start = () => {
+      build();
+      requestAnimationFrame(() => track.classList.add('is-in'));
     };
 
-    if (!('IntersectionObserver' in window)) { reveal(); return; }
-
-    const io = new IntersectionObserver((entries, obs) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          reveal();
-          obs.disconnect();
-          break;
+    if (!('IntersectionObserver' in window)) {
+      start();
+    } else {
+      const io = new IntersectionObserver((entries, obs) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) { start(); obs.disconnect(); break; }
         }
-      }
-    }, { threshold: 0.2 });
-    io.observe(canvas);
+      }, { threshold: 0.2 });
+      io.observe(center);
+    }
+
+    // Rebuild copy-count / pacing on resize so the loop stays seamless and full.
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      if (!track.classList.contains('is-in')) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 200);
+    });
   }
 
   if (document.readyState === 'loading') {

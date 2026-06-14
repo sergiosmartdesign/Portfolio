@@ -1,16 +1,17 @@
 /**
  * blog-vault.js — "VAULT-90s" portal in the blog hero.
  *
- * A 17-frame stop-motion door sequence (frame-01 closed → frame-17 open onto the
+ * A 29-frame stop-motion door sequence (frame-01 closed → frame-29 open onto the
  * server tunnel). Frames are pre-rendered WebP stills swapped on a single <img>;
- * frame-01 ships in the HTML as the poster, frames 02–17 are preloaded + decoded
+ * frame-01 ships in the HTML as the poster, frames 02–29 are preloaded + decoded
  * when the section approaches the viewport so the first interaction is flicker-free.
  *
  * Interaction model:
- *   - Pointer (hover-capable): hover/focus opens the doors, leave/blur closes them.
- *   - Touch / no-hover:        opens once when scrolled into view (no hover to rely on).
+ *   - On view:                 opens itself 2s after the section scrolls in and
+ *                              stays open on the final frame (plays once).
+ *   - Pointer (hover-capable): hover/focus brings the auto-open forward; never closes.
  *   - Click / Enter:           follows the anchor to the post (native <a> behaviour).
- *   - prefers-reduced-motion:  stays on the closed poster frame, no sequence.
+ *   - prefers-reduced-motion:  jumps straight to the open frame, no sequence.
  *
  * Single source of truth for the destination URL lives in POST_URL below.
  */
@@ -21,7 +22,7 @@
   // TODO: point this at the published post's PUBLIC url once the Ghost site is
   // out of private mode (e.g. https://dijital-junkworks.ghost.io/<post-slug>/).
   const POST_URL    = 'https://dijital-junkworks.ghost.io/';
-  const FRAME_COUNT = 17;
+  const FRAME_COUNT = 29;
   const FRAME_DIR   = 'images/blog/frames/';
   const FRAME_MS    = 70;   // ~14 fps — reads as deliberate stop-motion
   const CLOSED      = 1;
@@ -85,34 +86,42 @@
     const open  = () => { preload(); playTo(OPEN); };
     const close = () => playTo(CLOSED);
 
-    /* ── Pointer / keyboard wiring (hover-capable devices) ──────────────────── */
+    /* The door opens itself once and stays open on the final frame. Reduced
+       motion gets the same end state without the sequence. */
+    let autoOpened = false;
+    let autoTimer  = null;
+    function autoOpen() {
+      if (autoOpened) return;
+      autoOpened = true;
+      preload();
+      if (reduceMotion.matches) {
+        current = target = OPEN;
+        frame.src = srcOf(OPEN);
+        return;
+      }
+      playTo(OPEN);
+    }
+
+    /* ── Pointer / keyboard wiring (hover-capable devices) ──────────────────────
+       Hover/focus just brings the auto-open forward; it never closes again.   */
     if (canHover.matches) {
-      portal.addEventListener('mouseenter', open);
-      portal.addEventListener('mouseleave', close);
-      portal.addEventListener('focus', open);
-      portal.addEventListener('blur', close);
+      portal.addEventListener('mouseenter', autoOpen);
+      portal.addEventListener('focus', autoOpen);
     }
 
     /* ── Viewport observer ──────────────────────────────────────────────────────
-       Always used to warm the cache; on touch / no-hover it also plays the
-       open sequence once so those users still see the reveal. Closes again on
-       exit so the gesture can replay on the next scroll-in.                     */
-    const playsOnView = !canHover.matches && !reduceMotion.matches;
+       Warms the cache, then opens the door automatically 2s after the section
+       scrolls into view. Fires once and is left on the open frame.            */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           preload();
-          if (playsOnView) {
-            // Defer one frame so the preload kicks off first.
-            requestAnimationFrame(() => playTo(OPEN));
+          if (!autoOpened && autoTimer === null) {
+            autoTimer = setTimeout(autoOpen, 2000);
           }
-        } else {
-          if (playsOnView) close();
-          // Stop any in-flight sequence while off-screen.
-          if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
         }
       });
-    }, { rootMargin: '400px 0px', threshold: 0.01 });
+    }, { rootMargin: '0px', threshold: 0.25 });
 
     observer.observe(portal);
 

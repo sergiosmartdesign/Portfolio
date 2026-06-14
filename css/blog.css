@@ -29,7 +29,7 @@
 
 /* ── Masthead ────────────────────────────────────────────────────────────── */
 .blog-masthead {
-  background: var(--b-rust);
+  background: var(--b-paper);
   padding-inline: var(--b-pad);
   position: relative;
   overflow: hidden;
@@ -63,24 +63,27 @@
 
 .blog-masthead__vol,
 .blog-masthead__date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 600;
   font-size: 0.58rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(233, 216, 166, 0.65);
+  color: #070808;
 }
 
 .blog-masthead__center {
   text-align: center;
   /* Hug the voxel title: just enough to clear the cubes' drop-shadow,
-     so the rust band reads as roughly the height of the letters. */
+     so the band reads as roughly the height of the letters. */
   padding-block: clamp(0.4rem, 1.4vw, 0.75rem);
+  /* Clipping viewport for the scrolling wordmark band. */
+  overflow: hidden;
 }
 
 /* ── Voxel wordmark (isometric pixel "[ · b l o g · ]") ──────────────────── */
 .blog-voxel {
   display: block;
-  width: clamp(15rem, 46vw, 34rem);
+  width: clamp(11rem, 32vw, 23rem);
   height: auto;
   margin-inline: auto;
   /* Soft drop so the cubes read as floating above the rust paper */
@@ -101,6 +104,46 @@
     transition: none;
     transform: none;
   }
+}
+
+/* ── Marquee band (scrolling repeated wordmark, built by blog-voxel-title.js) ──
+   The track holds N copies of the wordmark and translates from 0 to -50% on an
+   infinite linear loop. Two identical halves + a per-item gap baked in px make
+   the -50% wrap seamless: copy[N/2] lands exactly where copy[0] started. */
+.blog-voxel-marquee {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+  animation: blog-marquee linear infinite;
+  animation-play-state: paused;      /* started when scrolled into view */
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.blog-voxel-marquee.is-in {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+/* Inside the band, individual canvases don't self-hide or recentre — the track
+   owns reveal (opacity) and motion (transform); per-item gap is set inline. */
+.blog-voxel-marquee .blog-voxel {
+  flex: 0 0 auto;
+  margin-inline: 0;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+@keyframes blog-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No scroll for reduced-motion users — JS keeps a single static wordmark. */
+  .blog-voxel-marquee { animation: none; }
 }
 
 /* ── Separators ──────────────────────────────────────────────────────────── */
