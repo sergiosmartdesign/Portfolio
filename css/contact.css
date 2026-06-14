@@ -784,11 +784,14 @@
   height: var(--ct-bar-h);
 }
 
-/* Vertical section banner — same rendered height as the capsule */
+/* Vertical section banner — same rendered height as the capsule.
+   Negative right margin cancels most of the row gap so it nearly
+   touches the form to its right. */
 .ct-contact-bar {
   flex-shrink: 0;
   height: var(--ct-bar-h);
   width: auto;
+  margin-right: calc(3px - clamp(1rem, 3vmin, 2.5rem));
   pointer-events: none;
 }
 
