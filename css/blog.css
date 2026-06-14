@@ -9,8 +9,9 @@
   color: #E9D8A6;
   font-family: 'Share Tech Mono', monospace;
 
-  /* Fill the viewport so the grid/list reach the bottom without inner scroll. */
-  min-height: 100vh;
+  /* Fill the area below the fixed header so the grid/list reach the viewport
+     bottom without inner scroll (same convention as #contact). */
+  min-height: calc(100vh - var(--header-height, 60px));
   display: flex;
   flex-direction: column;
 
@@ -60,11 +61,19 @@
 
 .blog-masthead__center {
   text-align: center;
-  /* Hug the voxel title: just enough to clear the cubes' drop-shadow,
-     so the band reads as roughly the height of the letters. */
-  padding-block: clamp(0.25rem, 0.9vw, 0.5rem);
+  /* A bit of headroom so the tilted band isn't clipped at the edges. */
+  padding-block: clamp(0.45rem, 1.4vw, 0.85rem);
   /* Clipping viewport for the scrolling wordmark band. */
   overflow: hidden;
+
+  /* Isometric (parallel-projection) tilt of the WHOLE band. No `perspective`
+     → true axonometric, so the long brand text stays on one tilted plane
+     instead of cascading per-letter. The scroll lives on the inner track
+     (translateX), so it's untouched by this static transform. */
+  --b-iso-x: 26deg;   /* pitch (rotateX) */
+  --b-iso-z: -15deg;  /* in-plane spin (rotateZ) */
+  transform: rotateX(var(--b-iso-x)) rotateZ(var(--b-iso-z));
+  transform-origin: center;
 }
 
 /* ── Voxel wordmarks (isometric pixel "[ · Dijital | JunkWorks · ]" + "[ · blog · ]") ──
@@ -72,7 +81,7 @@
 .blog-voxel {
   display: block;
   width: auto;
-  height: clamp(1.7rem, 4.2vw, 2.6rem);   /* brand (full size) */
+  height: clamp(1.15rem, 2.9vw, 1.8rem);   /* brand (full size) — sized for stacked rows */
   margin-inline: auto;
   /* Soft drop so the cubes read as floating above the paper */
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.32));
@@ -84,7 +93,7 @@
 
 /* "blog" mark rides at half the brand's height */
 .blog-voxel--half {
-  height: clamp(0.85rem, 2.1vw, 1.3rem);
+  height: clamp(0.58rem, 1.45vw, 0.9rem);
 }
 
 .blog-voxel.is-in {
@@ -99,7 +108,16 @@
   }
 }
 
-/* ── Marquee band (scrolling repeated wordmark, built by blog-voxel-title.js) ──
+/* ── Marquee band: stacked rows of the same content, each at its own speed ─────
+   Under the masthead's isometric tilt the rows read as parallel diagonals. */
+.blog-voxel-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.12rem, 0.5vw, 0.32rem);
+}
+
+/* ── Marquee row (scrolling repeated wordmark, built by blog-voxel-title.js) ──
    The track holds N copies of the wordmark and translates from 0 to -50% on an
    infinite linear loop. Two identical halves + a per-item gap baked in px make
    the -50% wrap seamless: copy[N/2] lands exactly where copy[0] started. */
@@ -118,6 +136,11 @@
 .blog-voxel-marquee.is-in {
   opacity: 1;
   animation-play-state: running;
+}
+
+/* Alternate rows scroll the other way (right-to-left vs left-to-right). */
+.blog-voxel-marquee.is-reverse {
+  animation-direction: reverse;
 }
 
 /* Inside the band, individual canvases don't self-hide or recentre — the track
@@ -605,6 +628,22 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
+
+/* Desktop (2-col layout): pin the section to exactly the viewport so the article
+   list and its animated door reach the bottom edge with no inner scroll. The grid
+   is allowed to shrink and clip the taller hero column instead of overflowing. */
+@media (width > 56.25em) {
+  #blog {
+    max-height: calc(100vh - var(--header-height, 60px));
+  }
+
+  .blog-grid {
+    min-height: 0;        /* let the grid shrink to the available height */
+    overflow: hidden;     /* clip the height-driven hero portal, don't scroll */
+    padding-bottom: 0;    /* sidebar backdrop reaches the viewport bottom */
+  }
+}
+
 @media (width <= 56.25em) {
   .blog-grid {
     grid-template-columns: 1fr;

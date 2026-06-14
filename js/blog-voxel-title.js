@@ -32,7 +32,6 @@
   const GAP    = 2;    // empty columns between glyphs (even letter-spacing, both marks)
   const ROWS   = 7;    // bitmap height
   const MARGIN = DEPTH + 4; // padding around the wordmark
-  const SPEED  = 75;   // marquee scroll speed in CSS px/second
 
   // ─── Palette: project tokens only. f = front, t = top (lighter), r = right (darker).
   // Warm set (blog) and a contrasting cool set (brand); both read on paper #E9D8A6.
@@ -176,7 +175,15 @@
   }
 
   // ─── Marquee state ─────────────────────────────────────────────────────────
-  let track       = null;   // scrolling flex track
+  // Several stacked rows of the same content, each at its own speed/direction.
+  // Under the masthead's isometric tilt they read as parallel diagonal lines.
+  const LINES = [
+    { speed: 58, reverse: false },
+    { speed: 96, reverse: true  },
+    { speed: 42, reverse: false },
+  ];
+
+  let band        = null;   // column of marquee rows
   let masterBrand = null;   // painted brand canvas (full size)
   let masterIcons = null;   // painted icon strip (full size)
   let masterBlog  = null;   // painted blog canvas (half size)
@@ -193,37 +200,51 @@
     return cv;
   }
 
-  // Fill the track with [brand][blog] units: two identical halves, each wide
-  // enough to cover the viewport, uniform per-item gap (seamless -50% wrap).
+  // Build every row. Row 0 reuses the painted masters (so the labelled originals
+  // stay in the DOM and are measurable); the other rows are clones. Each row is
+  // two identical halves + a uniform per-item gap, so its -50% wrap is seamless.
   function build(reduced) {
-    // Put the masters in the DOM first so they can be measured.
-    track.replaceChildren(masterBrand, masterIcons, masterBlog); // first unit
+    band.replaceChildren();
+    const cfgs = reduced ? LINES.slice(0, 1) : LINES;   // reduced motion → one static row
+
+    const tracks = cfgs.map((cfg) => {
+      const t = document.createElement('div');
+      t.className = 'blog-voxel-marquee' + (cfg.reverse ? ' is-reverse' : '');
+      band.appendChild(t);
+      return t;
+    });
+
+    // Masters into row 0 as its first unit → measurable.
+    tracks[0].append(masterBrand, masterIcons, masterBlog);
 
     const brandW = masterBrand.getBoundingClientRect().width;
     const iconsW = masterIcons.getBoundingClientRect().width;
     const blogW  = masterBlog.getBoundingClientRect().width;
     if (!brandW || !iconsW || !blogW) return;
 
-    const containerW = center.clientWidth || (brandW + iconsW + blogW);
-    const gap   = Math.round(brandW * 0.22);            // breathing space between marks
-    const unitW = brandW + iconsW + blogW + gap * 3;    // [brand][icons][blog] + its gaps
-
+    const gap = Math.round(brandW * 0.22);            // breathing space between marks
     masterBrand.style.marginInlineEnd = gap + 'px';
     masterIcons.style.marginInlineEnd = gap + 'px';
     masterBlog.style.marginInlineEnd  = gap + 'px';
 
-    if (reduced) return; // single static unit, no scroll (CSS disables the anim)
+    if (reduced) return; // single static row, no scroll (CSS disables the anim)
 
+    const containerW   = center.clientWidth || (brandW + iconsW + blogW);
+    const unitW        = brandW + iconsW + blogW + gap * 3; // [brand][icons][blog] + gaps
     const perHalfUnits = Math.max(1, Math.ceil(containerW / unitW) + 1);
-    const totalUnits   = perHalfUnits * 2;        // two identical halves
-    for (let u = 1; u < totalUnits; u++) {
-      track.appendChild(cloneCanvas(masterBrand, gap));
-      track.appendChild(cloneCanvas(masterIcons, gap));
-      track.appendChild(cloneCanvas(masterBlog, gap));
-    }
+    const totalUnits   = perHalfUnits * 2;                  // two identical halves
 
-    // One -50% step travels exactly one half-track; pace it by SPEED.
-    track.style.animationDuration = ((perHalfUnits * unitW) / SPEED).toFixed(2) + 's';
+    cfgs.forEach((cfg, i) => {
+      const track = tracks[i];
+      for (let u = (i === 0 ? 1 : 0); u < totalUnits; u++) {
+        track.appendChild(cloneCanvas(masterBrand, gap));
+        track.appendChild(cloneCanvas(masterIcons, gap));
+        track.appendChild(cloneCanvas(masterBlog, gap));
+      }
+      // One -50% step travels exactly one half-track; pace each row by its speed.
+      track.style.animationDuration = ((perHalfUnits * unitW) / cfg.speed).toFixed(2) + 's';
+      track.style.animationDelay    = (-(i * 3.1)).toFixed(2) + 's'; // desync row starts
+    });
   }
 
   // ─── Init ──────────────────────────────────────────────────────────────────
@@ -253,14 +274,15 @@
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    track = document.createElement('div');
-    track.className = 'blog-voxel-marquee';
-    center.insertBefore(track, masterBlog); // masters are moved in by build()
+    band = document.createElement('div');
+    band.className = 'blog-voxel-band';
+    center.insertBefore(band, masterBlog); // masters are moved into rows by build()
 
-    const start = () => {
-      build(reduce.matches);
-      requestAnimationFrame(() => track.classList.add('is-in'));
-    };
+    let started = false;
+    const reveal = () => requestAnimationFrame(() =>
+      band.querySelectorAll('.blog-voxel-marquee').forEach((t) => t.classList.add('is-in')));
+
+    const start = () => { build(reduce.matches); started = true; reveal(); };
 
     if (!('IntersectionObserver' in window)) {
       start();
@@ -273,12 +295,12 @@
       io.observe(center);
     }
 
-    // Rebuild copy-count / pacing on resize so the loop stays seamless and full.
+    // Rebuild copy-count / pacing on resize so every row stays seamless and full.
     let resizeTimer = null;
     window.addEventListener('resize', () => {
-      if (!track.classList.contains('is-in')) return;
+      if (!started) return;
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => build(reduce.matches), 200);
+      resizeTimer = setTimeout(() => { build(reduce.matches); reveal(); }, 200);
     });
   }
 
