@@ -551,8 +551,9 @@ nav {
   cursor: pointer;
   font-size: 1rem;
   font-weight: inherit;
-  /* Box hugs the glyphs: no vertical padding, no line-height leading. */
-  padding: 0;
+  /* Box hugs the glyphs horizontally; 3px top padding pushes the orange
+     top-line away from the text. */
+  padding: 3px 0 0;
   line-height: 1;
   color: var(--white);
   display: inline-flex;

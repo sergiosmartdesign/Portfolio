@@ -214,19 +214,19 @@ const WORKS_DATA = {
   // the modal backdrop stays the shared discipline image.
   '3d': [
     {
-      num: '01', cat: '3D', title: 'Pikapool', sub: 'Stylized character mashup — interactive 3D model',
+      num: '01', cat: '3D & Motion', title: 'Pikapool', sub: 'Stylized character mashup — interactive 3D model',
       specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
       tags: ['3D','Character','Real-Time'],
       model: 'images/3D/Pikapool-web.glb'
     },
     {
-      num: '02', cat: '3D', title: 'Tib', sub: 'Original character — interactive 3D model',
+      num: '02', cat: '3D & Motion', title: 'Tib', sub: 'Original character — interactive 3D model',
       specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
       tags: ['3D','Character','Real-Time'],
       model: 'images/3D/Tib-web.glb'
     },
     {
-      num: '03', cat: '3D', title: 'Throg', sub: 'Creature character sculpt — interactive 3D model',
+      num: '03', cat: '3D & Motion', title: 'Throg', sub: 'Creature character sculpt — interactive 3D model',
       specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
       tags: ['3D','Character','Real-Time'],
       bg: 'images/art-direction/3d/sergio-ayala-throg-3d-character-sculpt-2026.png',
@@ -257,5 +257,5 @@ const DISCIPLINE_LABELS = {
   identity:  'Identity',
   web:       'Web',
   editorial: 'Editorial',
-  '3d':      '3D'
+  '3d':      '3D & Motion'
 };

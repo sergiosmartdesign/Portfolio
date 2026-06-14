@@ -325,6 +325,25 @@ class ArtWorksPanel {
                 }
             }
         });
+
+        // Auto-close a left-open project when the section scrolls out of view —
+        // otherwise the full-bleed overlay (and any live model-viewer WebGL
+        // context) bleeds over the sections below.
+        if (this.section && 'IntersectionObserver' in window) {
+            new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (!e.isIntersecting && this.modal.classList.contains('is-open')) {
+                        this._closeModal();
+                    }
+                });
+            }, { threshold: 0 }).observe(this.section);
+        }
+
+        // Menu navigation jumps instantly and may not trip the observer above —
+        // close the project on any nav selection (NavigationManager fires this).
+        document.addEventListener('app:navigate', () => {
+            if (this.modal.classList.contains('is-open')) this._closeModal();
+        });
     }
 
     _openModal(work) {
@@ -422,7 +441,7 @@ class ArtWorksPanel {
         this.modal.classList.remove('is-open');
         this.modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
-        this._triggerEl?.focus();
+        this._triggerEl?.focus({ preventScroll: true });
         this._triggerEl = null;
         // Free the WebGL context once the fade-out (0.22s) has finished.
         this._mvTeardownTimer = setTimeout(() => this._teardownModelViewer(), 240);

@@ -440,8 +440,18 @@
 }
 
 /* ── Holo windshield beam (blue-gradient #holo polygon) ────────────────────
+   Entrance: revealed LAST, after the line art has settled to its source
+   colors (.ct-hide-holo is dropped at the end of the boot timeline).
    Random flicker: contact.js adds .ct-holo-blink every 8/10/15 s at random;
    the class is removed on animationend so it can re-trigger. */
+.ct-cockpit svg #holo {
+  transition: opacity 1s ease;
+}
+
+.ct-cockpit.ct-hide-holo svg #holo {
+  opacity: 0;
+}
+
 #holo.ct-holo-blink {
   animation: ct-holo-flicker 0.7s steps(1) both;
 }
@@ -728,7 +738,8 @@
   border: 0;
   padding: 0;
   cursor: pointer;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 600;
   font-size: clamp(1.1rem, 1.8vw, 1.45rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -758,6 +769,8 @@
   /* Shared capsule width — the vertical banner derives its height from it
      (capsule art is 207.55 × 410.66 → height = width × 1.9787) */
   --ct-capsule-w: clamp(176px, 28vmin, 300px);
+  /* The flag banner / capsule height — the form column matches it too */
+  --ct-bar-h: calc(var(--ct-capsule-w) * 1.9787);
 }
 
 /* Form + social links share one column so their widths always match:
@@ -767,12 +780,14 @@
   flex-direction: column;
   align-items: stretch;
   flex-shrink: 0;
+  /* Match the flag banner / capsule height */
+  height: var(--ct-bar-h);
 }
 
 /* Vertical section banner — same rendered height as the capsule */
 .ct-contact-bar {
   flex-shrink: 0;
-  height: calc(var(--ct-capsule-w) * 1.9787);
+  height: var(--ct-bar-h);
   width: auto;
   pointer-events: none;
 }
@@ -858,6 +873,12 @@
   position: relative;
   width: 100%;
   min-width: min(700px, 90vw);
+  /* Grow to fill the column so the form + buttons match the flag height;
+     the inner grid (and its textarea) absorbs the extra vertical space. */
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   padding: clamp(1.2rem, 3vmin, 2.1rem) clamp(1.3rem, 3.5vmin, 2.4rem);
   pointer-events: all;
   text-align: left;
@@ -922,15 +943,25 @@
 .ct-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
   gap: 0.7rem 1.1rem;
   margin-top: 1rem;
+  /* Absorb the form's extra height so the buttons stay pinned at the bottom */
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
-.ct-field--msg { grid-column: 1 / -1; }
+.ct-field--msg {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
 
 .ct-field label {
   display: block;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 600;
   font-size: clamp(0.8rem, 1.1vw, 0.95rem);
   letter-spacing: 0.08em;
   color: rgba(148, 210, 189, 0.75);
@@ -941,7 +972,8 @@
 .ct-field textarea {
   display: block;
   width: 100%;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 300;
   font-size: clamp(1.05rem, 1.5vw, 1.25rem);
   color: var(--ct-star-color);
   caret-color: var(--ct-sun-warm);
@@ -956,7 +988,10 @@
 }
 
 .ct-field textarea {
-  height: clamp(96px, 16vmin, 160px);
+  /* Grow to fill the message field so the form reaches the flag height */
+  flex: 1 1 auto;
+  height: auto;
+  min-height: clamp(96px, 16vmin, 160px);
   resize: none;
 }
 
@@ -1002,7 +1037,8 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 600;
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   letter-spacing: 0.06em;
   color: var(--ct-sun-warm);
@@ -1130,7 +1166,8 @@
 }
 
 .ct-link {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 600;
   font-size: clamp(0.7rem, 1.2vw, 0.9rem);
   color: var(--ct-sun-warm);
   text-decoration: none;
@@ -1252,21 +1289,23 @@
   .ct-stack-line { font-size: clamp(1.3rem, 6.5vw, 1.8rem); }
   .ct-stack-line--tag { font-size: clamp(0.75rem, 3.5vw, 1rem); }
 
-  .ct-form-col { width: min(420px, 86vw); }
+  /* Flag is hidden here — drop the height-match so content sizes naturally */
+  .ct-form-col { width: min(420px, 86vw); height: auto; }
 
   .ct-form {
     width: 100%;
     min-width: 0;
     margin-top: 0;
     padding: 0.7rem 0.8rem;
+    flex: 0 0 auto;
   }
 
   /* Single column; the location feed is sacrificed for width */
-  .ct-form-grid { grid-template-columns: 1fr; gap: 0.35rem; margin-top: 0.55rem; }
+  .ct-form-grid { grid-template-columns: 1fr; grid-template-rows: none; flex: 0 0 auto; gap: 0.35rem; margin-top: 0.55rem; }
   .ct-form-feed { display: none; }
   .ct-field label { margin-bottom: 0.25em; }
   .ct-field input, .ct-field textarea { padding: 0.4em 0.6em; }
-  .ct-field textarea { height: 48px; }
+  .ct-field textarea { flex: 0 0 auto; height: 48px; min-height: 0; }
   .ct-field-err { min-height: 0; }
   .ct-field-err:empty { display: none; }
 
@@ -1299,7 +1338,7 @@
 @media (max-height: 720px) {
   .ct-stack-line { font-size: clamp(1.6rem, 4vmin, 2.4rem); }
   .ct-title { gap: 1rem; }
-  .ct-field textarea { height: 52px; }
+  .ct-field textarea { min-height: 52px; }
   .ct-field-err { min-height: 0; }
   .ct-field-err:empty { display: none; }
 }

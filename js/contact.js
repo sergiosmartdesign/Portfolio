@@ -100,7 +100,7 @@
      The boot timeline removes these classes in sequence (CSS transitions
      do the smoothing) — works even though the SVG injection is async. */
   if (cockpitEl) {
-    cockpitEl.classList.add('ct-lines-teal', 'ct-no-colors', 'ct-hide-lines');
+    cockpitEl.classList.add('ct-lines-teal', 'ct-no-colors', 'ct-hide-lines', 'ct-hide-holo');
   }
 
   /* Flux capacitor FX — energy pulses traveling the three Y-arms into the
@@ -633,9 +633,8 @@
       glitchIn(tl, '.ct-sun',   '+=0.08', { withScaleY: true });
       glitchIn(tl, '.ct-ground','+=0.08', { withY: true });
 
-      // Cockpit entrance overlaps the landscape build and leads with the
-      // holo windshield beam: the container glitches in while #lines and
-      // #colors are still class-hidden, so only #holo shows. The glitch
+      // Cockpit entrance overlaps the landscape build: the container glitches
+      // in while #lines, #colors and #holo are all class-hidden. The glitch
       // runs in a sub-timeline so it can sit at an absolute position while
       // the background tweens keep appending sequentially after it.
       const HOLO_AT = 0.1;
@@ -643,9 +642,10 @@
       glitchIn(holoTl, '.ct-cockpit', 0);
       tl.add(holoTl, HOLO_AT);
 
-      // Cockpit build: holo beam above — then the teal wireframe fades in,
-      // the color art underneath, and finally the lines settle back to
-      // their original colors, all while the landscape finishes behind.
+      // Cockpit build: the teal wireframe fades in first, then the color art
+      // underneath, then the lines settle back to their original colors, and
+      // finally the blue holo windshield beam reveals last — all while the
+      // landscape finishes behind.
       const holoEnd = HOLO_AT + holoTl.duration();
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-lines'),
               null, holoEnd + 0.3);
@@ -653,6 +653,8 @@
               null, holoEnd + 1.3);
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-lines-teal'),
               null, holoEnd + 2.6);
+      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-holo'),
+              null, holoEnd + 3.6);
 
       // Hide title letters before the content fades in so they don't flash.
       // Scoped to the h2 — the button's chars are handled via autoAlpha on

@@ -435,6 +435,11 @@ class NavigationManager {
         if (href && href.startsWith('#')) {
           const sectionId = href.substring(1);
 
+          // Tell section widgets a nav jump is happening so they can tear down
+          // open overlays (e.g. the art-direction project modal) before the
+          // viewport moves — the instant scroll may not trip their observers.
+          document.dispatchEvent(new CustomEvent('app:navigate', { detail: { sectionId } }));
+
           // If the photo section is currently visible and we are navigating
           // away from it, force-hide it immediately before any scroll fires.
           // This prevents updatePhotoReveal from re-animating the clip-path
