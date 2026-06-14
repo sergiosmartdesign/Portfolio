@@ -134,6 +134,56 @@
       }
     });
 
+    /* ── Sidebar vault: the closed door covers the article list. A click opens
+       it once (CLOSED→OPEN) and stops on the final frame; then .is-open drops the
+       door behind so the articles rise on top. Not automatic, no loop. ───────── */
+    (function sidebarReveal() {
+      const sidebar = document.querySelector('.blog-sidebar');
+      const layer   = document.querySelector('.blog-sidebar__bg');
+      const bg      = document.querySelector('.blog-sidebar__bg-frame');
+      if (!sidebar || !layer || !bg) return;
+
+      // Reduced motion: skip the sequence — show the open door + reveal the list.
+      if (reduceMotion.matches) {
+        bg.src = srcOf(OPEN);
+        sidebar.classList.add('is-open');
+        layer.setAttribute('aria-expanded', 'true');
+        return;
+      }
+
+      bg.src = srcOf(CLOSED);
+      let cur = CLOSED, last = 0, raf = null, state = 'closed'; // closed | opening | open
+
+      function step(now) {
+        if (now - last >= FRAME_MS) {
+          last = now;
+          cur += 1;
+          bg.src = srcOf(cur);
+          if (cur >= OPEN) {            // stop on the final frame
+            raf = null;
+            state = 'open';
+            sidebar.classList.add('is-open');
+            layer.setAttribute('aria-expanded', 'true');
+            return;
+          }
+        }
+        raf = requestAnimationFrame(step);
+      }
+
+      function openVault() {
+        if (state !== 'closed') return;
+        state = 'opening';
+        preload();
+        last = 0;
+        raf = requestAnimationFrame(step);
+      }
+
+      layer.addEventListener('click', openVault);
+      layer.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openVault(); }
+      });
+    }());
+
     if (window.App) App.BlogVault = { open, close };
   }
 

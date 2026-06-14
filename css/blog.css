@@ -9,6 +9,11 @@
   color: #E9D8A6;
   font-family: 'Share Tech Mono', monospace;
 
+  /* Fill the viewport so the grid/list reach the bottom without inner scroll. */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
   /* Keep the masthead clear of the fixed header on hash / back-forward nav
      (nav-button clicks subtract the header height in script.js). */
   scroll-margin-top: var(--header-height, 60px);
@@ -53,45 +58,33 @@
 
 .blog-masthead > * { position: relative; z-index: 1; }
 
-.blog-masthead__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-block: 0.55rem;
-  border-bottom: 1px solid rgba(233, 216, 166, 0.22);
-}
-
-.blog-masthead__vol,
-.blog-masthead__date {
-  font-family: 'Funnel Display', sans-serif;
-  font-weight: 600;
-  font-size: 0.58rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #070808;
-}
-
 .blog-masthead__center {
   text-align: center;
   /* Hug the voxel title: just enough to clear the cubes' drop-shadow,
      so the band reads as roughly the height of the letters. */
-  padding-block: clamp(0.4rem, 1.4vw, 0.75rem);
+  padding-block: clamp(0.25rem, 0.9vw, 0.5rem);
   /* Clipping viewport for the scrolling wordmark band. */
   overflow: hidden;
 }
 
-/* ── Voxel wordmark (isometric pixel "[ · b l o g · ]") ──────────────────── */
+/* ── Voxel wordmarks (isometric pixel "[ · Dijital | JunkWorks · ]" + "[ · blog · ]") ──
+   Sized by HEIGHT so the two marks share a baseline and "half" is literal. */
 .blog-voxel {
   display: block;
-  width: clamp(8rem, 22vw, 16rem);
-  height: auto;
+  width: auto;
+  height: clamp(1.7rem, 4.2vw, 2.6rem);   /* brand (full size) */
   margin-inline: auto;
-  /* Soft drop so the cubes read as floating above the rust paper */
+  /* Soft drop so the cubes read as floating above the paper */
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.32));
   /* Scroll-in reveal (toggled by blog-voxel-title.js) */
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* "blog" mark rides at half the brand's height */
+.blog-voxel--half {
+  height: clamp(0.85rem, 2.1vw, 1.3rem);
 }
 
 .blog-voxel.is-in {
@@ -114,6 +107,7 @@
   display: flex;
   align-items: center;
   width: max-content;
+  margin-inline: auto;       /* centres the static unit; 0 when overflowing (animated) */
   will-change: transform;
   animation: blog-marquee linear infinite;
   animation-play-state: paused;      /* started when scrolled into view */
@@ -146,31 +140,6 @@
   .blog-voxel-marquee { animation: none; }
 }
 
-/* ── Separators ──────────────────────────────────────────────────────────── */
-.blog-sep {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.7rem var(--b-pad);
-  border-top: 1px solid var(--b-rule-hot);
-  border-bottom: 1px solid var(--b-rule);
-}
-
-.blog-sep__line {
-  flex: 1;
-  height: 1px;
-  background: var(--b-rule);
-}
-
-.blog-sep__label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.52rem;
-  letter-spacing: 0.38em;
-  text-transform: uppercase;
-  color: var(--b-amber);
-  white-space: nowrap;
-}
-
 /* ── Main grid (hero 7fr | rule | sidebar 5fr) ──────────────────────────── */
 .blog-grid {
   display: grid;
@@ -178,6 +147,8 @@
   padding-inline: var(--b-pad);
   padding-block: var(--b-gutter) calc(var(--b-gutter) * 1.25);
   gap: 0;
+  flex: 1;            /* grow to fill the section down to the viewport bottom */
+  align-items: stretch;
 }
 
 .blog-col-rule {
@@ -422,6 +393,88 @@
 .blog-sidebar {
   display: flex;
   flex-direction: column;
+  position: relative;          /* anchor for the looping door backdrop */
+  overflow: hidden;
+}
+
+/* ── Vault-door overlay (click-to-open, driven by blog-vault.js) ──────────────
+   Default: the door sits ON TOP of the list (z-index 2), covering it. After it
+   finishes opening, .is-open drops it behind so the articles show on top. */
+.blog-sidebar__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.blog-sidebar.is-open .blog-sidebar__bg {
+  z-index: 0;
+  pointer-events: none;
+  cursor: default;
+}
+
+.blog-sidebar__bg:focus-visible {
+  outline: 2px solid var(--b-amber);
+  outline-offset: -3px;
+}
+
+.blog-sidebar__bg-frame {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* full, undimmed — the door reads at full strength */
+}
+
+/* Scanlines only, to tie the door into the section (no dimming) */
+.blog-sidebar__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+}
+
+/* "Click to open" hint on the closed door */
+.blog-sidebar__bg-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 1.1rem;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--b-paper);
+  background: rgba(7, 8, 8, 0.72);
+  border: 1px solid var(--b-rule-hot);
+  padding: 0.45rem 0.85rem;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.blog-sidebar__bg:hover .blog-sidebar__bg-prompt,
+.blog-sidebar__bg:focus-visible .blog-sidebar__bg-prompt {
+  background: var(--b-amber);
+  color: #070808;
+}
+
+/* Once opened, the door no longer prompts and the list takes over */
+.blog-sidebar.is-open .blog-sidebar__bg-prompt {
+  display: none;
+}
+
+/* Lift the header + posts above the door once it has opened */
+.blog-sidebar__header,
+.blog-side-post {
+  position: relative;
+  z-index: 1;
 }
 
 .blog-sidebar__header {
@@ -462,10 +515,19 @@
 /* ── Side posts ──────────────────────────────────────────────────────────── */
 .blog-side-post {
   border-bottom: 1px solid var(--b-rule);
+  /* Share the column's free height so the list spans down to the viewport
+     bottom; content stays vertically centred in each slot. */
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
 }
 
 .blog-side-post:last-child {
   border-bottom: none;
+}
+
+.blog-side-post__link {
+  width: 100%;
 }
 
 .blog-side-post__link {

@@ -2802,23 +2802,12 @@
 
             <!-- ── Masthead ──────────────────────────────────────────────── -->
             <header class="blog-masthead">
-                <div class="blog-masthead__top">
-                    <span class="blog-masthead__vol">VOL. I &nbsp;·&nbsp; ISSUE_024 &nbsp;·&nbsp; BOGOTÁ, COL.</span>
-                    <span class="blog-masthead__date">SYS:2026-04-27</span>
-                </div>
                 <div class="blog-masthead__center">
                     <h2 class="sr-only">[ · blog · ] — The Digital Dispatch</h2>
                     <canvas class="blog-voxel" role="img"
                             aria-label="blog — The Digital Dispatch"></canvas>
                 </div>
             </header>
-
-            <!-- ── Separator ─────────────────────────────────────────────── -->
-            <div class="blog-sep" role="separator" aria-hidden="true">
-                <div class="blog-sep__line"></div>
-                <span class="blog-sep__label">Latest Transmission</span>
-                <div class="blog-sep__line"></div>
-            </div>
 
             <!-- ── Main grid ─────────────────────────────────────────────── -->
             <div class="blog-grid">
@@ -2878,6 +2867,18 @@
 
                 <!-- Sidebar: always-on-file posts -->
                 <aside class="blog-sidebar" aria-label="Featured posts">
+
+                    <!-- VAULT-90s door covers the list; click opens it once, then
+                         the articles rise above the open door (blog-vault.js). -->
+                    <div class="blog-sidebar__bg" role="button" tabindex="0"
+                         aria-expanded="false"
+                         aria-label="Open the vault to reveal the archive">
+                        <img src="images/blog/frames/frame-01.webp" alt=""
+                             class="blog-sidebar__bg-frame"
+                             width="800" height="1067" loading="lazy" decoding="async">
+                        <span class="blog-sidebar__bg-prompt" aria-hidden="true">Click to open ↗</span>
+                    </div>
+
                     <div class="blog-sidebar__header">
                         <span class="blog-sidebar__label">Always on File</span>
                         <div class="blog-sidebar__rule" aria-hidden="true"></div>
