@@ -83,7 +83,7 @@
 /* ── Voxel wordmark (isometric pixel "[ · b l o g · ]") ──────────────────── */
 .blog-voxel {
   display: block;
-  width: clamp(11rem, 32vw, 23rem);
+  width: clamp(8rem, 22vw, 16rem);
   height: auto;
   margin-inline: auto;
   /* Soft drop so the cubes read as floating above the rust paper */
