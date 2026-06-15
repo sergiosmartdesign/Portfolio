@@ -527,23 +527,6 @@
         },
         {
           "@type": "ImageObject",
-          "@id": "https://sergioayala.design/#blog-robot-image",
-          "name": "Vintage Robot, Mint Duotone — Blog Section Background",
-          "alternateName": "Robot Vintage, Duotono Verde Menta — Fondo Sección Blog",
-          "description": "Original photograph and art direction by Sergio Ayala. Full-body composition of the vintage tin robot in a mint seafoam green duotone — the signature colour for the upcoming blog section. Part of an intentional visual system where the same tin robot is colour-treated with a unique section-specific duotone across the portfolio.",
-          "contentUrl": "https://sergioayala.design/images/sergio-ayala-robot-mint-duotone-blog-section.webp",
-          "url": "https://sergioayala.design/",
-          "encodingFormat": "image/webp",
-          "width": "2732",
-          "height": "2048",
-          "creator": { "@id": "https://sergioayala.design/#person" },
-          "copyrightHolder": { "@id": "https://sergioayala.design/#person" },
-          "copyrightYear": "2025",
-          "keywords": "vintage robot, mint duotone, seafoam green, blog, full body robot, art direction, Sergio Ayala, Colombia",
-          "isPartOf": { "@id": "https://sergioayala.design/#website" }
-        },
-        {
-          "@type": "ImageObject",
           "@id": "https://sergioayala.design/#photo-robot-image",
           "name": "Robot with Camera Head Composite, Yellow-Teal Duotone — Photo Section Background",
           "alternateName": "Robot con Cabeza de Cámara Compuesta, Duotono Amarillo-Turquesa — Fondo Sección Fotografía",
@@ -700,7 +683,6 @@
     <link rel="stylesheet" href="css/preloader.css">
     <link rel="stylesheet" href="css/contact.css">
     <link rel="stylesheet" href="css/illus-cube.css">
-    <link rel="stylesheet" href="css/blog.css">
     <link rel="stylesheet" href="css/art-direction-panel.css">
     <link rel="stylesheet" href="css/inf-bracket.css">
 </head>
@@ -722,7 +704,6 @@
                 <a href="#art-direction" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.art-direction">[ · a r t · d i r e c t i o n · ]</a>
                 <a href="#photo" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.photography">[ · p h o t o g r a p h y · ]</a>
                 <a href="#illustration" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.illustration">[ · i l l u s t r a t i o n · ]</a>
-                <a href="#blog" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.blog">[ · b l o g · ]</a>
                 <a href="#contact" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.contact">[ · c o n t a c t · ]</a>
             </div>
 
@@ -2792,167 +2773,6 @@
             </div><!-- /.illus-tunnel -->
         </section>
 
-        <section id="blog"
-                 aria-label="Blog — The Digital Dispatch by Sergio Ayala"
-                 itemscope itemtype="https://schema.org/Blog">
-
-            <meta itemprop="name" content="The Digital Dispatch — Sergio Ayala">
-            <meta itemprop="description" content="Art direction, design, photography and technology reflections by Senior Art Director Sergio Ayala, based in Bogotá, Colombia.">
-            <meta itemprop="author" content="Sergio Ayala">
-
-            <!-- ── Masthead ──────────────────────────────────────────────── -->
-            <header class="blog-masthead">
-                <div class="blog-masthead__center">
-                    <h2 class="sr-only">[ · blog · ] — The Digital Dispatch</h2>
-                    <canvas class="blog-voxel" role="img"
-                            aria-label="blog — The Digital Dispatch"></canvas>
-                </div>
-            </header>
-
-            <!-- ── Main grid ─────────────────────────────────────────────── -->
-            <div class="blog-grid">
-
-                <!-- Hero: latest post -->
-                <article class="blog-hero"
-                         itemscope itemtype="https://schema.org/BlogPosting">
-                    <link itemprop="url" href="#" data-blog-post-link>
-                    <meta itemprop="author" content="Sergio Ayala">
-
-                    <!-- VAULT-90s portal: hover/focus opens the doors (blog-vault.js).
-                         frame-01 is the closed-door poster; 02–17 preload on approach. -->
-                    <a href="#" class="blog-vault" data-blog-post-link
-                       rel="noopener noreferrer" target="_blank"
-                       aria-label="Open the vault — read: The Death of the Average: Why AI Is Pushing Designers Toward the Extremes">
-                        <img src="images/blog/frames/frame-01.webp"
-                             alt="VAULT-90s — a retro-futuristic blast door labelled 'Enter the 90s', sealed over a server tunnel"
-                             class="blog-vault__frame is-active"
-                             width="800" height="1067"
-                             loading="lazy" decoding="async"
-                             itemprop="image">
-                        <span class="blog-badge" aria-label="Latest post">Latest Post</span>
-                        <span class="blog-vault__enter" aria-hidden="true">Enter the Archive</span>
-                    </a>
-
-                    <div class="blog-hero__text">
-                        <div class="blog-hero__meta">
-                            <span class="blog-tag" itemprop="keywords">Design Theory</span>
-                            <time class="blog-time" datetime="2026-04-20" itemprop="datePublished">SYS:2026-04-20</time>
-                        </div>
-
-                        <h2 class="blog-hero__headline" itemprop="headline">
-                            <a href="#" data-blog-post-link rel="noopener noreferrer" target="_blank">
-                                The Death of the Average: Why AI Is Pushing Designers Toward the Extremes
-                            </a>
-                        </h2>
-
-                        <p class="blog-hero__excerpt" itemprop="description">
-                            Mediocrity has always been the enemy of good design. But in an era where artificial intelligence can generate the adequate on demand, the adequate has become worthless overnight. What does this mean for practitioners who built careers in the middle ground?
-                        </p>
-
-                        <div class="blog-hero__footer">
-                            <span class="blog-author">By
-                                <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-                                    <span itemprop="name">Sergio Ayala</span>
-                                </span>
-                            </span>
-                            <a href="#" class="blog-read-more" data-blog-post-link rel="noopener noreferrer" target="_blank">
-                                Read Full Transmission &nbsp;→
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Column rule -->
-                <div class="blog-col-rule" aria-hidden="true"></div>
-
-                <!-- Sidebar: always-on-file posts -->
-                <aside class="blog-sidebar" aria-label="Featured posts">
-
-                    <!-- VAULT-90s door covers the list; click opens it once, then
-                         the articles rise above the open door (blog-vault.js). -->
-                    <div class="blog-sidebar__bg" role="button" tabindex="0"
-                         aria-expanded="false"
-                         aria-label="Open the vault to reveal the archive">
-                        <img src="images/blog/frames/frame-01.webp" alt=""
-                             class="blog-sidebar__bg-frame"
-                             width="800" height="1067" loading="lazy" decoding="async">
-                        <span class="blog-sidebar__bg-prompt" aria-hidden="true">Click to open ↗</span>
-                    </div>
-
-                    <div class="blog-sidebar__header">
-                        <span class="blog-sidebar__label">Always on File</span>
-                        <div class="blog-sidebar__rule" aria-hidden="true"></div>
-                    </div>
-
-                    <article class="blog-side-post"
-                             itemscope itemtype="https://schema.org/BlogPosting">
-                        <a href="#" class="blog-side-post__link"
-                           rel="noopener noreferrer" target="_blank" itemprop="url">
-                            <div class="blog-side-post__img-wrap">
-                                <img src="images/photo/Fairy woods.webp"
-                                     alt="Fairy woods — ethereal misty light filtering through ancient trees in a forest"
-                                     class="blog-side-post__img"
-                                     loading="lazy"
-                                     itemprop="image">
-                            </div>
-                            <div class="blog-side-post__body">
-                                <span class="blog-tag" itemprop="keywords">Photography</span>
-                                <h3 class="blog-side-post__headline" itemprop="headline">
-                                    Photographing the Unreal: When the Camera Lies Better Than the Artist
-                                </h3>
-                                <time class="blog-time" datetime="2026-03-15" itemprop="datePublished">SYS:2026-03-15</time>
-                            </div>
-                        </a>
-                    </article>
-
-                    <article class="blog-side-post"
-                             itemscope itemtype="https://schema.org/BlogPosting">
-                        <a href="#" class="blog-side-post__link"
-                           rel="noopener noreferrer" target="_blank" itemprop="url">
-                            <div class="blog-side-post__img-wrap">
-                                <img src="images/photo/Jewels of Petra.webp"
-                                     alt="Jewels of Petra — intricate carved stone details of the ancient Nabataean city in Jordan"
-                                     class="blog-side-post__img"
-                                     loading="lazy"
-                                     itemprop="image">
-                            </div>
-                            <div class="blog-side-post__body">
-                                <span class="blog-tag" itemprop="keywords">Authorship</span>
-                                <h3 class="blog-side-post__headline" itemprop="headline">
-                                    Vibe Coding and the Question of Authorship in Digital Design
-                                </h3>
-                                <time class="blog-time" datetime="2026-02-28" itemprop="datePublished">SYS:2026-02-28</time>
-                            </div>
-                        </a>
-                    </article>
-
-                    <article class="blog-side-post"
-                             itemscope itemtype="https://schema.org/BlogPosting">
-                        <a href="#" class="blog-side-post__link"
-                           rel="noopener noreferrer" target="_blank" itemprop="url">
-                            <div class="blog-side-post__img-wrap">
-                                <img src="images/photo/Istanbul ships.webp"
-                                     alt="Istanbul ships — silhouettes of vessels crossing the Bosphorus under a dramatic Turkish sky"
-                                     class="blog-side-post__img"
-                                     loading="lazy"
-                                     itemprop="image">
-                            </div>
-                            <div class="blog-side-post__body">
-                                <span class="blog-tag" itemprop="keywords">Culture</span>
-                                <h3 class="blog-side-post__headline" itemprop="headline">
-                                    The Cyberpunk Aesthetic Was Never a Future — It Was Always Now
-                                </h3>
-                                <time class="blog-time" datetime="2026-01-10" itemprop="datePublished">SYS:2026-01-10</time>
-                            </div>
-                        </a>
-                    </article>
-
-                </aside>
-
-            </div><!-- /.blog-grid -->
-
-        </section>
-
         <section id="contact" aria-labelledby="ct-name-heading">
 
             <!-- ── Synthwave scene ───────────────────────────────────────── -->
@@ -3199,7 +3019,5 @@
     </div>
 
     <script defer src="js/inf-bracket.js"></script>
-    <script defer src="js/blog-voxel-title.js"></script>
-    <script defer src="js/blog-vault.js"></script>
 </body>
 </html>

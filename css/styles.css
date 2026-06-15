@@ -2974,8 +2974,7 @@ img#id1svg {
 #art-direction,
 #photo,
 #illustration,
-#contact,
-#blog {
+#contact {
   position: relative;
   z-index: var(--z-layer-10);
   min-height: 100vh;
@@ -3041,14 +3040,6 @@ img#id1svg {
   width: 0;
   height: 0;
   z-index: 9999;
-}
-
-#blog {
-  background: #BB3E03;
-}
-
-#blog .coming-soon__label {
-  --glitch-final-color: #E9D8A6;
 }
 
 #art-direction .background {
