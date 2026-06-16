@@ -10,12 +10,15 @@
 (function () {
   'use strict';
 
-  const WORD    = 'Art-Direction';        // ← edit to change the spelled-out word
-  const SIZE    = 64;                      // canvas px (browser downscales to 16/32)
-  const STEP_MS = 200;                     // hold per frame
-  const BG      = '#001219';               // site dark teal
-  const FG      = '#EE9B00';               // brand amber
-  const FONT    = '"Funnel Display", sans-serif';
+  const WORD     = 'Art-Direction';       // ← edit to change the spelled-out word
+  const SIZE     = 64;                     // canvas px (browser downscales to 16/32)
+  const LETTER_MS = 520;                   // hold per letter (slow enough to read)
+  const START_MS  = 800;                   // longer beat on the empty "[]" frame
+  const DOTS_MS   = 420;                   // the "[··]" warm-up frame
+  const END_MS    = 1100;                  // pause on the last letter before looping
+  const BG       = '#001219';              // site dark teal
+  const FG       = '#EE9B00';              // brand amber
+  const FONT     = '"Funnel Display", sans-serif';
 
   // Frame sequence:  []  ·  [··]  ·  [·<letter>·] for each character.
   const frames = ['[]', '[··]'].concat(
@@ -82,19 +85,29 @@
   let i = 0;
   let timer = null;
 
+  // how long to hold each frame: long beat at the start, slow letters,
+  // and a clear pause on the final letter before the loop restarts.
+  function holdFor(index) {
+    if (index === 0) return START_MS;               // "[]"
+    if (index === 1) return DOTS_MS;                // "[··]"
+    if (index === frames.length - 1) return END_MS; // last letter
+    return LETTER_MS;                               // every other letter
+  }
+
   function tick() {
     draw(link, frames[i]);
+    const hold = holdFor(i);
     i = (i + 1) % frames.length;
+    timer = setTimeout(tick, hold);
   }
 
   function start() {
     if (timer) return;
     tick();
-    timer = setInterval(tick, STEP_MS);
   }
 
   function stop() {
-    clearInterval(timer);
+    clearTimeout(timer);
     timer = null;
   }
 
