@@ -1077,11 +1077,16 @@ function initInfoInterfaceHints() {
     clearHint(activeHint);
     activeHint = hint;
     applyHint(activeHint);
+    // Freeze the auto language cycle while an option is hovered; resume when
+    // the pointer is over the badge but not on any hotspot.
+    if (hint) badge._langLoopPause?.();
+    else badge._langLoopResume?.();
   });
 
   badge.addEventListener('mouseleave', () => {
     clearHint(activeHint);
     activeHint = null;
+    badge._langLoopResume?.();
   });
 }
 
@@ -1104,6 +1109,18 @@ function initInfoInterfaceLangLoop() {
 
   let currentGroup = enGroup;
   let nextGroup    = esGroup;
+
+  // Auto-cycle control. While paused (e.g. the user is hovering a hotspot to
+  // read a hint) the loop holds on the current language; resuming reschedules
+  // a fresh full interval so the visible language gets its full reading time.
+  let switchTimer = null;
+  let paused      = false;
+
+  function scheduleNext() {
+    clearTimeout(switchTimer);
+    if (paused) return;
+    switchTimer = setTimeout(doSwitch, DISPLAY_MS);
+  }
 
   // Restart line animations on a group.
   // --line-offset controls the initial delay before stagger begins.
@@ -1134,10 +1151,23 @@ function initInfoInterfaceLangLoop() {
       currentGroup = incoming;
       nextGroup    = outgoing;
 
-      // Schedule the next switch
-      setTimeout(doSwitch, DISPLAY_MS);
+      // Schedule the next switch (no-op while paused)
+      scheduleNext();
     }, EXIT_MS);
   }
+
+  // Exposed to the hotspot-hints handler so hovering an option freezes the
+  // language, and leaving it resumes the cycle.
+  badge._langLoopPause = () => {
+    if (paused) return;
+    paused = true;
+    clearTimeout(switchTimer);
+  };
+  badge._langLoopResume = () => {
+    if (!paused) return;
+    paused = false;
+    scheduleNext();
+  };
 
   // Observe the badge becoming active (set by initCyberPanel)
   const mo = new MutationObserver(() => {
@@ -1148,7 +1178,7 @@ function initInfoInterfaceLangLoop() {
     enterGroup(enGroup, '0.75s');
 
     // Schedule first switch after EN has been visible long enough
-    setTimeout(doSwitch, DISPLAY_MS);
+    scheduleNext();
   });
   mo.observe(badge, { attributes: true, attributeFilter: ['class'] });
 }
