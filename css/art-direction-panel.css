@@ -1291,52 +1291,99 @@ body.ad-section-live #art-direction .ad-explore-card {
 .ad-book-leaf.is-top .ad-book-corner { opacity: 0.92; }
 .ad-book-leaf.is-top:hover .ad-book-corner { width: 70px; height: 70px; opacity: 1; }
 
-/* ── Controls ── */
+/* ── Controls — cyberpunk HUD layer ──────────────────────────────────────────
+   Full-stage overlay so the prev/next triggers flank the book (vertically
+   centred) and the counter rides the top edge — clear of the bottom-left
+   project content they used to overlap. Layer is click-through; only the
+   controls themselves take pointer events. ─────────────────────────────────── */
 .ad-book-controls {
   position: absolute;
-  left: 50%;
-  bottom: -2px;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 18px;
+  inset: 0;
   z-index: 60;
+  pointer-events: none;
 }
+
 .ad-book-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: auto;
   appearance: none;
-  background: rgba(0, 18, 25, 0.55);
-  border: 1px solid rgba(238, 155, 0, 0.55);
-  color: #EE9B00;
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
+  width: 42px; height: 58px;
   display: grid;
   place-items: center;
+  cursor: pointer;
+  color: #EE9B00;
+  font-size: 1.25rem;
+  line-height: 1;
+  background: linear-gradient(150deg, rgba(0, 24, 32, 0.92), rgba(0, 12, 18, 0.86));
+  border: 1px solid rgba(238, 155, 0, 0.6);
+  /* Chamfered "cut-corner" cyber panel */
+  clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+  box-shadow:
+    0 0 0 1px rgba(10, 147, 150, 0.25),
+    0 0 14px rgba(0, 0, 0, 0.55),
+    inset 0 0 12px rgba(238, 155, 0, 0.08);
+  text-shadow: 0 0 8px rgba(238, 155, 0, 0.7);
   backdrop-filter: blur(2px);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+              transform 0.2s var(--ease-expo-out), background 0.2s ease;
 }
-.ad-book-btn:hover:not(:disabled) {
-  background: rgba(238, 155, 0, 0.18);
-  border-color: #EE9B00;
-  transform: scale(1.08);
-}
-.ad-book-btn:focus-visible { outline: 2px solid #EE9B00; outline-offset: 2px; }
-.ad-book-btn:disabled { opacity: 0.28; cursor: default; }
+.ad-book-prev { left: 4px;  clip-path: polygon(0 12px, 12px 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+.ad-book-next { right: 4px; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%); }
 
-.ad-book-counter {
-  font-family: 'Funnel Display', sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  color: #E9D8A6;
-  min-width: 92px;
-  text-align: center;
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+/* Teal accent tick — the cyber corner detail */
+.ad-book-btn::before {
+  content: "";
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 7px; height: 7px;
+  border-top: 1px solid #0A9396;
+  border-right: 1px solid #0A9396;
+  opacity: 0.8;
 }
+.ad-book-prev::before { right: auto; left: 5px; border-right: none; border-left: 1px solid #0A9396; }
+
+.ad-book-btn:hover:not(:disabled) {
+  color: #001219;
+  background: linear-gradient(150deg, #EE9B00, #ca8400);
+  border-color: #0A9396;
+  text-shadow: none;
+  box-shadow:
+    0 0 0 1px rgba(10, 147, 150, 0.6),
+    0 0 18px rgba(238, 155, 0, 0.55),
+    0 0 36px rgba(238, 155, 0, 0.25);
+}
+.ad-book-prev:hover:not(:disabled) { transform: translate(-3px, -50%); }
+.ad-book-next:hover:not(:disabled) { transform: translate(3px, -50%); }
+.ad-book-btn:focus-visible { outline: 2px solid #0A9396; outline-offset: 3px; }
+.ad-book-btn:disabled { opacity: 0.22; cursor: default; }
+
+/* Counter — top-edge HUD readout */
+.ad-book-counter {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.18em;
+  color: #EE9B00;
+  background: rgba(0, 18, 25, 0.72);
+  border: 1px solid rgba(238, 155, 0, 0.35);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  text-shadow: 0 0 8px rgba(238, 155, 0, 0.5);
+  backdrop-filter: blur(2px);
+  white-space: nowrap;
+}
+.ad-book-counter::before { content: "[ "; color: #0A9396; }
+.ad-book-counter::after  { content: " ]"; color: #0A9396; }
 
 @media (prefers-reduced-motion: reduce) {
   .ad-book-leaf { transition: none; }
   .ad-book-gloss { display: none; }
   .ad-book-corner { transition: opacity 0.2s ease; }
+  .ad-book-btn { transition: color 0.2s ease, box-shadow 0.2s ease; }
 }
