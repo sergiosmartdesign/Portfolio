@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;600;800&family=Share+Tech+Mono&display=swap">
 
+    <!-- ═══ FAVICON ═════════════════════════════════════════════════════════ -->
+    <!-- Static fallback (Safari/iOS, no-JS); animated-favicon.js takes over elsewhere -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23001219'/%3E%3Ctext%20x='32'%20y='34'%20font-family='sans-serif'%20font-weight='800'%20font-size='30'%20fill='%23EE9B00'%20text-anchor='middle'%20dominant-baseline='central'%3E%5B%C2%B7A%C2%B7%5D%3C/text%3E%3C/svg%3E">
+
     <!-- ═══ SECURITY HEADERS (HTML-deliverable subset) ══════════════════════ -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self';">
@@ -2980,6 +2984,7 @@
          (js/lib/draco/) must be configured before the module evaluates, or it
          locks to Google's CDN which CSP blocks and models never load. -->
     <script defer src="js/art-direction-data.js"></script>
+    <script defer src="js/ad-flipbook.js"></script>
     <script defer src="js/art-direction-panel.js"></script>
     <script defer src="js/particle-system.js"></script>
     <script defer src="js/orb-3d.js"></script>
@@ -3020,5 +3025,6 @@
     </div>
 
     <script defer src="js/inf-bracket.js"></script>
+    <script defer src="js/animated-favicon.js"></script>
 </body>
 </html>

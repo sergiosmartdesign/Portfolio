@@ -1170,3 +1170,173 @@ body.ad-section-live #art-direction .ad-explore-card {
   opacity: 1;
   transition: opacity 0s;
 }
+
+/* ── Flipbook — editorial catalog page-turn (js/ad-flipbook.js) ───────────────
+   A CSS-3D book mounted into the project-modal stage for multi-page editorial
+   works. Leaves rotate around a central spine; turned leaves pile left, unturned
+   right. Geometry (--leaf-w/--leaf-h) is sized to the page aspect ratio by JS.
+   Palette: amber #EE9B00 · cream #E9D8A6 · bg #001219
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* The image stage is normally pointer-events:none — the book needs clicks. */
+.ad-pm-stage.has-book { pointer-events: auto; }
+.ad-project-modal.is-flipbook .ad-pm-stage-img { display: none; }
+
+.ad-book {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 2600px;
+  perspective-origin: 50% 44%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ad-book-stack {
+  position: relative;
+  width: calc(var(--leaf-w, 38%) * 2);   /* spread = two pages wide */
+  height: var(--leaf-h, 78%);
+  transform-style: preserve-3d;
+  /* Page-silhouette shadow — cheap, follows the closed/open outline. */
+  filter: drop-shadow(0 16px 34px rgba(0, 0, 0, 0.55));
+}
+.ad-book--single .ad-book-stack { width: var(--leaf-w, 60%); }
+
+/* ── Leaves ── */
+.ad-book-leaf {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transform-origin: left center;       /* the spine */
+  transform-style: preserve-3d;
+  transition: transform 0.86s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ad-book--spread .ad-book-leaf { left: 50%; width: 50%; }  /* right half */
+.ad-book--single .ad-book-leaf { left: 0;   width: 100%; }
+.ad-book-leaf.is-flipped { transform: rotateY(-180deg); }
+
+.ad-book-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: #0b1a22;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1px rgba(233, 216, 166, 0.10);
+  overflow: hidden;
+}
+.ad-book-face--back { transform: rotateY(180deg); }
+.ad-book-face.is-blank { background-color: #07141b; }
+
+/* Binding shadow along the spine edge (each leaf's left edge). */
+.ad-book--spread .ad-book-face::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 15%;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.30), transparent);
+  pointer-events: none;
+}
+
+/* Subtle dark core at the gutter for depth (behind the pages). */
+.ad-book-gutter {
+  position: absolute;
+  top: 2%; bottom: 2%; left: 50%;
+  width: 26px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5), transparent 72%);
+  z-index: 0;
+  pointer-events: none;
+}
+.ad-book--single .ad-book-gutter { display: none; }
+
+/* ── Sheen — light sweeping across the turning page ── */
+.ad-book-gloss {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg,
+    rgba(255, 255, 255, 0) 32%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0) 68%);
+}
+.ad-book-leaf.is-turning .ad-book-face--front .ad-book-gloss {
+  animation: ad-gloss 0.86s ease forwards;
+}
+.ad-book-leaf.is-turning .ad-book-face--back .ad-book-gloss {
+  animation: ad-gloss-soft 0.86s ease forwards;
+}
+@keyframes ad-gloss      { 0% { opacity: 0; } 50% { opacity: 0.85; } 100% { opacity: 0; } }
+@keyframes ad-gloss-soft { 0% { opacity: 0; } 50% { opacity: 0.45; } 100% { opacity: 0; } }
+
+/* ── Corner-peel affordance — only the top right-hand page ── */
+.ad-book-corner {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 46px; height: 46px;
+  pointer-events: none;
+  opacity: 0;
+  clip-path: polygon(100% 48%, 100% 100%, 48% 100%);
+  background:
+    linear-gradient(315deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0) 55%),
+    linear-gradient(135deg, transparent 46%, #E9D8A6 47%, #EE9B00 100%);
+  transition: width 0.28s ease, height 0.28s ease, opacity 0.28s ease;
+}
+.ad-book-leaf.is-top .ad-book-corner { opacity: 0.92; }
+.ad-book-leaf.is-top:hover .ad-book-corner { width: 70px; height: 70px; opacity: 1; }
+
+/* ── Controls ── */
+.ad-book-controls {
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  z-index: 60;
+}
+.ad-book-btn {
+  appearance: none;
+  background: rgba(0, 18, 25, 0.55);
+  border: 1px solid rgba(238, 155, 0, 0.55);
+  color: #EE9B00;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(2px);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+.ad-book-btn:hover:not(:disabled) {
+  background: rgba(238, 155, 0, 0.18);
+  border-color: #EE9B00;
+  transform: scale(1.08);
+}
+.ad-book-btn:focus-visible { outline: 2px solid #EE9B00; outline-offset: 2px; }
+.ad-book-btn:disabled { opacity: 0.28; cursor: default; }
+
+.ad-book-counter {
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: #E9D8A6;
+  min-width: 92px;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-book-leaf { transition: none; }
+  .ad-book-gloss { display: none; }
+  .ad-book-corner { transition: opacity 0.2s ease; }
+}

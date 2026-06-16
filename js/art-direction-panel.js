@@ -359,13 +359,20 @@ class ArtWorksPanel {
             this.modalBg.style.backgroundImage = backdrop ? `url('${backdrop}')` : 'none';
         }
 
-        // Stage media — interactive 3D model or static image
+        // Stage media — flipbook (editorial catalogs) · 3D model · static image
         clearTimeout(this._mvTeardownTimer);
         this._teardownModelViewer();
+        this._teardownFlipbook();
+
+        const useFlip = this.activeDiscipline === 'editorial'
+            && Array.isArray(work.images) && work.images.length > 1
+            && !!window.ADFlipbook;
+
         if (work.model) this._mountModelViewer(work);
+        else if (useFlip) this._mountFlipbook(work);
 
         if (this.modalStageImg) {
-            if (work.bg && !work.model) {
+            if (work.bg && !work.model && !useFlip) {
                 this.modalStageImg.src = work.bg;
                 this.modalStageImg.alt = `${work.title} — project image`;
             } else {
@@ -373,6 +380,7 @@ class ArtWorksPanel {
                 this.modalStageImg.alt = '';
             }
         }
+        this.modal.classList.toggle('is-flipbook', useFlip);
 
         this.modalNum.textContent   = work.num;
         this.modalCat.textContent   = `· ${work.cat.toUpperCase()} ·`;
@@ -392,7 +400,10 @@ class ArtWorksPanel {
         this.modalTags.innerHTML = work.tags.map(t => `
             <span class="ad-pm-tag"><span class="ad-pm-dot"></span>${t}</span>`).join('');
 
-        if (this.modalThumbs) {
+        if (this.modalThumbs && useFlip) {
+            // The flipbook carries its own page navigation — no thumb strip.
+            this.modalThumbs.innerHTML = '';
+        } else if (this.modalThumbs) {
             const imgs = work.images;
             if (imgs && imgs.length > 1) {
                 this.modalThumbs.innerHTML = imgs.map((src, i) =>
@@ -443,8 +454,24 @@ class ArtWorksPanel {
         document.body.style.overflow = '';
         this._triggerEl?.focus({ preventScroll: true });
         this._triggerEl = null;
+        this._teardownFlipbook();
         // Free the WebGL context once the fade-out (0.22s) has finished.
         this._mvTeardownTimer = setTimeout(() => this._teardownModelViewer(), 240);
+    }
+
+    // ── Flipbook stage — editorial catalogs (js/ad-flipbook.js) ─────────────────
+
+    _mountFlipbook(work) {
+        if (!this.modalStage || !window.ADFlipbook) return;
+        this.modalStage.classList.add('has-book');
+        this._flipbook = new ADFlipbook(this.modalStage, work.images, {
+            label: `${work.title} — catalog`,
+        });
+    }
+
+    _teardownFlipbook() {
+        if (this._flipbook) { this._flipbook.destroy(); this._flipbook = null; }
+        this.modalStage?.classList.remove('has-book');
     }
 
     // ── 3D model stage ────────────────────────────────────────────────────────

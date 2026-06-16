@@ -191,8 +191,16 @@
       const vh   = window.innerHeight;
       updateLetters(rect, vh);
       updateBg(rect, vh);
-      // Section is fully in view (top reached the viewport top) → go live.
-      if (hasNav && !sectionLive && (vh - rect.top) / vh >= 1) triggerSectionLive();
+      // Go live once ≥40% of the section is on screen — the intro frame
+      // (red #BB3E03) and skills bar (amber #EE9B00) ride the ad-section-live
+      // gate, so this is what brings them in. Measured as visible height over
+      // min(section, viewport) so it stays reachable if the section ever grows
+      // taller than the viewport (pure section-height ratios can't).
+      if (hasNav && !sectionLive) {
+        const visible = Math.min(rect.bottom, vh) - Math.max(rect.top, 0);
+        const visibleFrac = visible / Math.min(rect.height || vh, vh);
+        if (visibleFrac >= 0.4) triggerSectionLive();
+      }
     };
 
     const onScroll = () => {
