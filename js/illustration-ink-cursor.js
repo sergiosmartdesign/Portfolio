@@ -109,6 +109,11 @@
       this.section   = document.getElementById('illustration');
       if (!this.section) return;
 
+      // Mouse-follow goo cursor is meaningless (and a wasted rAF) on touch
+      // devices, and hiding the real cursor on a hybrid touch+mouse device with
+      // no replacement looks broken. Skip building it on coarse pointers.
+      if (App.BrowserDetect && App.BrowserDetect.isTouch) return;
+
       this.active    = false;
       this.idle      = false;
       this.dots      = [];

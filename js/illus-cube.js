@@ -112,8 +112,11 @@
     const infoSvg     = illus.querySelector('.illus-info-svg');
     const lustEl      = illus.querySelector('.illus-lust-accent');
 
-    // Scale section height to number of images (100vh per stop)
-    illus.style.height = (N * 100) + 'vh';
+    // Scale section height to number of images. Scroll progress is normalized to
+    // offsetHeight (see _update), so a shorter per-stop height on phones just
+    // makes the cube scroll brisker without breaking the choreography.
+    const stopVh = (App.BrowserDetect && App.BrowserDetect.isMobile) ? 65 : 100;
+    illus.style.height = (N * stopVh) + 'vh';
 
     // Stamp face label + scan line into every face.
     // The gallery-title face (stop 0) gets the section descriptor instead of the expand hint.

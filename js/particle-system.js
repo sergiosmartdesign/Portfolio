@@ -44,12 +44,14 @@ class ParticleSystem {
 
     // Detect Safari for performance optimizations
     const isSafari = App.BrowserDetect ? App.BrowserDetect.isSafariBased() : false;
+    // Phones get a smaller swarm for battery / fill-rate (desktop unchanged).
+    const isMobile = App.BrowserDetect ? App.BrowserDetect.isMobile : false;
 
     // Configuration constants (optimized for Safari)
     this.config = {
       lifespan: 1000,
       popPerBirth: 1,
-      maxPop: isSafari ? 100 : 150,  // Reduced particle count on Safari
+      maxPop: isMobile ? 60 : (isSafari ? 100 : 150),  // smaller on phones / Safari
       birthFreq: 2,
       gridSize: 8,
       gridRadius: 500,

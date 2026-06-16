@@ -1,0 +1,340 @@
+/* ============================================================================
+   responsive.css — MOBILE / TABLET LAYER
+   ----------------------------------------------------------------------------
+   Loaded LAST so it wins the cascade. Desktop output must stay byte-for-byte
+   unchanged: every rule here lives inside a width / capability media query and
+   mirrors the specificity of the desktop rule it overrides. Nothing in this
+   file applies above 1024px or to fine-pointer (mouse) devices.
+
+   Primary target: modern phones, portrait-first (~390–430px). Tablets get an
+   in-between pass at ≤1024px. 360–380px is guard-railed (type/padding only).
+
+   BREAKPOINTS
+     ≤1024px  tablet / in-between
+     ≤768px   primary phone layer (most work)
+     ≤380px   small-phone guard rails
+   CAPABILITY
+     (hover:none) and (pointer:coarse)  → neutralize hover-only FX, cursor FX
+     (orientation:landscape) and (max-height:480px) → phone-landscape sanity
+
+   Existing per-section media queries (nav drawer, #about stacking, #photo
+   grid in styles.css; reduced-motion blocks) are intentionally left in place
+   and not duplicated here — this file only adds what is missing.
+
+   SECTION INDEX
+     1.  Foundation / global   2. Header & nav   3. #intro   4. #about
+     5.  #art-direction        6. #photo         7. #illustration   8. #contact
+   ============================================================================ */
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   1 · FOUNDATION / GLOBAL
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  /* Horizontal-overflow guard. body already has overflow-x:hidden; clip on the
+     root is cheaper (creates no scroll container) and catches transformed
+     decorative elements that bleed past the viewport edge on small screens. */
+  html {
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Honor the notch / dynamic-island and home-indicator safe areas. The header
+     is a fixed bar; pad its horizontal edges past the insets in landscape. */
+  header {
+    padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+  }
+}
+
+/* Touch-friendly hit targets + no sticky hover on coarse pointers. */
+@media (hover: none) and (pointer: coarse) {
+  .main-nav .nav-btn,
+  .language-toggle .nav-btn,
+  #sound-toggle {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   3 · #INTRO
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Sticky hero stage: svh fills the screen without the mobile URL-bar resize
+     reflowing the sticky layer mid-scroll (dvh would jitter here). */
+  #intro {
+    min-height: 100svh;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+
+  /* Desktop decorations that crowd a narrow hero: the info-interface badge is
+     380px wide at left:70px (overflows a 390px viewport) and the cyber-panel is
+     vertically centered at the far left, colliding with the centered title/CTA.
+     The navigation guidance they provide is already reachable via the hamburger
+     drawer + visible CTA, so drop them on phones. */
+  .info-interface,
+  .cyber-panel {
+    display: none;
+  }
+
+  /* The title is a letter-spaced single line (.glitch-text is white-space:pre,
+     so it can't wrap). styles.css's ≤768 rule (clamp(2rem,8vw,3.5rem)) renders
+     it ~655px wide → clipped both sides on a phone. Shrink to fit one line:
+     ~4.3vw keeps the full string inside 360–430px viewports. */
+  #main-title {
+    font-size: clamp(0.8rem, 4.3vw, 1.9rem);
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   4 · #ABOUT
+   (container/title/capsule stacking already handled at ≤1024 / ≤768 in styles.css)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* The certificate cube is absolutely positioned at left:120px / 240px wide —
+     off-center and cramped on a phone. Center it and shrink to the viewport. */
+  .cert-cube-wrapper {
+    --cs: min(58vw, 220px);
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+  }
+
+  .cert-cube-nav {
+    justify-content: center;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   5 · #ART-DIRECTION
+   Desktop is a spatial composition: a 75vw letter grid on the left with content
+   panels keyed to the narrow strip beside it (left: min(75vh,75vw)+…). On a
+   phone that strip is ~80px wide — unusable. The section is NOT scroll-pinned
+   (IntersectionObserver-gated), so it's safe to restack it as a vertical flow:
+   compact grid masthead on top, then the active content panel, then the nav.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* overflow:visible lets the now-in-flow panels define the section height
+     (absolute children create none). The bg-image/scanlines stay full-bleed. */
+  #art-direction {
+    overflow: visible;
+    min-height: 100svh;
+    padding-bottom: var(--spacing-2xl);
+  }
+
+  /* Compact, centered letter masthead at the top. art-cell is already fluid
+     (min(100vh/4,100vw/4)); cap it smaller so the grid reads as a header. */
+  #art-direction .art-direction-grid {
+    align-items: center;
+    margin: calc(var(--header-height, 60px) + var(--spacing-md)) auto var(--spacing-lg);
+  }
+  #art-direction .art-cell {
+    width: min(19vw, 84px);
+    height: min(19vw, 84px);
+  }
+
+  /* Decorative framing / vertical bars that have no room on a phone. */
+  #art-direction .ad-intro-svg,
+  #art-direction .ad-skills-bar,
+  #art-direction .ad-projects-bar {
+    display: none;
+  }
+
+  /* Content panels → full-width vertical flow. transform:none neutralizes the
+     translateY(-50%) centering the desktop absolute layout depends on. */
+  #art-direction .ad-intro-text,
+  #art-direction .ad-works-zone,
+  #art-direction .ad-explore-card {
+    position: static;
+    inset: auto;
+    width: auto;
+    max-width: 100%;
+    transform: none;
+    margin: 0 var(--spacing-md) var(--spacing-xl);
+  }
+
+  /* intro-text entrance keyframes animate to translateY(-50%) (centering-only);
+     drop the animation in flow but keep the class-driven visible state. */
+  #art-direction.ad-intro-active.ad-intro-animate .ad-intro-text {
+    animation: none;
+  }
+
+  /* intro-text and works-zone are mutually exclusive states. opacity alone
+     would leave the inactive one occupying space — collapse it with display. */
+  #art-direction:not(.ad-intro-active) .ad-intro-text {
+    display: none;
+  }
+  #art-direction.ad-intro-active .ad-works-zone {
+    display: none !important;
+  }
+
+  /* styles' art-direction-panel.css hides the works panel + discipline nav
+     below 1220px (no room beside the desktop grid, "nav would point at
+     nothing"). The mobile restack gives them their own full-width space below
+     the grid, so bring them back. */
+  #art-direction .ad-works-panel {
+    display: flex;
+  }
+  #art-direction .ad-explore-card {
+    display: block;
+  }
+
+  /* works panel: drop the desktop scale()/max-height so it reads full-width. */
+  #art-direction .ad-works-zone {
+    max-height: none;
+  }
+  #art-direction .ad-works-panel {
+    transform: none;
+    max-height: none;
+  }
+  /* The table is flex:1/flex-basis:0 — inside a now-auto-height column it
+     collapses to 0. Make it content-height and let the page scroll instead. */
+  #art-direction .ad-works-table {
+    flex: none;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  /* 5 columns don't fit a phone: drop the column-label header and the
+     scope/tools cells, leaving "NN · Title … Year" (mirrors the photo list). */
+  #art-direction .ad-works-cols {
+    display: none;
+  }
+  #art-direction .ad-work-item {
+    grid-template-columns: 22px 1fr auto;
+    column-gap: var(--spacing-sm);
+  }
+  #art-direction .ad-work-scope,
+  #art-direction .ad-work-tools {
+    display: none;
+  }
+
+  /* explore-card (discipline nav): the ad-explore-enter clip-path/translateY
+     reveal works fine in flow; just let it size by the SVG aspect ratio. */
+  #art-direction .ad-explore-card {
+    height: auto;
+    aspect-ratio: 564.09 / 406.8;
+    pointer-events: auto;
+  }
+  #art-direction .ad-explore-card .ad-nav-svg {
+    height: auto;
+  }
+
+  /* ── Project modal → full-screen sheet: media on top, scrollable details ── */
+  .ad-pm-frame {
+    inset: max(var(--spacing-sm), env(safe-area-inset-top))
+           var(--spacing-sm)
+           max(var(--spacing-sm), env(safe-area-inset-bottom));
+  }
+  .ad-pm-stage {
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: auto;
+    height: 42%;
+    padding: var(--spacing-xs);
+  }
+  .ad-pm-content {
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    bottom: var(--spacing-md);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    max-height: 50%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .ad-pm-num {
+    font-size: clamp(40px, 12vw, 64px);
+  }
+  .ad-pm-desc {
+    max-width: none;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   6 · #PHOTO
+   The top-grid (camera + project list) already stacks at ≤900/≤768 and the
+   project table already drops columns (styles.css). Single polaroid widget is
+   viewport-fluid. Only small polish needed here.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Location column was truncating; let long place names ellipsize cleanly
+     instead of clipping mid-word against the viewport edge. */
+  #photo .photo-project-item .photo-location {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   7 · #ILLUSTRATION
+   Cube/lightbox are viewport-fluid; per-stop scroll height is reduced on phones
+   in illus-cube.js. The mouse-follow ink cursor is skipped on touch
+   (illustration-ink-cursor.js) — restore the real cursor styles.css hides.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (hover: none) and (pointer: coarse) {
+  #illustration,
+  #illustration * {
+    cursor: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Sticky cube stage: svh keeps it from reflowing every time the mobile URL
+     bar shows/hides across the long cube scroll (matches the JS height units). */
+  .illus-tunnel {
+    height: calc(100svh - var(--header-height, 60px));
+  }
+
+  /* Tappable close button, clear of the notch. */
+  .illus-lightbox-close {
+    min-width: 44px;
+    min-height: 44px;
+    top: max(var(--spacing-sm), env(safe-area-inset-top));
+    right: max(var(--spacing-sm), env(safe-area-inset-right));
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   8 · #CONTACT
+   The form row already fully stacks at ≤640px in contact.css (capsule/bar
+   hidden, single-column grid, full-width send). Only touch-target + safe-area
+   polish needed.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Footer clears the home-indicator on notched phones. */
+  .ct-footer {
+    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* Comfortable tap targets for the send button and direct-contact links. */
+  .ct-send,
+  .ct-links--mini .ct-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
