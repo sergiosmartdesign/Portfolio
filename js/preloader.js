@@ -207,7 +207,17 @@
     if (labelStep >= LABEL_STEPS.length - 1) clearInterval(labelIv);
   }, 160);
 
-  let tick = 0;
+  // Electric "boil" — randomise each filter's turbulence seed (~13Hz) so the
+  // two colours keep arcing independently. Runs in its own interval, decoupled
+  // from the counter, so the electricity NEVER freezes when the line reaches the
+  // borders at 100% — it keeps boiling right through the exit fade and only
+  // stops once the overlay is removed.
+  let boilIv = null;
+  if (!reducedMotion) {
+    boilIv = setInterval(() => {
+      lineTurbs.forEach(t => t.setAttribute('seed', (Math.random() * 500 | 0) + 1));
+    }, 78);
+  }
 
   const counterIv = setInterval(() => {
     const ceiling = loadDone ? 100 : 94;
@@ -220,15 +230,6 @@
       lineEls.forEach(el => { el.style.transform = sx; });
     }
 
-    // Boil the electric lines at ~13Hz (every 3rd 26ms tick). Each filter gets
-    // its own random seed so the two colors arc independently. Runs even while
-    // count is capped at 94 waiting for the load event, and stops naturally
-    // when this interval clears at 100% — the arcs freeze "locked in", then
-    // fade out with the overlay.
-    if (!reducedMotion && ++tick % 3 === 0) {
-      lineTurbs.forEach(t => t.setAttribute('seed', (Math.random() * 500 | 0) + 1));
-    }
-
     if (count >= 100) {
       clearInterval(counterIv);
       setTimeout(() => {
@@ -239,6 +240,7 @@
         window.dispatchEvent(new CustomEvent('preloaderExiting'));
         overlay.classList.add('exit');
         overlay.addEventListener('transitionend', () => {
+          if (boilIv) clearInterval(boilIv);
           overlay.remove();
           window.dispatchEvent(new CustomEvent('preloaderDone'));
         }, { once: true });

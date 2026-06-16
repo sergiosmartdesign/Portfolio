@@ -902,9 +902,15 @@ function initPhotoReveal() {
       }
 
       if (exitProgress > 0) {
+        // Photo stays frozen (it's position:fixed). #illustration sits in normal
+        // flow right behind it and rises from the bottom as the spacer scrolls.
+        // Clip the photo from the BOTTOM up to expose that rising section, so it
+        // reads as illustration covering the frozen photo from the bottom. The
+        // clip seam sits at (1−exit)·vh — exactly illustration's top edge
+        // (spacerRect.bottom), so the seam + static line track it pixel-perfect.
         photoSection.style.visibility = exitProgress < 1 ? 'visible' : 'hidden';
-        photoSection.style.clipPath   = `inset(${exitProgress * 100}% 0 0 0)`;
-        staticLineCanvas.style.top    = `${exitProgress * viewportHeight - 2}px`;
+        photoSection.style.clipPath   = `inset(0 0 ${exitProgress * 100}% 0)`;
+        staticLineCanvas.style.top    = `${(1 - exitProgress) * viewportHeight - 2}px`;
         exitProgress < 1 ? showStaticLine() : hideStaticLine();
       } else {
         photoSection.style.visibility = entryClamped > 0 ? 'visible' : 'hidden';

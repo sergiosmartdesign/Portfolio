@@ -33,6 +33,8 @@
       this._cameraEl       = null;
       this._cardLastPhase  = null; // per-card: -1=hidden, 0=entering(t<0.22), 1=visible(t>=0.22)
       this._ejectRafPending = false;
+      this._ro             = null; // ResizeObserver: re-aligns stream to camera centre
+      this._syncRaf        = null;
     }
 
     get canPlay()      { return this._streamCanPlay; }
@@ -51,10 +53,12 @@
       this._updateStreamWidth();
       this._setupInfoStripClicks();
       this._setupStreamLightbox();
+      this._setupCameraSync();
     }
 
     resize() {
       this._updateStreamWidth();
+      this._scheduleSync();
     }
 
     // Called every scroll tick — owns all stream state transitions.
@@ -163,6 +167,59 @@
       if (this._stream) {
         this._stream.style.setProperty('--ghost-stream-w', this._stream.offsetWidth + 'px');
       }
+    }
+
+    // ── Vertical alignment to the camera ──────────────────────────────────────
+    // The stream is absolutely positioned inside .photo-col-left; the camera
+    // image lives in that column's normal flow. Their centres are anchored to
+    // different reference frames (top-down flow vs. bottom of column), so they
+    // drift apart whenever the section reflows. We lock them together by
+    // measuring the camera's rendered centre and exposing it as --cam-center-y.
+
+    // Nearest positioned ancestor — the containing block for the stream's `top`.
+    _streamRef() {
+      return this._stream && (this._stream.offsetParent || this._stream.parentElement);
+    }
+
+    _syncStreamToCamera() {
+      const ref = this._streamRef();
+      if (!ref || !this._cameraEl) return;
+      // getBoundingClientRect is transform-aware → the rotated camera's true
+      // rendered centre. Subtracting the column rect cancels scroll/zoom, so
+      // the result is resolution-independent.
+      const cam = this._cameraEl.getBoundingClientRect();
+      const box = ref.getBoundingClientRect();
+      const centerY = (cam.top + cam.height / 2) - box.top;
+      this._stream.style.setProperty('--cam-center-y', centerY.toFixed(2) + 'px');
+    }
+
+    // Coalesce bursts of layout changes into a single post-layout measurement.
+    _scheduleSync() {
+      if (this._syncRaf) return;
+      this._syncRaf = requestAnimationFrame(() => {
+        this._syncRaf = null;
+        this._syncStreamToCamera();
+      });
+    }
+
+    _setupCameraSync() {
+      // ResizeObserver catches everything a resize event misses: content/locale
+      // reflow growing the column, the camera image loading, % width changes.
+      if (window.ResizeObserver) {
+        this._ro = new ResizeObserver(() => this._scheduleSync());
+        const ref = this._streamRef();
+        if (ref)            this._ro.observe(ref);
+        if (this._cameraEl) this._ro.observe(this._cameraEl);
+      }
+      // First accurate measure once the camera image knows its intrinsic height.
+      if (this._cameraEl && !this._cameraEl.complete) {
+        this._cameraEl.addEventListener('load', () => this._scheduleSync(), { once: true });
+      }
+      // Web-font swap reflows the description paragraph → column height shifts.
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => this._scheduleSync());
+      }
+      this._scheduleSync();
     }
 
     _setupInfoStripClicks() {

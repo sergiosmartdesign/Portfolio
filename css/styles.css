@@ -1568,21 +1568,22 @@ nav {
   z-index: var(--z-layer-5);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-2xl);
+  gap: clamp(2rem, 5vw, var(--spacing-2xl));
   max-width: 1400px;
   width: 100%;
   align-items: start;
-  margin-top: -50px;
 }
 
 .about-left {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  min-width: 0;            /* allow the grid track to shrink; no overflow */
 }
 
 .about-left > p {
-  width: 550px;
+  max-width: 60ch;         /* fluid reading measure — never overflows the column */
+  width: 100%;
   text-align: inherit;
 }
 
@@ -1591,9 +1592,12 @@ nav {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  padding: 40px;
-  margin-top: 750px;
-  margin-left: -30px;
+  padding: clamp(1.5rem, 2.5vw, 40px);
+  /* Fluid stagger — replaces the old fixed 750px offset so the right column
+     keeps its lower-start composition without breaking at other resolutions. */
+  margin-top: clamp(3rem, 16vw, 12rem);
+  margin-left: 0;
+  min-width: 0;
 }
 
 /* Animated vertical line on the left of right column */
@@ -1603,7 +1607,7 @@ nav {
   left: 0;
   top: 0;
   width: var(--border-medium);
-  height: calc(100% + 680px);
+  height: 100%;
   background: #ee9b00;
   transform-origin: top;
   scale: 1 0;
@@ -1647,6 +1651,10 @@ nav {
 /* --- About Title (Left Column) --- */
 #about #abouttitle {
   color: #001219;
+  /* Collapse the trailing space the stacked title's negative line offsets
+     reserve, so the badge/paragraphs below follow tightly at any resolution.
+     The title is fixed-size, so this single value is stable across widths. */
+  margin-bottom: -90px;
 }
 
 /* Prevent about section h2 glitch on page load */
@@ -1759,38 +1767,21 @@ nav {
 /* --- About Paragraphs (Left Column) --- */
 .about-left > p {
   color: #001219;
-  position: relative;
-  top: -100px;   /* Moves paragraphs 150px up */
-  left:0px;       /* Modify this to move paragraphs left (negative) or right (positive) */
+  position: relative;     /* flows naturally now — px offsets removed */
   opacity: 0;
   transform: translateX(-100px);
 }
 
-/* Specific positioning for first paragraph */
-#aboutp1 {
-  top: -820px;    /* Move up (more negative) or down (more positive) */
-  left: 300px;      /* Move left (negative) or right (positive) */
-  width: 450px;   /* Change this value to make the paragraph wider or narrower */
-}
+/* Paragraph measures — fluid, capped for readability (was fixed 450/550px) */
+#aboutp1 { max-width: 58ch; }
 
-/* Specific positioning for second paragraph */
-#aboutp2 {
-  top: -500px;    /* Move up (more negative) or down (more positive) */
-  left: 0px;      /* Move left (negative) or right (positive) */
-}
+#aboutp2 { max-width: 58ch; }
 
-/* Specific positioning for third paragraph */
-#aboutp3 {
-  top: 280px;    /* Move up (more negative) or down (more positive) */
-  left: 0px;      /* Move left (negative) or right (positive) */
-  width: 450px;   /* Change this value to make the paragraph wider or narrower */
-}
+#aboutp3 { max-width: 58ch; }
 
 /* --- Availability Badge --- */
 #about-availability {
   position: relative;
-  top: -60px;
-  left: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1826,9 +1817,8 @@ nav {
 /* --- Metrics Strip --- */
 #about-metrics {
   position: relative;
-  top: -520px;
-  left: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   font-family: 'Share Tech Mono', monospace;
@@ -2600,9 +2590,8 @@ nav {
 /* --- ID1 SVG --- */
 #id1svg {
   position: relative;
-  width: 465px;     /* Change this to resize - Customizable */
-  top: -464px;      /* Move up (more negative) or down (more positive) - Customizable */
-  left: 980px;      /* Move left (negative) or right (positive) - Customizable */
+  width: min(100%, 300px);   /* flows in the left column; never overflows */
+  height: auto;
   opacity: 0;
   transform: translateY(-100px);
   transform-origin: bottom left;
@@ -4308,10 +4297,16 @@ img#id1svg {
    then fading out before the right column border. */
 .photo-ghost-stream {
   position: absolute;
-  bottom: calc(clamp(0.5rem, 1vw, 1rem) - 7px);
+  /* Anchored to the camera image's vertical centre (measured in JS →
+     --cam-center-y, relative to .photo-col-left), then pulled up half its own
+     height so the stream's centre — and therefore the cards' centreline —
+     always coincides with the camera's centre, independent of section
+     size / resolution / locale reflow. Falls back to ~62% pre-measurement. */
+  top: var(--cam-center-y, 62%);
   left: 0;
   right: 0;
   height: 300px;
+  transform: translateY(-50%);
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
     to right,
@@ -4338,7 +4333,9 @@ img#id1svg {
 /* Each mockup polaroid card — position/opacity driven by JS on every scroll tick */
 .photo-ghost-card {
   position: absolute;
-  top: calc(50% + 25px);
+  /* 50% = the stream's geometric centre, which JS locks onto the camera centre.
+     Combined with translateY(-50%), each card's centre rides that exact line. */
+  top: 50%;
   left: 0;
   width: 156px;
   height: 189px;
