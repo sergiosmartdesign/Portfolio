@@ -11,7 +11,7 @@
 
     <!-- ═══ FAVICON ═════════════════════════════════════════════════════════ -->
     <!-- Static fallback (Safari/iOS, no-JS); animated-favicon.js takes over elsewhere -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23001219'/%3E%3Ctext%20x='32'%20y='34'%20font-family='sans-serif'%20font-weight='800'%20font-size='30'%20fill='%23EE9B00'%20text-anchor='middle'%20dominant-baseline='central'%3E%5B%C2%B7A%C2%B7%5D%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23001219'/%3E%3Ctext%20x='32'%20y='34'%20font-family='sans-serif'%20font-weight='800'%20font-size='30'%20fill='%23EE9B00'%20text-anchor='middle'%20dominant-baseline='central'%3E%5B%C2%B7_%C2%B7%5D%3C/text%3E%3C/svg%3E">
 
     <!-- ═══ SECURITY HEADERS (HTML-deliverable subset) ══════════════════════ -->
     <meta http-equiv="Content-Security-Policy"
@@ -1193,6 +1193,10 @@
         </section>
         </div>
 
+        <!-- Pin wrapper: #art-direction sticks at top:0 (frozen) while the fixed
+             #photo curtain reveals over it. The spacer provides the pin distance.
+             Sticky reserves flow space, so the photo-reveal math is unaffected. -->
+        <div class="ad-pin-wrap">
         <section id="art-direction" aria-label="Art Direction Portfolio">
 
             <!-- Background layer: static-line canvas, SVG filters, VHS overlay -->
@@ -2215,6 +2219,7 @@
             <div class="vhs-static" aria-hidden="true"></div>
         </section>
         <div class="photo-scroll-spacer"></div>
+        </div><!-- /.ad-pin-wrap -->
 
         <section id="illustration" aria-label="Illustration Portfolio — Fantasy Concept Art and Dark Fantasy Digital Illustration by Sergio Ayala">
 

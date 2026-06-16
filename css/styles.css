@@ -2981,16 +2981,41 @@ img#id1svg {
   background: var(--black);
 }
 
+/* Pin wrapper — its height (section + 300vh spacer) is the distance the section
+   stays frozen. No transform/filter/contain here: that would trap the fixed
+   #photo curtain; it must stay viewport-fixed. bg matches the section so the
+   clipped strip below the letters is seamless while pinned. */
+.ad-pin-wrap {
+  background-color: #001219;
+}
+
 #art-direction {
   background-color: #001219;
   overflow: hidden;
   scroll-margin-top: var(--header-height, 60px);
+  /* Freeze the section at the top of the viewport while the #photo curtain
+     reveals over it. Sticky pins within .ad-pin-wrap and reserves its flow
+     space, so the spacer-driven photo reveal timing is unchanged. */
+  position: sticky;
+  top: 0;
+  /* End the section exactly at the bottom edge of the TION letter row — no dead
+     strip below the masthead. The grid is the only in-flow child and starts at
+     the section top, so its height (4 × cell = min(100vh − header, 100vw)) is
+     the section height. overflow:hidden then clips the robot bg to that edge. */
+  height: min(calc(100vh - var(--header-height, 60px)), 100vw);
+  min-height: 0;
 }
 
 /* ── Background image — animated entrance ───────────────────────────────── */
 #art-direction .art-bg-image {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Keep the original full-viewport height so `cover` resolves the robot to the
+     exact same scale/position as before the section was shortened. The section's
+     overflow:hidden then clips whatever falls below the (shorter) bottom edge. */
+  height: 100vh;
   background-image: url('../images/sergio-ayala-robot-dark-teal-duotone-art-direction-section.webp');
   background-size: cover;
   background-position: calc(50% - 40px) calc(50% + 40px);

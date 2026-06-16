@@ -129,8 +129,17 @@
      (absolute children create none). The bg-image/scanlines stay full-bleed. */
   #art-direction {
     overflow: visible;
+    height: auto;            /* cancel the desktop grid-height lock */
     min-height: 100svh;
     padding-bottom: var(--spacing-2xl);
+    position: relative;      /* cancel the desktop sticky pin */
+    top: auto;
+  }
+  /* Restore full-bleed: the mobile section is a tall vertical flow, so the bg
+     must stretch the whole height, not the fixed 100vh used on desktop. */
+  #art-direction .art-bg-image {
+    inset: 0;
+    height: auto;
   }
 
   /* Compact, centered letter masthead at the top. art-cell is already fluid

@@ -25,6 +25,12 @@
     WORD.split('').map(function (ch) { return '[·' + ch + '·]'; })
   );
 
+  // Safari (incl. iOS) reliably renders the favicon declared in the HTML at
+  // parse time, but ignores/flakes on favicons swapped in dynamically by JS.
+  // So leave its static SVG favicon ([·_·]) untouched and don't animate.
+  var BD = window.App && window.App.BrowserDetect;
+  if (BD && BD.isSafariBased()) return;
+
   const canvas  = document.createElement('canvas');
   canvas.width  = canvas.height = SIZE;
   const ctx     = canvas.getContext('2d');

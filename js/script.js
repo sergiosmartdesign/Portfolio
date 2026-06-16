@@ -870,6 +870,10 @@ function initPhotoReveal() {
   const photoSection     = document.querySelector('#photo');
   const photoSpacer      = document.querySelector('.photo-scroll-spacer');
   const staticLineCanvas = document.querySelector('.photo-static-line');
+  // #art-direction is sticky-pinned (frozen) behind the photo curtain, so its
+  // IntersectionObserver keeps it "visible" and its ambient animations running
+  // the whole time it's occluded. Pause them once the curtain fully covers it.
+  const artDirection     = document.getElementById('art-direction');
 
   if (photoSection && photoSpacer && staticLineCanvas) {
     // shadow: false — CSS filter on the canvas handles the glow
@@ -890,6 +894,12 @@ function initPhotoReveal() {
 
       // Exit: 0→1 over the last viewport of the spacer (spacer.bottom → 0)
       const exitProgress = Math.max(0, Math.min(1, 1 - (spacerRect.bottom / viewportHeight)));
+
+      // Freeze art-direction's ambient animations while it's fully occluded by
+      // the curtain (reveal complete, exit not yet started).
+      if (artDirection) {
+        artDirection.classList.toggle('paused-animations', entryClamped >= 1 && exitProgress <= 0);
+      }
 
       if (exitProgress > 0) {
         photoSection.style.visibility = exitProgress < 1 ? 'visible' : 'hidden';
