@@ -1568,13 +1568,19 @@ nav {
 .about-top {
   position: relative;
   z-index: var(--z-layer-5);
-  width: 100%;
-  max-width: 1400px;
+  /* Grow leftward and left-align so the container's left border meets the
+     vertical bar2 svg (left:80px, ~117.5px right edge) without moving it.
+     margin-left ≈ bar2 right edge − section padding-left (64px) = ~54px.
+     This single value is the knob to nudge the border onto bar2. */
+  align-self: stretch;
+  width: auto;
+  max-width: none;
+  margin-left: 54px;
+  margin-right: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
   padding: var(--spacing-md);
-  border: 2px dashed #E9D8A6;   /* DEV: top block outline (cream) — remove when happy */
 }
 
 /* Title on the left, id badge beside it */
@@ -1587,16 +1593,48 @@ nav {
 
 .about-top .decoration-bar1 { align-self: stretch; }
 
+/* Title + paragraph share one height (align-items:stretch). Kept separate from
+   the badge so the badge isn't vertically distorted. */
+.about-intro {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-xl);
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+/* Title keeps its content width (never shrinks under the paragraph) */
+.about-top-head #abouttitle { flex: 0 0 auto; }
+
+/* Intro paragraph — to the right of the title, matched to its height */
+.about-top-head #aboutp1 {
+  flex: 1 1 320px;
+  min-width: 260px;
+  max-width: 60ch;
+  align-self: stretch;     /* same height as the title */
+  margin: 15px 0 0;        /* nudged 15px down */
+  opacity: 1;
+  transform: none;
+}
+
 /* --- About Container Layout (two columns) --- */
 .about-container {
   position: relative;
   z-index: var(--z-layer-5);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: clamp(2rem, 5vw, var(--spacing-2xl));
+  --about-col-gap: clamp(2rem, 5vw, var(--spacing-2xl));
+  column-gap: var(--about-col-gap);
   row-gap: var(--spacing-lg);
-  max-width: 1400px;
-  width: 100%;
+  /* Match the top container's horizontal bounds: left column's left edge and
+     right column's right edge line up with .about-top (same 54px left start,
+     stretched to the same right edge). */
+  align-self: stretch;
+  width: auto;
+  max-width: none;
+  margin-left: 54px;
+  margin-right: 0;
   align-items: start;
 }
 
@@ -1605,7 +1643,6 @@ nav {
   flex-direction: column;
   gap: var(--spacing-md);
   min-width: 0;            /* allow the grid track to shrink; no overflow */
-  border: 2px solid #EE9B00;    /* DEV: left column outline */
   padding: var(--spacing-md);
 }
 
@@ -1624,14 +1661,13 @@ nav {
   margin-top: 0;
   margin-left: 0;
   min-width: 0;
-  border: 2px solid #0A9396;    /* DEV: right column outline */
 }
 
-/* Animated vertical line on the left of right column */
+/* Animated vertical line — centered in the gap between the two columns */
 .about-right::before {
   content: '';
   position: absolute;
-  left: 0;
+  left: calc(var(--about-col-gap, 2rem) / -2 - var(--border-medium) / 2);
   top: 0;
   width: var(--border-medium);
   height: 100%;
@@ -1718,7 +1754,7 @@ nav {
   top: 0;
   left: 0;
   display: inline-block;
-  width: 200px; /* Adjust this value to set the width for all lines */
+  width: max-content; /* size to the text so it can't overflow onto neighbours */
   opacity: 0;
   transform: translateY(-100px);
 }
@@ -1731,7 +1767,7 @@ nav {
   left: 0;
   margin-left: -7px;
   display: inline-block;
-  width: 200px; /* Same width as line 1 */
+  width: max-content; /* size to the text */
   opacity: 0;
   transform: translateY(-100px);
 }
@@ -1742,7 +1778,7 @@ nav {
   top: -64px; /* Moves "Sergio" up by 70px */
   left: 0;
   display: inline-block;
-  width: 200px; /* Same width as line 1 */
+  width: max-content; /* size to the text */
   opacity: 0;
   transform: translateY(-100px);
 }
@@ -1753,7 +1789,7 @@ nav {
   top:-90px;
   left: 0;
   display: inline-block;
-  width: 200px; /* Same width as line 1 */
+  width: max-content; /* size to the text */
   opacity: 0;
   transform: translateY(-100px);
 }
@@ -2616,8 +2652,11 @@ nav {
 /* --- ID1 SVG --- */
 #id1svg {
   position: relative;
-  width: min(100%, 300px);   /* flows in the left column; never overflows */
+  width: min(81%, 777px);    /* badge +30% again */
   height: auto;
+  flex-shrink: 0;            /* keep its size; wrap instead of squashing neighbours */
+  margin-left: auto;         /* push to the right edge of the head row */
+  align-self: flex-start;    /* sit in the top-right corner */
   opacity: 0;
   transform: translateY(-100px);
   transform-origin: bottom left;
@@ -2830,6 +2869,40 @@ img#id1svg {
   top: 1050px;
   left: 200px;
   transform: scale(0.8);
+}
+
+/* Skills block relocated into the left column — flows at the bottom.
+   Svg + list are stacked in ONE grid cell so the list is in normal flow and
+   the block grows to contain it (the old absolute list overflowed a fixed
+   600px height and collided with the paragraph below). */
+.about-left .decoration-skills {
+  position: relative;
+  top: auto;
+  left: auto;
+  display: grid;
+  width: 100%;
+  height: auto;
+  align-self: stretch;
+  margin-top: var(--spacing-lg);
+  transform-origin: top left;
+}
+.about-left .decoration-skills > .skills-svg {
+  grid-area: 1 / 1;
+  align-self: start;
+  justify-self: start;
+  position: static;
+  width: 200px;              /* deterministic size; ~350px tall by its ratio */
+  height: auto;
+  max-width: 100%;
+}
+.about-left .decoration-skills > .skills-list {
+  grid-area: 1 / 1;          /* overlays the svg, but now defines block height */
+  position: static;
+  align-self: start;
+  justify-self: start;
+  margin: 96px 0 0 56px;     /* preserves the original overlay offset */
+  width: max-content;
+  max-width: calc(100% - 56px);
 }
 
 .decoration-skills .skills-svg {

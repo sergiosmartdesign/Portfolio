@@ -205,14 +205,16 @@
   }
 
   // Called internally after the SVG is injected.
-  // #id1svg is offset far outside #about's layout — observe a stable in-flow proxy
-  // (#about-availability) instead, because Chrome's IntersectionObserver clips to
-  // the `overflow: clip` boundary and the element would never intersect otherwise.
+  // #id1svg now lives in the top head beside the title; reveal it off #abouttitle
+  // (its in-flow neighbour) so the trigger can't be pushed off-screen by the
+  // badge's own size. Chrome's IntersectionObserver clips to the `overflow: clip`
+  // boundary, so a stable in-flow proxy is still used rather than the badge itself.
   function _setupID1Observer() {
     const id1svg = document.getElementById('id1svg');
     if (!id1svg) return;
 
     const proxyEl =
+      document.getElementById('abouttitle') ||
       document.getElementById('about-availability') ||
       document.getElementById('about');
     if (!proxyEl) return;

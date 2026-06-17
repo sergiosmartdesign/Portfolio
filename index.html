@@ -865,12 +865,15 @@
                  Row: title + id badge · then the quote · then bar1 (divider) -->
             <div class="about-top">
                 <div class="about-top-head">
+                    <div class="about-intro">
                     <h2 id="abouttitle" class="glitch-text subtitle-glitch" data-splitting>
                         <span class="title-line-1">·Hello!</span><br>
                         <span class="title-line-2">I'm</span><br>
                         <span class="title-line-3">Sergio</span><br>
                         <span class="title-line-4">Ayala·</span>
                     </h2>
+                    <p id="aboutp1" data-i18n-html="about.p1">Senior Art Director &amp; Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.<br><span class="about-highlight">This portfolio itself was built using vibe coding, combining AI-assisted development with my UX/UI expertise</span> — and is fully optimized for both traditional search engines and AI-powered search.</p>
+                    </div>
                     <img id="id1svg" src="images/id1.svg" alt="Sergio Ayala — Art Director profile badge">
                 </div>
 
@@ -901,8 +904,6 @@
                         Available for freelance — 2026
                     </div>
 
-                    <p id="aboutp1" data-i18n-html="about.p1">Senior Art Director &amp; Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.<br><span class="about-highlight">This portfolio itself was built using vibe coding, combining AI-assisted development with my UX/UI expertise</span> — and is fully optimized for both traditional search engines and AI-powered search.</p>
-
                     <p id="aboutp2" data-i18n-html="about.p2">As a UX/UI designer, my goal is to transform a brand's vision into engaging digital and tangible experiences that are clear and authentic. I currently work as an independent freelance professional, helping my clients to tell their stories through design.<br><br>I'm now embracing vibe coding, using AI with my creative Art Direction skills to take them to the next level and build exceptional projects like this portfolio.</p>
 
                     <div id="about-metrics">
@@ -913,8 +914,22 @@
                         <span>Bogotá → Worldwide</span>
                     </div>
 
-                    <p id="aboutp3" data-i18n-html="about.p3">My work is an extension of my lifestyle: I am constantly learning about technology, tendencies, techniques. Always looking for references. I look for aesthetics everywhere, whether in the forms of nature, architecture, urban colors, pop culture or everyday details.<br><br><span class="about-highlight">I strongly believe that constant learning is the best way to create good design.</span></p>
+                    <!-- Skills graphic + list — directly below the metrics -->
+                    <div class="decoration-skills">
+                        <img class="skills-svg" src="images/skills.svg" alt="" role="presentation" aria-hidden="true">
+                        <ul class="skills-list">
+                            <li>Art Direction<span class="skills-sub">Prompt Engineering · Brand Campaigns · Visual Strategy · Creative Concepting · Editorial Design</span></li>
+                            <li>Photography<span class="skills-sub">Commercial · Portrait · Street · Studio Lighting · Photo Retouching</span></li>
+                            <li>UX / UI<span class="skills-sub">User Research · Wireframing · Prototyping · Design Systems · Accessibility</span></li>
+                            <li>Branding<span class="skills-sub">Brand Identity · Logo Design · Brand Guidelines · Naming · Packaging</span></li>
+                            <li>Illustration<span class="skills-sub">Digital Illustration · Vector Art · Motion Graphics · Character Design</span></li>
+                            <li>Web Design<span class="skills-sub">Responsive Design · Landing Pages · Interaction Design · Vibe Coding</span></li>
+                            <li>Typography<span class="skills-sub">Type Pairing · Custom Lettering · Editorial Layout · Grid Systems</span></li>
+                            <li>Color Theory<span class="skills-sub">Color Grading · Palette Curation · Mood Boarding · Cultural Context</span></li>
+                        </ul>
+                    </div>
 
+                    <p id="aboutp3" data-i18n-html="about.p3">My work is an extension of my lifestyle: I am constantly learning about technology, tendencies, techniques. Always looking for references. I look for aesthetics everywhere, whether in the forms of nature, architecture, urban colors, pop culture or everyday details.<br><br><span class="about-highlight">I strongly believe that constant learning is the best way to create good design.</span></p>
 
                 </div>
 
@@ -1169,19 +1184,7 @@
             <!-- Decorative SVG Graphics -->
             <div class="svg-decorations">
                 <img class="decoration-bar2" src="images/bar2.svg" alt="" role="presentation">
-                <div class="decoration-skills">
-                    <img class="skills-svg" src="images/skills.svg" alt="" role="presentation" aria-hidden="true">
-                    <ul class="skills-list">
-                        <li>Art Direction<span class="skills-sub">Prompt Engineering · Brand Campaigns · Visual Strategy · Creative Concepting · Editorial Design</span></li>
-                        <li>Photography<span class="skills-sub">Commercial · Portrait · Street · Studio Lighting · Photo Retouching</span></li>
-                        <li>UX / UI<span class="skills-sub">User Research · Wireframing · Prototyping · Design Systems · Accessibility</span></li>
-                        <li>Branding<span class="skills-sub">Brand Identity · Logo Design · Brand Guidelines · Naming · Packaging</span></li>
-                        <li>Illustration<span class="skills-sub">Digital Illustration · Vector Art · Motion Graphics · Character Design</span></li>
-                        <li>Web Design<span class="skills-sub">Responsive Design · Landing Pages · Interaction Design · Vibe Coding</span></li>
-                        <li>Typography<span class="skills-sub">Type Pairing · Custom Lettering · Editorial Layout · Grid Systems</span></li>
-                        <li>Color Theory<span class="skills-sub">Color Grading · Palette Curation · Mood Boarding · Cultural Context</span></li>
-                    </ul>
-                </div>
+                <!-- skills block moved into .about-left -->
             </div>
 
             <!-- Paul Rand quote relocated into .about-top -->
