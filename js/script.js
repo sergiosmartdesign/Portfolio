@@ -485,10 +485,19 @@ class NavigationManager {
 
           if (sectionId === 'art-direction') {
             e.preventDefault();
-            const artTarget = document.getElementById('art-direction');
+            // #art-direction is position:sticky (top:0) inside .ad-pin-wrap, so
+            // its own rect.top clamps to 0 once pinned — reading rect.top+scrollY
+            // off the section gives an arbitrary target whenever you click from
+            // within its pin zone (the intermittent "header covers the top"
+            // offset). Measure the NON-sticky wrapper instead: its rect.top+scrollY
+            // is the section's true, stable document offset regardless of scroll
+            // position (mirrors how about-pin.js targets .about-pin-wrapper).
+            const artTarget = document.querySelector('.ad-pin-wrap')
+                            || document.getElementById('art-direction');
             if (artTarget) {
               const headerH = this.header ? this.header.offsetHeight : 0;
-              window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY - headerH);
+              const targetY = Math.max(0, artTarget.getBoundingClientRect().top + window.scrollY - headerH);
+              window.scrollTo(0, targetY);
             }
             if (App.playArtEntranceAnimation) App.playArtEntranceAnimation();
             this.setActiveButton('art-direction');
