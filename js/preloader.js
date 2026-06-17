@@ -80,28 +80,29 @@
 
   const lineEls = [lineEl, lineLeftEl, lineRightEl];
 
-  // Displacement filters — scale 48 throws the 2px filament ±24px, filling the
-  // element's 50px corridor (see .preloader-line). The low baseFrequency keeps
-  // the tall arcs coherent — fine noise at this amplitude shreds the line into
-  // dots. Region percentages are moderate because the bbox is the full 50px
-  // corridor, not the 2px filament (extreme regions can fail to render).
-  // Two instances so the border bolts arc independently from the center bolt
-  // instead of cloning its shape where they overlap.
+  // Flowing electric displacement. One turbulence field sampled by two
+  // opposite-scrolling feOffsets (along X, the length of the line) and
+  // composited: the noise FLOWS along the filament — real electricity rather
+  // than the random "boiling" of re-seeding — while the two copies keep the
+  // field covering the region so the line never blanks out. scale 48 throws the
+  // 2px filament ±24px to fill the 50px corridor. Two filters with different
+  // seeds so the border bolts arc independently from the centre bolt.
+  const flowFilter = (id, seed) =>
+    '<filter id="' + id + '" colorInterpolationFilters="sRGB" x="-3%" y="-15%" width="106%" height="130%">' +
+      '<feTurbulence type="turbulence" baseFrequency="0.018" numOctaves="2" seed="' + seed + '" result="n"/>' +
+      '<feOffset in="n" result="a"><animate attributeName="dx" values="320;0" dur="2.6s" repeatCount="indefinite" calcMode="linear"/></feOffset>' +
+      '<feOffset in="n" result="b"><animate attributeName="dx" values="0;-320" dur="2.6s" repeatCount="indefinite" calcMode="linear"/></feOffset>' +
+      '<feComposite in="a" in2="b" operator="over" result="noise"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="48" xChannelSelector="R" yChannelSelector="G"/>' +
+    '</filter>';
   overlay.insertAdjacentHTML('beforeend',
-    '<svg style="position:absolute;width:0;height:0;" aria-hidden="true"><defs>' +
-      '<filter id="preloader-electric" colorInterpolationFilters="sRGB" x="-3%" y="-15%" width="106%" height="130%">' +
-        '<feTurbulence id="preloader-electric-turb" type="turbulence" baseFrequency="0.018" numOctaves="2" seed="1" result="noise"/>' +
-        '<feDisplacementMap in="SourceGraphic" in2="noise" scale="48" xChannelSelector="R" yChannelSelector="G"/>' +
-      '</filter>' +
-      '<filter id="preloader-electric-2" colorInterpolationFilters="sRGB" x="-3%" y="-15%" width="106%" height="130%">' +
-        '<feTurbulence id="preloader-electric-turb-2" type="turbulence" baseFrequency="0.018" numOctaves="2" seed="137" result="noise"/>' +
-        '<feDisplacementMap in="SourceGraphic" in2="noise" scale="48" xChannelSelector="R" yChannelSelector="G"/>' +
-      '</filter>' +
+    '<svg class="preloader-elec-defs" style="position:absolute;width:0;height:0;" aria-hidden="true"><defs>' +
+      flowFilter('preloader-electric', 1) +
+      flowFilter('preloader-electric-2', 7) +
     '</defs></svg>');
-  const lineTurbs = [
-    overlay.querySelector('#preloader-electric-turb'),
-    overlay.querySelector('#preloader-electric-turb-2')
-  ].filter(Boolean);
+  // prefers-reduced-motion: freeze the flow (the displaced line still shows, but
+  // it no longer animates) — replaces the old reduced-motion seed-skip.
+  if (reducedMotion) overlay.querySelector('.preloader-elec-defs')?.pauseAnimations();
 
   document.body.prepend(overlay);
   document.body.classList.add('preloading');
@@ -207,18 +208,6 @@
     if (labelStep >= LABEL_STEPS.length - 1) clearInterval(labelIv);
   }, 160);
 
-  // Electric "boil" — randomise each filter's turbulence seed (~13Hz) so the
-  // two colours keep arcing independently. Runs in its own interval, decoupled
-  // from the counter, so the electricity NEVER freezes when the line reaches the
-  // borders at 100% — it keeps boiling right through the exit fade and only
-  // stops once the overlay is removed.
-  let boilIv = null;
-  if (!reducedMotion) {
-    boilIv = setInterval(() => {
-      lineTurbs.forEach(t => t.setAttribute('seed', (Math.random() * 500 | 0) + 1));
-    }, 78);
-  }
-
   const counterIv = setInterval(() => {
     const ceiling = loadDone ? 100 : 94;
     if (count < ceiling) {
@@ -240,7 +229,6 @@
         window.dispatchEvent(new CustomEvent('preloaderExiting'));
         overlay.classList.add('exit');
         overlay.addEventListener('transitionend', () => {
-          if (boilIv) clearInterval(boilIv);
           overlay.remove();
           window.dispatchEvent(new CustomEvent('preloaderDone'));
         }, { once: true });

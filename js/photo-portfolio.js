@@ -781,16 +781,12 @@
     }
 
     // ── Electric border helpers ──────────────────────────────────────────────
-    // RAF loop: cycles turbulence seed every 2 frames (~30fps effective) to
-    // create the electric flicker. Starts only when something is animating,
-    // stops the moment count returns to zero — zero CPU at idle.
+    // The electric flow is now driven by the self-animating SVG filter
+    // (#accordion-electric, animated feOffset), so this per-frame turbulence
+    // re-seeding is obsolete — the tick just ends its RAF chain. Visibility is
+    // still toggled via the .accordion-animating class in _borderStart/_borderStop.
     _borderAnimTick() {
-      if (this._borderCount <= 0) { this._borderRaf = null; return; }
-      this._borderFrameTick++;
-      if (this._borderFrameTick % 2 === 0 && this._borderTurbulence) {
-        this._borderTurbulence.setAttribute('seed', (Math.random() * 500 | 0) + 1);
-      }
-      this._borderRaf = requestAnimationFrame(() => this._borderAnimTick());
+      this._borderRaf = null;
     }
 
     _borderStart() {
@@ -1179,12 +1175,9 @@
     }
 
     _photoBorderTick() {
-      if (!this._photoBorderActive) { this._photoBorderRaf = null; return; }
-      this._photoBorderFrame++;
-      if (this._photoBorderFrame % 3 === 0 && this._photoBorderTurbulence) {
-        this._photoBorderTurbulence.setAttribute('seed', (Math.random() * 500 | 0) + 1);
-      }
-      this._photoBorderRaf = requestAnimationFrame(() => this._photoBorderTick());
+      // Flow now driven by the self-animating #photo-bg-electric filter; the
+      // per-frame seed cycling is obsolete, so just end the RAF chain.
+      this._photoBorderRaf = null;
     }
 
     // ── Text scramble — same glitch pattern as art-direction discipline list ──

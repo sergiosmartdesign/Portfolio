@@ -1519,8 +1519,10 @@ nav {
   z-index: var(--z-layer-10);
   min-height: 100vh;
   display: flex;
+  flex-direction: column;          /* top block, then the two columns, stacked */
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: var(--spacing-xl);
   overflow: clip;
   background: var(--black);
   padding: var(--spacing-3xl) var(--spacing-2xl) 100px var(--spacing-2xl);
@@ -1562,13 +1564,37 @@ nav {
   z-index: var(--z-layer-4);
 }
 
-/* --- About Container Layout --- */
+/* --- About TOP — single full-width column: (title + id badge) · quote · bar1 --- */
+.about-top {
+  position: relative;
+  z-index: var(--z-layer-5);
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 2px dashed #E9D8A6;   /* DEV: top block outline (cream) — remove when happy */
+}
+
+/* Title on the left, id badge beside it */
+.about-top-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.about-top .decoration-bar1 { align-self: stretch; }
+
+/* --- About Container Layout (two columns) --- */
 .about-container {
   position: relative;
   z-index: var(--z-layer-5);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(2rem, 5vw, var(--spacing-2xl));
+  column-gap: clamp(2rem, 5vw, var(--spacing-2xl));
+  row-gap: var(--spacing-lg);
   max-width: 1400px;
   width: 100%;
   align-items: start;
@@ -1579,6 +1605,8 @@ nav {
   flex-direction: column;
   gap: var(--spacing-md);
   min-width: 0;            /* allow the grid track to shrink; no overflow */
+  border: 2px solid #EE9B00;    /* DEV: left column outline */
+  padding: var(--spacing-md);
 }
 
 .about-left > p {
@@ -1593,11 +1621,10 @@ nav {
   flex-direction: column;
   gap: var(--spacing-md);
   padding: clamp(1.5rem, 2.5vw, 40px);
-  /* Fluid stagger — replaces the old fixed 750px offset so the right column
-     keeps its lower-start composition without breaking at other resolutions. */
-  margin-top: clamp(3rem, 16vw, 12rem);
+  margin-top: 0;
   margin-left: 0;
   min-width: 0;
+  border: 2px solid #0A9396;    /* DEV: right column outline */
 }
 
 /* Animated vertical line on the left of right column */
@@ -2091,12 +2118,11 @@ nav {
 
 /* --- Paul Rand Quote --- */
 .paul-rands-quote {
-  position: absolute;
-  top: 537px;
-  left: 160px;
-  font-size: clamp(5rem, 7vw + 4rem, 5rem);
+  position: relative;            /* flows inside .about-top now (was absolute) */
+  font-size: clamp(1.8rem, 4.5vw, 4rem);
   line-height: 1.2;
   width: fit-content;
+  max-width: 100%;
   z-index: 1000;
 }
 
@@ -2754,11 +2780,13 @@ img#id1svg {
   opacity: 0;
 }
 
+/* Divider bar — flows at the bottom of .about-top, above the two columns. */
 .decoration-bar1 {
-  width: 981.6px;
-  height: 27.3px;
-  top: 750px;
-  left: 160px;
+  display: block;
+  width: 100%;
+  max-width: 981.6px;
+  height: auto;            /* preserve the bar's aspect ratio */
+  opacity: 0;              /* slideInFromLeft reveals it when in view */
   transform: translateX(-100px);
 }
 

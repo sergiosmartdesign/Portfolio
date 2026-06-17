@@ -102,7 +102,6 @@
 
     const tunnel         = illus.querySelector('.illus-tunnel');
     const cube           = illus.querySelector('.illus-cube');
-    const electricNoise  = document.getElementById('illus-cube-turbulence');
     const faces       = [...illus.querySelectorAll('.illus-face')];
     const hudPct      = illus.querySelector('.illus-hud-pct');
     const progFill    = illus.querySelector('.illus-progress-fill');
@@ -446,7 +445,6 @@
     // elecOff uses a guard so the timeout is only scheduled once per idle entry.
     let elecActive    = false;
     let elecTimer     = null;
-    let elecFrame     = 0;
     let prevSmooth    = smooth;
     let introSeenOnce = false;
     let introTimer    = null;
@@ -600,10 +598,9 @@
             const isLast = i === steps.length - 1;
             const on     = isLast ? false : Math.random() > 0.4;
             setTimeout(() => {
+                // Flow is driven by the self-animating #illus-cube-electric filter;
+                // only the on/off flicker is toggled here.
                 tunnel.classList.toggle('illus-electric-active', on);
-                if (on && electricNoise) {
-                    electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
-                }
             }, delay);
         });
     }
@@ -748,9 +745,6 @@
         const vel = Math.abs(smooth - prevSmooth);
         prevSmooth = smooth;
         if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
-        if ((elecActive || lbOpen) && electricNoise && ++elecFrame % 3 === 0) {
-            electricNoise.setAttribute('seed', (Math.random() * 500 | 0) + 1);
-        }
 
         setCubeTransform(smooth);
         updateFaceOpacities();

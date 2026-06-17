@@ -861,22 +861,45 @@
 
         <div class="about-pin-wrapper">
         <section id="about" aria-label="About Sergio Ayala">
-            <div class="about-container">
-                <!-- Left Column -->
-                <div class="about-left">
+            <!-- ════ TOP SECTION — single full-width column ════
+                 Row: title + id badge · then the quote · then bar1 (divider) -->
+            <div class="about-top">
+                <div class="about-top-head">
                     <h2 id="abouttitle" class="glitch-text subtitle-glitch" data-splitting>
                         <span class="title-line-1">·Hello!</span><br>
                         <span class="title-line-2">I'm</span><br>
                         <span class="title-line-3">Sergio</span><br>
                         <span class="title-line-4">Ayala·</span>
                     </h2>
+                    <img id="id1svg" src="images/id1.svg" alt="Sergio Ayala — Art Director profile badge">
+                </div>
 
+                <div class="paul-rands-quote">
+                    <blockquote>
+                        <p class="glitch-text" data-splitting aria-label='"Design'><span>· " D e s i g n &nbsp;</span></p>
+                        <ul>
+                            <li class="glitch-text" data-splitting>can be art ·</li>
+                            <li class="glitch-text" data-splitting>can be aesthetics ·</li>
+                            <li class="glitch-text" data-splitting>is so simple,</li>
+                        </ul>
+                    </blockquote>
+                    <p class="ending glitch-text" data-splitting>
+                        that's why it's so complicated." ·<br />
+                        <i>— · P a u l R a n d ·</i>
+                    </p>
+                </div>
+
+                <img class="decoration-bar1" src="images/bar1.svg" alt="" role="presentation">
+            </div>
+
+            <!-- ════ TWO COLUMNS — organized, non-overlapping ════ -->
+            <div class="about-container">
+                <!-- Left Column -->
+                <div class="about-left">
                     <div id="about-availability">
                         <span class="availability-dot"></span>
                         Available for freelance — 2026
                     </div>
-
-                    <img id="id1svg" src="images/id1.svg" alt="Sergio Ayala — Art Director profile badge">
 
                     <p id="aboutp1" data-i18n-html="about.p1">Senior Art Director &amp; Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.<br><span class="about-highlight">This portfolio itself was built using vibe coding, combining AI-assisted development with my UX/UI expertise</span> — and is fully optimized for both traditional search engines and AI-powered search.</p>
 
@@ -1145,7 +1168,6 @@
 
             <!-- Decorative SVG Graphics -->
             <div class="svg-decorations">
-                <img class="decoration-bar1" src="images/bar1.svg" alt="" role="presentation">
                 <img class="decoration-bar2" src="images/bar2.svg" alt="" role="presentation">
                 <div class="decoration-skills">
                     <img class="skills-svg" src="images/skills.svg" alt="" role="presentation" aria-hidden="true">
@@ -1162,20 +1184,7 @@
                 </div>
             </div>
 
-            <div class="paul-rands-quote">
-                <blockquote>
-                    <p class="glitch-text" data-splitting aria-label='"Design'><span>· " D e s i g n &nbsp;</span></p>
-                    <ul>
-                        <li class="glitch-text" data-splitting>can be art ·</li>
-                        <li class="glitch-text" data-splitting>can be aesthetics ·</li>
-                        <li class="glitch-text" data-splitting>is so simple,</li>
-                    </ul>
-                </blockquote>
-                <p class="ending glitch-text" data-splitting>
-                    that's why it's so complicated." ·<br />
-                    <i>— · P a u l R a n d ·</i>
-                </p>
-            </div>
+            <!-- Paul Rand quote relocated into .about-top -->
 
             <!-- Certificate Modal/Lightbox -->
             <div id="certModal" class="cert-modal hidden">
@@ -1582,12 +1591,24 @@
             <!-- SVG filters — seeds cycled by JS RAF, never run idle -->
             <svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
                 <defs>
+                    <!-- Flowing electric displacement. One turbulence field, sampled by
+                         TWO opposite-scrolling feOffsets and composited: the noise flows
+                         continuously (real electricity, not random "boiling") while the
+                         two copies guarantee the field always covers the filter region —
+                         so the displacement never empties out. Offset distance is kept
+                         within the element's size so it can't scroll off-frame. -->
                     <filter id="accordion-electric" colorInterpolationFilters="sRGB" x="-4%" y="-4%" width="108%" height="108%">
-                        <feTurbulence id="accordion-electric-turbulence" type="turbulence" baseFrequency="0.04" numOctaves="2" seed="1" result="noise" />
+                        <feTurbulence id="accordion-electric-turbulence" type="turbulence" baseFrequency="0.04" numOctaves="2" seed="3" result="n" />
+                        <feOffset in="n" result="a"><animate attributeName="dy" values="120;0" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
+                        <feOffset in="n" result="b"><animate attributeName="dy" values="0;-120" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
+                        <feComposite in="a" in2="b" operator="over" result="noise" />
                         <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
                     </filter>
                     <filter id="photo-bg-electric" colorInterpolationFilters="sRGB" x="-2%" y="-2%" width="104%" height="104%">
-                        <feTurbulence id="photo-bg-turbulence" type="turbulence" baseFrequency="0.035" numOctaves="2" seed="1" result="noise" />
+                        <feTurbulence id="photo-bg-turbulence" type="turbulence" baseFrequency="0.035" numOctaves="2" seed="3" result="n" />
+                        <feOffset in="n" result="a"><animate attributeName="dy" values="160;0" dur="3.6s" repeatCount="indefinite" calcMode="linear" /></feOffset>
+                        <feOffset in="n" result="b"><animate attributeName="dy" values="0;-160" dur="3.6s" repeatCount="indefinite" calcMode="linear" /></feOffset>
+                        <feComposite in="a" in2="b" operator="over" result="noise" />
                         <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" />
                     </filter>
                 </defs>
@@ -2400,11 +2421,15 @@
                 <!-- SVG filter for cube electric ring -->
                 <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
                     <defs>
-                        <filter id="illus-cube-electric" x="-12%" y="-12%" width="124%" height="124%">
-                            <feTurbulence id="illus-cube-turbulence" type="turbulence"
-                                baseFrequency="0.025" numOctaves="2" seed="1" result="noise" />
-                            <feDisplacementMap in="SourceGraphic" in2="noise"
-                                scale="18" xChannelSelector="R" yChannelSelector="G" />
+                        <!-- Flowing electric displacement: one turbulence field sampled by
+                             two opposite-scrolling feOffsets and composited, so the ring
+                             crackles continuously and the noise always covers the region. -->
+                        <filter id="illus-cube-electric" colorInterpolationFilters="sRGB" x="-12%" y="-12%" width="124%" height="124%">
+                            <feTurbulence id="illus-cube-turbulence" type="turbulence" baseFrequency="0.025" numOctaves="2" seed="3" result="n" />
+                            <feOffset in="n" result="a"><animate attributeName="dy" values="100;0" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
+                            <feOffset in="n" result="b"><animate attributeName="dy" values="0;-100" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
+                            <feComposite in="a" in2="b" operator="over" result="noise" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G" />
                         </filter>
                     </defs>
                 </svg>
