@@ -288,7 +288,11 @@ class GlitchSystem {
 
 class NavigationManager {
   constructor() {
-    this.navButtons = document.querySelectorAll('.main-nav .nav-btn');
+    // Only the section nav links — exclude the language ([EN]/[ES]) and sound
+    // toggles, which also carry .nav-btn but own their own independent .active
+    // state (set in i18n.js / sound toggle). Including them here would let every
+    // scroll-driven setActiveButton() wipe their highlight.
+    this.navButtons = document.querySelectorAll('.main-nav .nav-btn:not(.lang-btn):not(.sound-btn)');
     this.sections = document.querySelectorAll('main section');
     this.header = document.querySelector('header');
     this.sectionToButton = new Map();
@@ -377,8 +381,17 @@ class NavigationManager {
    * the page wins when two sections overlap (e.g. sticky #about while
    * art-direction is just entering from below).
    *
-   * #photo is position:fixed so its DOM rect is always 0 — handled separately
-   * via the scroll spacer. #intro has its own clear-all logic.
+   * #photo is position:fixed so its own DOM rect is always pinned to the
+   * viewport — useless for ownership. Its real scroll extent lives in the
+   * .photo-scroll-spacer that follows it in flow, so we substitute the spacer's
+   * rect as #photo's proxy and let it compete in the SAME rule as every other
+   * section. This is the fix for the long-standing "art direction stays
+   * highlighted while photo is active" bug: because the spacer sits directly
+   * after #art-direction in flow, art-direction.bottom and spacer.top are the
+   * exact same edge — so the previous code (which only fell back to #photo after
+   * the loop found nothing) kept art-direction winning through the whole photo
+   * reveal. Treating photo as a real participant lets it take over as soon as the
+   * spacer crosses the trigger line, and hand off to #illustration the same way.
    */
   detectActiveSection() {
     const scrollY = window.scrollY;
@@ -392,13 +405,26 @@ class NavigationManager {
       return;
     }
 
-    // ── Normal sections: find the lowest section whose top ≤ 35 % of viewport ─
-    const triggerY = vh * 0.35;
+    // ── Find the lowest section (in DOM order) whose top ≤ 35 % of viewport ───
+    const triggerY    = vh * 0.35;
+    const photoSpacer = document.querySelector('.photo-scroll-spacer');
     let activeId = null;
 
+    // this.sections is in DOM order: …art-direction, photo, illustration… so
+    // #photo is evaluated right after #art-direction (it can override it) and
+    // right before #illustration (which can override #photo) — exactly the
+    // handoff order we want.
     this.sections.forEach(section => {
-      if (!section.id || section.id === 'intro' || section.id === 'photo') return;
-      const rect = section.getBoundingClientRect();
+      if (!section.id || section.id === 'intro') return;
+
+      let rect;
+      if (section.id === 'photo') {
+        if (!photoSpacer) return;        // spacer is the only source of truth
+        rect = photoSpacer.getBoundingClientRect();
+      } else {
+        rect = section.getBoundingClientRect();
+      }
+
       if (rect.top <= triggerY && rect.bottom > 0) {
         activeId = section.id; // keep overwriting — last (lowest) match wins
       }
@@ -406,20 +432,10 @@ class NavigationManager {
 
     if (activeId) {
       this.setActiveButton(activeId);
-      return;
-    }
-
-    // ── Photo zone fallback: no normal section matched the trigger line ───────
-    // #photo is position:fixed; spacer measures its depth. Active for the full
-    // spacer range (rawProgress 0 → end) — sections after the spacer are caught
-    // by the normal loop above before this fallback is reached.
-    const photoSpacer = document.querySelector('.photo-scroll-spacer');
-    if (photoSpacer) {
-      const progress = 1 - photoSpacer.getBoundingClientRect().top / vh;
-      if (progress > 0) {
-        this.setActiveButton('photo');
-        if (location.hash !== '#photo') history.pushState(null, '', '#photo');
-        return;
+      // Keep the URL in sync with the photo zone (other sections push their hash
+      // on click; photo is purely scroll-driven so it does it here).
+      if (activeId === 'photo' && location.hash !== '#photo') {
+        history.pushState(null, '', '#photo');
       }
     }
   }

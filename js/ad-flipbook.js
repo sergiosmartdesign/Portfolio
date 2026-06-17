@@ -105,9 +105,9 @@
           <span class="ad-book-gutter" aria-hidden="true"></span>
         </div>
         <div class="ad-book-controls">
-          <button type="button" class="ad-book-btn ad-book-prev" aria-label="Previous page">‹</button>
+          <button type="button" class="ad-book-btn ad-book-prev" aria-label="Previous page"><span class="ad-book-chevs" aria-hidden="true">‹‹‹</span></button>
           <span class="ad-book-counter" aria-live="polite"></span>
-          <button type="button" class="ad-book-btn ad-book-next" aria-label="Next page">›</button>
+          <button type="button" class="ad-book-btn ad-book-next" aria-label="Next page"><span class="ad-book-chevs" aria-hidden="true">›››</span></button>
         </div>`;
 
       this.el       = el;

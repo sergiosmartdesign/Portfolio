@@ -420,10 +420,14 @@ body.ad-section-live #art-direction .ad-skills-bar {
    .adnav-cat rows take clicks — everything around the card stays click-through. ── */
 #art-direction .ad-explore-card {
   position: absolute;
-  left: calc(min(75vh, 75vw) + 2vw + 400px);
+  /* Widened (smaller left offset) so the SVG is no longer width-constrained and
+     its text can render larger; grows downward (smaller bottom buffer + taller)
+     into the empty viewport bottom, keeping the top edge ~fixed so it never
+     pushes up into the red intro frame or the works list above it. */
+  left: calc(min(75vh, 75vw) + 2vw + 300px);
   right: clamp(12px, 2vw, 24px);
-  bottom: calc(clamp(16px, 3vh, 32px) + 80px);
-  height: min(25.7vh, 229px);
+  bottom: calc(clamp(16px, 3vh, 32px) + 24px);
+  height: min(31.5vh, 285px);
   z-index: 5;
   pointer-events: none;
   opacity: 0;
@@ -1303,60 +1307,66 @@ body.ad-section-live #art-direction .ad-explore-card {
   pointer-events: none;
 }
 
+/* Styled to match the red-glow HUD arrow that points to the disciplines card
+   (#adfrm-arrow in .ad-intro-svg): a #BB3E03 chevron framed by rounded [ ]
+   brackets with a red drop-glow. Sits well over the modal's red deco frame. */
 .ad-book-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: auto;
   appearance: none;
-  width: 42px; height: 58px;
+  width: 64px; height: 58px;
   display: grid;
   place-items: center;
   cursor: pointer;
-  color: #EE9B00;
-  font-size: 1.25rem;
+  color: #BB3E03;
+  font-size: 1.5rem;
+  font-weight: 700;
   line-height: 1;
-  background: linear-gradient(150deg, rgba(0, 24, 32, 0.92), rgba(0, 12, 18, 0.86));
-  border: 1px solid rgba(238, 155, 0, 0.6);
-  /* Chamfered "cut-corner" cyber panel */
-  clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
-  box-shadow:
-    0 0 0 1px rgba(10, 147, 150, 0.25),
-    0 0 14px rgba(0, 0, 0, 0.55),
-    inset 0 0 12px rgba(238, 155, 0, 0.08);
-  text-shadow: 0 0 8px rgba(238, 155, 0, 0.7);
-  backdrop-filter: blur(2px);
-  transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
-              transform 0.2s var(--ease-expo-out), background 0.2s ease;
+  /* Faint dark halo only — keeps the red chevron legible over bright catalog
+     pages without reading as a panel (the bracket frame stays the focus). */
+  background: radial-gradient(ellipse at center, rgba(0, 12, 18, 0.55), rgba(0, 12, 18, 0) 72%);
+  border: none;
+  backdrop-filter: blur(1px);
+  text-shadow: 0 0 6px rgba(187, 62, 3, 0.9), 0 0 16px rgba(155, 34, 38, 0.6);
+  filter: drop-shadow(0 0 5px rgba(187, 62, 3, 0.55))
+          drop-shadow(0 0 14px rgba(155, 34, 38, 0.45));
+  transition: color 0.2s ease, filter 0.2s ease,
+              transform 0.2s var(--ease-expo-out);
 }
-.ad-book-prev { left: 4px;  clip-path: polygon(0 12px, 12px 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
-.ad-book-next { right: 4px; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%); }
+.ad-book-prev { left: 4px; }
+.ad-book-next { right: 4px; }
 
-/* Teal accent tick — the cyber corner detail */
-.ad-book-btn::before {
+/* [ … ] bracket frame — the round-jointed HUD brackets from the SVG arrow */
+.ad-book-btn::before,
+.ad-book-btn::after {
   content: "";
   position: absolute;
-  top: 5px; right: 5px;
-  width: 7px; height: 7px;
-  border-top: 1px solid #0A9396;
-  border-right: 1px solid #0A9396;
-  opacity: 0.8;
+  top: 7px;
+  bottom: 7px;
+  width: 9px;
+  border: 2px solid #BB3E03;
+  border-radius: 2px;
 }
-.ad-book-prev::before { right: auto; left: 5px; border-right: none; border-left: 1px solid #0A9396; }
+.ad-book-btn::before { left: 4px;  border-right: none; }
+.ad-book-btn::after  { right: 4px; border-left: none; }
+
+/* triple-chevron cluster — [ ‹‹‹ ] / [ ››› ], tightened like the SVG arrow */
+.ad-book-chevs {
+  display: block;
+  letter-spacing: -0.12em;
+  padding: 0 0.08em;
+}
 
 .ad-book-btn:hover:not(:disabled) {
-  color: #001219;
-  background: linear-gradient(150deg, #EE9B00, #ca8400);
-  border-color: #0A9396;
-  text-shadow: none;
-  box-shadow:
-    0 0 0 1px rgba(10, 147, 150, 0.6),
-    0 0 18px rgba(238, 155, 0, 0.55),
-    0 0 36px rgba(238, 155, 0, 0.25);
+  color: #d8531a;
+  filter: drop-shadow(0 0 7px rgba(187, 62, 3, 0.85))
+          drop-shadow(0 0 22px rgba(155, 34, 38, 0.6));
 }
 .ad-book-prev:hover:not(:disabled) { transform: translate(-3px, -50%); }
 .ad-book-next:hover:not(:disabled) { transform: translate(3px, -50%); }
-.ad-book-btn:focus-visible { outline: 2px solid #0A9396; outline-offset: 3px; }
+.ad-book-btn:focus-visible { outline: 2px solid #BB3E03; outline-offset: 3px; }
 .ad-book-btn:disabled { opacity: 0.22; cursor: default; }
 
 /* Counter — top-edge HUD readout */
