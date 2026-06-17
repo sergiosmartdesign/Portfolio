@@ -1062,39 +1062,6 @@
                     <p id="aboutp4" data-i18n-html="about.p4">My process begins with listening. It's not just about delivering a design, but about co-creating a visual language, that is the way to create good design. By talking with you we can <span class="about-highlight">understand your Brand's DNA,</span> translating it coherently into any format you need, whether it's relaunching your web platform, defining your photographic style, or conceptualizing your entire branding. <a href="mailto:sergionook@gmail.com" class="about-cta-marker"><em><strong>Let's work together</strong></em></a> to ensure your design doesn't just look good, but feels authentic and delivers a tangible impact on your audience.<br><br>You can explore what I've studied in the certificates gallery below and experience what I've done with it throughout this very project.</p>
 
                     <!-- Certificate Gallery - Independent Layer -->
-                    <!-- SVG Filter for Electric Border Effect -->
-                    <svg style="position: absolute; width: 0; height: 0;">
-                        <defs>
-                            <filter id="cert-electric-border" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-                                <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
-                                <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
-                                    <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                                </feOffset>
-
-                                <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
-                                <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
-                                    <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                                </feOffset>
-
-                                <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise3" seed="2" />
-                                <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
-                                    <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                                </feOffset>
-
-                                <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise4" seed="2" />
-                                <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
-                                    <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
-                                </feOffset>
-
-                                <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
-                                <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
-                                <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
-
-                                <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
-                            </filter>
-                        </defs>
-                    </svg>
-
                     <!-- Certificate Gallery -->
                     <div class="cert-gallery-layer">
                         <img class="decoration-certs1" src="images/certs1.svg" alt="" role="presentation">
@@ -1590,32 +1557,6 @@
 
         <section id="photo" aria-label="Photography Portfolio">
             <canvas class="photo-static-line"></canvas>
-
-            <!-- SVG filters — seeds cycled by JS RAF, never run idle -->
-            <svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
-                <defs>
-                    <!-- Flowing electric displacement. One turbulence field, sampled by
-                         TWO opposite-scrolling feOffsets and composited: the noise flows
-                         continuously (real electricity, not random "boiling") while the
-                         two copies guarantee the field always covers the filter region —
-                         so the displacement never empties out. Offset distance is kept
-                         within the element's size so it can't scroll off-frame. -->
-                    <filter id="accordion-electric" colorInterpolationFilters="sRGB" x="-4%" y="-4%" width="108%" height="108%">
-                        <feTurbulence id="accordion-electric-turbulence" type="turbulence" baseFrequency="0.04" numOctaves="2" seed="3" result="n" />
-                        <feOffset in="n" result="a"><animate attributeName="dy" values="120;0" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
-                        <feOffset in="n" result="b"><animate attributeName="dy" values="0;-120" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
-                        <feComposite in="a" in2="b" operator="over" result="noise" />
-                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
-                    </filter>
-                    <filter id="photo-bg-electric" colorInterpolationFilters="sRGB" x="-2%" y="-2%" width="104%" height="104%">
-                        <feTurbulence id="photo-bg-turbulence" type="turbulence" baseFrequency="0.035" numOctaves="2" seed="3" result="n" />
-                        <feOffset in="n" result="a"><animate attributeName="dy" values="160;0" dur="3.6s" repeatCount="indefinite" calcMode="linear" /></feOffset>
-                        <feOffset in="n" result="b"><animate attributeName="dy" values="0;-160" dur="3.6s" repeatCount="indefinite" calcMode="linear" /></feOffset>
-                        <feComposite in="a" in2="b" operator="over" result="noise" />
-                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" />
-                    </filter>
-                </defs>
-            </svg>
 
             <!-- Left-edge bar — fixed within the section, never scrolls -->
             <img class="photo-section-bar-img" src="images/photo-section-bar.svg" alt="" role="presentation" aria-hidden="true" draggable="false">
@@ -2421,21 +2362,6 @@
                     </div>
                 </div>
 
-                <!-- SVG filter for cube electric ring -->
-                <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
-                    <defs>
-                        <!-- Flowing electric displacement: one turbulence field sampled by
-                             two opposite-scrolling feOffsets and composited, so the ring
-                             crackles continuously and the noise always covers the region. -->
-                        <filter id="illus-cube-electric" colorInterpolationFilters="sRGB" x="-12%" y="-12%" width="124%" height="124%">
-                            <feTurbulence id="illus-cube-turbulence" type="turbulence" baseFrequency="0.025" numOctaves="2" seed="3" result="n" />
-                            <feOffset in="n" result="a"><animate attributeName="dy" values="100;0" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
-                            <feOffset in="n" result="b"><animate attributeName="dy" values="0;-100" dur="3s" repeatCount="indefinite" calcMode="linear" /></feOffset>
-                            <feComposite in="a" in2="b" operator="over" result="noise" />
-                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G" />
-                        </filter>
-                    </defs>
-                </svg>
 
                 <!-- HUD -->
                 <div class="illus-hud" aria-hidden="true">

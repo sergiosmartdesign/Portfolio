@@ -79,67 +79,6 @@ body.preloading header *::after {
   font-size: 1.5rem;
   color: #EE9B00;
 }
-/* ── Electric progress lines ─────────────────────────────────────────────── */
-/* Three bolts, all driven by scaleX(count/100) from JS:
-   --center : full width, center origin — grows center → both borders
-   --left   : half width, left origin   — grows left border → center
-   --right  : half width, right origin  — grows right border → center
-   The border pair shares a second random color and its own filter instance
-   (#preloader-electric-2) so the two colors arc independently. */
-.preloader-line {
-  position: absolute;
-  /* The element IS the 50px electric corridor: 25px above and 25px below the
-     viewport centerline. The visible filament is a 2px gradient stripe at its
-     middle; the displacement filter throws it around inside this box. Keeping
-     the bbox 50px tall keeps the filter-region percentages in the moderate,
-     proven range — extreme regions on a 2px bbox can fail to render at all. */
-  top: calc(50% - 25px);
-  height: 50px;
-  background: linear-gradient(
-    to bottom,
-    transparent              calc(50% - 1px),
-    var(--line-color, #EE9B00) calc(50% - 1px),
-    var(--line-color, #EE9B00) calc(50% + 1px),
-    transparent              calc(50% + 1px)
-  );
-  transform: scaleX(0);
-  /* Melts the 1%-steps (26ms ticks) into continuous liquid growth */
-  transition: transform 0.12s linear;
-  pointer-events: none;
-  will-change: transform;
-}
-
-/* Glow via drop-shadow chained after the displacement, so it hugs the
-   lightning arcs themselves (box-shadow would outline the invisible box) */
-.preloader-line--center {
-  left: 0;
-  right: 0;
-  transform-origin: center;
-  filter:
-    url(#preloader-electric)
-    drop-shadow(0 0 6px var(--line-color, #EE9B00))
-    drop-shadow(0 0 16px color-mix(in srgb, var(--line-color, #EE9B00) 45%, transparent));
-}
-
-.preloader-line--left {
-  left: 0;
-  width: 50%;
-  transform-origin: left;
-  filter:
-    url(#preloader-electric-2)
-    drop-shadow(0 0 6px var(--line-color, #EE9B00))
-    drop-shadow(0 0 16px color-mix(in srgb, var(--line-color, #EE9B00) 45%, transparent));
-}
-
-.preloader-line--right {
-  right: 0;
-  width: 50%;
-  transform-origin: right;
-  filter:
-    url(#preloader-electric-2)
-    drop-shadow(0 0 6px var(--line-color, #EE9B00))
-    drop-shadow(0 0 16px color-mix(in srgb, var(--line-color, #EE9B00) 45%, transparent));
-}
 
 /* ── Glitch chars ────────────────────────────────────────────────────────── */
 /* Each span has data-char=actual, --char-0=actual, --char-1..9=random glitch */

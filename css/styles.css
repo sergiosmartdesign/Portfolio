@@ -1583,12 +1583,13 @@ nav {
   padding: var(--spacing-md);
 }
 
-/* Title on the left, id badge beside it */
+/* Title on the left, id badge always pinned to the top-right (no wrap so the
+   badge never drops to a second line; the intro shrinks to make room instead). */
 .about-top-head {
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-xl);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .about-top .decoration-bar1 { align-self: stretch; }
@@ -2652,7 +2653,7 @@ nav {
 /* --- ID1 SVG --- */
 #id1svg {
   position: relative;
-  width: min(81%, 777px);    /* badge +30% again */
+  width: min(59%, 561px);    /* badge −15% again */
   height: auto;
   flex-shrink: 0;            /* keep its size; wrap instead of squashing neighbours */
   margin-left: auto;         /* push to the right edge of the head row */
@@ -3537,7 +3538,6 @@ img#id1svg {
     0 0  8px rgba(148, 210, 189, 0.85),
     0 0 24px rgba(148, 210, 189, 0.40),
     0 0 52px rgba(238, 155,   0, 0.18);
-  filter: url(#photo-bg-electric);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -4295,9 +4295,8 @@ img#id1svg {
   flex-direction: column;
 }
 
-/* ── Electric border — visible only while accordion is animating ──────── */
-/* Single element: SVG displacement handles the wobble, box-shadow the glow.
-   GPU-composited and idle-zero CPU (seed cycled by JS RAF on demand only). */
+/* ── Accordion glow border — visible only while accordion is animating ──── */
+/* box-shadow glow frame; the old electric displacement filter has been removed. */
 .accordion-electric-border {
   position: absolute;
   inset: 0;
@@ -4308,8 +4307,6 @@ img#id1svg {
     0 0 6px  rgba(238, 155, 0, 0.65),
     0 0 18px rgba(238, 155, 0, 0.22),
     0 0 32px rgba(10,  147, 150, 0.14);
-  filter: url(#accordion-electric);
-  will-change: filter;
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 5;
@@ -4615,7 +4612,6 @@ img#id1svg {
     0 0  8px rgba(238, 155,   0, 0.85),
     0 0 24px rgba(238, 155,   0, 0.40),
     0 0 48px rgba(148, 210, 189, 0.18);
-  filter: url(#accordion-electric);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.45s ease;
@@ -4699,7 +4695,6 @@ img#id1svg {
     0 0  8px rgba(238, 155,   0, 0.85),
     0 0 24px rgba(238, 155,   0, 0.40),
     0 0 52px rgba(148, 210, 189, 0.18);
-  filter: url(#photo-bg-electric);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s ease;

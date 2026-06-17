@@ -57,11 +57,9 @@
       this._borderCount       = 0;
       this._borderRaf         = null;
       this._borderFrameTick   = 0;
-      this._borderTurbulence  = null; // set in init()
       this._borderPaused      = false;
 
-      // Photo bg electric border
-      this._photoBorderTurbulence  = null;
+      // Photo bg glow border
       this._photoBorderActive      = false;
       this._photoBorderRaf         = null;
       this._photoBorderFrame       = 0;
@@ -98,8 +96,6 @@
     init() {
       this.winH         = window.innerHeight;
       this.spacerDocTop = this.photoSpacer.getBoundingClientRect().top + window.scrollY;
-      this._borderTurbulence      = document.getElementById('accordion-electric-turbulence');
-      this._photoBorderTurbulence = document.getElementById('photo-bg-turbulence');
       this._enlargeLabel          = document.getElementById('photoEnlargeLabel');
       this._enlargeText           = this._enlargeLabel?.querySelector('.photo-enlarge-text') ?? null;
 

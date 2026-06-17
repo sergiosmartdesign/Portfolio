@@ -1,8 +1,8 @@
 /**
- * Preloader — letter-by-letter label, electric progress line, glitch % counter
+ * Preloader — letter-by-letter label + glitch % counter.
  * No external dependencies.
  * Stack (top → bottom): "[ · L O A D I N G · ]" building one char per step,
- * the electric line growing from center in sync with the count, the % digits.
+ * then the % digits.
  */
 (function () {
   'use strict';
@@ -11,16 +11,6 @@
   // preloader runs as a classic IIFE before ES module infrastructure loads.
   // If you change the string, update constants.js to match.
   const GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
-
-  // Project palette — the electric progress line rolls one of these per load
-  const PALETTE = [
-    '#005F73', '#0A9396', '#94D2BD', '#E9D8A6', '#EE9B00',
-    '#CA6702', '#BB3E03', '#AE2012', '#9B2226'
-  ];
-
-  // Reduced motion: the line still grows (it's progress information) but the
-  // turbulence is never re-seeded — calm static line instead of a boiling one.
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── Build DOM ─────────────────────────────────────────────────────────── */
   const overlay = document.createElement('div');
@@ -43,66 +33,6 @@
   stage.appendChild(labelEl);
   stage.appendChild(pctEl);
   overlay.appendChild(stage);
-
-  /* ── Electric progress line ──────────────────────────────────────────────
-     One full-width element scaled from a CENTER origin: scaleX(count/100)
-     grows both tips symmetrically — center→left and center→right reach the
-     viewport borders together at 100%. Reads the same `count` the digits
-     render from, so line and number can never drift apart. scaleX is
-     compositor-only: the filter output re-rasterizes on seed changes (~13Hz),
-     not on the 38Hz counter ticks. */
-  // Two random palette colors per load: one for the center bolt, a different
-  // one shared by the two border bolts (deliberately not hopping mid-load —
-  // color reads as a state change on progress UI)
-  const colorCenter = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-  let colorBorders;
-  do {
-    colorBorders = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-  } while (colorBorders === colorCenter);
-
-  // Center bolt — grows center → both borders
-  const lineEl = document.createElement('div');
-  lineEl.className = 'preloader-line preloader-line--center';
-  lineEl.style.setProperty('--line-color', colorCenter);
-  overlay.appendChild(lineEl);
-
-  // Border bolts — half-width each, origin at their border, growing inward
-  // (border → center). Appended after the center bolt so they paint on top.
-  const lineLeftEl = document.createElement('div');
-  lineLeftEl.className = 'preloader-line preloader-line--left';
-  lineLeftEl.style.setProperty('--line-color', colorBorders);
-  overlay.appendChild(lineLeftEl);
-
-  const lineRightEl = document.createElement('div');
-  lineRightEl.className = 'preloader-line preloader-line--right';
-  lineRightEl.style.setProperty('--line-color', colorBorders);
-  overlay.appendChild(lineRightEl);
-
-  const lineEls = [lineEl, lineLeftEl, lineRightEl];
-
-  // Flowing electric displacement. One turbulence field sampled by two
-  // opposite-scrolling feOffsets (along X, the length of the line) and
-  // composited: the noise FLOWS along the filament — real electricity rather
-  // than the random "boiling" of re-seeding — while the two copies keep the
-  // field covering the region so the line never blanks out. scale 48 throws the
-  // 2px filament ±24px to fill the 50px corridor. Two filters with different
-  // seeds so the border bolts arc independently from the centre bolt.
-  const flowFilter = (id, seed) =>
-    '<filter id="' + id + '" colorInterpolationFilters="sRGB" x="-3%" y="-15%" width="106%" height="130%">' +
-      '<feTurbulence type="turbulence" baseFrequency="0.018" numOctaves="2" seed="' + seed + '" result="n"/>' +
-      '<feOffset in="n" result="a"><animate attributeName="dx" values="320;0" dur="2.6s" repeatCount="indefinite" calcMode="linear"/></feOffset>' +
-      '<feOffset in="n" result="b"><animate attributeName="dx" values="0;-320" dur="2.6s" repeatCount="indefinite" calcMode="linear"/></feOffset>' +
-      '<feComposite in="a" in2="b" operator="over" result="noise"/>' +
-      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="48" xChannelSelector="R" yChannelSelector="G"/>' +
-    '</filter>';
-  overlay.insertAdjacentHTML('beforeend',
-    '<svg class="preloader-elec-defs" style="position:absolute;width:0;height:0;" aria-hidden="true"><defs>' +
-      flowFilter('preloader-electric', 1) +
-      flowFilter('preloader-electric-2', 7) +
-    '</defs></svg>');
-  // prefers-reduced-motion: freeze the flow (the displaced line still shows, but
-  // it no longer animates) — replaces the old reduced-motion seed-skip.
-  if (reducedMotion) overlay.querySelector('.preloader-elec-defs')?.pauseAnimations();
 
   document.body.prepend(overlay);
   document.body.classList.add('preloading');
@@ -213,10 +143,6 @@
     if (count < ceiling) {
       count++;
       renderPct(count);
-      // All three bolts share the same progress: the center one stretches
-      // toward the borders, the border pair stretches toward the center.
-      const sx = 'scaleX(' + (count / 100) + ')';
-      lineEls.forEach(el => { el.style.transform = sx; });
     }
 
     if (count >= 100) {
