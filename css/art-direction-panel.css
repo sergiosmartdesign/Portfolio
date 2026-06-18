@@ -238,7 +238,7 @@ body.ad-section-live #art-direction .ad-skills-bar {
 }
 
 #art-direction .ad-intro-text .iad-header {
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(13px, 1.3vw, 18px);
   color: #EE9B00;
   letter-spacing: 0.1em;
@@ -255,7 +255,7 @@ body.ad-section-live #art-direction .ad-skills-bar {
 }
 
 #art-direction .ad-intro-text .iad-footer {
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(15px, 1.4vw, 20px);
   color: rgba(238, 155, 0, 0.75);
   letter-spacing: 0.06em;
@@ -407,7 +407,7 @@ body.ad-section-live #art-direction .ad-skills-bar {
 }
 
 #art-direction .ad-works-empty-text {
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 12px;
   letter-spacing: 0.08em;
   color: rgba(233, 216, 166, 0.4);
@@ -1105,7 +1105,7 @@ body.ad-section-live #art-direction .ad-explore-card {
   background: rgba(0, 18, 25, 0.55);
   border: 1px solid rgba(238, 155, 0, 0.45);
   color: #EE9B00;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 20px;
   font-weight: 400;
   letter-spacing: 0.18em;

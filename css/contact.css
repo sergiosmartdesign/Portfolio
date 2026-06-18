@@ -917,7 +917,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.7rem, 1vw, 0.85rem);
   letter-spacing: 0.08em;
   color: rgba(148, 210, 189, 0.6);
@@ -1015,7 +1015,7 @@
 .ct-field-err {
   min-height: 1.1em;
   margin: 0.25em 0 0;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 0.58rem;
   letter-spacing: 0.06em;
   color: #ff7d6b;
@@ -1079,7 +1079,7 @@
   flex: 1;
   min-width: 0;
   margin: 0;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.55rem, 0.85vw, 0.68rem);
   letter-spacing: 0.05em;
   color: rgba(148, 210, 189, 0.65);
@@ -1130,7 +1130,7 @@
 }
 
 .ct-success-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.6rem, 0.9vw, 0.75rem);
   color: rgba(233, 216, 166, 0.7);
   letter-spacing: 0.06em;
@@ -1218,7 +1218,7 @@
 }
 
 .ct-footer p {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.55rem, 0.8vw, 0.7rem);
   color: rgba(233, 216, 166, 0.45);
   letter-spacing: 0.05em;

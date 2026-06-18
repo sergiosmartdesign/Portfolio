@@ -174,7 +174,7 @@
     right: 50px;
     padding: 8px 14px;
     text-align: center;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: clamp(0.72rem, 1.9vmin, 0.95rem);
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -219,7 +219,7 @@
     transform: translateX(-50%);
     padding: 8px 20px;
     text-align: center;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: clamp(0.72rem, 1.9vmin, 0.95rem);
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -488,7 +488,7 @@
     background: transparent;
     border: none;
     color: #94D2BD;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: 0.22em;
@@ -556,7 +556,7 @@
     top: var(--illus-ui-inset);
     right: var(--illus-ui-inset);
     text-align: right;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.65rem;
     letter-spacing: 0.15em;
     color: var(--illus-muted);
@@ -700,7 +700,7 @@
 }
 
 .illus-caption-num {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.58rem;
     letter-spacing: 0.28em;
     color: var(--illus-accent);
@@ -724,7 +724,7 @@
 }
 
 .illus-caption-name {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: clamp(0.62rem, 1.45vw, 0.88rem);
     letter-spacing: 0.16em;
     color: #E9D8A6;
@@ -788,7 +788,7 @@
 .illus-card--right .illus-stat-row   { justify-content: flex-end; }
 
 .illus-tag {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.6rem;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -962,7 +962,7 @@
 
 .illus-technique {
     display: block;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.58rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -988,7 +988,7 @@
 }
 
 .illus-meta-item {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.7rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -1042,7 +1042,7 @@
 }
 
 .illus-stat-label {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.58rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -1082,7 +1082,7 @@
     border: 2px solid var(--illus-accent);
     background: var(--illus-accent);
     color: #001219;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.82rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -1106,7 +1106,7 @@
     border: 2px solid rgba(148, 210, 189, 0.45);
     background: transparent;
     color: var(--illus-muted);
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Funnel Display', sans-serif;
     font-size: 0.82rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;

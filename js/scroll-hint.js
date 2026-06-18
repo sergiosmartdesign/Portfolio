@@ -94,11 +94,6 @@
   /* ── Init ────────────────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
 
-    /* About section — fixed overlay */
-    const aboutHintEl = document.getElementById('scroll-hint');
-    const aboutTextEl = aboutHintEl && aboutHintEl.querySelector('.sc-text');
-    const aboutCtrl   = aboutHintEl ? makeHintController(aboutHintEl, aboutTextEl) : null;
-
     /* Intro section — inline element */
     const introHintEl = document.querySelector('.intro-scroll-hint');
     const introTextEl = introHintEl && introHintEl.querySelector('.sc-text');
@@ -142,21 +137,10 @@
     const EVENTS = ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'];
     EVENTS.forEach(evt => {
       window.addEventListener(evt, () => {
-        aboutCtrl && aboutCtrl.onActivity();
         introCtrl && introCtrl.onActivity();
         photoCtrl && photoCtrl.onActivity();
       }, { passive: true });
     });
-
-    /* Observe about section */
-    if (aboutCtrl) {
-      const about = document.getElementById('about');
-      if (about) {
-        new IntersectionObserver(entries => {
-          entries.forEach(e => aboutCtrl.setSectionActive(e.isIntersecting));
-        }, { threshold: 0.05 }).observe(about);
-      }
-    }
 
     /* Observe intro section */
     if (introCtrl) {
@@ -170,7 +154,6 @@
 
     window.addEventListener('pageshow', (e) => {
       if (!e.persisted) return;
-      aboutCtrl && aboutCtrl.reset();
       introCtrl && introCtrl.reset();
       photoCtrl && photoCtrl.reset();
     });

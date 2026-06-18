@@ -184,7 +184,7 @@
 }
 
 .coming-soon__label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
   font-size: clamp(0.85rem, 1.6vw, 1.2rem);
   letter-spacing: 0.10em;
@@ -962,7 +962,7 @@ nav {
   transform-origin: center;
   font-size: 12px;
   opacity: 0.8;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 10px;
   color: #9B2226;
   z-index: var(--z-layer-10);
@@ -1278,7 +1278,7 @@ nav {
   height: 18px;
   line-height: 18px;
   text-align: center;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 14px;
   color: var(--cyan);
 }
@@ -1849,7 +1849,7 @@ nav {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 0.82rem;
   color: #001219;
   opacity: 0;
@@ -1885,7 +1885,7 @@ nav {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 0.85rem;
   color: #001219;
   opacity: 0;
@@ -2015,7 +2015,7 @@ nav {
 }
 
 .seal-monogram {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 11px;
   letter-spacing: 0.2em;
   fill: #94D2BD;
@@ -2042,7 +2042,7 @@ nav {
 
 .seal-label {
   display: block;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   color: #E9D8A6;
@@ -2437,7 +2437,7 @@ nav {
 .texts {
   position: absolute;
   font-size: 3.5vmin; /* Further reduced for better readability */
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   transform-style: preserve-3d;
   animation: none; /* Disabled by default */
   opacity: 0; /* Hidden until visible */
@@ -2650,18 +2650,113 @@ nav {
   animation: fadeIn 0.3s ease-out 2.2s forwards;
 }
 
+/* --- ID badge stack: badge + HUD "descend" arrow --- */
+/* Column that owns the badge's old top-right placement; the badge sits on top,
+   the descend arrow centers beneath it. */
+.about-id-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.4vw, 22px);
+  width: min(59%, 561px);    /* badge −15% again — width now lives on the stack */
+  margin-left: auto;         /* push to the right edge of the head row */
+  align-self: flex-start;    /* sit in the top-right corner */
+  flex-shrink: 0;            /* keep its size; wrap instead of squashing neighbours */
+  /* Shared teal glow halo for the badge, scroll label, and arrow. The elements
+     are dark (#001219), so the glow reads as emitted accent light. */
+  --id-glow: rgba(10, 147, 150, 0.65);
+  --id-glow-soft: rgba(10, 147, 150, 0.35);
+}
+
 /* --- ID1 SVG --- */
 #id1svg {
   position: relative;
-  width: min(59%, 561px);    /* badge −15% again */
+  width: 100%;               /* fill the stack (stack carries the sizing now) */
   height: auto;
-  flex-shrink: 0;            /* keep its size; wrap instead of squashing neighbours */
-  margin-left: auto;         /* push to the right edge of the head row */
-  align-self: flex-start;    /* sit in the top-right corner */
   opacity: 0;
   transform: translateY(-100px);
   transform-origin: bottom left;
   animation-fill-mode: forwards;
+  filter: drop-shadow(0 0 6px var(--id-glow))
+          drop-shadow(0 0 16px var(--id-glow-soft));
+}
+
+/* --- ID badge descend cue -------------------------------------------------
+   Mirrors #art-direction's red intro-frame cue (adfrm-arrow): a bracketed
+   scroll prompt on top (replaces the old dotted feed line), [ ] target
+   brackets, and three down-chevrons that pulse top→bottom. Self-contained
+   .aid-* classes — no coupling to the art-direction SVG's global <style>.
+   Both fade in + the chevrons pulse when the badge reveals (siblings of
+   #id1svg.element-visible). */
+.about-id-scroll {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.8rem, 1.3vw, 1.05rem);
+  letter-spacing: 0.18em;
+  color: #001219;
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  text-shadow: 0 0 6px var(--id-glow), 0 0 14px var(--id-glow-soft);
+}
+
+.about-id-arrow {
+  width: clamp(58px, 19%, 88px);
+  height: auto;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  filter: drop-shadow(0 0 4px var(--id-glow))
+          drop-shadow(0 0 11px var(--id-glow-soft));
+}
+
+.about-id-arrow .aid-bracket {
+  fill: none;
+  stroke: #001219;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-id-arrow .aid-chev {
+  fill: #001219;
+  opacity: 0.15;             /* resting state before the pulse arms */
+}
+
+/* Reveal + perpetual descend pulse — armed off the badge's reveal class.
+   svg-inline.js replaces <img#id1svg> in place, so the arrow stays its
+   following sibling and this combinator keeps working post-swap. */
+#about #id1svg.element-visible ~ .about-id-scroll,
+#about #id1svg.element-visible ~ .about-id-arrow {
+  opacity: 1;
+}
+#about #id1svg.element-visible ~ .about-id-arrow .aid-chev-0 {
+  animation: aid-chev-seq 1.4s linear 0s infinite;
+}
+#about #id1svg.element-visible ~ .about-id-arrow .aid-chev-1 {
+  animation: aid-chev-seq 1.4s linear 0.18s infinite;
+}
+#about #id1svg.element-visible ~ .about-id-arrow .aid-chev-2 {
+  animation: aid-chev-seq 1.4s linear 0.36s infinite;
+}
+
+@keyframes aid-chev-seq {
+  0%   { opacity: 0.15; }
+  16%  { opacity: 1; }
+  42%  { opacity: 1; }
+  46%  { opacity: 0.3; }
+  50%  { opacity: 0.9; }
+  68%  { opacity: 0.15; }
+  100% { opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-id-arrow { transition: none; }
+  #about #id1svg.element-visible ~ .about-id-arrow .aid-chev {
+    opacity: 0.8;
+    animation: none !important;
+  }
 }
 
 /* Pre-conversion <img> fallback only — once svg-inline.js swaps in the inline
@@ -3465,7 +3560,7 @@ img#id1svg {
 
 .photo-enlarge-text {
   display: block;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 12px;
   font-weight: 300;
   letter-spacing: 0.06em;
@@ -3494,7 +3589,7 @@ img#id1svg {
 
 /* Section label above the 3-column grid */
 .photo-section-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.6rem, 0.85vw, 0.75rem);
   color: #0A9396;
   letter-spacing: 0.12em;
@@ -3685,7 +3780,7 @@ img#id1svg {
 }
 
 .photo-ig-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.75rem, 1.2vw, 1rem);
   font-weight: 700;
   color: #9B2226;
@@ -3696,7 +3791,7 @@ img#id1svg {
 .photo-ig-label:hover { color: #001219; }
 
 .photo-ig-handle {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.75rem, 1.2vw, 1rem);
   color: #BB3E03;
   margin: 0;
@@ -3738,7 +3833,7 @@ img#id1svg {
   gap: 0.5em;
   text-decoration: none;
   color: #9B2226;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.75rem, 1.2vw, 1rem);
   letter-spacing: 0.08em;
   margin-top: var(--spacing-xs);
@@ -3926,7 +4021,7 @@ img#id1svg {
 }
 
 .photo-polaroid-section {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.4rem, 0.6vw, 0.55rem);
   color: #001219;
   letter-spacing: 0.08em;
@@ -3952,7 +4047,7 @@ img#id1svg {
 /* Photo name — amber marker highlight */
 .photo-polaroid-name {
   position: relative;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.5rem, 0.85vw, 0.78rem);
   color: #001219;
   letter-spacing: 0.04em;
@@ -4404,7 +4499,7 @@ img#id1svg {
 
 .pgallery-info-left,
 .pgallery-info-right {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 80px;
   font-weight: 900;
   color: #001219;
@@ -4443,7 +4538,7 @@ img#id1svg {
 }
 
 .pgallery-info-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.85rem, 1.4vw, 1.1rem);
   font-weight: 700;
   color: #001219;
@@ -4453,7 +4548,7 @@ img#id1svg {
 }
 
 .pgallery-info-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.6rem, 0.9vw, 0.75rem);
   font-weight: 600;
   color: #001219;
@@ -4541,7 +4636,7 @@ img#id1svg {
   background: transparent;
   border: none;
   color: #EE9B00;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -4615,7 +4710,7 @@ img#id1svg {
   border-top: 1px solid rgba(10, 147, 150, 0.18);
   cursor: pointer;
   text-align: left;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
   font-size: clamp(0.8rem, 1.3vw, 1.05rem);
   color: #9B2226;
@@ -4638,7 +4733,7 @@ img#id1svg {
 /* [ + ] / [ - ] indicator */
 .photo-btn-indicator::before {
   content: '[ + ]';
-  font-family: 'Funnel Display', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: 0.75em;
   letter-spacing: 0.1em;
   opacity: 0.5;
@@ -4823,7 +4918,7 @@ img#id1svg {
 }
 
 .pgallery-hint {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Funnel Display', sans-serif;
   font-size: clamp(0.7rem, 1vw, 0.85rem);
   color: #001219;
   text-align: center;
