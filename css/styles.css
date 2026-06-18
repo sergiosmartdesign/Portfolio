@@ -2182,7 +2182,7 @@ nav {
 #about .paul-rands-quote blockquote p {
   font-size: inherit;
   position: relative;
-  top: -25px;
+  top: -15px;
 }
 
 /* Prevent quote glitch on page load */

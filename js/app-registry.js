@@ -19,7 +19,7 @@
  *   App.certCube                 {goto(), next(), prev()}         — devtools only
  *   App.glitchSystem             {initDNAGlitch(), animateDNAReveal(), …} — devtools only
  *   App.playArtEntranceAnimation ()                               — set by art-direction.js
- *   App._scrollPathActive        boolean                          — set by about-pin.js
+ *   App._scrollPathActive        boolean                          — legacy/unused; about-pin.js no longer scroll-jacks
  */
 (function () {
   'use strict';
