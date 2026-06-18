@@ -57,7 +57,9 @@
   100% { opacity: 1;    transform: translateY(-50%);             clip-path: inset(0 0 0 0); }
 }
 
-#art-direction .ad-intro-svg {
+/* Frame wrapper owns the absolute box geometry; the SVG fills it and an HTML
+   label can be overlaid at the chevron arrow without SVG-text distortion. */
+#art-direction .ad-intro-frame {
   position: absolute;
   left: calc(min(75vh, 75vw) + 2vw);
   right: 0;
@@ -66,9 +68,42 @@
   height: 56vh;
   pointer-events: none;
   z-index: 9;
+}
+
+#art-direction .ad-intro-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   filter: drop-shadow(0 0 6px #BB3E03) drop-shadow(0 0 18px rgba(155, 34, 38, 0.7));
   opacity: 0;
   clip-path: inset(0 100% 0 0);
+}
+
+/* HUD prompt overlaying the chevron arrow — sits where the arrow's dashed dots
+   used to be (viewBox 674 / 950.9 ≈ 70.9% across, ~72% down). Crisp HTML text
+   instead of SVG <text> (the frame stretches via preserveAspectRatio="none").
+   Matches the red frame + glows; fades in with the chevrons, intro state only. */
+#art-direction .ad-intro-arrow-label {
+  position: absolute;
+  left: 66.7%;
+  top: 72%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  white-space: nowrap;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(11px, 0.95vw, 15px);
+  letter-spacing: 0.12em;
+  color: #CA6702;
+  text-shadow: 0 0 6px rgba(202, 103, 2, 0.6), 0 0 16px rgba(202, 103, 2, 0.5);
+  pointer-events: none;
+  opacity: 0;
+}
+
+body.ad-section-live #art-direction.ad-intro-active .ad-intro-arrow-label {
+  animation: adfrm-arrow-in 0.6s ease-out 2.8s forwards;
 }
 
 body.ad-section-live #art-direction .ad-intro-svg {
@@ -152,6 +187,11 @@ body.ad-section-live #art-direction .ad-intro-svg #animate1 {
   transition: opacity 0.3s ease;
 }
 
+/* Arrow recoloured (#CA6702) independently of the red frame (#BB3E03) — these
+   id-scoped rules outrank the SVG's inline .adfrm-2/.adfrm-6 base styles. */
+#art-direction .ad-intro-svg #adfrm-arrow .adfrm-2 { stroke: #CA6702; }
+#art-direction .ad-intro-svg #adfrm-arrow .adfrm-6 { fill: #CA6702; }
+
 body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg #adfrm-arrow {
   animation: adfrm-arrow-in 0.6s ease-out 2.8s forwards;
 }
@@ -198,6 +238,10 @@ body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-2 
     opacity: 0.8;
     animation: none !important;
   }
+  body.ad-section-live #art-direction.ad-intro-active .ad-intro-arrow-label {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 @keyframes adfrm-binary-stream {
@@ -232,8 +276,7 @@ body.ad-section-live #art-direction .ad-skills-bar {
 
 /* ── Type styles — text groups always visible inside their container ── */
 #art-direction .ad-intro-text .iad-header,
-#art-direction .ad-intro-text .iad-body,
-#art-direction .ad-intro-text .iad-footer {
+#art-direction .ad-intro-text .iad-body {
   margin: 0;
 }
 
@@ -252,13 +295,6 @@ body.ad-section-live #art-direction .ad-skills-bar {
   font-size: clamp(15px, 1.7vw, 22px);
   color: #E9D8A6;
   line-height: 1.55;
-}
-
-#art-direction .ad-intro-text .iad-footer {
-  font-family: 'Funnel Display', sans-serif;
-  font-size: clamp(15px, 1.4vw, 20px);
-  color: rgba(238, 155, 0, 0.75);
-  letter-spacing: 0.06em;
 }
 
 /* ── LinkedIn icon — inline below body text, in flex flow ── */

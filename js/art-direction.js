@@ -151,8 +151,6 @@
       setTimeout(() => {
         section.classList.add('ad-intro-animate');
         window.scrambleText(section.querySelector('.iad-header[data-content]'), NAV_SCRAMBLE);
-        window.scrambleText(section.querySelector('.iad-footer[data-content]'),
-          { ...NAV_SCRAMBLE, startDelay: 200 });
       }, 2000);
     };
 
@@ -163,7 +161,7 @@
       section.classList.remove('ad-intro-animate');
       section.classList.add('ad-intro-active');
       navLabels.forEach(label => { label.textContent = label.getAttribute('data-content'); });
-      ['.iad-header[data-content]', '.iad-footer[data-content]'].forEach(sel => {
+      ['.iad-header[data-content]'].forEach(sel => {
         const el = section.querySelector(sel);
         if (el) el.textContent = el.getAttribute('data-content');
       });

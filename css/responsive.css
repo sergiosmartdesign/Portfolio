@@ -154,7 +154,7 @@
   }
 
   /* Decorative framing / vertical bars that have no room on a phone. */
-  #art-direction .ad-intro-svg,
+  #art-direction .ad-intro-frame,
   #art-direction .ad-skills-bar,
   #art-direction .ad-projects-bar {
     display: none;

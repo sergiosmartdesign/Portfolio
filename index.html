@@ -1291,8 +1291,11 @@
                         </a>
                     </li>
                 </ul>
-                <p class="iad-footer" data-content="· select a discipline to begin ·">· select a discipline to begin ·</p>
             </div>
+            <!-- Frame wrapper carries the absolute box geometry so a crisp HTML
+                 label can overlay the chevron arrow (the SVG itself stretches via
+                 preserveAspectRatio="none", which would distort SVG text). -->
+            <div class="ad-intro-frame">
             <svg class="ad-intro-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 950.9 632.7" preserveAspectRatio="none" aria-hidden="true" focusable="false">
               <defs>
                 <style>
@@ -1353,10 +1356,10 @@
                   </g>
                 </g>
                 <!-- Down indicator — points at the DISCIPLINES nav card below the frame;
-                     HUD target brackets + dashed feed line + chevron cascade (waterfall
-                     pulse driven by .adfrm-chev-N CSS). Intro state only. -->
-                <g id="adfrm-arrow">
-                  <line class="adfrm-1" x1="674" y1="462" x2="674" y2="490"/>
+                     HUD target brackets + chevron cascade (waterfall pulse driven by
+                     .adfrm-chev-N CSS). The prompt above it is the HTML .ad-intro-arrow-label
+                     overlay (replaced the old dashed feed line). Intro state only. -->
+                <g id="adfrm-arrow" transform="translate(-40 0)">
                   <polyline class="adfrm-2" points="646 498 634 498 634 596 646 596"/>
                   <polyline class="adfrm-2" points="702 498 714 498 714 596 702 596"/>
                   <polygon class="adfrm-6 adfrm-chev adfrm-chev-0" points="652 502 674 518 696 502 696 512 674 528 652 512"/>
@@ -1366,6 +1369,11 @@
                 <rect class="adfrm-2" x="36.4" y="42.6" width="79.2" height="20.3"/>
               </g>
             </svg>
+            <!-- Crisp HUD prompt sitting where the arrow's dashed dots were,
+                 above the chevron cascade. Positioned over the arrow via % of the
+                 frame box. Intro state only; fades in with the chevrons. -->
+            <span class="ad-intro-arrow-label" aria-hidden="true">[ · Select a discipline to begin · ]</span>
+            </div>
 
             <!-- Works zone: label + list, top-aligned via flex -->
             <div class="ad-works-zone">
