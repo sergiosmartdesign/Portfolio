@@ -940,10 +940,17 @@ body.ad-section-live #art-direction .ad-explore-card {
   gap: 40px;
 }
 
-/* Text block — left side */
+/* Text block — left side. The image/SVG stage occupies the right 65% of the
+   frame (anchored right:100px), so its left edge lands near the 35% mark. The
+   text column is pinned to the open left third and capped so the larger type
+   always clears the red SVG horizontally — it wraps/grows downward, never under
+   the stage. */
 .ad-pm-text {
   position: relative;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  width: min(40ch, 30%);
+  max-width: 440px;
+  margin-right: auto;
 }
 
 .ad-project-modal.is-open .ad-pm-content {
@@ -965,11 +972,34 @@ body.ad-section-live #art-direction .ad-explore-card {
   user-select: none;
 }
 
+/* ── Glitch scramble — category / title / subtitle ───────────────────────────
+   _glitchSplit() (art-direction-panel.js) runs Splitting.js on these on each
+   open, stamping the [data-char] glyph vars. The global [data-char]:after rules
+   (styles.css) supply duration/delay/timing; here we switch the animation on and
+   recolour each char to its element's hue (the global default is white). ── */
+.ad-pm-cat[data-splitting] [data-char]:after,
+.ad-pm-title[data-splitting] [data-char]:after,
+.ad-pm-sub[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+  animation-iteration-count: calc(var(--char-index) * 0.55);
+}
+.ad-pm-cat[data-splitting]   [data-char]:after { color: #EE9B00; }
+.ad-pm-title[data-splitting] [data-char]:after { color: #E9D8A6; }
+.ad-pm-sub[data-splitting]   [data-char]:after { color: rgba(233, 216, 166, 0.55); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-pm-cat[data-splitting] [data-char]:after,
+  .ad-pm-title[data-splitting] [data-char]:after,
+  .ad-pm-sub[data-splitting] [data-char]:after {
+    animation-name: none;
+  }
+}
+
 /* Category chip */
 .ad-pm-cat {
   display: block;
   font-family: 'Funnel Display', sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.26em;
   color: #EE9B00;
@@ -980,7 +1010,7 @@ body.ad-section-live #art-direction .ad-explore-card {
 /* Project title */
 .ad-pm-title {
   font-family: 'Funnel Display', sans-serif;
-  font-size: clamp(22px, 3vw, 36px);
+  font-size: clamp(32px, 4vw, 52px);
   font-weight: 700;
   color: #E9D8A6;
   line-height: 1.1;
@@ -990,7 +1020,7 @@ body.ad-section-live #art-direction .ad-explore-card {
 /* Subtitle */
 .ad-pm-sub {
   font-family: 'Funnel Display', sans-serif;
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 300;
   color: rgba(233, 216, 166, 0.55);
   margin: 0 0 14px 0;
@@ -1000,11 +1030,10 @@ body.ad-section-live #art-direction .ad-explore-card {
 /* Project description — short paragraph with inline links, between subtitle and specs */
 .ad-pm-desc {
   font-family: 'Funnel Display', sans-serif;
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 300;
   line-height: 1.6;
   color: rgba(233, 216, 166, 0.78);
-  max-width: 46ch;
   margin: 0 0 22px 0;
   letter-spacing: 0.02em;
 }
@@ -1041,7 +1070,7 @@ body.ad-section-live #art-direction .ad-explore-card {
   display: flex;
   gap: 1.5rem;
   font-family: 'Funnel Display', sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   align-items: baseline;
 }
 
@@ -1075,7 +1104,7 @@ body.ad-section-live #art-direction .ad-explore-card {
   border: 1px solid rgba(238, 155, 0, 0.22);
   border-radius: 10px;
   font-family: 'Funnel Display', sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   color: #E9D8A6;
   letter-spacing: 0.05em;

@@ -16,6 +16,10 @@
 // titles). Distinct from the nav-card decode in art-direction.js.
 const AD_PANEL_SCRAMBLE = { chars: '!<>-_\\/[]{}—=+*^?#∆◊§øΩ†‡', frameMs: 38 };
 
+// Glyph pool for the modal text's Splitting.js char-cycle glitch — mirrors the
+// site-wide GLITCH_CHARS used on headings (script.js).
+const AD_PM_GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
+
 class ArtWorksPanel {
     constructor() {
         this.panel    = document.querySelector('#art-direction .ad-works-panel');
@@ -387,6 +391,13 @@ class ArtWorksPanel {
         this.modalTitle.textContent = work.title;
         this.modalSub.textContent   = work.sub;
 
+        // Re-split on each open so the fresh [data-char] pseudo-elements re-fire
+        // the glitch-switch char-cycle (keyframes in styles.css). The plain-text
+        // assignment above wipes any prior split, so Splitting starts clean.
+        this._glitchSplit(this.modalCat);
+        this._glitchSplit(this.modalTitle);
+        this._glitchSplit(this.modalSub);
+
         if (this.modalDesc) {
             this.modalDesc.innerHTML = work.desc ?? AD_PM_DESC_PLACEHOLDER;
         }
@@ -431,6 +442,23 @@ class ArtWorksPanel {
         document.body.style.overflow = 'hidden';
 
         requestAnimationFrame(() => this.modalClose.focus());
+    }
+
+    // Run Splitting.js on an element and seed each char with 10 random glyphs so
+    // the CSS glitch-switch animation has frames to cycle through before settling
+    // on the real character. Same recipe as GlitchSystem.initSplitting (script.js).
+    _glitchSplit(el) {
+        if (!el || !window.Splitting) return;
+        const results = window.Splitting({ target: el, by: 'chars' });
+        results.forEach(result => {
+            result.chars.forEach(char => {
+                char.style.setProperty('--count', String(Math.random() * 5 + 1));
+                for (let g = 0; g < 10; g++) {
+                    const r = AD_PM_GLITCH_CHARS[Math.floor(Math.random() * AD_PM_GLITCH_CHARS.length)];
+                    char.style.setProperty(`--char-${g}`, `"${r}"`);
+                }
+            });
+        });
     }
 
     _switchModalImage(src, index) {

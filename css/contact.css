@@ -804,6 +804,22 @@
   flex-shrink: 0;
   pointer-events: none;
   filter: var(--id-glow-filter);
+  /* Hidden until the section boots — grows in like #about's capsule */
+  transform: scale(0);
+  transform-origin: bottom left;
+}
+
+/* Entrance: reuse #about's capsuleGrow (widens to a thin line, then rises to
+   full height). Gated to the .ct-glitch-in boot class added by contact.js so
+   it plays as the form fades in. */
+#contact.ct-glitch-in .ct-capsule {
+  animation: capsuleGrow var(--duration-scene) ease-out 0s forwards;
+}
+
+/* Reduced motion never adds .ct-glitch-in — keep the capsule simply visible */
+@media (prefers-reduced-motion: reduce) {
+  .ct-capsule { transform: none; }
+  .ct-capsule-dna { opacity: 1; }
 }
 
 .ct-capsule-shell {
@@ -817,6 +833,14 @@
 .ct-capsule-dna {
   position: absolute;
   inset: 13% 11% 6%;
+  /* Hidden while the shell grows in — the character enters afterwards */
+  opacity: 0;
+}
+
+/* Character entrance: fades in only once the shell's capsuleGrow has finished
+   (delay = --duration-scene), so the empty capsule appears alone first. */
+#contact.ct-glitch-in .ct-capsule-dna {
+  animation: fadeIn 0.7s ease-out var(--duration-scene) both;
 }
 
 .ct-capsule-dna svg {
@@ -912,6 +936,22 @@
 }
 
 .ct-form-feed { white-space: nowrap; }
+
+/* ── Glitch intro on the comms-form text ─────────────────────────────────
+   Same Splitting.js per-letter scramble used across the site. Each element
+   keeps its own colour via --glitch-final-color, and the scramble is gated
+   to .ct-glitch-in (added by contact.js as the form fades in) so it fires on
+   entrance instead of being wasted while the section is off-screen. */
+.ct-form-title.glitch-text,
+.ct-field label.glitch-text { --glitch-final-color: rgba(148, 210, 189, 0.85); }
+.ct-send.glitch-text        { --glitch-final-color: var(--ct-sun-warm); }
+
+#contact .ct-form .glitch-text[data-splitting] [data-char]:after {
+  animation-name: none;
+}
+#contact.ct-glitch-in .ct-form .glitch-text[data-splitting] [data-char]:after {
+  animation-name: glitch-switch;
+}
 
 .ct-form-dot {
   display: inline-block;

@@ -667,6 +667,27 @@
         '+=0.08'
       );
 
+      // Fire the per-letter glitch scramble on the form text (NEW_MESSAGE,
+      // field labels, send) as the content reveals. Skipped under reduced
+      // motion so the text just appears statically. See contact.css.
+      tl.call(() => {
+        if (motionOk()) section.classList.add('ct-glitch-in');
+      }, null, '<');
+
+      // Assemble the form piece by piece: header → fields → send → links.
+      // Done in GSAP (not CSS) so the form stays visible if GSAP never loads;
+      // under reduced motion the parts simply ride the .ct-content fade above.
+      if (motionOk()) {
+        const formParts = section.querySelectorAll(
+          '.ct-form-head, .ct-form-grid .ct-field, .ct-form-foot, .ct-links--mini'
+        );
+        tl.fromTo(formParts,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1 },
+          '<0.1'
+        );
+      }
+
       appendTitleReveal(tl);
 
     }, section);
