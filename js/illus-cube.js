@@ -450,8 +450,11 @@
     let elecActive    = false;
     let elecTimer     = null;
     let prevSmooth    = smooth;
-    let introSeenOnce = false;
-    let introTimer    = null;
+    let introSeenOnce     = false;  // both stages fired — entrance complete
+    let stageContentFired = false;  // Stage A (text + SVG) latched at 40% coverage
+    let stageCubeFired    = false;  // Stage B (3D cube) latched at 90% coverage
+    const prefersReducedMotion =
+        window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function elecOn() {
         if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
@@ -609,12 +612,14 @@
         });
     }
 
+    // Cleanup run on every (re)entry / nav click. The staged entrance itself is
+    // driven by viewport coverage in the frame loop (see "Staged scroll-driven
+    // entrance"); .illus-intro-active is intentionally left applied as the
+    // permanent Stage-0 hold that the stage classes override.
     function resetIntro() {
-        if (introTimer) { clearTimeout(introTimer); introTimer = null; }
         elecActive = false;
         if (elecTimer) { clearTimeout(elecTimer); elecTimer = null; }
         tunnel.classList.remove('illus-electric-active');
-        illus.classList.remove('illus-entering', 'illus-intro-active');
 
         // Evict any stale photo and restore the gallery label — always, on every visit
         const titleFaceImg = faces[INTRO_FACE].querySelector('img');
@@ -624,19 +629,41 @@
         }
         restoreGalleryLabel();
         faceImgIdx[INTRO_FACE] = -1;
+    }
 
-        if (introSeenOnce) return;
-        introSeenOnce = true;
-        illus.classList.add('illus-entering');
-        startIntroElecFlicker();
-        introTimer = setTimeout(() => {
-            illus.classList.remove('illus-entering');
-            introTimer = null;
-        }, 1300);
+    // Play the full staged entrance (Stage A text/SVG → Stage B cube power-on)
+    // on demand, independent of scroll coverage. The menu jumps to the section
+    // instantly (coverage hits 100% in a single frame), so the coverage-based
+    // trigger would collapse both stages together — this scripts them on a timer
+    // so a clicked entry looks identical to a scrolled one.
+    let entranceTimer = null;
+    function playStagedEntrance() {
+        if (entranceTimer) { clearTimeout(entranceTimer); entranceTimer = null; }
+
+        // Re-arm to the bg-only Stage-0 baseline and take over from the
+        // coverage-based trigger so it can't double-fire.
+        illus.classList.remove('illus-stage-content', 'illus-stage-cube');
+        stageContentFired = true;
+        stageCubeFired    = false;
+        introSeenOnce     = true;
+        resetIntro();                       // restore gallery label, evict stale photo
+        void illus.offsetWidth;             // restart the stage-content animation cleanly
+
+        // Stage A — text + SVG slide in.
+        illus.classList.add('illus-stage-content');
+
+        // Stage B — cube powers on once the content has settled, mirroring the
+        // gap the scroll path leaves between 40% and 90% coverage.
+        entranceTimer = setTimeout(() => {
+            stageCubeFired = true;
+            illus.classList.add('illus-stage-cube');
+            if (!prefersReducedMotion) startIntroElecFlicker();
+            entranceTimer = null;
+        }, 900);
     }
 
     document.querySelectorAll('a[href="#illustration"]').forEach(btn => {
-        btn.addEventListener('click', resetIntro);
+        btn.addEventListener('click', playStagedEntrance);
     });
 
     // ── Lightbox ─────────────────────────────────────────────────────────────
@@ -730,17 +757,43 @@
 
         // Skip all work when section is well off-screen — cheap early exit.
         const bcr = illus.getBoundingClientRect();
-        if (bcr.top > window.innerHeight + 100 || bcr.bottom < -100) return;
+        if (bcr.top > window.innerHeight + 100 || bcr.bottom < -100) {
+            // Section fully off-screen — re-arm the staged entrance so the
+            // power-on replays the next time the section is approached. Removing
+            // the stage classes lets the permanent .illus-intro-active hold
+            // re-hide everything to the bg-only Stage-0 baseline.
+            if (introSeenOnce || stageContentFired) {
+                if (entranceTimer) { clearTimeout(entranceTimer); entranceTimer = null; }
+                introSeenOnce = stageContentFired = stageCubeFired = false;
+                illus.classList.remove('illus-stage-content', 'illus-stage-cube');
+            }
+            return;
+        }
 
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
 
         tgt = getProgress(bcr);
 
-        // First organic scroll entry — fires resetIntro() if user scrolled in
-        // without clicking the nav button (nav click already calls resetIntro directly).
-        if (!introSeenOnce && bcr.top <= 0 && bcr.bottom > 0) {
-            resetIntro();
+        // ── Staged scroll-driven entrance ─────────────────────────────────
+        // coverage = the share of the viewport this section occupies as it
+        // rises over the photo curtain (bottom-up). It equals the photo
+        // reveal's exitProgress, but measured from our own rect so the section
+        // stays self-contained. Stage A (text + SVG) latches at 40% coverage,
+        // Stage B (the 3D cube) at 90%. Each stage fires once and holds.
+        if (!introSeenOnce) {
+            const coverage = (window.innerHeight - bcr.top) / window.innerHeight;
+            if (!stageContentFired && coverage >= 0.40) {
+                stageContentFired = true;
+                resetIntro();                       // restore label, evict stale photo
+                illus.classList.add('illus-stage-content');
+            }
+            if (!stageCubeFired && coverage >= 0.90) {
+                stageCubeFired = true;
+                illus.classList.add('illus-stage-cube');
+                if (!prefersReducedMotion) startIntroElecFlicker();
+                introSeenOnce = true;               // entrance complete — latch
+            }
         }
 
         smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));

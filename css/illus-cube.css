@@ -1274,6 +1274,7 @@
 #illustration.illus-intro-active .illus-strip,
 #illustration.illus-intro-active .illus-caption,
 #illustration.illus-intro-active .illus-info-svg,
+#illustration.illus-intro-active .illus-sections,
 #illustration.illus-intro-active .illus-svg-bar {
     opacity: 0;
     transition: none;
@@ -1301,36 +1302,43 @@
     to   { opacity: 1; translate: 0 0; }
 }
 
-/* ── illus-entering — CSS drives the full stagger ──────────────────────────
-   animation-fill-mode: both → element stays at from-state during delay
-   (backwards) and at to-state after finishing (forwards).
-   Card and its children use their existing opacity transitions; only the
-   transition-delay is overridden here to create the intro stagger.
+/* ── Staged scroll-driven entrance ─────────────────────────────────────────
+   Driven by illus-cube.js from the section's own bottom-up viewport coverage
+   over the photo curtain:
+     • .illus-stage-content — text + SVG, latched at 40% coverage
+     • .illus-stage-cube    — the 3D cube, latched at 90% coverage
+   The .illus-intro-active suppressor above stays applied the whole time; these
+   animations win on source order and (with fill:both) hold their end state, so
+   no fragile class-removal timing is needed. animation-fill-mode: both → the
+   element holds the from-state during the delay and the to-state afterwards.
 ──────────────────────────────────────────────────────────────────────────── */
 
-#illustration.illus-entering #illus-particle-canvas {
-    animation: illus-enter-fade 400ms ease 0ms both;
+/* Stage A — text + SVG slide into position (everything except the cube) */
+#illustration.illus-stage-content #illus-particle-canvas {
+    animation: illus-enter-fade 600ms ease 0ms both;
 }
 
-#illustration.illus-entering .illus-scene {
-    animation: illus-enter-scale 480ms var(--ease-expo-out) 80ms both;
+#illustration.illus-stage-content .illus-svg-bar {
+    animation: illus-svgbar-enter 900ms var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 60ms both;
 }
 
-#illustration.illus-entering .illus-hud {
+#illustration.illus-stage-content .illus-hud {
     animation: illus-enter-left 400ms ease 160ms both;
 }
 
-#illustration.illus-entering .illus-strip,
-#illustration.illus-entering .illus-caption {
+#illustration.illus-stage-content .illus-strip,
+#illustration.illus-stage-content .illus-caption {
     animation: illus-enter-up 380ms ease 300ms both;
 }
 
-#illustration.illus-entering .illus-info-svg {
+#illustration.illus-stage-content .illus-info-svg {
     animation: illus-enter-up 400ms ease 380ms both;
 }
 
-#illustration.illus-entering .illus-svg-bar {
-    animation: illus-svgbar-enter 900ms var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 60ms both;
+/* Intro card slides up as a single panel — its inner elements have already
+   settled (invisibly) via their .active transitions while held at Stage 0. */
+#illustration.illus-stage-content .illus-sections {
+    animation: illus-enter-up 460ms var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 220ms both;
 }
 
 @keyframes illus-svgbar-enter {
@@ -1338,28 +1346,48 @@
     to   { opacity: 1; translate: 0 0; }
 }
 
-/* Card wrapper — delay the opacity:0→1 transition so it lands after the cube */
-#illustration.illus-entering .illus-section[data-idx="0"] {
-    transition-delay: 0.18s;
+/* Stage B — the 3D cube "powers on" (fires at 90% coverage).
+   Dramatic but cheap: only transform + opacity on .illus-scene (the perspective
+   wrapper), so it composites on the GPU with no layout/paint. Scaling the scene
+   acts as a dolly toward the viewer because the perspective lives on it; the
+   cube child keeps its JS-driven rotation untouched. Per-keyframe timing builds
+   the rhythm — fast rush-in, back-out overshoot, two hard digital glitch hitches
+   (steps), then a smooth settle. will-change is safe here: the cube subtree is
+   already a live compositor layer (it rotates every frame). */
+#illustration.illus-stage-cube .illus-scene {
+    will-change: transform, opacity;
+    animation: illus-cube-warp-in 1100ms linear 0ms both;
 }
 
+@keyframes illus-cube-warp-in {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) scale(0.16) rotate(-14deg);
+        animation-timing-function: steps(1, end);                     /* hold dark a beat */
+    }
+    12% {
+        opacity: 0.2;
+        transform: translate3d(0, 0, 0) scale(0.16) rotate(-14deg);
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);     /* grow smoothly to size */
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    }
+}
 
-/* Card inner elements — extended stagger on first entry */
-#illustration.illus-entering .illus-section[data-idx="0"] .illus-h-line {
-    transition-delay: 0.32s;
-}
-#illustration.illus-entering .illus-section[data-idx="0"] .illus-tag {
-    transition-delay: 0.36s;
-}
-#illustration.illus-entering .illus-section[data-idx="0"] .illus-h1 {
-    transition-delay: 0.46s;
-}
-#illustration.illus-entering .illus-section[data-idx="0"] .illus-body {
-    transition-delay: 0.58s;
-}
-#illustration.illus-entering .illus-section[data-idx="0"] .illus-cta,
-#illustration.illus-entering .illus-section[data-idx="0"] .illus-cta-back {
-    transition-delay: 0.70s;
+/* Reduced motion — no slide/scale; everything simply fades in at its stage. */
+@media (prefers-reduced-motion: reduce) {
+    #illustration.illus-stage-content #illus-particle-canvas,
+    #illustration.illus-stage-content .illus-svg-bar,
+    #illustration.illus-stage-content .illus-hud,
+    #illustration.illus-stage-content .illus-strip,
+    #illustration.illus-stage-content .illus-caption,
+    #illustration.illus-stage-content .illus-info-svg,
+    #illustration.illus-stage-content .illus-sections,
+    #illustration.illus-stage-cube .illus-scene {
+        animation: illus-enter-fade 220ms ease both;
+    }
 }
 
 
