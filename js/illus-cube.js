@@ -119,7 +119,16 @@
     // offsetHeight (see _update), so a shorter per-stop height on phones just
     // makes the cube scroll brisker without breaking the choreography.
     const stopVh = (App.BrowserDetect && App.BrowserDetect.isMobile) ? 65 : 100;
-    illus.style.height = (N * stopVh) + 'vh';
+    // Reserve a frozen exit band at the very end of the section. The tunnel stays
+    // pinned through this band (the section bottom hasn't reached the viewport
+    // bottom yet), so while scrolling it the entrance choreography plays in
+    // reverse — text/SVG slide back out, the cube shrinks away — leaving only the
+    // background before #contact finally scrolls up.
+    const EXIT_VH = stopVh;
+    illus.style.height = (N * stopVh + EXIT_VH) + 'vh';
+    // Raw scroll progress at which the cube gallery completes; [GALLERY_END, 1]
+    // is the exit band. Gallery progress fed to the cube = raw / GALLERY_END.
+    const GALLERY_END = (N * stopVh) / (N * stopVh + EXIT_VH);
 
     // Stamp face label + scan line into every face.
     // The gallery-title face (stop 0) gets the section descriptor instead of the expand hint.
@@ -389,11 +398,13 @@
     function gotoSlide(idx) {
         const illusTop = illus.getBoundingClientRect().top + window.scrollY;
         const total    = illus.offsetHeight - window.innerHeight;
-        const targetY  = illusTop + (Math.max(0, Math.min(N - 1, idx)) / (N - 1)) * total;
+        // Stops live in the [0, GALLERY_END] portion of the scroll range; the
+        // remainder is the frozen exit band.
+        const targetY  = illusTop + (Math.max(0, Math.min(N - 1, idx)) / (N - 1)) * total * GALLERY_END;
         window.scrollTo({ top: targetY, behavior: 'smooth' });
     }
 
-    let tgt    = getProgress();
+    let tgt    = Math.min(getProgress() / GALLERY_END, 1);
     let smooth = tgt;
 
     function applyFaceColor(stop) {
@@ -453,6 +464,7 @@
     let introSeenOnce     = false;  // both stages fired — entrance complete
     let stageContentFired = false;  // Stage A (text + SVG) latched at 40% coverage
     let stageCubeFired    = false;  // Stage B (3D cube) latched at 90% coverage
+    let exiting           = false;  // inside the frozen exit band (reverse choreography)
     const prefersReducedMotion =
         window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -741,7 +753,7 @@
     });
 
     window.addEventListener('scroll', () => {
-        tgt = getProgress();
+        tgt = Math.min(getProgress() / GALLERY_END, 1);
     }, { passive: true });
 
     illus.addEventListener('click', e => {
@@ -762,10 +774,10 @@
             // power-on replays the next time the section is approached. Removing
             // the stage classes lets the permanent .illus-intro-active hold
             // re-hide everything to the bg-only Stage-0 baseline.
-            if (introSeenOnce || stageContentFired) {
+            if (introSeenOnce || stageContentFired || exiting) {
                 if (entranceTimer) { clearTimeout(entranceTimer); entranceTimer = null; }
-                introSeenOnce = stageContentFired = stageCubeFired = false;
-                illus.classList.remove('illus-stage-content', 'illus-stage-cube');
+                introSeenOnce = stageContentFired = stageCubeFired = exiting = false;
+                illus.classList.remove('illus-stage-content', 'illus-stage-cube', 'illus-exiting');
             }
             return;
         }
@@ -773,7 +785,19 @@
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
 
-        tgt = getProgress(bcr);
+        const raw = getProgress(bcr);
+        tgt = Math.min(raw / GALLERY_END, 1);   // gallery completes at GALLERY_END
+
+        // ── Frozen exit ───────────────────────────────────────────────────
+        // Past GALLERY_END the gallery is finished but the tunnel is still
+        // pinned, so the section is frozen in place. Toggle .illus-exiting to
+        // play the reverse choreography (content slides out, cube shrinks away,
+        // leaving only the background) before the section unpins into #contact.
+        const inExitBand = raw > GALLERY_END + 0.001;
+        if (inExitBand !== exiting) {
+            exiting = inExitBand;
+            illus.classList.toggle('illus-exiting', exiting);
+        }
 
         // ── Staged scroll-driven entrance ─────────────────────────────────
         // coverage = the share of the viewport this section occupies as it

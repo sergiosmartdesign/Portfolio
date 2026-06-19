@@ -1385,6 +1385,67 @@
     }
 }
 
+/* ── Frozen exit — the entrance played backwards ───────────────────────────
+   While scrolling the exit band (illus-cube.js adds .illus-exiting), the tunnel
+   is pinned and the background stays put; the cube shrinks away first, then the
+   text/SVG slide back out — the opposite direction to how they entered. Placed
+   after the entrance rules so it wins the `animation` property; the strip and
+   info-SVG use a transform-based slide so the left/right `translate` positioning
+   is preserved (see illus-enter-up-tf). Particles + bg are untouched and remain.
+──────────────────────────────────────────────────────────────────────────── */
+#illustration.illus-exiting .illus-scene {
+    animation: illus-cube-warp-out 600ms cubic-bezier(0.7, 0, 0.84, 0) 0ms both;
+}
+#illustration.illus-exiting .illus-svg-bar {
+    animation: illus-svgbar-exit 560ms var(--ease-expo-out, cubic-bezier(0.16,1,0.3,1)) 240ms both;
+}
+#illustration.illus-exiting .illus-hud {
+    animation: illus-exit-left 340ms ease-in 240ms both;
+}
+#illustration.illus-exiting .illus-strip,
+#illustration.illus-exiting .illus-caption,
+#illustration.illus-exiting .illus-info-svg {
+    animation: illus-exit-up-tf 340ms ease-in 280ms both;
+}
+#illustration.illus-exiting .illus-sections {
+    animation: illus-exit-up 340ms ease-in 280ms both;
+}
+/* "Click to expand" hint — translate-based so its translateX(-50%) centering is
+   preserved (it uses `transform` for that). */
+#illustration.illus-exiting .illus-expand-hint {
+    animation: illus-exit-up 340ms ease-in 280ms both;
+}
+/* Floating title — rests at opacity 0.72 with its own --visible animation; the
+   higher-specificity .illus-exiting rule overrides it. */
+#illustration.illus-exiting .illus-title-float {
+    animation: illus-exit-title 340ms ease-in 240ms both;
+}
+
+@keyframes illus-cube-warp-out {
+    from { opacity: 1; transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+    to   { opacity: 0; transform: translate3d(0, 0, 0) scale(0.16) rotate(-14deg); }
+}
+@keyframes illus-svgbar-exit {
+    from { opacity: 1; translate: 0 0; }
+    to   { opacity: 0; translate: -100% 0; }
+}
+@keyframes illus-exit-left {
+    from { opacity: 1; translate: 0 0; }
+    to   { opacity: 0; translate: -28px 0; }
+}
+@keyframes illus-exit-up-tf {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(18px); }
+}
+@keyframes illus-exit-up {
+    from { opacity: 1; translate: 0 0; }
+    to   { opacity: 0; translate: 0 18px; }
+}
+@keyframes illus-exit-title {
+    from { opacity: 0.72; transform: none; }
+    to   { opacity: 0; transform: translateY(18px); }
+}
+
 /* Reduced motion — no slide/scale; everything simply fades in at its stage. */
 @media (prefers-reduced-motion: reduce) {
     #illustration.illus-stage-content #illus-particle-canvas,
@@ -1397,6 +1458,23 @@
     #illustration.illus-stage-cube .illus-scene {
         animation: illus-enter-fade 220ms ease both;
     }
+
+    #illustration.illus-exiting .illus-svg-bar,
+    #illustration.illus-exiting .illus-hud,
+    #illustration.illus-exiting .illus-strip,
+    #illustration.illus-exiting .illus-caption,
+    #illustration.illus-exiting .illus-info-svg,
+    #illustration.illus-exiting .illus-sections,
+    #illustration.illus-exiting .illus-expand-hint,
+    #illustration.illus-exiting .illus-title-float,
+    #illustration.illus-exiting .illus-scene {
+        animation: illus-exit-fade 220ms ease both;
+    }
+}
+
+@keyframes illus-exit-fade {
+    from { opacity: 1; }
+    to   { opacity: 0; }
 }
 
 
