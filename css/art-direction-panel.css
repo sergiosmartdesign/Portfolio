@@ -958,6 +958,33 @@ body.ad-section-live #art-direction .ad-explore-card {
   transform: translateY(0);
 }
 
+/* ── Glitch entrance on the left text block — mirrors the section's intro-text
+   reveal (.ad-intro-text / ad-intro-entrance): a left→right clip-path wipe with
+   skew + jitter, layered under the per-char scramble. fill-mode:both hides it
+   during the delay and holds the open state; on close the rule drops so the
+   block just fades out with .ad-pm-content. ── */
+.ad-project-modal.is-open .ad-pm-text {
+  animation: ad-pm-text-glitch-in 0.72s var(--ease-expo-out) 0.4s both;
+}
+
+@keyframes ad-pm-text-glitch-in {
+  0%   { clip-path: inset(0 100% 0 0);       transform: translateY(8px); }
+  12%  { clip-path: inset(0 72% 0 0);        transform: translateY(7px); }
+  14%  { clip-path: inset(20% 68% 15% 0);    transform: translateY(7px) skewX(-2deg); }
+  16%  { clip-path: inset(0 68% 0 0);        transform: translateY(6px); }
+  55%  { clip-path: inset(0 12% 0 0);        transform: translateY(2px); }
+  58%  { clip-path: inset(25% 8% 5% 0);      transform: translateY(2px) skewX(1.5deg); }
+  60%  { clip-path: inset(0 6% 0 0);         transform: translateY(1px); }
+  85%  { clip-path: inset(0 0 0 0);          transform: translateY(0); }
+  100% { clip-path: inset(0 0 0 0);          transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-project-modal.is-open .ad-pm-text {
+    animation: none;
+  }
+}
+
 /* Large faint project number — top-right of text block */
 .ad-pm-num {
   position: absolute;
