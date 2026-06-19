@@ -19,20 +19,20 @@
 /* Glow applied to the whole SVG so chevrons share it */
 #inf-bracket-svg {
   filter:
-    drop-shadow(0 0 4px rgba(255, 60, 0, 0.7))
-    drop-shadow(0 0 10px rgba(255, 60, 0, 0.3));
+    drop-shadow(0 0 4px rgba(238, 155, 0, 0.7))
+    drop-shadow(0 0 10px rgba(238, 155, 0, 0.3));
   overflow: visible;
 }
 
 #inf-bracket-path {
-  stroke: #ff3c00;
+  stroke: #EE9B00;
   stroke-width: 2.5;
   fill: none;
 }
 
 /* Chevrons at nub tip — same cascade animation as scroll hint */
 .inf-bracket-chevron {
-  stroke: #ff3c00;
+  stroke: #EE9B00;
   stroke-width: 2.5;
   fill: none;
   animation: inf-chev-fade 2s ease-in-out infinite;
@@ -50,7 +50,7 @@
 
 /* Label below chevrons — individual letter spans */
 #inf-bracket-label {
-  fill: #ff3c00;
+  fill: #EE9B00;
 }
 
 /* Each letter hidden by default */
@@ -102,7 +102,7 @@
 #inf-leader-track,
 #inf-leader-snake {
   fill: none;
-  stroke: #ff3c00;
+  stroke: #EE9B00;
   opacity: 0;
   transition: opacity 0.3s var(--ease-expo-out);
 }
@@ -124,13 +124,13 @@
   stroke-linecap: butt;
   stroke-linejoin: miter;
   shape-rendering: crispEdges;     /* pixel-sharp squares, no blur */
-  filter: drop-shadow(0 0 2px rgba(255, 60, 0, 0.45));   /* faint dot-matrix glow */
+  filter: drop-shadow(0 0 2px rgba(238, 155, 0, 0.45));   /* faint dot-matrix glow */
 }
 
 /* Pixel head — position/rotation/opacity driven per-frame in JS */
 #inf-leader-head {
   opacity: 0;
-  filter: drop-shadow(0 0 2px rgba(255, 60, 0, 0.45));
+  filter: drop-shadow(0 0 2px rgba(238, 155, 0, 0.45));
 }
 
 #inf-leader.visible #inf-leader-track { opacity: 0.15; }

@@ -80,9 +80,9 @@
 ─────────────────────────────────────────────────────────────────────────────── */
 .intro-scroll-cue {
   position: absolute;
-  bottom: 40px;
+  bottom: 130px;                       /* lifted so it clears the panel's bottom border line */
   left: calc(70px + 380px + 0.9rem);   /* just right of the info panel */
-  height: 274px;                       /* spans the panel's height */
+  height: 230px;                       /* spans most of the panel's height */
   z-index: var(--z-layer-5);
   pointer-events: none;
   opacity: 0;

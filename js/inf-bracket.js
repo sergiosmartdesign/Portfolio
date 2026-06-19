@@ -4,8 +4,11 @@
   const TARGETS = {
     nav:   { selector: '.main-nav',        yRef: 'topline' },
     cta:   { selector: '.intro-work-cta',  yRef: 'self'    },
-    sound: { selector: '.sound-btn',       yRef: 'topline' },
-    lang:  { selector: '.language-toggle', yRef: 'topline' },
+    // sound + lang anchor to the control itself → bracket sits just below the
+    // button. approach:'right' forces the snake to travel right along the bottom
+    // first, then climb to the control, instead of shooting straight to the top.
+    sound: { selector: '.sound-btn',       yRef: 'self', approach: 'right' },
+    lang:  { selector: '.language-toggle', yRef: 'self', approach: 'right' },
     // 'scroll' intentionally omitted — handled by the scroll-hint clone
   };
 
@@ -231,12 +234,29 @@
     const bx = bLeft + W / 2;           // bracket caption is centred on the target
     const by = bTop + LABEL_Y - 6;      // land on the here/aquí caption
 
-    const route = routeOrthogonal(ax, ay, bx, by);
+    // approach:'right' — the snake must visibly leave the panel heading RIGHT,
+    // then climb to the control. The row sits inside the info panel (an A*
+    // obstacle), so A* would otherwise escape upward first. Force a horizontal
+    // exit past the panel's right edge, then pathfind right-along then up.
+    const approach = (TARGETS[hint] || {}).approach;
+    let route, startX = ax;
+    if (approach === 'right') {
+      const panel = document.querySelector('.info-interface');
+      const panelRight = panel ? panel.getBoundingClientRect().right : ax;
+      startX = Math.min(bx - CELL, panelRight + 30);   // clear of the panel
+      const r1 = routeOrthogonal(startX, ay, bx, ay);  // run right
+      const r2 = routeOrthogonal(bx, ay, bx, by);      // then climb
+      route = (r1 && r2) ? r1.concat(r2)
+            : routeOrthogonal(startX, ay, bx, by);     // fallback from exit point
+    } else {
+      route = routeOrthogonal(ax, ay, bx, by);
+    }
     let pts;
     if (route && route.length) {
       const f = route[0], l = route[route.length - 1];
-      // orthogonal stubs snapping the grid route to the exact A / B points
-      pts = [[ax, ay], [f[0], ay], ...route, [l[0], by], [bx, by]];
+      // orthogonal stubs snapping the grid route to the exact A / B points;
+      // [startX, ay] forces the rightward exit before any climb.
+      pts = [[ax, ay], [startX, ay], [f[0], ay], ...route, [l[0], by], [bx, by]];
     } else {
       pts = [[ax, ay], [ax, by], [bx, by]];   // fallback L if fully walled off
     }

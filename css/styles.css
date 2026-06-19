@@ -2160,6 +2160,7 @@ nav {
 /* --- Paul Rand Quote --- */
 .paul-rands-quote {
   position: relative;            /* flows inside .about-top now (was absolute) */
+  top: -100px;                   /* nudge the quote up 100px inside .about-top */
   font-size: clamp(1.8rem, 4.5vw, 4rem);
   line-height: 1.2;
   width: fit-content;
@@ -2518,9 +2519,9 @@ nav {
   pointer-events: none;
   transform: scale(0);
   transform-origin: bottom left;
-  filter: drop-shadow(0 0 2px rgba(0, 18, 25, 0.6))
-          drop-shadow(0 0 4px rgba(0, 18, 25, 0.4))
-          drop-shadow(0 0 8px rgba(0, 18, 25, 0.2));
+  /* Teal emitted-light halo — same shared --id-glow tokens as #id1svg /
+     vtv1.svg / the contact capsule, instead of the old dark drop-shadow. */
+  filter: var(--id-glow-filter);
 }
 
 /* Scale animation - grows horizontally first, then vertically */
