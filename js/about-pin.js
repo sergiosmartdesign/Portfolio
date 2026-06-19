@@ -128,11 +128,13 @@
       applyOffset(-1);
       triggerGlitch(quoteH3);
 
+      // Kick off the yellow lines the instant the "Design" glitch settles —
+      // no extra READABLE_PAUSE here.
       const h3Ms = glitchDuration(quoteH3);
       stepTimer = setTimeout(() => {
         if (!running) return;
         runStep(0);
-      }, h3Ms + READABLE_PAUSE);
+      }, h3Ms);
     }
 
     function loopRestart() {
