@@ -1302,6 +1302,15 @@
     to   { opacity: 1; translate: 0 0; }
 }
 
+/* Same slide-up, but on `transform` instead of the `translate` property — for
+   elements (.illus-strip, .illus-info-svg) whose left/right side-flip is driven
+   by `translate: -100%`. Animating `translate` here would clobber that and shove
+   the right-side variant off-screen; `transform` composes with it instead. */
+@keyframes illus-enter-up-tf {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Staged scroll-driven entrance ─────────────────────────────────────────
    Driven by illus-cube.js from the section's own bottom-up viewport coverage
    over the photo curtain:
@@ -1328,11 +1337,11 @@
 
 #illustration.illus-stage-content .illus-strip,
 #illustration.illus-stage-content .illus-caption {
-    animation: illus-enter-up 380ms ease 300ms both;
+    animation: illus-enter-up-tf 380ms ease 300ms both;
 }
 
 #illustration.illus-stage-content .illus-info-svg {
-    animation: illus-enter-up 400ms ease 380ms both;
+    animation: illus-enter-up-tf 400ms ease 380ms both;
 }
 
 /* Intro card slides up as a single panel — its inner elements have already
