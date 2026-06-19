@@ -656,40 +656,71 @@
       tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-holo'),
               null, holoEnd + 3.6);
 
-      // Hide title letters before the content fades in so they don't flash.
-      // Scoped to the h2 — the button's chars are handled via autoAlpha on
-      // the button element itself.
-      tl.set('.ct-stack .ct-stack-char', { opacity: 0 }, 0);
+      // Content entrance (fade + form-part stagger + glitch + title) is appended
+      // after the landscape/cockpit build so it reveals last. Factored out so a
+      // contact nav-button click can replay it on its own — see
+      // replayContentEntrance().
+      appendContentEntrance(tl, '+=0.08');
 
-      tl.fromTo('.ct-content',
-        { opacity: 0, y: 22 },
-        { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
-        '+=0.08'
+    }, section);
+  }
+
+  /* Builds the form/content entrance onto a timeline. Shared by the first-run
+     bootScene (sequenced after the scene) and by standalone nav re-entry.
+     `contentAt` positions where the .ct-content fade starts. */
+  function appendContentEntrance(tl, contentAt) {
+    // Hide title letters from t=0 so they don't flash before their drop-in.
+    // (The button's chars are handled via autoAlpha on the button itself.)
+    tl.set('.ct-stack .ct-stack-char', { opacity: 0 }, 0);
+
+    tl.fromTo('.ct-content',
+      { opacity: 0, y: 22 },
+      { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
+      contentAt
+    );
+
+    // Per-letter glitch scramble on the form text (NEW_MESSAGE, field labels,
+    // send) as the content reveals. Skipped under reduced motion so the text
+    // just appears statically. See contact.css.
+    tl.call(() => {
+      if (motionOk()) section.classList.add('ct-glitch-in');
+    }, null, '<');
+
+    // Assemble the form piece by piece: header → fields → send → links. Done in
+    // GSAP (not CSS) so the form stays visible if GSAP never loads; under
+    // reduced motion the parts simply ride the .ct-content fade above.
+    if (motionOk()) {
+      const formParts = section.querySelectorAll(
+        '.ct-form-head, .ct-form-grid .ct-field, .ct-form-foot, .ct-links--mini'
       );
+      tl.fromTo(formParts,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1 },
+        '<0.1'
+      );
+    }
 
-      // Fire the per-letter glitch scramble on the form text (NEW_MESSAGE,
-      // field labels, send) as the content reveals. Skipped under reduced
-      // motion so the text just appears statically. See contact.css.
-      tl.call(() => {
-        if (motionOk()) section.classList.add('ct-glitch-in');
-      }, null, '<');
+    appendTitleReveal(tl);
+  }
 
-      // Assemble the form piece by piece: header → fields → send → links.
-      // Done in GSAP (not CSS) so the form stays visible if GSAP never loads;
-      // under reduced motion the parts simply ride the .ct-content fade above.
-      if (motionOk()) {
-        const formParts = section.querySelectorAll(
-          '.ct-form-head, .ct-form-grid .ct-field, .ct-form-foot, .ct-links--mini'
-        );
-        tl.fromTo(formParts,
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1 },
-          '<0.1'
-        );
-      }
-
-      appendTitleReveal(tl);
-
+  /* Replays just the content entrance — the synthwave scene + cockpit stay put.
+     Needed because bootScene is a one-shot (sceneBoot guard) and the section's
+     IntersectionObserver never re-boots, so a nav-button click would otherwise
+     land on a static, already-revealed form. On the very first visit it defers
+     to bootScene so the scene builds too. */
+  function replayContentEntrance() {
+    if (typeof gsap === 'undefined') return;
+    // We're navigating into the section: clear the off-screen .ct-paused guard
+    // up front so its animation-play-state:paused doesn't freeze the glitch /
+    // capsule keyframes at frame 0 before the IntersectionObserver catches up.
+    section.classList.remove('ct-paused');
+    if (!sceneBoot) { bootScene(); return; }
+    // Re-arm the CSS-gated pieces (glitch text, capsule grow, DNA fade): drop
+    // the gate class and flush a reflow so re-adding it restarts the keyframes.
+    section.classList.remove('ct-glitch-in');
+    void section.offsetWidth;
+    gsap.context(() => {
+      appendContentEntrance(gsap.timeline({ defaults: { ease: 'none' } }), 0);
     }, section);
   }
 
@@ -712,6 +743,16 @@
   );
 
   observer.observe(section);
+
+  // Replay the entrance when the contact nav button is clicked. NavigationManager
+  // dispatches app:navigate (before its instant scrollTo), and the general-rule
+  // branch relies on "observer re-entry" that never fires for an already-booted
+  // section — so we replay explicitly here, mirroring #art-direction's
+  // App.playArtEntranceAnimation() hook. The section is in view a frame later,
+  // so the timeline plays right as it lands.
+  document.addEventListener('app:navigate', (e) => {
+    if (e.detail && e.detail.sectionId === 'contact') replayContentEntrance();
+  });
 
   window.addEventListener('resize', () => {
     updateCockpitAspect();

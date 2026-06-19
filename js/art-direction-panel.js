@@ -294,10 +294,18 @@ class ArtWorksPanel {
 
         this.modalClose.addEventListener('click', () => this._closeModal());
 
+        // Click anywhere closes the modal — except on genuinely interactive
+        // controls: description links, the thumbnail strip, the orbitable 3D
+        // stage and the flipbook (both need their own gestures), and the close
+        // button (its own handler above). Everything else — backdrop, photo,
+        // text, specs — dismisses.
         this.modal.addEventListener('click', e => {
-            if (e.target === this.modal || e.target.classList.contains('ad-pm-backdrop')) {
-                this._closeModal();
+            if (e.target.closest(
+                'a[href], .ad-pm-thumb, .ad-pm-close, .ad-pm-stage.has-model, .ad-pm-stage.has-book, .ad-book'
+            )) {
+                return;
             }
+            this._closeModal();
         });
 
         document.addEventListener('keydown', e => {
