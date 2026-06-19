@@ -17,7 +17,7 @@
 
   "photo.ui.enlarge":     "· click to enlarge ·",
   "photo.ui.cta":         "Click a category to expand its list — then hover over any photo title to preview the image.",
-  "photo.ui.infoSub":     "use the arrows to navigate the photos · click the one you like to full view",
+  "photo.ui.infoSub":     "use the arrows [<<<] [>>>] to navigate the photos · click the one you like to full view",
   "photo.ui.polaroids":   "[ · p o l a r o i d s · ]",
   "photo.ui.polaroidsDesc": "A growing collection of travel polaroids. Each polaroid here is a travel photograph pulled from years of work across landscapes, cities, and encounters worldwide. When the archive reaches 100 photographs, the full collection is printed as a limited edition photobook.",
   "photo.ui.scrollHint":  "[ · s c r o l l   t o   r e v e a l   /   c l i c k   t o   e x p a n d   · ]",

@@ -53,6 +53,10 @@
   height: var(--cs);
   perspective: 600px;
   cursor: pointer;
+  /* Same teal emitted-light halo as the about #id1svg badge (shared :root
+     tokens). Applied to the scene so it wraps the rendered cube silhouette
+     without flattening the preserve-3d faces inside. */
+  filter: var(--id-glow-filter);
 }
 
 /* ── The cube itself ─────────────────────────────────────────────────────── */
@@ -75,13 +79,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 18, 25, 0.88);
-  border: 1px solid var(--cert-amber-45);
+  /* Emit blue from within — the same recipe as dnacapsule1.svg's internal
+     radial gradient (#1ee9f2 core → #00aef0 → dark), so the cube glows like the
+     capsule rather than just carrying an edge shadow. The cert image sits on top. */
+  background:
+    radial-gradient(ellipse 78% 78% at 50% 50%,
+      rgba(30, 233, 242, 0.30) 0%,
+      rgba(0, 138, 223, 0.15) 55%,
+      rgba(0, 18, 25, 0.92) 100%);
+  border: 1px solid rgba(0, 213, 223, 0.55);
   box-sizing: border-box;
+  /* Blue emission + bloom halo (matches the capsule's --id-glow light). */
   box-shadow:
-    inset 0 0 18px var(--cert-amber-08),
-    0 0 14px 2px var(--cert-amber-18),
-    0 0 34px 6px var(--cert-amber-10);
+    inset 0 0 22px rgba(30, 233, 242, 0.30),
+    0 0 16px 2px rgba(0, 213, 223, 0.40),
+    0 0 40px 8px rgba(0, 138, 223, 0.24);
 }
 
 .cert-face[data-face="top"]    { transform: rotateX(-90deg) translateZ(calc(var(--cs) / 2)); }
@@ -109,7 +121,7 @@
 
 /* Glow intensifies when scene is hovered (hover state) */
 .cert-cube-scene:hover .cert-cube {
-  box-shadow: 0 0 40px 8px var(--cert-amber-22);
+  box-shadow: 0 0 48px 10px rgba(0, 213, 223, 0.45);
 }
 
 /* ── Navigation bar ──────────────────────────────────────────────────────── */

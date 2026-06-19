@@ -17,6 +17,10 @@
         src.split('/').pop().replace(/\.[^.]+$/, '').toUpperCase()
     );
 
+    // Stop 0 is the section intro (no photo yet) — show the gallery title in the
+    // HUD instead of the first image's filename.
+    const INTRO_LABEL = '· S e r g i o  A y a l a ·   I L L U S T R A T I O N   -   G A L L E R Y';
+
 
     const N            = IMAGES.length;
     const SWAP_RADIUS  = 3;
@@ -362,7 +366,7 @@
         const name   = FACE_NAMES[stop] ?? '';
         const spaced = name.split('').join(' ');
 
-        sceneLabel.textContent   = name;
+        sceneLabel.textContent   = stop === 0 ? INTRO_LABEL : name;
 
         imgGlitchPending = true;
         // Hide the image-name caption on the gallery-title face (stop 0 has no photo)

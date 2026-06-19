@@ -541,7 +541,7 @@
 
 /* ── Breathing glow in the artwork's own colors (flux device + 1,000,000) ──
    A blurred clone of the art, screen-blended over itself and soft-masked to
-   the region, glows exactly like the DNA capsule's breathing halo. */
+   the region, giving the device a soft breathing halo. */
 .ct-glow-layer {
   pointer-events: none;
   mix-blend-mode: screen;
@@ -795,17 +795,15 @@
   pointer-events: none;
 }
 
-/* DNA capsule — decorative line art beside the form, light-blue glow.
+/* DNA capsule — decorative line art beside the form. Glows with the same teal
+   emitted-light halo as the about #id1svg badge (shared --id-glow tokens).
    The glow filter sits on the container so shell + DNA glow as one piece. */
 .ct-capsule {
   position: relative;
   width: var(--ct-capsule-w, clamp(176px, 28vmin, 300px));
   flex-shrink: 0;
   pointer-events: none;
-  filter:
-    drop-shadow(0 0 5px rgba(0, 255, 255, 0.55))
-    drop-shadow(0 0 16px rgba(0, 255, 255, 0.28));
-  animation: ct-capsule-glow 3.4s ease-in-out infinite;
+  filter: var(--id-glow-filter);
 }
 
 .ct-capsule-shell {
@@ -859,18 +857,6 @@
   100%    { opacity: 0; }
 }
 
-@keyframes ct-capsule-glow {
-  0%, 100% {
-    filter:
-      drop-shadow(0 0 5px rgba(0, 255, 255, 0.55))
-      drop-shadow(0 0 16px rgba(0, 255, 255, 0.28));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 8px rgba(0, 255, 255, 0.8))
-      drop-shadow(0 0 26px rgba(0, 255, 255, 0.45));
-  }
-}
 
 .ct-form {
   position: relative;

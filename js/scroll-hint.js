@@ -94,11 +94,6 @@
   /* ── Init ────────────────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
 
-    /* Intro section — inline element */
-    const introHintEl = document.querySelector('.intro-scroll-hint');
-    const introTextEl = introHintEl && introHintEl.querySelector('.sc-text');
-    const introCtrl   = introHintEl ? makeHintController(introHintEl, introTextEl) : null;
-
     /* Photo section ─────────────────────────────────────────────────────────
        Shows only when:  phase 3 active  AND  a category is expanded
                          AND  items extend below the visible container area.
@@ -137,24 +132,12 @@
     const EVENTS = ['scroll', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'click'];
     EVENTS.forEach(evt => {
       window.addEventListener(evt, () => {
-        introCtrl && introCtrl.onActivity();
         photoCtrl && photoCtrl.onActivity();
       }, { passive: true });
     });
 
-    /* Observe intro section */
-    if (introCtrl) {
-      const intro = document.getElementById('intro');
-      if (intro) {
-        new IntersectionObserver(entries => {
-          entries.forEach(e => introCtrl.setSectionActive(e.isIntersecting));
-        }, { threshold: 0.05 }).observe(intro);
-      }
-    }
-
     window.addEventListener('pageshow', (e) => {
       if (!e.persisted) return;
-      introCtrl && introCtrl.reset();
       photoCtrl && photoCtrl.reset();
     });
   });

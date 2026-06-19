@@ -689,6 +689,7 @@
     <link rel="stylesheet" href="css/illus-cube.css">
     <link rel="stylesheet" href="css/art-direction-panel.css">
     <link rel="stylesheet" href="css/inf-bracket.css">
+    <link rel="stylesheet" href="css/illus-snake.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -739,18 +740,6 @@
             </a>
 
             <a href="#art-direction" class="intro-work-cta nav-btn glitch-text" data-splitting data-i18n-split="intro.cta" aria-label="See my work">[ · s e e · m y · w o r k · ]</a>
-
-            <!-- Scroll hint — inline, below CTAs -->
-            <div class="intro-scroll-hint" aria-hidden="true">
-                <svg class="sc-icon" viewBox="0 0 36 62" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
-                    <rect x="8" y="1" width="20" height="34" rx="10" stroke="currentColor" stroke-width="1.5"/>
-                    <line x1="18" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
-                    <rect class="sc-wheel" x="15.5" y="7" width="5" height="9" rx="2.5" fill="currentColor"/>
-                    <polyline class="sc-chevron-1" points="11,42 18,50 25,42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline class="sc-chevron-2" points="11,51 18,59 25,51" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <p class="sc-text">[ · s c r o l l · ]</p>
-            </div>
 
             <!-- Cyberpunk panel - slides in after 2 seconds -->
             <div class="cyber-panel" id="introCyberPanel">
@@ -814,15 +803,15 @@
                     <g class="inf-lang" id="inf-en">
                         <text class="info-line" style="--i:0" x="28" y="38" font-family="'Funnel Display', sans-serif" font-size="18" fill="#E9D8A6" letter-spacing="3">[ · HOW TO NAVIGATE · ]</text>
                         <line class="info-line info-line--rule" style="--i:1" x1="14" y1="52" x2="530" y2="52" stroke="#E9D8A6" stroke-width="1" opacity="0.35"/>
-                        <text class="info-line" style="--i:2" x="28" y="84" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 01 ·</tspan><tspan font-size="26"> TOP MENU</tspan></text>
+                        <text class="info-line" data-hint="nav" style="--i:2" x="28" y="84" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 01 ·</tspan><tspan font-size="26"> TOP MENU</tspan></text>
                         <text class="info-line" style="--i:3" x="50" y="106" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· jump to any section</text>
                         <text class="info-line" style="--i:4" x="28" y="146" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 02 ·</tspan><tspan font-size="26"> SCROLL</tspan></text>
                         <text class="info-line" style="--i:5" x="50" y="168" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· explore in sequence</text>
-                        <text class="info-line" style="--i:6" x="28" y="208" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 03 ·</tspan><tspan font-size="26"> see my work →</tspan></text>
+                        <text class="info-line" data-hint="cta" style="--i:6" x="28" y="208" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 03 ·</tspan><tspan font-size="26"> see my work →</tspan></text>
                         <text class="info-line" style="--i:7" x="50" y="230" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· curated entry point</text>
-                        <text class="info-line" style="--i:8" x="28" y="270" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 04 ·</tspan><tspan font-size="26"> SOUND</tspan></text>
+                        <text class="info-line" data-hint="sound" style="--i:8" x="28" y="270" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 04 ·</tspan><tspan font-size="26"> SOUND</tspan></text>
                         <text class="info-line" style="--i:9" x="50" y="292" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· mute / unmute top right</text>
-                        <text class="info-line" style="--i:10" x="28" y="332" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 05 ·</tspan><tspan font-size="26"> LANGUAGE</tspan></text>
+                        <text class="info-line" data-hint="lang" style="--i:10" x="28" y="332" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 05 ·</tspan><tspan font-size="26"> LANGUAGE</tspan></text>
                         <text class="info-line" style="--i:11" x="50" y="354" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· switch EN / ES top right</text>
                         <line class="info-line info-line--rule" style="--i:12" x1="14" y1="364" x2="530" y2="364" stroke="#E9D8A6" stroke-width="1" opacity="0.35"/>
                         <text class="info-line" style="--i:13" x="28" y="388" font-family="'Funnel Display', sans-serif" font-size="18" fill="#E9D8A6" opacity="0.9">choose your path ·</text>
@@ -831,15 +820,15 @@
                     <g class="inf-lang" id="inf-es" style="display:none">
                         <text class="info-line" style="--i:0" x="28" y="38" font-family="'Funnel Display', sans-serif" font-size="18" fill="#E9D8A6" letter-spacing="3">[ · CÓMO NAVEGAR · ]</text>
                         <line class="info-line info-line--rule" style="--i:1" x1="14" y1="52" x2="530" y2="52" stroke="#E9D8A6" stroke-width="1" opacity="0.35"/>
-                        <text class="info-line" style="--i:2" x="28" y="84" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 01 ·</tspan><tspan font-size="26"> MENÚ SUPERIOR</tspan></text>
+                        <text class="info-line" data-hint="nav" style="--i:2" x="28" y="84" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 01 ·</tspan><tspan font-size="26"> MENÚ SUPERIOR</tspan></text>
                         <text class="info-line" style="--i:3" x="50" y="106" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· salta a cualquier sección</text>
-                        <text class="info-line" style="--i:4" x="28" y="146" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 02 ·</tspan><tspan font-size="26"> DESPLÁZATE</tspan></text>
-                        <text class="info-line" style="--i:5" x="50" y="168" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· explora en secuencia</text>
-                        <text class="info-line" style="--i:6" x="28" y="208" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 03 ·</tspan><tspan font-size="26"> ver mi trabajo →</tspan></text>
+                        <text class="info-line" style="--i:4" x="28" y="146" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 02 ·</tspan><tspan font-size="26"> DESPLÁZATE CON SCROLL</tspan></text>
+                        <text class="info-line" style="--i:5" x="50" y="168" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· explora las secciones en secuencia</text>
+                        <text class="info-line" data-hint="cta" style="--i:6" x="28" y="208" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 03 ·</tspan><tspan font-size="26"> ver mi trabajo →</tspan></text>
                         <text class="info-line" style="--i:7" x="50" y="230" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· punto de entrada</text>
-                        <text class="info-line" style="--i:8" x="28" y="270" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 04 ·</tspan><tspan font-size="26"> SONIDO</tspan></text>
+                        <text class="info-line" data-hint="sound" style="--i:8" x="28" y="270" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 04 ·</tspan><tspan font-size="26"> SONIDO</tspan></text>
                         <text class="info-line" style="--i:9" x="50" y="292" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· silenciar / activar arriba</text>
-                        <text class="info-line" style="--i:10" x="28" y="332" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 05 ·</tspan><tspan font-size="26"> IDIOMA</tspan></text>
+                        <text class="info-line" data-hint="lang" style="--i:10" x="28" y="332" font-family="'Funnel Display', sans-serif" fill="#E9D8A6"><tspan font-size="14" opacity="0.6">· 05 ·</tspan><tspan font-size="26"> IDIOMA</tspan></text>
                         <text class="info-line" style="--i:11" x="50" y="354" font-family="'Funnel Display', sans-serif" font-size="20" fill="#E9D8A6" opacity="0.9">· cambiar EN / ES arriba</text>
                         <line class="info-line info-line--rule" style="--i:12" x1="14" y1="364" x2="530" y2="364" stroke="#E9D8A6" stroke-width="1" opacity="0.35"/>
                         <text class="info-line" style="--i:13" x="28" y="388" font-family="'Funnel Display', sans-serif" font-size="18" fill="#E9D8A6" opacity="0.9">elige tu camino ·</text>
@@ -853,6 +842,20 @@
                         <rect class="inf-hotspot" data-hint="lang"   x="0" y="312" width="545" height="52" fill="transparent"/>
                     </g>
                 </svg>
+            </div>
+
+            <!-- Scroll cue — revealed when the "02 SCROLL" how-to row is hovered.
+                 Same bracketed [ ] + ▼▼▼ + "[ · Scroll to explore · ]" message as
+                 the illustration section (see css/scroll-hint.css). -->
+            <div class="intro-scroll-cue" aria-hidden="true">
+                <svg class="iscue-arrow" viewBox="0 0 100 110" fill="none" aria-hidden="true" focusable="false">
+                    <polyline class="iscue-bracket" points="22 4 10 4 10 102 22 102"/>
+                    <polyline class="iscue-bracket" points="78 4 90 4 90 102 78 102"/>
+                    <polygon class="iscue-chev iscue-chev-0" points="28 8 50 24 72 8 72 18 50 34 28 18"/>
+                    <polygon class="iscue-chev iscue-chev-1" points="28 34 50 50 72 34 72 44 50 60 28 44"/>
+                    <polygon class="iscue-chev iscue-chev-2" points="28 60 50 76 72 60 72 70 50 86 28 70"/>
+                </svg>
+                <span class="iscue-text">[ · Scroll to explore · ]</span>
             </div>
 
             <div class="scanlines"></div>
@@ -2020,11 +2023,39 @@
                                 <line x1="14" y1="50" x2="786" y2="50" stroke="#BB3E03" stroke-width="1" opacity="0.35" vector-effect="non-scaling-stroke"/>
                             </svg>
                             <div class="pgallery-info-content">
-                                <span class="pgallery-info-left"  role="button" tabindex="0" aria-label="Reverse polaroid stream"></span>
+                                <span class="pgallery-info-left"  role="button" tabindex="0" aria-label="Reverse polaroid stream">
+                                    <!-- [ <<< ] — same bracketed-chevron arrow as the right button,
+                                         mirrored via CSS (scaleX(-1)) to point left. -->
+                                    <svg class="pgnav-arrow" viewBox="0 0 120 50" fill="none" aria-hidden="true">
+                                        <polyline class="pgnav-bracket" points="16 8 8 8 8 42 16 42"/>
+                                        <polyline class="pgnav-bracket" points="104 8 112 8 112 42 104 42"/>
+                                        <polyline class="pgnav-chev pgnav-chev-0" points="34 14 46 25 34 36"/>
+                                        <polyline class="pgnav-chev pgnav-chev-1" points="52 14 64 25 52 36"/>
+                                        <polyline class="pgnav-chev pgnav-chev-2" points="70 14 82 25 70 36"/>
+                                    </svg>
+                                </span>
                                 <div class="pgallery-info-text">
-                                    <span class="pgallery-info-sub" data-i18n="photo.ui.infoSub">use the arrows to navigate the photos · click the one you like to full view</span>
+                                    <span class="pgallery-info-sub" data-i18n="photo.ui.infoSub">use the arrows [&lt;&lt;&lt;] [&gt;&gt;&gt;] to navigate the photos · click the one you like to full view</span>
                                 </div>
-                                <span class="pgallery-info-right" role="button" tabindex="0" aria-label="Play polaroid stream forward"></span>
+                                <span class="pgallery-info-right" role="button" tabindex="0" aria-label="Play polaroid stream forward">
+                                    <!-- [ >>> ] — horizontal bracketed-chevron arrow (about / art-
+                                         direction style, rotated) pointing right. -->
+                                    <svg class="pgnav-arrow" viewBox="0 0 120 50" fill="none" aria-hidden="true">
+                                        <polyline class="pgnav-bracket" points="16 8 8 8 8 42 16 42"/>
+                                        <polyline class="pgnav-bracket" points="104 8 112 8 112 42 104 42"/>
+                                        <polyline class="pgnav-chev pgnav-chev-0" points="34 14 46 25 34 36"/>
+                                        <polyline class="pgnav-chev pgnav-chev-1" points="52 14 64 25 52 36"/>
+                                        <polyline class="pgnav-chev pgnav-chev-2" points="70 14 82 25 70 36"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <!-- Down cue — sits inside the panel near its bottom edge, points at
+                                 the polaroid carousel (.photo-ghost-stream) further down the column. -->
+                            <div class="pgallery-down-cue" aria-hidden="true">
+                                <svg viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="12" y1="1" x2="12" y2="9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                                    <polyline points="5,7 12,14 19,7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                             </div>
                         </div>
                         <img src="images/polaroid camera.webp" alt="Polaroid camera" class="photo-polaroids-camera" draggable="false" aria-hidden="true">
@@ -2118,7 +2149,7 @@
                                     <rect x="27" y="9" width="5" height="5" fill="#AE2012" opacity="0.5"/>
                                     <rect x="36" y="9" width="5" height="5" fill="#AE2012" opacity="0.2"/>
                                     <!-- Header label -->
-                                    <text x="50" y="16" font-family="'Funnel Display', sans-serif" font-size="8" fill="#AE2012" opacity="0.65">· REVEAL·SYS ·</text>
+                                    <text x="50" y="17" font-family="'Funnel Display', sans-serif" font-size="14" fill="#AE2012" opacity="0.65">· REVEAL·SYS ·</text>
 
                                     <!-- Left track -->
                                     <line x1="8" y1="24" x2="8" y2="276" stroke="#AE2012" stroke-width="1" opacity="0.3"/>
@@ -2132,20 +2163,19 @@
                                     <line x1="282" y1="150" x2="285" y2="150" stroke="#AE2012" stroke-width="1" opacity="0.5"/>
                                     <line x1="282" y1="210" x2="285" y2="210" stroke="#AE2012" stroke-width="1" opacity="0.5"/>
 
-                                    <!-- Bracket wrapping the text block -->
-                                    <path d="M87,128 L81,128 L81,188 L87,188" fill="none" stroke="#AE2012" stroke-width="1" opacity="0.6"/>
-                                    <!-- Circuit node connecting < to text bracket -->
-                                    <line x1="72" y1="158" x2="81" y2="158" stroke="#AE2012" stroke-width="1" opacity="0.5"/>
-                                    <circle cx="83" cy="158" r="3" fill="#AE2012" opacity="0.85"/>
-                                    <line x1="83" y1="148" x2="83" y2="128" stroke="#AE2012" stroke-width="1" opacity="0.4"/>
-                                    <line x1="83" y1="168" x2="83" y2="188" stroke="#AE2012" stroke-width="1" opacity="0.4"/>
+                                    <!-- Left arrow cue — points back at the polaroid, aligned with
+                                         the middle (REVEAL) line of the stack. -->
+                                    <polygon points="26,156 38,144 38,151 44,151 44,161 38,161 38,168" fill="#001219"/>
 
-                                    <!-- Arrow pointing left -->
-                                    <polygon points="15,158 55,122 55,147 72,147 72,169 55,169 55,194" fill="#001219"/>
-
-                                    <!-- Text lines -->
-                                    <text x="90" y="147" font-family="'Funnel Display', sans-serif" font-size="15" font-weight="bold" fill="#001219" data-i18n="photo.ui.revealHint1">hover to reveal</text>
-                                    <text x="90" y="172" font-family="'Funnel Display', sans-serif" font-size="15" font-weight="bold" fill="#001219" data-i18n="photo.ui.revealHint2">reveal the photo</text>
+                                    <!-- Stacked HUD prompt: big spaced verbs/noun (HOVER / REVEAL /
+                                         PHOTO) with small connectors (to / the), wrapped in [ · · ].
+                                         Per-word styling can't ride the 2 i18n keys, so this is a fixed
+                                         English layout — treated as HUD chrome like · REVEAL·SYS ·. -->
+                                    <text x="78" y="90"  font-family="'Funnel Display', sans-serif" font-size="24" font-weight="bold" fill="#001219">[ · H O V E R</text>
+                                    <text x="112" y="124" font-family="'Funnel Display', sans-serif" font-size="24" font-weight="bold" fill="#001219">T O</text>
+                                    <text x="78" y="158" font-family="'Funnel Display', sans-serif" font-size="24" font-weight="bold" fill="#001219">R E V E A L</text>
+                                    <text x="112" y="192" font-family="'Funnel Display', sans-serif" font-size="24" font-weight="bold" fill="#001219">T H E</text>
+                                    <text x="78" y="226" font-family="'Funnel Display', sans-serif" font-size="24" font-weight="bold" fill="#001219">P H O T O · ]</text>
 
                                     <!-- Bottom bar -->
                                     <line x1="14" y1="278" x2="276" y2="278" stroke="#AE2012" stroke-width="1" opacity="0.7"/>
@@ -2352,6 +2382,19 @@
 
                 <!-- Left bar SVG -->
                 <img src="images/illust.svg" class="illus-svg-bar" aria-hidden="true" role="presentation">
+
+                <!-- Scroll cue (about-section style [ ] + ▼▼▼) — revealed when the
+                     SCROLL how-to row is hovered; see css/illus-snake.css. -->
+                <div class="illus-scroll-cue" aria-hidden="true">
+                    <svg class="illus-scroll-cue-arrow" viewBox="0 0 100 110" fill="none" aria-hidden="true" focusable="false">
+                        <polyline class="iscue-bracket" points="22 4 10 4 10 102 22 102"/>
+                        <polyline class="iscue-bracket" points="78 4 90 4 90 102 78 102"/>
+                        <polygon class="iscue-chev iscue-chev-0" points="28 8 50 24 72 8 72 18 50 34 28 18"/>
+                        <polygon class="iscue-chev iscue-chev-1" points="28 34 50 50 72 34 72 44 50 60 28 44"/>
+                        <polygon class="iscue-chev iscue-chev-2" points="28 60 50 76 72 60 72 70 50 86 28 70"/>
+                    </svg>
+                    <span class="illus-scroll-cue-text">[ · Scroll to explore · ]</span>
+                </div>
 
                 <!-- VHS / CRT overlay -->
                 <div class="scanlines" aria-hidden="true"></div>
@@ -2960,6 +3003,20 @@
     <script defer src="js/illustration-ink-cursor.js"></script>
     <script defer src="js/illus-cube.js"></script>
 
+    <!-- Leader line overlay — vintage Snake-game connector from info-card line to its bracket -->
+    <svg id="inf-leader" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" focusable="false">
+      <path id="inf-leader-track"/>
+      <path id="inf-leader-snake"/>
+      <!-- Pixel head — centred on (0,0), faces +x; JS rides it along the route -->
+      <g id="inf-leader-head" shape-rendering="crispEdges">
+        <rect x="-5" y="-4" width="9" height="8" fill="#ff3c00"/>
+        <rect x="4" y="-3" width="2" height="2" fill="#ff3c00"/>
+        <rect x="4" y="1"  width="2" height="2" fill="#ff3c00"/>
+        <rect x="0" y="-3" width="2" height="2" fill="#001219"/>
+        <rect x="0" y="1"  width="2" height="2" fill="#001219"/>
+      </g>
+    </svg>
+
     <!-- Info bracket overlay — contextual { indicator for info-interface hotspots -->
     <div id="inf-bracket" aria-hidden="true">
       <svg id="inf-bracket-svg" xmlns="http://www.w3.org/2000/svg" fill="none" overflow="visible">
@@ -2972,7 +3029,21 @@
       </svg>
     </div>
 
+    <!-- Illustration snake-leader overlay — amber; points from each how-to row to its control -->
+    <svg id="illus-snake" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" focusable="false">
+      <path id="illus-snake-track"/>
+      <path id="illus-snake-body"/>
+      <g id="illus-snake-head" shape-rendering="crispEdges">
+        <rect x="-5" y="-4" width="9" height="8" fill="#EE9B00"/>
+        <rect x="4" y="-3" width="2" height="2" fill="#EE9B00"/>
+        <rect x="4" y="1"  width="2" height="2" fill="#EE9B00"/>
+        <rect x="0" y="-3" width="2" height="2" fill="#001219"/>
+        <rect x="0" y="1"  width="2" height="2" fill="#001219"/>
+      </g>
+    </svg>
+
     <script defer src="js/inf-bracket.js"></script>
+    <script defer src="js/illus-snake.js"></script>
     <script defer src="js/animated-favicon.js"></script>
 </body>
 </html>

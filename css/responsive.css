@@ -80,6 +80,7 @@
      The navigation guidance they provide is already reachable via the hamburger
      drawer + visible CTA, so drop them on phones. */
   .info-interface,
+  .intro-scroll-cue,
   .cyber-panel {
     display: none;
   }

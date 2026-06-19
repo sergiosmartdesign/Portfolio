@@ -117,35 +117,17 @@
       this._stream?.classList.remove('stream-active');
     }
 
-    startInfoAnim() {
-      const rightEl = document.querySelector('.pgallery-info-right');
-      const leftEl  = document.querySelector('.pgallery-info-left');
-      if (!rightEl || !leftEl) return;
-
-      const rightStates = ['', '>', '>>', '>>>'];
-      const leftStates  = ['', '<', '<<', '<<<'];
-      const STEP_DELAY  = 500;
-      const LOOP_PAUSE  = 2200;
-      let step = 0;
-
-      const tick = () => {
-        rightEl.textContent = rightStates[step];
-        leftEl.textContent  = leftStates[step];
-        step = (step + 1) % rightStates.length;
-        this._infoAnimInterval = setTimeout(tick, step === 0 ? LOOP_PAUSE : STEP_DELAY);
-      };
-      tick();
-    }
+    // Nav arrows are now inline bracketed-chevron SVGs that pulse via CSS
+    // (.pgnav-chev), so the old textContent cascade is no longer needed —
+    // writing textContent here would wipe the SVGs. Kept as no-ops so callers
+    // in activate()/deactivate() stay valid.
+    startInfoAnim() {}
 
     stopInfoAnim() {
       if (this._infoAnimInterval) {
         clearTimeout(this._infoAnimInterval);
         this._infoAnimInterval = null;
       }
-      const rightEl = document.querySelector('.pgallery-info-right');
-      const leftEl  = document.querySelector('.pgallery-info-left');
-      if (rightEl) rightEl.textContent = '';
-      if (leftEl)  leftEl.textContent  = '';
     }
 
     // ── Private ──────────────────────────────────────────────────────────────

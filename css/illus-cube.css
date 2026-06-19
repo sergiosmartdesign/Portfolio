@@ -1482,60 +1482,41 @@
    Text flips to #001219 (dark) for contrast against the bright rect fill.
 ─────────────────────────────────────────────────────────────────────────── */
 
-/* Trigger only after panel is revealed */
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-hl-rect {
-    animation: ilsv-row-bg-cycle 8s ease-in-out 3.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-hl-rect {
-    animation: ilsv-row-bg-cycle 8s ease-in-out 5.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-hl-rect {
-    animation: ilsv-row-bg-cycle 8s ease-in-out 7.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-hl-rect {
-    animation: ilsv-row-bg-cycle 8s ease-in-out 9.5s infinite;
+/* Row highlight is HOVER-ONLY (was an automatic staggered 8s cycle). Hovering a
+   line lights its accent background + flips its text — one line at a time.
+   Keyframes below (ilsv-row-*-cycle) are kept for reference but no longer run. */
+.illus-info-svg .ilsv-hl-rect { transition: fill-opacity 0.25s ease; }
+.illus-info-svg .ilsv-act,
+.illus-info-svg .ilsv-num,
+.illus-info-svg .ilsv-sub { transition: fill 0.25s ease, fill-opacity 0.25s ease; }
+
+/* Background rect → bright accent (orange/red per piece) */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01:hover .ilsv-hl-rect,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02:hover .ilsv-hl-rect,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03:hover .ilsv-hl-rect,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04:hover .ilsv-hl-rect {
+    fill-opacity: 0.88;
 }
 
-/* Action text → dark while highlighted */
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-act {
-    animation: ilsv-row-act-cycle 8s ease-in-out 3.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-act {
-    animation: ilsv-row-act-cycle 8s ease-in-out 5.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-act {
-    animation: ilsv-row-act-cycle 8s ease-in-out 7.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-act {
-    animation: ilsv-row-act-cycle 8s ease-in-out 9.5s infinite;
+/* Action text + step number → light, for contrast against the bright rect */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01:hover .ilsv-act,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02:hover .ilsv-act,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03:hover .ilsv-act,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04:hover .ilsv-act,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01:hover .ilsv-num,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02:hover .ilsv-num,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03:hover .ilsv-num,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04:hover .ilsv-num {
+    fill: #E9D8A6;
 }
 
-/* Step number → dark while highlighted (resets to accent color) */
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-num {
-    animation: ilsv-row-num-cycle 8s ease-in-out 3.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-num {
-    animation: ilsv-row-num-cycle 8s ease-in-out 5.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-num {
-    animation: ilsv-row-num-cycle 8s ease-in-out 7.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-num {
-    animation: ilsv-row-num-cycle 8s ease-in-out 9.5s infinite;
-}
-
-/* Sub-text → dark + more opaque while highlighted */
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01 .ilsv-sub {
-    animation: ilsv-row-sub-cycle 8s ease-in-out 3.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02 .ilsv-sub {
-    animation: ilsv-row-sub-cycle 8s ease-in-out 5.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03 .ilsv-sub {
-    animation: ilsv-row-sub-cycle 8s ease-in-out 7.5s infinite;
-}
-.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04 .ilsv-sub {
-    animation: ilsv-row-sub-cycle 8s ease-in-out 9.5s infinite;
+/* Sub-text → light + more opaque */
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-01:hover .ilsv-sub,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-02:hover .ilsv-sub,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-03:hover .ilsv-sub,
+.illus-tunnel.illus-info-revealed .illus-info-svg #ilsv-row-04:hover .ilsv-sub {
+    fill: #E9D8A6;
+    fill-opacity: 0.85;
 }
 
 /* ── Keyframes ── */

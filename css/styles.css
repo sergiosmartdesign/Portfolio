@@ -91,6 +91,16 @@
   --glow-orange: 0 0 15px var(--orange), 0 0 30px var(--orange);
   --glow-amber: 0 0 15px var(--grid-color-6), 0 0 30px var(--grid-color-6);
 
+  /* Cyan-blue emitted-light halo — matches the about #id1svg badge's glow, whose
+     internal radial gradients run #00d5df (bright cyan core) → #008adf (blue
+     bloom). Shared so the DNA capsule, cert cube, and vtv decoration glow with
+     the exact same light. */
+  --id-glow: rgba(0, 213, 223, 0.70);
+  --id-glow-soft: rgba(0, 138, 223, 0.45);
+  --id-glow-filter:
+    drop-shadow(0 0 6px var(--id-glow))
+    drop-shadow(0 0 16px var(--id-glow-soft));
+
   /* ── Semantic interaction roles ────────────────────────────────────────────
      cyan  = system / machine state  (glitch fx, HUD panels, focus rings)
      amber = human  / content state  (link hovers, active CTAs, content chrome)
@@ -1293,12 +1303,6 @@ nav {
   stroke: var(--cyan);
   transition: stroke 0.25s ease;
 }
-.intro-scroll-hint--on-info.info-glow {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 10px rgba(255, 60, 0, 0.9)) !important;
-  transition: opacity 0.25s ease, filter 0.25s ease !important;
-}
-
 /* --- Social Media Icons --- */
 .social-media-icons {
   position: absolute;
@@ -2662,10 +2666,9 @@ nav {
   margin-left: auto;         /* push to the right edge of the head row */
   align-self: flex-start;    /* sit in the top-right corner */
   flex-shrink: 0;            /* keep its size; wrap instead of squashing neighbours */
-  /* Shared teal glow halo for the badge, scroll label, and arrow. The elements
-     are dark (#001219), so the glow reads as emitted accent light. */
-  --id-glow: rgba(10, 147, 150, 0.65);
-  --id-glow-soft: rgba(10, 147, 150, 0.35);
+  /* Teal glow halo for the badge, scroll label, and arrow comes from the
+     shared --id-glow / --id-glow-soft tokens in :root. The elements are dark
+     (#001219), so the glow reads as emitted accent light. */
 }
 
 /* --- ID1 SVG --- */
@@ -2677,8 +2680,7 @@ nav {
   transform: translateY(-100px);
   transform-origin: bottom left;
   animation-fill-mode: forwards;
-  filter: drop-shadow(0 0 6px var(--id-glow))
-          drop-shadow(0 0 16px var(--id-glow-soft));
+  filter: var(--id-glow-filter);
 }
 
 /* --- ID badge descend cue -------------------------------------------------
@@ -2955,7 +2957,9 @@ img#id1svg {
   z-index: 2;
   pointer-events: none;
   opacity: 0;
-  filter: brightness(0) saturate(100%) invert(5%) sepia(18%) saturate(4098%) hue-rotate(167deg) brightness(95%) contrast(101%);
+  /* Recolor the light-blue art to dark teal, then add the same teal emitted-light
+     halo as the about #id1svg badge (shared --id-glow tokens). */
+  filter: brightness(0) saturate(100%) invert(5%) sepia(18%) saturate(4098%) hue-rotate(167deg) brightness(95%) contrast(101%) var(--id-glow-filter);
 }
 
 .decoration-skills {
@@ -4476,6 +4480,36 @@ img#id1svg {
   box-sizing: border-box;
 }
 
+/* Down cue inside the info panel (near its bottom edge) — nudges the eye toward
+   the polaroid carousel. Child of .pgallery-info (position:relative) so it rides
+   the panel's reveal; anchored within the SVG border (bottom at y99 of 100). */
+.pgallery-down-cue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pgallery-down-cue svg {
+  width: clamp(14px, 1.5vw, 19px);
+  height: auto;
+  color: #BB3E03;
+  filter: drop-shadow(0 0 5px rgba(187, 62, 3, 0.55));
+  animation: pgallery-down-bob 1.5s ease-in-out infinite;
+}
+
+@keyframes pgallery-down-bob {
+  0%, 100% { transform: translateY(0);   opacity: 0.7; }
+  50%      { transform: translateY(3px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pgallery-down-cue svg { animation: none; opacity: 0.9; }
+}
+
 .pgallery-info-svg {
   position: absolute;
   inset: 0;
@@ -4499,12 +4533,7 @@ img#id1svg {
 
 .pgallery-info-left,
 .pgallery-info-right {
-  font-family: 'Funnel Display', sans-serif;
-  font-size: 80px;
-  font-weight: 900;
-  color: #001219;
-  letter-spacing: -0.05em;
-  min-width: max(4ch, 44px);
+  min-width: 44px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
@@ -4512,28 +4541,77 @@ img#id1svg {
   cursor: pointer;
   user-select: none;
   padding: 0 0.25rem;
-  transition: color 0.2s, text-shadow 0.2s;
   flex-shrink: 0;
-  line-height: 1;
 }
 
-.pgallery-info-left  { text-align: right; }
-.pgallery-info-right { text-align: left; }
+/* Horizontal bracketed-chevron nav arrows — about / art-direction style.
+   One right-pointing SVG; the left button mirrors it to point left. */
+.pgnav-arrow {
+  width: clamp(56px, 6vw, 80px);
+  height: auto;
+  display: block;
+  transition: filter 0.2s;
+}
 
-.pgallery-info-left:hover,
-.pgallery-info-right:hover {
-  color: #BB3E03;
-  text-shadow: 0 0 16px rgba(187, 62, 3, 0.9);
+.pgallery-info-left .pgnav-arrow { transform: scaleX(-1); }   /* → [ <<< ] */
+
+.pgnav-bracket {
+  fill: none;
+  stroke: #001219;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pgnav-chev {
+  fill: none;
+  stroke: #001219;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.2;
+}
+
+.pgnav-chev-0 { animation: pgnav-chev-seq 1.4s linear 0s    infinite; }
+.pgnav-chev-1 { animation: pgnav-chev-seq 1.4s linear 0.18s infinite; }
+.pgnav-chev-2 { animation: pgnav-chev-seq 1.4s linear 0.36s infinite; }
+
+@keyframes pgnav-chev-seq {
+  0%   { opacity: 0.2; }
+  16%  { opacity: 1; }
+  42%  { opacity: 1; }
+  46%  { opacity: 0.35; }
+  50%  { opacity: 0.95; }
+  68%  { opacity: 0.2; }
+  100% { opacity: 0.2; }
+}
+
+.pgallery-info-left:hover .pgnav-bracket,
+.pgallery-info-right:hover .pgnav-bracket,
+.pgallery-info-left:hover .pgnav-chev,
+.pgallery-info-right:hover .pgnav-chev {
+  stroke: #BB3E03;
+}
+
+.pgallery-info-left:hover .pgnav-arrow,
+.pgallery-info-right:hover .pgnav-arrow {
+  filter: drop-shadow(0 0 10px rgba(187, 62, 3, 0.85));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pgnav-chev { opacity: 0.85; animation: none !important; }
 }
 
 .pgallery-info-text {
   flex: 1;
+  align-self: flex-start;     /* pin text to the top border; frees the lower
+                                 half of the panel for the down-arrow cue */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.25rem;
-  padding: 0 0.5rem;
+  padding: 7px 0.5rem 0;
   user-select: none;
 }
 
@@ -4549,7 +4627,7 @@ img#id1svg {
 
 .pgallery-info-sub {
   font-family: 'Funnel Display', sans-serif;
-  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
   font-weight: 600;
   color: #001219;
   letter-spacing: 0.1em;

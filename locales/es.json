@@ -17,7 +17,7 @@
 
   "photo.ui.enlarge":     "· clic para ampliar ·",
   "photo.ui.cta":         "Haz clic en una categoría para expandir su lista — luego pasa el cursor sobre cualquier título para previsualizar la imagen.",
-  "photo.ui.infoSub":     "usa las flechas para navegar las fotos · haz clic en la que quieras para verla en pantalla completa",
+  "photo.ui.infoSub":     "usa las flechas [<<<] [>>>] para navegar las fotos · haz clic en la que quieras para verla en pantalla completa",
   "photo.ui.polaroids":   "[ · p o l a r o i d s · ]",
   "photo.ui.polaroidsDesc": "Una colección en crecimiento de polaroids de viaje. Cada polaroid es una fotografía extraída de años de trabajo entre paisajes, ciudades y encuentros por todo el mundo. Cuando el archivo alcance las 100 fotografías, la colección completa se imprime como un photobook de edición limitada.",
   "photo.ui.scrollHint":  "[ · d e s l i z a   p a r a   r e v e l a r   /   c l i c   p a r a   e x p a n d i r   · ]",

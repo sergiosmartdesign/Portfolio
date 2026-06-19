@@ -71,47 +71,68 @@
   50%      { opacity: 0.55; }
 }
 
-/* ── Intro section inline scroll hint ────────────────────────────────────── */
-.intro-scroll-hint {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+/* ── Intro "02 SCROLL" how-to cue ─────────────────────────────────────────────
+   Hovering the SCROLL row in the HOW TO NAVIGATE panel reveals the same
+   bracketed [ ] + three pulsing down-chevrons + "[ · Scroll to explore · ]"
+   message used by the illustration section. The info panel is docked at
+   bottom:40px / left:70px / width:380px (≈274px tall); the cue sits just to its
+   right and spans the panel height. Reuses the global aid-chev-seq pulse.
+─────────────────────────────────────────────────────────────────────────────── */
+.intro-scroll-cue {
   position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
+  bottom: 40px;
+  left: calc(70px + 380px + 0.9rem);   /* just right of the info panel */
+  height: 274px;                       /* spans the panel's height */
   z-index: var(--z-layer-5);
-
-  opacity: 0;
-  transition:
-    opacity   0.7s var(--ease-expo-out),
-    transform 0.7s var(--ease-expo-out);
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  display: flex;
+  flex-direction: column;              /* arrow at top, rotated label reaching bottom */
+  align-items: center;
+  justify-content: space-between;
 }
 
-.intro-scroll-hint.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+.intro-scroll-cue .iscue-arrow {
+  display: block;
+  width: clamp(50px, 4.5vw, 68px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 4px rgba(238, 155, 0, 0.5))
+          drop-shadow(0 0 11px rgba(238, 155, 0, 0.3));
+}
+.intro-scroll-cue .iscue-bracket {
+  fill: none;
+  stroke: #EE9B00;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.intro-scroll-cue .iscue-chev { fill: #EE9B00; opacity: 0.15; }
+
+/* Label below the arrow, rotated 90° → reads top-to-bottom, centred on the arrow */
+.intro-scroll-cue .iscue-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);           /* flip so "[ · Scroll" sits at the bottom, reading up */
+  white-space: nowrap;
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.2vw, 1.05rem);
+  letter-spacing: 0.2em;
+  color: #EE9B00;
+  text-shadow: 0 0 6px rgba(238, 155, 0, 0.5), 0 0 14px rgba(238, 155, 0, 0.3);
 }
 
-.intro-scroll-hint .sc-icon {
-  width: 50px;
-  height: 88px;
-  color: var(--cyan);
-  filter: drop-shadow(0 0 6px var(--cyan)) drop-shadow(0 0 18px var(--cyan));
-}
+/* Reveal + pulse the chevrons while the SCROLL hotspot is hovered */
+#intro:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-cue { opacity: 1; }
+#intro:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-cue .iscue-chev-0 { animation: aid-chev-seq 1.4s linear 0s    infinite; }
+#intro:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-cue .iscue-chev-1 { animation: aid-chev-seq 1.4s linear 0.18s infinite; }
+#intro:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-cue .iscue-chev-2 { animation: aid-chev-seq 1.4s linear 0.36s infinite; }
 
-.intro-scroll-hint .sc-text {
-  font-size: 0.9rem;
-  color: var(--cyan);
-  text-shadow: var(--glow-cyan-intense);
-}
-
-/* ── Scale up the bottom scroll hint when scroll hotspot is hovered ────── */
-#intro:has(.inf-hotspot[data-hint="scroll"]:hover) .intro-scroll-hint {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-60px) scale(1.4);
+@media (prefers-reduced-motion: reduce) {
+  .intro-scroll-cue { transition: none; }
+  .intro-scroll-cue .iscue-chev { opacity: 0.8; animation: none !important; }
 }
 
 /* ── Photo section scroll hint — same layout, crimson palette ─────────────── */
