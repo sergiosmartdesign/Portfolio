@@ -28,6 +28,22 @@
 }
 
 /* ── Section reset & palette ──────────────────────────────────────────────── */
+/* Cross-dissolve handoff from #illustration: during the handoff band #contact is
+   held as a fixed, fully-opaque backdrop directly BEHIND #illustration, which
+   fades its own opacity out to reveal it. No transform pinning — fixed is driven
+   by the compositor, so it stays rock-steady (no scroll jitter); opaque + behind,
+   so the fade never exposes any other section. z below #illustration's raised
+   handoff layer; the nav header (z 1000) still sits above. */
+#contact.ct-handoff-in {
+  position: fixed;
+  top: var(--header-height, 60px);
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--header-height, 60px));
+  z-index: var(--z-layer-10, 10);
+  will-change: opacity;
+}
+
 #contact {
   background: transparent;
   overflow: hidden;

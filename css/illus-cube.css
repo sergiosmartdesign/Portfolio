@@ -35,6 +35,16 @@
     background: var(--illus-bg);
 }
 
+/* ── Handoff to #contact — frozen cross-dissolve ───────────────────────────
+   During the HANDOFF band (section still pinned) illus-cube.js adds
+   .illus-handoff: the section is raised above #contact and its opacity scrubbed
+   1→0, revealing the fixed, opaque #contact backdrop sitting behind it (see
+   #contact.ct-handoff-in). The tunnel stays compositor-pinned (sticky) — nothing
+   moves, only opacity, so there's no scroll jitter and no translucent gap. */
+#illustration.illus-handoff {
+    z-index: var(--z-layer-15, 15);
+}
+
 /* ── VHS / CRT overlay ────────────────────────────────────────────────────── */
 #illustration .scanlines,
 #illustration .vhs-static {

@@ -124,11 +124,17 @@
     // bottom yet), so while scrolling it the entrance choreography plays in
     // reverse — text/SVG slide back out, the cube shrinks away — leaving only the
     // background before #contact finally scrolls up.
-    const EXIT_VH = stopVh;
-    illus.style.height = (N * stopVh + EXIT_VH) + 'vh';
-    // Raw scroll progress at which the cube gallery completes; [GALLERY_END, 1]
-    // is the exit band. Gallery progress fed to the cube = raw / GALLERY_END.
-    const GALLERY_END = (N * stopVh) / (N * stopVh + EXIT_VH);
+    const EXIT_VH    = stopVh;   // frozen band where illustration content slides out
+    const HANDOFF_VH = stopVh;   // frozen band for the cross-dissolve into #contact
+    const totalVh    = N * stopVh + EXIT_VH + HANDOFF_VH;
+    illus.style.height = totalVh + 'vh';
+    // Raw scroll milestones (fractions of the section's scroll range):
+    //   [0, GALLERY_END]             cube gallery (progress fed = raw / GALLERY_END)
+    //   [GALLERY_END, HANDOFF_START] frozen exit — content slides out, bg only
+    //   [HANDOFF_START, 1]           frozen cross-dissolve into #contact
+    const GALLERY_END   = (N * stopVh) / totalVh;
+    const HANDOFF_START = (N * stopVh + EXIT_VH) / totalVh;
+    const contactEl = document.getElementById('contact');
 
     // Stamp face label + scan line into every face.
     // The gallery-title face (stop 0) gets the section descriptor instead of the expand hint.
@@ -465,6 +471,7 @@
     let stageContentFired = false;  // Stage A (text + SVG) latched at 40% coverage
     let stageCubeFired    = false;  // Stage B (3D cube) latched at 90% coverage
     let exiting           = false;  // inside the frozen exit band (reverse choreography)
+    let handoffActive     = false;  // frozen cross-dissolve into #contact is running
     const prefersReducedMotion =
         window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -762,18 +769,54 @@
         gotoSlide(parseInt(btn.dataset.goto, 10));
     });
 
+    // ── Handoff to #contact — frozen cross-dissolve ───────────────────────
+    // Runs during the HANDOFF band while the section is STILL PINNED, so nothing
+    // moves and nothing below scrolls into view. #contact is held as a fixed,
+    // fully-opaque backdrop *behind* the section (both pinned by the compositor —
+    // no JS transforms, so no scroll jitter); the section's own opacity is scrubbed
+    // 1→0 to reveal it. Because contact is opaque and directly behind, there is
+    // never a translucent gap that could expose other sections. #contact's own
+    // IntersectionObserver fires its entrance as it's revealed. Reversible.
+    function updateHandoff(raw) {
+        if (!contactEl) return false;
+
+        if (raw <= HANDOFF_START) {
+            if (handoffActive) {
+                handoffActive = false;
+                illus.classList.remove('illus-handoff');
+                illus.style.removeProperty('opacity');
+                contactEl.classList.remove('ct-handoff-in');
+            }
+            return false;
+        }
+
+        const wp = Math.min(1, (raw - HANDOFF_START) / (1 - HANDOFF_START));
+        if (!handoffActive) {
+            handoffActive = true;
+            illus.classList.add('illus-handoff');      // raise section above #contact
+            contactEl.classList.add('ct-handoff-in');   // fixed opaque backdrop behind
+        }
+        illus.style.opacity = String(1 - wp);           // fade section out → reveal #contact
+        return true;
+    }
+
     let lastNow = performance.now();
 
     function frame(now) {
         requestAnimationFrame(frame);
 
-        // Skip all work when section is well off-screen — cheap early exit.
         const bcr = illus.getBoundingClientRect();
-        if (bcr.top > window.innerHeight + 100 || bcr.bottom < -100) {
-            // Section fully off-screen — re-arm the staged entrance so the
-            // power-on replays the next time the section is approached. Removing
-            // the stage classes lets the permanent .illus-intro-active hold
-            // re-hide everything to the bg-only Stage-0 baseline.
+        const vh  = window.innerHeight;
+        const raw = getProgress(bcr);
+
+        // Frozen cross-dissolve into #contact (runs in the HANDOFF band).
+        const handoff = updateHandoff(raw);
+
+        // Skip all work when section is well off-screen — cheap early exit.
+        // Suspended while the handoff owns the frame so the dissolve can finish;
+        // a fully off-screen section also re-arms the staged entrance so the whole
+        // sequence replays the next time the section is approached.
+        if (!handoff && (bcr.top > vh + 100 || bcr.bottom < -100)) {
             if (introSeenOnce || stageContentFired || exiting) {
                 if (entranceTimer) { clearTimeout(entranceTimer); entranceTimer = null; }
                 introSeenOnce = stageContentFired = stageCubeFired = exiting = false;
@@ -785,7 +828,6 @@
         const dt = Math.min((now - lastNow) / 1000, 0.05);
         lastNow  = now;
 
-        const raw = getProgress(bcr);
         tgt = Math.min(raw / GALLERY_END, 1);   // gallery completes at GALLERY_END
 
         // ── Frozen exit ───────────────────────────────────────────────────
