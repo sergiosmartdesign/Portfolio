@@ -786,6 +786,8 @@
                 illus.classList.remove('illus-handoff');
                 illus.style.removeProperty('opacity');
                 contactEl.classList.remove('ct-handoff-in');
+                // Tunnel is the interactive layer again — let the goo cursor return.
+                window.dispatchEvent(new CustomEvent('illus:handoff', { detail: { active: false } }));
             }
             return false;
         }
@@ -795,6 +797,9 @@
             handoffActive = true;
             illus.classList.add('illus-handoff');      // raise section above #contact
             contactEl.classList.add('ct-handoff-in');   // fixed opaque backdrop behind
+            // #contact owns input now; the tunnel is still pinned in view, so the
+            // goo cursor's IntersectionObserver won't release on its own — tell it.
+            window.dispatchEvent(new CustomEvent('illus:handoff', { detail: { active: true } }));
         }
         illus.style.opacity = String(1 - wp);           // fade section out → reveal #contact
         return true;

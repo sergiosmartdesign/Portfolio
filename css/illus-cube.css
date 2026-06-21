@@ -43,6 +43,12 @@
    moves, only opacity, so there's no scroll jitter and no translucent gap. */
 #illustration.illus-handoff {
     z-index: var(--z-layer-15, 15);
+    /* The section is faded to opacity 0 here but opacity does NOT disable
+       hit-testing — left interactive it would sit above #contact (z 10) and
+       swallow every click (form unusable) while the centred .illus-cube-clickzone
+       kept opening the lightbox. Once #contact is the revealed layer it must own
+       all input, so the spent gallery becomes click-through. */
+    pointer-events: none;
 }
 
 /* ── VHS / CRT overlay ────────────────────────────────────────────────────── */

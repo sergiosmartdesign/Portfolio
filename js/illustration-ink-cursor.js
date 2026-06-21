@@ -116,6 +116,8 @@
 
       this.active    = false;
       this.idle      = false;
+      this.inView    = false;   // tunnel ≥ 50% in viewport
+      this.handoff   = false;   // frozen cross-dissolve into #contact is running
       this.dots      = [];
       this.mouse     = { x: 0, y: 0 };
       this.rafId     = null;
@@ -161,16 +163,29 @@
       const observer = new IntersectionObserver(
         entries => {
           entries.forEach(e => {
-            if (e.intersectionRatio >= 0.5) {
-              this._activate();
-            } else {
-              this._deactivate();
-            }
+            this.inView = e.intersectionRatio >= 0.5;
+            this._sync();
           });
         },
         { threshold: [0, 0.5, 1.0] }
       );
       observer.observe(target);
+
+      // During the frozen handoff into #contact (illus-cube.js) the tunnel is
+      // still pinned ≥ 50% in view, so the observer never releases — but #contact
+      // has taken over as the interactive layer and the goo cursor must not bleed
+      // over it. Drive activation off both signals instead of intersection alone.
+      window.addEventListener('illus:handoff', e => {
+        this.handoff = !!(e.detail && e.detail.active);
+        this._sync();
+      });
+    }
+
+    // Cursor is live only while the gallery is both in view AND the foreground
+    // layer. _activate/_deactivate are idempotent, so re-running this is cheap.
+    _sync() {
+      if (this.inView && !this.handoff) this._activate();
+      else                              this._deactivate();
     }
 
     _activate() {
