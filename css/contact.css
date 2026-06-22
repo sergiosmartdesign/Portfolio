@@ -591,6 +591,32 @@
   50%      { opacity: 0.55; }
 }
 
+/* ── EVA-02 dashboard screen — 9-frame scan flipbook @ 8 fps ────────────────
+   Frames (nested <svg> viewports built by contact.js, each cropping the mech
+   out of images/contact/N.svg) are stacked at the screen slot and shown one at
+   a time. Same step-end negative-stagger flipbook as the DNA capsule: each
+   frame is opaque for one 1/9 slice, hard-cut to the next. 9 × 0.125s = 8 fps.
+   The static #glow_and_blink mech is hidden — frame 1 is its pose. */
+.ct-eva-static { display: none; }
+
+.ct-eva { --ct-eva-step: 0.125s; }   /* 1000ms / 8fps */
+
+.ct-eva-frame {
+  opacity: 0;
+  animation: ct-eva-scan calc(var(--ct-eva-count, 9) * var(--ct-eva-step))
+             step-end infinite;
+  animation-delay: calc((var(--ct-eva-i, 0) - var(--ct-eva-count, 9)) * var(--ct-eva-step));
+}
+
+/* Static fallback frame (reduced motion / animations paused) */
+.ct-eva-first { opacity: 1; }
+
+@keyframes ct-eva-scan {
+  0%      { opacity: 1; }
+  11.111% { opacity: 0; }   /* 1/9 of the loop */
+  100%    { opacity: 0; }
+}
+
 /* ── Pilot's left hand — bottom-left, on top of the cockpit (z:20) ──────────
    contact.js translates it so the fingertip (#hand-pointer_invisible) lands
    on the dashboard hover rects while form elements are hovered/focused. */
@@ -1307,6 +1333,9 @@
   .ct-flux-dot { display: none; }
   .ct-flux-core,
   .ct-glow-layer { animation: none; }
+
+  /* EVA-02 screen: hold frame 1 (.ct-eva-first), no scan flipbook */
+  .ct-eva-frame { animation: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

@@ -91,6 +91,7 @@
         updateCockpitAspect();
         buildFluxFx(svg);
         initHoloBlink(svg);
+        buildEvaScreen(svg);
       })
       .catch(err => console.error('[contact] cockpit SVG failed to load:', err));
   }
@@ -278,6 +279,72 @@
         schedule();
       }, wait);
     })();
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     EVA-02 DASHBOARD SCREEN — 9-frame scan flipbook at 8 fps, looping
+     ════════════════════════════════════════════════════════════════════════
+     The dashboard has a portrait EVA-02 screen (the static mech inside
+     #glow_and_blink, marking the slot SLOT below). Frames images/contact/1..9.svg
+     are a potrace-teal HUD scan of the mech (full body → torso → head). Each
+     landscape frame is dropped into a nested <svg> whose viewBox crops a central
+     PORTRAIT window onto the mech and slice-fits it to the screen slot — so the
+     wide HUD label/stripes fall outside and the mech fills the panel. Frames are
+     stacked and cross-cut by a CSS step-end opacity flipbook (contact.css); the
+     section-wide #contact.ct-paused gate freezes it off-screen, and reduced
+     motion leaves frame 1 showing. */
+  function buildEvaScreen(svg) {
+    const blink = svg.querySelector('#glow_and_blink');
+    if (!blink) return;
+
+    // Hide the static mech (the lone <g> in #glow_and_blink) — the flipbook,
+    // whose frame 1 is the same pose, replaces it. Tag before appending below.
+    const staticMech = blink.querySelector(':scope > g');
+    if (staticMech) staticMech.classList.add('ct-eva-static');
+
+    const NS = 'http://www.w3.org/2000/svg';
+    const XLINK = 'http://www.w3.org/1999/xlink';
+
+    // Screen slot in cockpit viewBox units (matches the #glow_and_blink rect).
+    const SX = 993.1, SY = 835.7, SW = 63.3, SH = 126.9;
+    // Per-frame native sizes (potrace trims each to its own content box) so the
+    // crop window stays the SAME RELATIVE central portrait strip on every frame.
+    const FRAMES = [
+      [894, 584], [836, 590], [836, 586], [878, 586], [840, 584],
+      [838, 584], [874, 582], [836, 580], [838, 586],
+    ];
+    const CROP_FRAC = 300 / 894;   // central window width as a fraction of frame
+
+    const wrap = document.createElementNS(NS, 'g');
+    wrap.setAttribute('class', 'ct-eva');
+    wrap.style.setProperty('--ct-eva-count', FRAMES.length);
+
+    FRAMES.forEach(([W, H], i) => {
+      const cw = W * CROP_FRAC;
+      const cx = (W - cw) / 2;
+
+      const frame = document.createElementNS(NS, 'svg');
+      frame.setAttribute('class', i === 0 ? 'ct-eva-frame ct-eva-first' : 'ct-eva-frame');
+      frame.setAttribute('x', SX);
+      frame.setAttribute('y', SY);
+      frame.setAttribute('width', SW);
+      frame.setAttribute('height', SH);
+      frame.setAttribute('viewBox', `${cx.toFixed(1)} 0 ${cw.toFixed(1)} ${H}`);
+      frame.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      frame.style.setProperty('--ct-eva-i', i);
+
+      const img = document.createElementNS(NS, 'image');
+      img.setAttribute('width', W);
+      img.setAttribute('height', H);
+      const href = `images/contact/${i + 1}.svg`;
+      img.setAttribute('href', href);
+      img.setAttributeNS(XLINK, 'xlink:href', href);   // Safari fallback
+
+      frame.appendChild(img);
+      wrap.appendChild(frame);
+    });
+
+    blink.appendChild(wrap);
   }
 
   injectCockpit();
@@ -919,4 +986,90 @@
   }
 
   initContactForm();
+
+  /* Hover-to-glitch on every piece of text in the contact panel. Two modes,
+     because the markup is mixed:
+       (A) Already split into [data-char] glyphs (title, field labels, send) →
+           replay the site's per-letter scramble via a none → glitch-switch
+           restart. Self-contained (no GlitchSystem dependency); the global
+           .glitch-firing CSS uses !important so it beats the .ct-glitch-in gate.
+       (B) Plain text (BOGOTÁ ▸ WORLDWIDE feed, the > READY log line, the
+           whatsapp/instagram/linkedin links) isn't split, so a lightweight
+           character scramble decodes the text on hover without touching its
+           markup or styling. */
+  function initFormTextGlitch() {
+    const section = document.getElementById('contact');
+    if (!section) return;
+    if (window.App && window.App.BrowserDetect && window.App.BrowserDetect.isTouch) return;
+
+    const CHARS = (window.GLITCH_CHARS && window.GLITCH_CHARS.length)
+      ? window.GLITCH_CHARS
+      : '`¡™£¢∞§¶•ªºåß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>'.split('');
+
+    // ── (A) per-letter restart on the split glitch-text elements ──────────
+    const fire = el => {
+      el.classList.add('glitch-suppressed');
+      el.classList.remove('glitch-firing');
+      void el.getBoundingClientRect();
+      el.classList.add('glitch-firing');
+    };
+    // Attach unconditionally: Splitting.js (GlitchSystem.initSplitting) runs
+    // later, inside LanguageManager.ready — AFTER this IIFE. So the [data-char]
+    // glyphs don't exist yet at wire-up time; they do by the time the user
+    // hovers, and fire() only toggles classes the global CSS keys off.
+    section
+      .querySelectorAll('.ct-form-title.glitch-text, .ct-field label.glitch-text, .ct-send.glitch-text')
+      .forEach(el => {
+        el.addEventListener('mouseenter', () => fire(el));
+        el.addEventListener('mouseleave', () => el.classList.remove('glitch-firing'));
+      });
+
+    // ── (B) decode-scramble on the plain-text bits ────────────────────────
+    const firstTextNode = el => {
+      for (const n of el.childNodes) {
+        if (n.nodeType === Node.TEXT_NODE && n.nodeValue.trim()) return n;
+      }
+      return null;
+    };
+
+    const attachScramble = el => {
+      const node = firstTextNode(el);
+      if (!node) return;
+      const glyphs = Array.from(node.nodeValue);
+      let timer = null;
+
+      const restore = () => {
+        if (timer) { clearInterval(timer); timer = null; }
+        // Re-read the live original each time so the log line (which contact.js
+        // rewrites) restores to whatever it currently says, not a stale capture.
+        node.nodeValue = node._ctOriginal;
+      };
+
+      el.addEventListener('mouseenter', () => {
+        if (timer) return;
+        node._ctOriginal = node.nodeValue;
+        const original = Array.from(node._ctOriginal);
+        let step = 0;
+        timer = setInterval(() => {
+          step += 1;
+          const settled = step * 1.6;            // glyphs lock in left-to-right
+          node.nodeValue = original
+            .map((c, i) => {
+              if (c === ' ' || c === '\n' || c === '\t') return c;
+              if (i < settled) return c;
+              return CHARS[(Math.random() * CHARS.length) | 0];
+            })
+            .join('');
+          if (settled >= original.length) restore();
+        }, 28);
+      });
+      el.addEventListener('mouseleave', restore);
+    };
+
+    section
+      .querySelectorAll('.ct-form-feed, .ct-log-text, .ct-links--mini .ct-link')
+      .forEach(attachScramble);
+  }
+
+  initFormTextGlitch();
 })();
