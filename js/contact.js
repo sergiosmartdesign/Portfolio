@@ -92,6 +92,8 @@
         buildFluxFx(svg);
         initHoloBlink(svg);
         buildEvaScreen(svg);
+        buildInterfazScreen(svg);
+        initGlowBlink(svg);
       })
       .catch(err => console.error('[contact] cockpit SVG failed to load:', err));
   }
@@ -355,6 +357,102 @@
     const glowParent = hover ? hover.parentNode : svg;
     const barsGlow = buildGlowFx(svg, glowParent, 'evabars', 637.9, 850.4, 124.8, 33.8);
     if (barsGlow) barsGlow.classList.add('ct-eva-bars-glow');
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     INTERFAZ "SALTO TEMPORAL" SCREEN — 8-frame cross-fade, 1 frame / 2 s
+     ════════════════════════════════════════════════════════════════════════
+     A second, slower dashboard screen: the portrait jump-prep panel the user
+     pasted into the cockpit SVG as a static group marks the slot. Frames
+     images/contact/interfaz/1..8.svg cross-dissolve — each holds ~2 s with a
+     gentle fade-in/fade-out — and the whole stack carries a teal glow.
+     The slot is read LIVE from the pasted panel's box (so repositioning it in
+     the SVG just works) and stretched with preserveAspectRatio="none" to match
+     it exactly (the cockpit itself renders with PAR=none). The static panel is
+     hidden — frame 1 is its content. Paused off-screen via #contact.ct-paused;
+     reduced motion holds frame 1. Runs AFTER buildEvaScreen so the EVA static
+     is already tagged and this resolves to the interfaz panel alone. */
+  function buildInterfazScreen(svg) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const XLINK = 'http://www.w3.org/1999/xlink';
+
+    // The remaining plain top-level <g>: no id, not the artwork wrapper
+    // (#colors/#lines), and not either EVA group (already classed).
+    const tops = [...svg.children].filter(n => n.tagName === 'g');
+    const staticPanel = tops.find(g =>
+      !g.id &&
+      !g.classList.contains('ct-eva') &&
+      !g.classList.contains('ct-eva-static') &&
+      !g.querySelector('#colors, #lines'));
+    if (!staticPanel) return;
+
+    // Slot = the pasted panel's live box (no transform on it; PAR=none below
+    // makes the frames fill it identically to the static panel).
+    let box;
+    try { box = staticPanel.getBBox(); } catch (e) { return; }
+    if (!box.width || !box.height) return;
+    const SX = box.x, SY = box.y, SW = box.width, SH = box.height;
+    staticPanel.classList.add('ct-iz-static');
+
+    // Per-frame native sizes (potrace trims each to its own content box).
+    const FRAMES = [
+      [468, 880], [448, 868], [440, 858], [446, 866],
+      [442, 860], [456, 874], [446, 868], [458, 842],
+    ];
+
+    const wrap = document.createElementNS(NS, 'g');
+    wrap.setAttribute('class', 'ct-iz');
+    wrap.style.setProperty('--ct-iz-count', FRAMES.length);
+
+    FRAMES.forEach(([W, H], i) => {
+      const frame = document.createElementNS(NS, 'svg');
+      frame.setAttribute('class', i === 0 ? 'ct-iz-frame ct-iz-first' : 'ct-iz-frame');
+      frame.setAttribute('x', SX.toFixed(1));
+      frame.setAttribute('y', SY.toFixed(1));
+      frame.setAttribute('width', SW.toFixed(1));
+      frame.setAttribute('height', SH.toFixed(1));
+      frame.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      frame.setAttribute('preserveAspectRatio', 'none');   // match static panel
+      frame.style.setProperty('--ct-iz-i', i);
+
+      const img = document.createElementNS(NS, 'image');
+      img.setAttribute('width', W);
+      img.setAttribute('height', H);
+      const href = `images/contact/interfaz/${i + 1}.svg`;
+      img.setAttribute('href', href);
+      img.setAttributeNS(XLINK, 'xlink:href', href);   // Safari fallback
+
+      frame.appendChild(img);
+      wrap.appendChild(frame);
+    });
+
+    svg.appendChild(wrap);
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     #glow_and_blink LAYER — per-element glow + random blink
+     ════════════════════════════════════════════════════════════════════════
+     The cockpit's "glow_and_blink" group is a cluster of small dashboard
+     indicator lights. Each element gets a soft glow in its OWN colour and an
+     independent, JS-randomised blink cadence (random duration + negative delay)
+     so the panel reads like a live console of asynchronously flickering lights.
+     CSS does the flicker (contact.css); #contact.ct-paused freezes it
+     off-screen and reduced motion leaves the lights lit but static. */
+  function initGlowBlink(svg) {
+    const layer = svg.querySelector('#glow_and_blink');
+    if (!layer) return;
+    layer.querySelectorAll(':scope > *').forEach(el => {
+      // Glow colour = the element's own fill (fallback to site amber).
+      let c = '#EE9B00';
+      try {
+        const f = getComputedStyle(el).fill;
+        if (f && f !== 'none' && !/rgba?\(0,\s*0,\s*0/.test(f)) c = f;
+      } catch (e) { /* keep fallback */ }
+      el.style.setProperty('--bk', c);
+      el.style.setProperty('--bk-dur', (2.2 + Math.random() * 3.6).toFixed(2) + 's');
+      el.style.setProperty('--bk-delay', '-' + (Math.random() * 6).toFixed(2) + 's');
+      el.classList.add('ct-blink-el');
+    });
   }
 
   injectCockpit();
