@@ -205,6 +205,7 @@
     });
 
     parent.appendChild(layer);
+    return layer;
   }
 
   /* Power-readout digits — no glowing region: only the number glyphs glow.
@@ -284,53 +285,51 @@
   /* ════════════════════════════════════════════════════════════════════════
      EVA-02 DASHBOARD SCREEN — 9-frame scan flipbook at 8 fps, looping
      ════════════════════════════════════════════════════════════════════════
-     The dashboard has a portrait EVA-02 screen (the static mech inside
-     #glow_and_blink, marking the slot SLOT below). Frames images/contact/1..9.svg
-     are a potrace-teal HUD scan of the mech (full body → torso → head). Each
-     landscape frame is dropped into a nested <svg> whose viewBox crops a central
-     PORTRAIT window onto the mech and slice-fits it to the screen slot — so the
-     wide HUD label/stripes fall outside and the mech fills the panel. Frames are
-     stacked and cross-cut by a CSS step-end opacity flipbook (contact.css); the
-     section-wide #contact.ct-paused gate freezes it off-screen, and reduced
-     motion leaves frame 1 showing. */
+     The dashboard has a SMALL LANDSCAPE EVA-02 HUD screen to the right of the
+     animated flux capacitor — a top-level group (not #Layer_11, not
+     #glow_and_blink) whose static panel is frame 1 of the scan. Frames
+     images/contact/1..9.svg are a potrace-teal HUD scan of the mech (full body →
+     torso → head), already landscape with the same aspect as the slot, so each
+     whole frame is dropped into a nested <svg> and meet-fit to the slot (no
+     crop). The static panel is hidden and the flipbook plays in its place,
+     cross-cut by a CSS step-end opacity flipbook (contact.css). The section-wide
+     #contact.ct-paused gate freezes it off-screen; reduced motion holds frame 1.
+     (NOTE: the other, portrait EVA with the "EVA-02" word — #glow_and_blink — is
+     left untouched.) */
   function buildEvaScreen(svg) {
-    const blink = svg.querySelector('#glow_and_blink');
-    if (!blink) return;
-
-    // Hide the static mech (the lone <g> in #glow_and_blink) — the flipbook,
-    // whose frame 1 is the same pose, replaces it. Tag before appending below.
-    const staticMech = blink.querySelector(':scope > g');
-    if (staticMech) staticMech.classList.add('ct-eva-static');
-
     const NS = 'http://www.w3.org/2000/svg';
     const XLINK = 'http://www.w3.org/1999/xlink';
 
-    // Screen slot in cockpit viewBox units (matches the #glow_and_blink rect).
-    const SX = 993.1, SY = 835.7, SW = 63.3, SH = 126.9;
-    // Per-frame native sizes (potrace trims each to its own content box) so the
-    // crop window stays the SAME RELATIVE central portrait strip on every frame.
+    // Find the small static EVA HUD: the top-level <g> that isn't the artwork
+    // wrapper (#Layer_11, which holds #colors/#lines) nor the labelled portrait
+    // EVA (#glow_and_blink). Hide it — frame 1 of the flipbook is its pose.
+    const tops = [...svg.children].filter(n => n.tagName === 'g');
+    const staticEva = tops.find(g =>
+      g.id !== 'glow_and_blink' && !g.querySelector('#colors, #lines'));
+    if (staticEva) staticEva.classList.add('ct-eva-static');
+
+    // Screen slot in cockpit viewBox units (the static EVA's measured box,
+    // right of the flux capacitor). Landscape, matching the frames' aspect.
+    const SX = 603.2, SY = 898.2, SW = 135.7, SH = 88.4;
+    // Per-frame native sizes (potrace trims each to its own content box).
     const FRAMES = [
       [894, 584], [836, 590], [836, 586], [878, 586], [840, 584],
       [838, 584], [874, 582], [836, 580], [838, 586],
     ];
-    const CROP_FRAC = 300 / 894;   // central window width as a fraction of frame
 
     const wrap = document.createElementNS(NS, 'g');
     wrap.setAttribute('class', 'ct-eva');
     wrap.style.setProperty('--ct-eva-count', FRAMES.length);
 
     FRAMES.forEach(([W, H], i) => {
-      const cw = W * CROP_FRAC;
-      const cx = (W - cw) / 2;
-
       const frame = document.createElementNS(NS, 'svg');
       frame.setAttribute('class', i === 0 ? 'ct-eva-frame ct-eva-first' : 'ct-eva-frame');
       frame.setAttribute('x', SX);
       frame.setAttribute('y', SY);
       frame.setAttribute('width', SW);
       frame.setAttribute('height', SH);
-      frame.setAttribute('viewBox', `${cx.toFixed(1)} 0 ${cw.toFixed(1)} ${H}`);
-      frame.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      frame.setAttribute('viewBox', `0 0 ${W} ${H}`);     // whole frame, no crop
+      frame.setAttribute('preserveAspectRatio', 'xMidYMid meet');
       frame.style.setProperty('--ct-eva-i', i);
 
       const img = document.createElementNS(NS, 'image');
@@ -344,7 +343,18 @@
       wrap.appendChild(frame);
     });
 
-    blink.appendChild(wrap);
+    // Append at root so it renders above the cockpit artwork at the slot's
+    // absolute coordinates (the slot group has no transform).
+    svg.appendChild(wrap);
+
+    // Amber/orange readout bars just above the EVA panel — give them a slow,
+    // intermittent breathing glow (calm). Reuses the artwork-colour soft-mask
+    // glow; the custom .ct-eva-bars-glow animation (contact.css) overrides the
+    // default breathe with a longer swell-and-rest cycle.
+    const hover = svg.querySelector('#hover');
+    const glowParent = hover ? hover.parentNode : svg;
+    const barsGlow = buildGlowFx(svg, glowParent, 'evabars', 637.9, 850.4, 124.8, 33.8);
+    if (barsGlow) barsGlow.classList.add('ct-eva-bars-glow');
   }
 
   injectCockpit();

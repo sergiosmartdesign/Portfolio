@@ -37,14 +37,28 @@
     } = options;
     const stepMs = options.stepMs ?? frameMs;
 
+    // ── Re-entrancy guard ───────────────────────────────────────────────────
+    // Rapid re-hover (or any double call on the same element) used to spawn a
+    // second ticking loop that fought the first over textContent — and worse,
+    // captured its final text from a half-scrambled textContent, freezing the
+    // element on garbage. Cancel the in-flight run, and resolve the canonical
+    // final text from the *original* text captured before any scramble began,
+    // never from the live (possibly mid-scramble) textContent.
+    const prev = el.__scramble;
+    if (prev) {
+      clearTimeout(prev.timer);
+      prev.cancelled = true;
+    }
+
     const finalText = target != null
       ? target
-      : (el.getAttribute('data-content') || el.textContent || '');
+      : ((prev && prev.finalText) || el.getAttribute('data-content') || el.textContent || '');
     const glyphs = [...finalText];
     const n = glyphs.length;
 
     // Reduced motion (or empty string): resolve instantly, no animation.
     if (reducedMotion.matches || n === 0) {
+      el.__scramble = null;
       el.textContent = finalText;
       done();
       return;
@@ -54,9 +68,14 @@
     const resolveAt = i => initialDelay + i * stepMs;
     const maxResolve = resolveAt(n - 1);
 
+    const state = { cancelled: false, timer: null, finalText };
+    el.__scramble = state;
+
     const run = () => {
+      if (state.cancelled) return;
       let elapsed = 0;
       const tick = () => {
+        if (state.cancelled) return;
         let out = '';
         for (let i = 0; i < n; i++) {
           out += elapsed >= resolveAt(i)
@@ -66,16 +85,17 @@
         el.textContent = out;
         elapsed += frameMs;
         if (elapsed <= maxResolve + frameMs) {
-          setTimeout(tick, frameMs);
+          state.timer = setTimeout(tick, frameMs);
         } else {
           el.textContent = finalText;
+          if (el.__scramble === state) el.__scramble = null;
           done();
         }
       };
       tick();
     };
 
-    if (startDelay > 0) setTimeout(run, startDelay);
+    if (startDelay > 0) state.timer = setTimeout(run, startDelay);
     else run();
   }
 

@@ -581,6 +581,21 @@
   50%      { opacity: 1; }
 }
 
+/* Readout bars above the EVA screen — slow intermittent glow: a gentle swell
+   that holds, fades, then rests dim before the next pulse (calm, not a steady
+   breathe). Higher specificity than .ct-glow-layer so it wins the override. */
+.ct-glow-layer.ct-eva-bars-glow {
+  animation: ct-eva-bars-pulse 7s ease-in-out infinite;
+}
+
+@keyframes ct-eva-bars-pulse {
+  0%   { opacity: 0.12; }
+  35%  { opacity: 0.9; }
+  55%  { opacity: 0.9; }
+  82%  { opacity: 0.12; }
+  100% { opacity: 0.12; }
+}
+
 .ct-cockpit.ct-no-colors svg .ct-glow-layer,
 .ct-cockpit.ct-no-colors svg .ct-flux {
   opacity: 0;

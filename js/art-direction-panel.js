@@ -173,8 +173,8 @@ class ArtWorksPanel {
                 }
             });
             row.addEventListener('mouseenter', () => {
-                const titleEl = row.querySelector('.ad-work-title');
-                if (titleEl) this._scrambleText(titleEl);
+                // Title glitch/scramble on hover disabled for now (froze on
+                // rapid re-hover, leaving the name unreadable). Preview kept.
                 if (works[i].bg) this._showRowPreview(works[i].bg, works[i].whiteBg);
             });
             row.addEventListener('mouseleave', () => this._hideRowPreview());
