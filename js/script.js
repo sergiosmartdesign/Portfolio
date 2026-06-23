@@ -441,6 +441,103 @@ class NavigationManager {
   }
 
   /**
+   * Programmatically navigate to a section — the single source of truth shared
+   * by nav-button clicks, deep-links on first load, and browser back/forward.
+   *
+   * Each section type needs a different scroll target (sticky wrappers, the
+   * fixed #photo + its spacer proxy) and a different entrance trigger, so this
+   * mirrors exactly what a manual nav click does. `pushHash` is false when the
+   * URL already reflects the destination (deep-link / popstate) so we don't
+   * stack duplicate history entries.
+   */
+  goToSection(sectionId, { pushHash = true } = {}) {
+    // Tell section widgets a nav jump is happening so they can tear down
+    // open overlays (e.g. the art-direction project modal) before the
+    // viewport moves — the instant scroll may not trip their observers.
+    document.dispatchEvent(new CustomEvent('app:navigate', { detail: { sectionId } }));
+
+    // If the photo section is currently visible and we are navigating away
+    // from it, force-hide it immediately before any scroll fires so
+    // updatePhotoReveal doesn't re-animate the clip-path wipe mid-scroll.
+    if (sectionId !== 'photo') {
+      const _photoSpacer = document.querySelector('.photo-scroll-spacer');
+      if (_photoSpacer) {
+        const _prog = 1 - _photoSpacer.getBoundingClientRect().top / window.innerHeight;
+        if (_prog > 0) {
+          const _photoEl = document.querySelector('#photo');
+          if (_photoEl) {
+            _photoEl.style.visibility = 'hidden';
+            _photoEl.style.clipPath   = 'inset(0 0 100% 0)';
+          }
+          _photoNavExit = true;
+          setTimeout(() => { _photoNavExit = false; }, 2000);
+        }
+      }
+    }
+
+    const headerH = this.header ? this.header.offsetHeight : 0;
+
+    if (sectionId === 'intro') {
+      window.scrollTo(0, 0);
+      this.setActiveButton('intro');
+      return;
+    }
+
+    if (sectionId === 'art-direction') {
+      // #art-direction is position:sticky (top:0) inside .ad-pin-wrap, so its
+      // own rect.top clamps to 0 once pinned — reading rect.top+scrollY off the
+      // section gives an arbitrary target whenever you start from within its pin
+      // zone (the intermittent "header covers the top" offset). Measure the
+      // NON-sticky wrapper instead: its rect.top+scrollY is the section's true,
+      // stable document offset regardless of scroll position.
+      const artTarget = document.querySelector('.ad-pin-wrap')
+                      || document.getElementById('art-direction');
+      if (artTarget) {
+        const targetY = Math.max(0, artTarget.getBoundingClientRect().top + window.scrollY - headerH);
+        window.scrollTo(0, targetY);
+      }
+      if (App.playArtEntranceAnimation) App.playArtEntranceAnimation();
+      this.setActiveButton('art-direction');
+      if (pushHash) history.pushState(null, '', '#art-direction');
+      return;
+    }
+
+    if (sectionId === 'about') {
+      // Same sticky caveat as art-direction: measure the flow wrapper.
+      const aboutTarget = document.querySelector('.about-pin-wrapper')
+                        || document.getElementById('about');
+      if (aboutTarget) {
+        const targetY = Math.max(0, aboutTarget.getBoundingClientRect().top + window.scrollY - headerH);
+        window.scrollTo(0, targetY);
+      }
+      this.setActiveButton('about');
+      if (pushHash) history.pushState(null, '', '#about');
+      return;
+    }
+
+    if (sectionId === 'photo') {
+      const photoSpacer = document.querySelector('.photo-scroll-spacer');
+      if (photoSpacer) {
+        // rawProgress=3: all list items revealed (spacerTop + two full viewport heights)
+        const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo(0, spacerTop + window.innerHeight * 2);
+      }
+      this.setActiveButton('photo');
+      if (pushHash) history.pushState(null, '', '#photo');
+      return;
+    }
+
+    // General rule: all other sections scroll instantly to their top
+    // and activate entrance animations through IntersectionObserver re-entry.
+    const target = document.getElementById(sectionId);
+    if (target) {
+      window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
+    }
+    this.setActiveButton(sectionId);
+    if (pushHash) history.pushState(null, '', `#${sectionId}`);
+  }
+
+  /**
    * Setup click handlers for navigation buttons
    */
   setupClickHandlers() {
@@ -449,86 +546,8 @@ class NavigationManager {
       btn.addEventListener('click', (e) => {
         const href = btn.getAttribute('href');
         if (href && href.startsWith('#')) {
-          const sectionId = href.substring(1);
-
-          // Tell section widgets a nav jump is happening so they can tear down
-          // open overlays (e.g. the art-direction project modal) before the
-          // viewport moves — the instant scroll may not trip their observers.
-          document.dispatchEvent(new CustomEvent('app:navigate', { detail: { sectionId } }));
-
-          // If the photo section is currently visible and we are navigating
-          // away from it, force-hide it immediately before any scroll fires.
-          // This prevents updatePhotoReveal from re-animating the clip-path
-          // wipe while the browser scrolls to the target.
-          if (sectionId !== 'photo') {
-            const _photoSpacer = document.querySelector('.photo-scroll-spacer');
-            if (_photoSpacer) {
-              const _prog = 1 - _photoSpacer.getBoundingClientRect().top / window.innerHeight;
-              if (_prog > 0) {
-                const _photoEl = document.querySelector('#photo');
-                if (_photoEl) {
-                  _photoEl.style.visibility = 'hidden';
-                  _photoEl.style.clipPath   = 'inset(0 0 100% 0)';
-                }
-                _photoNavExit = true;
-                setTimeout(() => { _photoNavExit = false; }, 2000);
-              }
-            }
-          }
-
-          if (sectionId === 'intro') {
-            e.preventDefault();
-            window.scrollTo(0, 0);
-            this.setActiveButton('intro');
-            return;
-          }
-
-          if (sectionId === 'art-direction') {
-            e.preventDefault();
-            // #art-direction is position:sticky (top:0) inside .ad-pin-wrap, so
-            // its own rect.top clamps to 0 once pinned — reading rect.top+scrollY
-            // off the section gives an arbitrary target whenever you click from
-            // within its pin zone (the intermittent "header covers the top"
-            // offset). Measure the NON-sticky wrapper instead: its rect.top+scrollY
-            // is the section's true, stable document offset regardless of scroll
-            // position (mirrors how about-pin.js targets .about-pin-wrapper).
-            const artTarget = document.querySelector('.ad-pin-wrap')
-                            || document.getElementById('art-direction');
-            if (artTarget) {
-              const headerH = this.header ? this.header.offsetHeight : 0;
-              const targetY = Math.max(0, artTarget.getBoundingClientRect().top + window.scrollY - headerH);
-              window.scrollTo(0, targetY);
-            }
-            if (App.playArtEntranceAnimation) App.playArtEntranceAnimation();
-            this.setActiveButton('art-direction');
-            history.pushState(null, '', '#art-direction');
-            return;
-          }
-
-          if (sectionId === 'photo') {
-            e.preventDefault();
-            const photoSpacer = document.querySelector('.photo-scroll-spacer');
-            if (photoSpacer) {
-              // rawProgress=3: all list items revealed (spacerTop + two full viewport heights)
-              const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
-              const targetY = spacerTop + window.innerHeight * 2;
-              // If coming from above the photo zone, jump there instantly to skip the about section
-              window.scrollTo(0, targetY);
-            }
-            this.setActiveButton('photo');
-            history.pushState(null, '', '#photo');
-            return;
-          }
-
-          // General rule: all other sections scroll instantly to their top
-          // and activate entrance animations through IntersectionObserver re-entry.
           e.preventDefault();
-          const target = document.getElementById(sectionId);
-          if (target) {
-            window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
-          }
-          this.setActiveButton(sectionId);
-          history.pushState(null, '', `#${sectionId}`);
+          this.goToSection(href.substring(1));
         }
       });
     });
@@ -627,17 +646,28 @@ class NavigationManager {
 }
 
 
-// ── Handle browser back / forward for #photo ─────────────────────────────
-// All other section hashes use native anchors so the browser handles them.
+// Resolve the current URL hash to a deep-linkable section id, or null. Only
+// real <main> sections qualify; #intro (page top) and the #main skip-link target
+// are excluded so they fall through to the plain scroll-to-top path.
+function _deepLinkSectionId() {
+  const id = (location.hash || '').slice(1);
+  if (!id || id === 'intro' || id === 'main') return null;
+  // NB: a module-level `const CSS` shadows window.CSS here, so CSS.escape is
+  // unavailable — resolve by id directly (section ids are plain slugs anyway).
+  const el = document.getElementById(id);
+  return (el && el.tagName === 'SECTION' && el.closest('main')) ? id : null;
+}
+
+// ── Browser back / forward ───────────────────────────────────────────────
+// Route every section hash through the shared navigator (sticky wrappers and
+// the fixed #photo need their own scroll math); empty/#intro returns to top.
 window.addEventListener('popstate', () => {
-  if (location.hash === '#photo') {
-    const photoSpacer = document.querySelector('.photo-scroll-spacer');
-    if (photoSpacer) {
-      const spacerTop = photoSpacer.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, spacerTop + window.innerHeight * 2);
-    }
+  const id = _deepLinkSectionId();
+  if (id) {
+    App.navigationManager?.goToSection(id, { pushHash: false });
   } else if (!location.hash || location.hash === '#intro') {
     window.scrollTo(0, 0);
+    App.navigationManager?.setActiveButton('intro');
   }
 });
 
@@ -1252,6 +1282,7 @@ App.LanguageManager.ready.then(() => {
   const glitchSystem      = safeInit('GlitchSystem',      () => new GlitchSystem());
   const navigationManager = safeInit('NavigationManager', () => new NavigationManager());
   if (navigationManager) navigationManager.updateHeaderBackground('intro');
+  App.navigationManager = navigationManager;  // shared with popstate (back/forward)
   initIntroObserver();
   initAboutAnimations();
   initPhotoReveal();
@@ -1268,10 +1299,30 @@ App.LanguageManager.ready.then(() => {
     });
   });
 
+  // ── Deep-link routing ────────────────────────────────────────────────────
+  // A shared link like /#contact must land directly on that section without
+  // the user scrolling past intro. We jump while the preloader overlay is still
+  // opaque (preloaderExiting fires just before its fade) so the reveal already
+  // shows the right section — no intro flash + jump. goToSection() reuses the
+  // exact per-section scroll/entrance logic the nav buttons use.
+  let deepLinkRouted = false;
+  const routeDeepLink = () => {
+    if (deepLinkRouted || !navigationManager) return;
+    const id = _deepLinkSectionId();
+    if (!id) return;
+    deepLinkRouted = true;
+    navigationManager.goToSection(id, { pushHash: false });
+  };
+
   // sidebar uses CSS transition — unaffected by animation-play-state freeze
   window.addEventListener('preloaderExiting', () => {
     initCyberPanel(800);
+    routeDeepLink();
   }, { once: true });
+
+  // Fallback: if a slow locale fetch made this block run AFTER the preloader
+  // already finished, the listener above missed its event — route immediately.
+  if (!document.getElementById('preloader')) routeDeepLink();
 
   // Orb3D excluded — runs since page load, visible above the preloader.
   // App.ParticleSystem is the intro swarm (the preloader's own instance
@@ -1279,20 +1330,12 @@ App.LanguageManager.ready.then(() => {
   window.addEventListener('preloaderDone', () => {
     if (App.ParticleSystem?.resume)    App.ParticleSystem.resume();
     if (App.BarcodeAnimation?.start)   App.BarcodeAnimation.start();
-    if (location.hash === '#art-direction' && App.playArtEntranceAnimation) {
-      safeInit('art-entrance-hash', () => {
-        const artTarget = document.getElementById('art-direction');
-        if (artTarget) {
-          const hh = document.querySelector('header')?.offsetHeight || 0;
-          window.scrollTo(0, artTarget.getBoundingClientRect().top + window.scrollY - hh);
-        }
-        App.playArtEntranceAnimation();
-      });
-    }
   }, { once: true });
 });
 
-window.addEventListener('load',         () => window.scrollTo(0, 0));
+// Only reset to top on (re)load when NOT deep-linking — otherwise this would
+// fight the deep-link jump. The hash is preserved across reload by the browser.
+window.addEventListener('load',         () => { if (!_deepLinkSectionId()) window.scrollTo(0, 0); });
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
 // About section pin (→ about-pin.js). smoothScrollTo injected to avoid circular import.

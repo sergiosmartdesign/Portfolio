@@ -92,6 +92,9 @@
         buildFluxFx(svg);
         initHoloBlink(svg);
         buildEvaScreen(svg);
+        buildMechScreen(svg);
+        buildSeparator(svg);
+        buildSideArt(svg);
         buildInterfazScreen(svg);
         initGlowBlink(svg);
       })
@@ -357,6 +360,129 @@
     const glowParent = hover ? hover.parentNode : svg;
     const barsGlow = buildGlowFx(svg, glowParent, 'evabars', 637.9, 850.4, 124.8, 33.8);
     if (barsGlow) barsGlow.classList.add('ct-eva-bars-glow');
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     SECOND MECH SCREEN — 12-frame rotation flipbook at 4 fps, beside the EVA
+     ════════════════════════════════════════════════════════════════════════
+     A small rotating mech (images/contact/frame-1..12.svg, 64×128 teal line
+     art) sits flush right of the EVA screen at the SAME top and height. Hard-cut
+     flipbook at 4 fps (12 × 0.25s = 3s loop), same mechanism as the EVA scan.
+     Paused off-screen via #contact.ct-paused; reduced motion holds frame 1. */
+  function buildMechScreen(svg) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const XLINK = 'http://www.w3.org/1999/xlink';
+
+    // Slot: right of the EVA (ends x≈738.9), same top & height as the EVA; width
+    // from the 64×128 frame aspect so the figure isn't distorted.
+    const FW = 64, FH = 128;
+    const SY = 898.2, SH = 88.4;
+    const SW = SH * (FW / FH);          // 44.2
+    const SX = 740;                      // small gap after the EVA panel
+    const COUNT = 12;
+
+    const wrap = document.createElementNS(NS, 'g');
+    wrap.setAttribute('class', 'ct-mech');
+    wrap.style.setProperty('--ct-mech-count', COUNT);
+
+    for (let i = 0; i < COUNT; i++) {
+      const frame = document.createElementNS(NS, 'svg');
+      frame.setAttribute('class', i === 0 ? 'ct-mech-frame ct-mech-first' : 'ct-mech-frame');
+      frame.setAttribute('x', SX);
+      frame.setAttribute('y', SY);
+      frame.setAttribute('width', SW.toFixed(1));
+      frame.setAttribute('height', SH);
+      frame.setAttribute('viewBox', `0 0 ${FW} ${FH}`);
+      frame.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      frame.style.setProperty('--ct-mech-i', i);
+
+      const img = document.createElementNS(NS, 'image');
+      img.setAttribute('width', FW);
+      img.setAttribute('height', FH);
+      const href = `images/contact/frame-${i + 1}.svg`;
+      img.setAttribute('href', href);
+      img.setAttributeNS(XLINK, 'xlink:href', href);   // Safari fallback
+
+      frame.appendChild(img);
+      wrap.appendChild(frame);
+    }
+
+    svg.appendChild(wrap);
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     SIDE ART — one random static illustration (glow), beside the mech
+     ════════════════════════════════════════════════════════════════════════
+     Right of the rotating mech, a single STATIC illustration picked at random
+     each load (a different one than the previous load), fitted to the EVA's
+     height and recoloured teal with a soft glow. The five candidates share the
+     viewBox 499.8×730.9; the source art is black line work, so it's fetched
+     inline and recoloured via CSS (.ct-sideart). */
+  function buildSideArt(svg) {
+    const ART = ['freelance.svg', 'guitar electric.svg', 'reader.svg', 'tattoo.svg', 'time.svg'];
+
+    // Pick one that differs from the previous load (so each reload changes it).
+    let last = null;
+    try { last = localStorage.getItem('ct-sideart-last'); } catch (e) { /* private mode */ }
+    const pool = ART.filter(n => n !== last);
+    const pick = pool[Math.floor(Math.random() * pool.length)] || ART[0];
+    try { localStorage.setItem('ct-sideart-last', pick); } catch (e) { /* ignore */ }
+
+    // Slot: right of the mech (ends x≈784.2), same top & height as the EVA;
+    // width from the art aspect (499.8×730.9) so it isn't distorted.
+    const AW = 499.8, AH = 730.9;
+    const SY = 898.2, SH = 88.4;
+    const SW = SH * (AW / AH);          // 60.4
+    // Right edge must stay inside the brown screen rect (x597–885); end ≈882.
+    const SX = 822;
+
+    fetch('images/' + encodeURIComponent(pick))
+      .then(r => r.text())
+      .then(text => {
+        const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+        const art = doc.documentElement;
+        if (art.nodeName !== 'svg') throw new Error('bad SVG payload');
+        // Drop any inline <style> so the CSS recolour wins; strip sizing.
+        art.querySelectorAll('style').forEach(s => s.remove());
+        art.removeAttribute('id');
+        art.removeAttribute('width');
+        art.removeAttribute('height');
+        art.removeAttribute('style');
+        art.setAttribute('class', 'ct-sideart');
+        art.setAttribute('x', SX);
+        art.setAttribute('y', SY);
+        art.setAttribute('width', SW.toFixed(1));
+        art.setAttribute('height', SH);
+        art.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        svg.appendChild(art);
+      })
+      .catch(err => console.error('[contact] side art failed to load:', pick, err));
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     SEPARATOR — 3 small vertical lines between the EVA animations & the side art
+     ════════════════════════════════════════════════════════════════════════
+     Sits in the gap between the rotating mech (ends x≈784.2) and the side-art
+     slot (x850), vertically centred on the EVA height. Teal with a soft glow. */
+  function buildSeparator(svg) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const CX = 803;                       // centre of the mech↔side-art gap
+    const CY = 898.2 + 88.4 / 2;          // EVA vertical centre
+    const H = 46, W = 2, GAP = 7;
+
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'ct-sep');
+    [-1, 0, 1].forEach(k => {
+      const r = document.createElementNS(NS, 'rect');
+      r.setAttribute('class', 'ct-sep-bar');
+      r.setAttribute('x', (CX + k * GAP - W / 2).toFixed(1));
+      r.setAttribute('y', (CY - H / 2).toFixed(1));
+      r.setAttribute('width', W);
+      r.setAttribute('height', H);
+      r.setAttribute('rx', 1);
+      g.appendChild(r);
+    });
+    svg.appendChild(g);
   }
 
   /* ════════════════════════════════════════════════════════════════════════

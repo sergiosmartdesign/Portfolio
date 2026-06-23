@@ -632,6 +632,43 @@
   100%    { opacity: 0; }
 }
 
+/* ── Second mech screen — 12-frame rotation, 4 fps, right of the EVA ────────
+   Same hard-cut flipbook as the EVA scan; 12 × 0.25s = 3s loop. */
+.ct-mech { --ct-mech-step: 0.25s; }   /* 4 fps */
+
+.ct-mech-frame {
+  opacity: 0;
+  animation: ct-mech-spin calc(var(--ct-mech-count, 12) * var(--ct-mech-step))
+             step-end infinite;
+  animation-delay: calc((var(--ct-mech-i, 0) - var(--ct-mech-count, 12)) * var(--ct-mech-step));
+}
+
+.ct-mech-first { opacity: 1; }        /* static fallback (reduced motion) */
+
+@keyframes ct-mech-spin {
+  0%      { opacity: 1; }
+  8.333%  { opacity: 0; }   /* 1/12 of the loop */
+  100%    { opacity: 0; }
+}
+
+/* ── Side art — one random static illustration, recoloured teal + glow ──────
+   Source files are black line art (no fill), fetched inline by contact.js so
+   the shapes can be recoloured here. Static (no flipbook), soft teal bloom. */
+.ct-sideart :is(path, polygon, rect, circle, polyline, ellipse, line) {
+  fill: #94d2bd;
+}
+
+.ct-sideart {
+  filter: drop-shadow(0 0 2px rgba(148, 210, 189, 0.9))
+          drop-shadow(0 0 5px rgba(148, 210, 189, 0.45));
+}
+
+/* ── Separator — 3 vertical lines between the EVA animations and the side art ── */
+.ct-sep-bar {
+  fill: #94d2bd;
+  filter: drop-shadow(0 0 2px rgba(148, 210, 189, 0.85));
+}
+
 /* ── Interfaz "SALTO TEMPORAL" screen — 8-frame cross-fade, 1 frame / 2 s ──
    Slower & softer than the EVA scan: each frame fades in, holds, fades out,
    overlapping the next (cross-dissolve, no black flash). Whole stack glows. */
@@ -1406,6 +1443,9 @@
 
   /* Interfaz screen: hold frame 1 (.ct-iz-first), no cross-fade */
   .ct-iz-frame { animation: none; }
+
+  /* Second mech screen: hold frame 1 (.ct-mech-first), no spin */
+  .ct-mech-frame { animation: none; }
 
   /* Indicator lights: stay lit + glowing, no blink */
   .ct-blink-el { animation: none; }
