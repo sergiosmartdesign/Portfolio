@@ -150,13 +150,47 @@
     bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     z-index: var(--z-layer-10);
     pointer-events: none;
-    border: var(--border-medium) solid var(--orange);
-    border-radius: 2px;
-    box-shadow: var(--glow-orange);   /* same bloom as the desktop .panel-line */
-    /* one-time power-on. Base state (no transform, opacity 1) already equals the
-       final frame, so prefers-reduced-motion (animation neutralized below) shows
-       the finished frame with no motion. */
-    animation: introFrameOn 0.9s var(--easing-ease-out) 0.4s both;
+    /* Targeting-HUD frame: a faint continuous rail carries the rectangle while
+       the bright corner brackets below carry the emphasis (more cyberpunk than a
+       single solid border). inset bloom + outer glow mirror the desktop orange. */
+    border: var(--border-thin) solid rgba(255, 60, 0, 0.5);
+    box-shadow: inset 0 0 22px rgba(255, 60, 0, 0.05),
+                0 0 10px rgba(255, 60, 0, 0.22);
+    /* neon-tube ignition: stutters on, then holds. opacity cascades to the
+       corner brackets / tab / readout (all children), so the whole HUD flickers
+       up as one unit. base == final, so prefers-reduced-motion shows it lit. */
+    animation: introFrameIgnite 1.15s var(--easing-ease-out) 0.3s both;
+  }
+
+  /* Corner brackets — the four L-cut targeting marks. drop-shadow traces the L
+     (box-shadow would halo the square box), giving a crisp neon edge glow. */
+  #intro .intro-frame-mobile .ifm-c {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 0 solid var(--orange);
+    filter: drop-shadow(0 0 4px var(--orange))
+            drop-shadow(0 0 9px rgba(255, 60, 0, 0.5));
+  }
+  #intro .intro-frame-mobile .ifm-c--tl {
+    top: -1px; left: -1px;
+    border-top-width: var(--border-medium);
+    border-left-width: var(--border-medium);
+  }
+  #intro .intro-frame-mobile .ifm-c--tr {
+    top: -1px; right: -1px;
+    border-top-width: var(--border-medium);
+    border-right-width: var(--border-medium);
+  }
+  #intro .intro-frame-mobile .ifm-c--bl {
+    bottom: -1px; left: -1px;
+    border-bottom-width: var(--border-medium);
+    border-left-width: var(--border-medium);
+  }
+  #intro .intro-frame-mobile .ifm-c--br {
+    bottom: -1px; right: -1px;
+    border-bottom-width: var(--border-medium);
+    border-right-width: var(--border-medium);
   }
 
   /* Right-rail accent tab — echoes .cyber-panel__backdrop::after /
@@ -165,37 +199,43 @@
     content: "";
     position: absolute;
     left: 100%;
-    top: 2rem;
+    top: 32%;
     width: var(--border-thick);
-    height: 34%;
+    height: 30%;
     background: var(--orange);
-    opacity: 0.85;
     clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
     box-shadow: var(--glow-orange);
   }
 
-  /* Bottom-right clipped corner — echoes the .cyber-panel__backdrop notch +
-     .corner::after diagonal bar: a 135° orange slash across the corner. */
+  /* Dashed "data strip" on the top rail — echoes .panel-line--bottom::after
+     (the orange dashed segment). Sits just clear of the top-left bracket. */
   #intro .intro-frame-mobile::after {
     content: "";
     position: absolute;
-    right: calc(-1 * var(--border-medium));
-    bottom: calc(-1 * var(--border-medium));
-    width: 16px;
-    height: 16px;
-    background: linear-gradient(135deg, transparent 0 42%, var(--orange) 42% 58%, transparent 58%);
+    top: calc(-1 * var(--border-thin));
+    left: 34px;
+    width: 86px;
+    height: var(--border-medium);
+    background: repeating-linear-gradient(to right,
+      var(--orange) 0 7px, transparent 7px 14px);
     box-shadow: var(--glow-orange);
   }
 }
 
-@keyframes introFrameOn {
-  0%   { opacity: 0; transform: scale(0.985); }
-  60%  { opacity: 1; }
-  100% { opacity: 1; transform: scale(1); }
+/* Neon-tube ignition flicker (cheap: opacity only). */
+@keyframes introFrameIgnite {
+  0%   { opacity: 0; }
+  9%   { opacity: 0.55; }
+  13%  { opacity: 0.1; }
+  18%  { opacity: 0.85; }
+  23%  { opacity: 0.25; }
+  31%  { opacity: 1; }
+  36%  { opacity: 0.45; }
+  42%, 100% { opacity: 1; }
 }
 
-/* Reduced motion: skip the power-on; the base rule already paints the final
-   frame. (No-op on desktop — the element is empty/unstyled there.) */
+/* Reduced motion: skip the ignition; the base rule already paints the lit frame.
+   (No-op on desktop — the element is empty/unstyled there.) */
 @media (prefers-reduced-motion: reduce) {
   #intro .intro-frame-mobile { animation: none; }
 }
