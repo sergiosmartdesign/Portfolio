@@ -40,6 +40,10 @@ class ParticleSystem {
       bgInit: 'rgba(0, 0, 0, 1)',      // initial canvas fill
       bgFade: 'rgba(0, 0, 0, 0.1)',    // per-frame fade (trail dissolve)
       inlinePosition: false,    // set position:absolute/inset inline (no CSS rule)
+      // Optional per-instance phone tuning (only applied when isMobile). Lets one
+      // swarm shrink further on phones without touching desktop or other swarms.
+      maxPopMobile: null,       // override particle count on phones
+      zoomMobile: null,         // override spatial spread on phones (smaller = tighter)
     }, options);
 
     // Detect Safari for performance optimizations
@@ -61,6 +65,12 @@ class ParticleSystem {
       zoom: 1.6,
       targetFPS: isSafari ? 30 : 60  // Throttle to 30fps on Safari
     };
+
+    // Per-instance phone overrides (desktop untouched — guarded by isMobile).
+    if (isMobile) {
+      if (this.opts.maxPopMobile != null) this.config.maxPop = this.opts.maxPopMobile;
+      if (this.opts.zoomMobile  != null) this.config.zoom   = this.opts.zoomMobile;
+    }
 
     // Animation state
     this.stepCount = 0;
@@ -568,6 +578,10 @@ document.addEventListener('DOMContentLoaded', () => {
     bgInit: 'rgba(0, 18, 25, 1)',   // matches the overlay bg (#001219)
     bgFade: 'rgba(0, 18, 25, 0.1)',
     inlinePosition: true,
+    // Phones: thin + tighten the multicolor swarm so it reads as a subtle
+    // backdrop, not a busy full-screen field (desktop unchanged: 60 / 1.6).
+    maxPopMobile: 40,
+    zoomMobile: 1.25,
   });
   window.addEventListener('preloaderDone', () => preloaderParticles.destroy(), { once: true });
 

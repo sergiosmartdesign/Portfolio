@@ -69,9 +69,19 @@ both versions and were explicitly requested by the owner.
 well-formed XML with 68 image entries.
 
 ### Responsive (visual)
-- _None yet._ `responsive.css` is already mature and well-documented. Visual
-  tuning to be done **with the browser open** so changes are reviewed live —
-  no blind edits.
+
+**Preloader / loading screen — phone (2026-06-24)**
+- `css/responsive.css` (new `2 · PRELOADER` block, ≤768px): shrank
+  `.preloader-label` (1.15rem → `clamp(0.82rem,3.4vw,1.15rem)`), `.preloader-pct`
+  (1.5rem → `clamp(1.05rem,4.6vw,1.5rem)`) and `.preloader-stage` gap
+  (90px → `clamp(54px,16vw,90px)`). clamp upper bounds = desktop values, so
+  desktop can never change.
+- `js/particle-system.js`: added optional `maxPopMobile` / `zoomMobile` instance
+  options, applied **only when `isMobile`**. The preloader swarm now uses
+  `maxPopMobile: 40` (was 60 on phones) and `zoomMobile: 1.25` (was 1.6) so the
+  multicolor field reads as a subtle backdrop, not a busy full-screen swarm.
+  Desktop (150/Safari 100, zoom 1.6) and the intro/illustration swarms are
+  untouched.
 
 ---
 

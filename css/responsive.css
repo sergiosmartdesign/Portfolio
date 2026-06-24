@@ -62,6 +62,30 @@
 
 
 /* ════════════════════════════════════════════════════════════════════════════
+   2 · PRELOADER (loading screen)
+   The label, % counter and 90px stage gap are tuned for desktop; on a phone the
+   type reads oversized. Shrink type + gap fluidly. clamp() upper bounds equal
+   the desktop values, so nothing here can ever exceed the desktop render (and
+   the whole block only applies ≤768px anyway). The colored particle swarm is
+   thinned separately in particle-system.js (isMobile-gated, preloader only).
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Tighter column so the smaller type still straddles the centre line cleanly
+     (the electric line corridor is 50px; ~30px each side stays clear). */
+  .preloader-stage {
+    gap: clamp(54px, 16vw, 90px);
+  }
+  .preloader-label {
+    font-size: clamp(0.82rem, 3.4vw, 1.15rem);
+  }
+  .preloader-pct {
+    font-size: clamp(1.05rem, 4.6vw, 1.5rem);
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
    3 · #INTRO
    ════════════════════════════════════════════════════════════════════════════ */
 
