@@ -1084,9 +1084,9 @@
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
     /* TRANSPORT — no server backend yet, so the message is handed off to the
-       visitor's mail client as a prefilled email to mail@sergioayala.studio.
+       visitor's mail client as a prefilled email to mail@sergio-ayala.com.
        Swap the body for e.g. fetch('/api/contact', …) once a mail backend exists. */
-    const CONTACT_EMAIL = 'mail@sergioayala.studio';
+    const CONTACT_EMAIL = 'mail@sergio-ayala.com';
     function sendTransmission(payload) {
       const subject = `Portfolio contact — ${payload.name}`;
       const body =

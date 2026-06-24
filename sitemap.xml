@@ -1,14 +1,356 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <!--
-    TODO: replace "https://sergioayala.studio" with your actual live URL.
-    Single-page portfolio — one URL covers all sections.
-    Update <lastmod> whenever you publish significant content changes.
+    Single-page portfolio: one canonical URL carries every section.
+    The image extension lists every section/gallery asset so Google Images and
+    AI crawlers can discover and rank them (most travel photos are JS-loaded, so
+    this sitemap is their only crawlable surface). Update <lastmod> on changes.
   -->
   <url>
-    <loc>https://sergioayala.studio/</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://www.sergio-ayala.com/</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/sergio-ayala-vintage-tin-robot-amber-duotone-about.webp</image:loc>
+        <image:title>Vintage Tin Robot, Amber Duotone — Sergio Ayala</image:title>
+        <image:caption>Signature vintage tin toy robot in custom amber duotone (#EE9B00); the about-section backdrop and brand image of art director Sergio Ayala.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/sergio-ayala-robot-dark-teal-duotone-art-direction-section.webp</image:loc>
+        <image:title>Vintage Robot Portrait, Dark Teal Duotone — Art Direction</image:title>
+        <image:caption>Close-up of the vintage tin robot in deep dark-teal duotone; the art-direction section backdrop by Sergio Ayala.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/sergio-ayala-robot-camera-head-yellow-teal-photo-section.webp</image:loc>
+        <image:title>Robot with Camera Head, Yellow-Teal Duotone — Photography</image:title>
+        <image:caption>Vintage tin robot composited with a retro film camera as its head, yellow-teal duotone; the photography section backdrop by Sergio Ayala.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/sergio-ayala-robot-red-teal-duotone-illustration-section.webp</image:loc>
+        <image:title>Vintage Robot, Red-Teal Duotone — Illustration</image:title>
+        <image:caption>Vintage tin robot in crimson red and teal duotone with embossed relief; the illustration section backdrop by Sergio Ayala.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-themberchaud-dnd-dragon-concept-art.webp</image:loc>
+        <image:title>Themberchaud — D&amp;D Red Dragon Concept Art</image:title>
+        <image:caption>Themberchaud the red dragon of Gracklstugh on a golden hoard; dark-fantasy D&amp;D concept art in Procreate by Sergio Ayala, 2025.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-hada-de-los-andes-andean-fairy-illustration-2024.webp</image:loc>
+        <image:title>Andean Fairy — Inca-Inspired Fantasy Concept Art</image:title>
+        <image:caption>A fairy in Inca aguayo textiles with owl-butterfly wings and a golden tumi; Latin-American fantasy character concept art by Sergio Ayala, 2024.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-meninas-canido-tarot-illustration-ferrol-2024.webp</image:loc>
+        <image:title>Meninas de Canido as a Tarot Card — Concept Art</image:title>
+        <image:caption>Baroque wolf-headed figure as a tarot major arcana; official Meninas de Canido festival proposal (Ferrol, Galicia) by Sergio Ayala, 2024.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-rocker-ghost-geisha-yurei-illustration-2024.webp</image:loc>
+        <image:title>Rocker Ghost Geisha — Japanese Yurei Rock Star</image:title>
+        <image:caption>A Japanese yurei ghost in a purple-gold kimono shredding a Gibson Les Paul against a rising sun; concept art by Sergio Ayala, 2024.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-holy-vandal-canido-baroque-concept-art-2024.webp</image:loc>
+        <image:title>Holy Vandal — Baroque Canid Street Artist</image:title>
+        <image:caption>A baroque dog-headed knight painting a mask with cherub heralds and a Hokusai wave; Meninas de Canido study by Sergio Ayala, 2024.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-mujer-crustaceo-surrealist-mixed-media-2014.webp</image:loc>
+        <image:title>Mujer Crustaceo — Surrealist Transformation Study</image:title>
+        <image:caption>A woman merging with a crustacean exoskeleton; watercolour and ink surrealist illustration by Sergio Ayala, 2014.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/illustration/sergio-ayala-reconciliacion-watercolor-digital-2014.webp</image:loc>
+        <image:title>Reconciliacion — Watercolour &amp; Digital Mixed Media</image:title>
+        <image:caption>A pink-haired woman facing a skeletal masked figure; watercolour and digital mixed-media illustration by Sergio Ayala, 2014.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/art-direction/draconic%20love/sergio-ayala-draconic-love-dragon-illustration-2019.webp</image:loc>
+        <image:title>Draconic Love — Dragon Merchandise Illustration</image:title>
+        <image:caption>Two dragons forming a heart around hand-lettered type; commercial merchandise illustration by Sergio Ayala, 2019.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/12%20Houses.webp</image:loc>
+        <image:title>12 Houses — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>12 Houses. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Adrvan%20Restaurant%20Mostar.webp</image:loc>
+        <image:title>Adrvan Restaurant Mostar — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Adrvan Restaurant Mostar. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Andean%20Flamingo.webp</image:loc>
+        <image:title>Andean Flamingo — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Andean Flamingo. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Asturian%20Folklore%20street%20photo.webp</image:loc>
+        <image:title>Asturian Folklore street photo — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Asturian Folklore street photo. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Attack%20of%20the%20Titan.webp</image:loc>
+        <image:title>Attack of the Titan — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Attack of the Titan. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Beduinos.webp</image:loc>
+        <image:title>Beduinos — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Beduinos. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Cajon%20del%20Maipo.webp</image:loc>
+        <image:title>Cajon del Maipo — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Cajon del Maipo. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Cappadocia%20ice%20cream%20houses.webp</image:loc>
+        <image:title>Cappadocia ice cream houses — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Cappadocia ice cream houses. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Castillo%20de%20las%20Hadas.webp</image:loc>
+        <image:title>Castillo de las Hadas — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Castillo de las Hadas. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Coming%20for%20you.webp</image:loc>
+        <image:title>Coming for you — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Coming for you. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Crash.webp</image:loc>
+        <image:title>Crash — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Crash. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Dali%20Desert.webp</image:loc>
+        <image:title>Dali Desert — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Dali Desert. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Dog.webp</image:loc>
+        <image:title>Dog — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Dog. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Dubrovnik.webp</image:loc>
+        <image:title>Dubrovnik — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Dubrovnik. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Fairy%20woods.webp</image:loc>
+        <image:title>Fairy woods — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Fairy woods. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Find%20the%20Rhombus.webp</image:loc>
+        <image:title>Find the Rhombus — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Find the Rhombus. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Goreme.webp</image:loc>
+        <image:title>Goreme — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Goreme. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Guimaraes%20Portugal%20Street%20Photo.webp</image:loc>
+        <image:title>Guimaraes Portugal Street Photo — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Guimaraes Portugal Street Photo. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Indi.webp</image:loc>
+        <image:title>Indi — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Indi. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Isla%20en%20Uyuni.webp</image:loc>
+        <image:title>Isla en Uyuni — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Isla en Uyuni. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Istanbul%20ships.webp</image:loc>
+        <image:title>Istanbul ships — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Istanbul ships. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Jewels%20of%20Petra.webp</image:loc>
+        <image:title>Jewels of Petra — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Jewels of Petra. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Kotor%20Montenegro.webp</image:loc>
+        <image:title>Kotor Montenegro — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Kotor Montenegro. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Kotor%20landscape.webp</image:loc>
+        <image:title>Kotor landscape — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Kotor landscape. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Laguna%20Azul%20Chile.webp</image:loc>
+        <image:title>Laguna Azul Chile — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Laguna Azul Chile. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Laguna%20Blanca%20Andes%20Bolivianos.webp</image:loc>
+        <image:title>Laguna Blanca Andes Bolivianos — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Laguna Blanca Andes Bolivianos. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/London%20Bridge.webp</image:loc>
+        <image:title>London Bridge — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>London Bridge. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Looking%20to%20the%20Sky.webp</image:loc>
+        <image:title>Looking to the Sky — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Looking to the Sky. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Making%20the%20Laundry.webp</image:loc>
+        <image:title>Making the Laundry — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Making the Laundry. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Medieval.webp</image:loc>
+        <image:title>Medieval — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Medieval. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Mt%20Saint%20Michel.webp</image:loc>
+        <image:title>Mt Saint Michel — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Mt Saint Michel. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Ojo%20Sevillano.webp</image:loc>
+        <image:title>Ojo Sevillano — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Ojo Sevillano. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Old%20tombs.webp</image:loc>
+        <image:title>Old tombs — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Old tombs. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/On%20the%20top.webp</image:loc>
+        <image:title>On the top — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>On the top. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Our%20Lady%20of%20the%20Rocks.webp</image:loc>
+        <image:title>Our Lady of the Rocks — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Our Lady of the Rocks. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Parada%20refrescante.webp</image:loc>
+        <image:title>Parada refrescante — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Parada refrescante. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Perast.webp</image:loc>
+        <image:title>Perast — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Perast. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Petra%20details.webp</image:loc>
+        <image:title>Petra details — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Petra details. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Petra%20horizon.webp</image:loc>
+        <image:title>Petra horizon — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Petra horizon. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Petra.webp</image:loc>
+        <image:title>Petra — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Petra. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Ponte%20de%20Lima.webp</image:loc>
+        <image:title>Ponte de Lima — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Ponte de Lima. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Rovinj%20Croatia.webp</image:loc>
+        <image:title>Rovinj Croatia — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Rovinj Croatia. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Rumbo%20Uyuni.webp</image:loc>
+        <image:title>Rumbo Uyuni — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Rumbo Uyuni. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Sevilla%202.webp</image:loc>
+        <image:title>Sevilla 2 — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Sevilla 2. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Sevilla.webp</image:loc>
+        <image:title>Sevilla — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Sevilla. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Shenanigan.webp</image:loc>
+        <image:title>Shenanigan — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Shenanigan. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Street%20Beauty%20Nantes.webp</image:loc>
+        <image:title>Street Beauty Nantes — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Street Beauty Nantes. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Streets%20of%20Biarritz.webp</image:loc>
+        <image:title>Streets of Biarritz — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Streets of Biarritz. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Streets%20of%20Dubrovnik.webp</image:loc>
+        <image:title>Streets of Dubrovnik — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Streets of Dubrovnik. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Streets%20of%20Istanbul.webp</image:loc>
+        <image:title>Streets of Istanbul — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Streets of Istanbul. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Streets%20of%20Sevilla.webp</image:loc>
+        <image:title>Streets of Sevilla — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Streets of Sevilla. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Sweet%20wine.webp</image:loc>
+        <image:title>Sweet wine — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Sweet wine. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/The%20River.webp</image:loc>
+        <image:title>The River — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>The River. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Tourist%20Selfie.webp</image:loc>
+        <image:title>Tourist Selfie — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Tourist Selfie. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Triton%20de%20Sintra.webp</image:loc>
+        <image:title>Triton de Sintra — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Triton de Sintra. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
+      <image:image>
+        <image:loc>https://www.sergio-ayala.com/images/photo/Wandering%20Fox%20Street%20photo.webp</image:loc>
+        <image:title>Wandering Fox Street photo — Travel Photography by Sergio Ayala</image:title>
+        <image:caption>Wandering Fox Street photo. Travel and street photograph by Sergio Ayala, photographer based in Bogota, Colombia.</image:caption>
+      </image:image>
   </url>
 </urlset>

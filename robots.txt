@@ -1,5 +1,17 @@
 User-agent: *
 Allow: /
 
-# TODO: replace with your actual live domain
-Sitemap: https://sergioayala.studio/sitemap.xml
+# Explicitly welcome image + AI crawlers (discoverability / virality)
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://www.sergio-ayala.com/sitemap.xml
