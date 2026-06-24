@@ -116,6 +116,20 @@
   #main-title {
     font-size: clamp(0.8rem, 4.3vw, 1.9rem);
   }
+
+  /* Social icons: center them along the bottom of the hero instead of the
+     desktop bottom-right corner. A full-bleed ul (left:0/right:0) + flex
+     justify-content:center centers the icons WITHOUT a translateX transform —
+     the socialIconsGrow scale() entrance animation owns `transform`, so any
+     positioning transform here would be clobbered the moment it plays.
+     bottom uses the safe-area inset so the row clears the home indicator. */
+  #intro .social-media-icons {
+    left: 0;
+    right: 0;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
+  }
 }
 
 

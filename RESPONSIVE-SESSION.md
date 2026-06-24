@@ -83,6 +83,15 @@ well-formed XML with 68 image entries.
   Desktop (150/Safari 100, zoom 1.6) and the intro/illustration swarms are
   untouched.
 
+**#intro social icons — phone (2026-06-24)**
+- `css/responsive.css` (#INTRO block, ≤768px): `#intro .social-media-icons`
+  moved from the desktop bottom-right corner (`right:35px`) to centered along
+  the bottom of the hero — `left:0; right:0; justify-content:center;
+  gap:--spacing-xl; bottom:max(--spacing-lg, safe-area-inset-bottom)`. No
+  translateX (the socialIconsGrow scale() entrance owns `transform`); centering
+  is done with the full-bleed flex row instead. Desktop corner placement
+  unchanged.
+
 ---
 
 ## Change Log — 2026-06-24 (cont.)
