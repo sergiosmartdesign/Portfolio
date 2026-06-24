@@ -133,9 +133,51 @@ well-formed XML with 68 image entries.
 ---
 
 ## Files touched this session
-- `index.html` — head meta (og/twitter), JSON-LD domain + new photo gallery block
-- `sitemap.xml` — rebuilt as image sitemap
-- `robots.txt` — domain + crawler allowlist
+- `index.html` — head meta (og/twitter removed broken img), domain → www.sergio-ayala.com,
+  new photo-gallery JSON-LD block, `#web`→`#art-direction` anchor, unified email
+- `sitemap.xml` — rebuilt as an image sitemap (68 images)
+- `robots.txt` — domain + AI/image crawler allowlist
+- `js/contact.js`, `locales/{en,es}.json` — unified contact email
+- `images/qr-*.png` + `qr-sergio-ayala-com.svg` — regenerated for new domain
+- `css/responsive.css` — preloader type/% shrink + particle note + intro social-icons centering
+- `js/particle-system.js` — `maxPopMobile`/`zoomMobile` opts (isMobile-gated) + preloader values
 - `RESPONSIVE-SESSION.md` — this file
 
-_No CSS or JS behavior files were modified. Desktop output is unchanged._
+_Desktop output unchanged: every visual edit is inside a ≤768px / coarse-pointer
+media query, or JS guarded by `isMobile`._
+
+---
+
+## 🧷 Session close — 2026-06-24
+
+**Git:** clean working tree, `main` in sync with `origin/main` (all pushed).
+Session commits: `6205173` (seo) · `f44abcc` (deep-links + QR) · `f60304c`
+(preloader responsive) · `03c1483` (intro social icons).
+
+**Deploy:** all live on GitHub Pages (`https://sergiosmartdesign.github.io/Portfolio/`).
+Pages redeploys ~1–2 min after each push; assets cache ~10 min client-side
+(`max-age=600`, no cache-bust) → hard-reload (⌘⇧R) to see fresh changes.
+
+**Local preview server:** stopped. To resume:
+`python3 -m http.server 8000 --bind 127.0.0.1` from `web/`, then open
+`http://127.0.0.1:8000/` (DevTools ⌘⇧M for mobile emulation).
+
+**Production domain:** `https://www.sergio-ayala.com` (canonical). The github.io
+URL is a project-pages preview at the `/Portfolio/` subpath.
+
+### Done this session
+- SEO/metadata: domain, image sitemap, photo-gallery JSON-LD, robots, email,
+  removed broken og-image, fixed `#web` anchor.
+- QR codes regenerated for the new domain (verified).
+- Responsive (phone-only): preloader type/% + particle swarm reduced; intro
+  social icons centered at the bottom of the hero.
+
+### Recommended next steps (not started)
+- **Share card:** add a real 1200×630 `og:image` (jpg/png) — 5-line wire-in at
+  the `TODO(share-card)` comment in `<head>`. Highest-impact virality asset.
+- **Responsive visual passes** still open for: #about, #art-direction, #photo,
+  #illustration, #contact — review each live on a phone and tune in
+  `responsive.css` / `isMobile`-gated JS only (desktop frozen).
+
+_To resume: re-read this file + the unbreakable rule at the top before any
+responsive edit._
