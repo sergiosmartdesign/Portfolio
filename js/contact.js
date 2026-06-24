@@ -419,14 +419,8 @@
      viewBox 499.8×730.9; the source art is black line work, so it's fetched
      inline and recoloured via CSS (.ct-sideart). */
   function buildSideArt(svg) {
-    const ART = ['freelance.svg', 'guitar electric.svg', 'reader.svg', 'tattoo.svg', 'time.svg'];
-
-    // Pick one that differs from the previous load (so each reload changes it).
-    let last = null;
-    try { last = localStorage.getItem('ct-sideart-last'); } catch (e) { /* private mode */ }
-    const pool = ART.filter(n => n !== last);
-    const pick = pool[Math.floor(Math.random() * pool.length)] || ART[0];
-    try { localStorage.setItem('ct-sideart-last', pick); } catch (e) { /* ignore */ }
+    // Side art is pinned to time.svg on every load (no random rotation).
+    const pick = 'time.svg';
 
     // Slot: right of the mech (ends x≈784.2), same top & height as the EVA;
     // width from the art aspect (499.8×730.9) so it isn't distorted.
