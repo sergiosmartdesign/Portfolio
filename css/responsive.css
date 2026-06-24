@@ -150,10 +150,14 @@
     bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     z-index: var(--z-layer-10);
     pointer-events: none;
-    /* dnacapsule1.svg as the hero frame, stretched to fill the exact footprint
-       of the old drawn border (background-size: 100% 100%). The SVG carries its
-       own cyan glow + line-art detail, so nothing else is needed here. */
-    background: url("../images/dnacapsule1.svg") center / 100% 100% no-repeat;
+    /* Orange line-art variant of dnacapsule1.svg (cyan glow-fill removed, strokes
+       recoloured #ff3c00) stretched to fill the exact footprint of the old drawn
+       border. Only the borders show — no filled background. */
+    background: url("../images/dnacapsule1-frame.svg") center / 100% 100% no-repeat;
+    /* the old orange neon glow, applied via drop-shadow so it traces the SVG
+       strokes (box-shadow would only halo the rectangular box). */
+    filter: drop-shadow(0 0 6px var(--orange))
+            drop-shadow(0 0 16px rgba(255, 60, 0, 0.5));
     /* one-time power-on flicker; base == final, so prefers-reduced-motion
        (animation neutralized below) shows the shell fully lit, no motion. */
     animation: introFrameIgnite 1.15s var(--easing-ease-out) 0.3s both;
