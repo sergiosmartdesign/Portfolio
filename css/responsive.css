@@ -145,8 +145,10 @@
     /* clear the fixed header up top; hug the safe-area edges elsewhere so the
        capsule shell never collides with the notch / home indicator. */
     top: calc(var(--header-height, 60px) + var(--spacing-xs));
-    left:  max(var(--spacing-sm), env(safe-area-inset-left));
-    right: max(var(--spacing-sm), env(safe-area-inset-right));
+    /* left/right flush to the viewport edges (full-bleed) — the capsule's side
+       walls touch the screen. top/bottom keep their header / safe-area clearance. */
+    left: 0;
+    right: 0;
     bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     z-index: var(--z-layer-10);
     pointer-events: none;
