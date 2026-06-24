@@ -172,9 +172,18 @@ URL is a project-pages preview at the `/Portfolio/` subpath.
 - Responsive (phone-only): preloader type/% + particle swarm reduced; intro
   social icons centered at the bottom of the hero.
 
+### Share card — DONE 2026-06-24
+- Created `images/og-image.jpg` (1200×630, 164 KB) by cropping the owner-supplied
+  cyber-hero (`images/usa esta imagen.jpg`, 1067×1085) to a centered 1.905:1 band
+  (full width, text block centered) and resizing (OpenCV, Lanczos, q90).
+- Wired `<head>`: `og:image` (+ secure_url/type/width/height/alt),
+  `twitter:image` (+alt), and restored JSON-LD `Person.image` → og-image.jpg.
+- ⚠️ After deploy, **force a re-scrape** (platforms cache cards hard): FB Sharing
+  Debugger, LinkedIn Post Inspector, X Card Validator.
+- Source `images/usa esta imagen.jpg` left in place (owner-supplied) — safe to
+  delete now that og-image.jpg exists.
+
 ### Recommended next steps (not started)
-- **Share card:** add a real 1200×630 `og:image` (jpg/png) — 5-line wire-in at
-  the `TODO(share-card)` comment in `<head>`. Highest-impact virality asset.
 - **Responsive visual passes** still open for: #about, #art-direction, #photo,
   #illustration, #contact — review each live on a phone and tune in
   `responsive.css` / `isMobile`-gated JS only (desktop frozen).
