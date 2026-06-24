@@ -530,17 +530,18 @@ body.ad-section-live #art-direction .ad-explore-card {
   100% { fill: #EE9B00; }
 }
 
-/* Hover / keyboard focus — partial highlight wash, cycle suppressed */
+/* Hover / keyboard focus — solid amber band so the row reads as selected,
+   dark text on top for contrast; cycle suppressed */
 .ad-nav-svg .adnav-cat:hover .adnav-hl,
 .ad-nav-svg .adnav-cat:focus-visible .adnav-hl {
   animation: none;
-  opacity: 0.22;
+  opacity: 1;
 }
 
 .ad-nav-svg .adnav-cat:hover text,
 .ad-nav-svg .adnav-cat:focus-visible text {
   animation: none;
-  fill: #EE9B00;
+  fill: #001219;
 }
 
 .ad-nav-svg .adnav-cat:focus-visible .adnav-hl {
