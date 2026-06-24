@@ -88,6 +88,25 @@ well-formed XML with 68 image entries.
    - Only stale refs left are in `review/AUDITORIA_RESULTADO.html` (a historical
      audit report, not a live contact surface) — intentionally untouched.
 
+### Deep-links & QR codes — 2026-06-24
+
+7. **Section deep-linking verified + fixed.** The hash router in `js/script.js`
+   (`_deepLinkSectionId` / `routeDeepLink` / `goToSection`) is domain-independent
+   and already handles every section (`#about`, `#art-direction`, `#photo`,
+   `#illustration`, `#contact`) plus bare-domain/`#intro` → top/intro. No JS bug.
+   - Fixed the one stale anchor: JSON-LD `artdirection-robot-image.url` used
+     `/#web` (a non-existent section id) → corrected to `/#art-direction`.
+
+8. **Regenerated all per-section QR codes** to encode the new domain
+   (`segno`, black/white, scale 10, border 4, error-correction M):
+   - `qr-intro` → `/#intro` · `qr-about` → `/#about` ·
+     `qr-art-direction` → `/#art-direction` · `qr-photo` → `/#photo` ·
+     `qr-illustration` → `/#illustration` · `qr-contact` → `/#contact` ·
+     `qr-sergio-ayala-com` (.png + .svg) → `/`
+   - Verified by decode (6/7 via OpenCV) + exact module-matrix comparison for the
+     7th (`qr-art-direction`, 0 mismatches). QR assets are standalone (not
+     referenced in the page) — used for print/sharing.
+
 ## ⚠️ Open questions for the owner
 
 - _None outstanding._
