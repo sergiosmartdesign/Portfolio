@@ -183,6 +183,24 @@ URL is a project-pages preview at the `/Portfolio/` subpath.
 - Source `images/usa esta imagen.jpg` left in place (owner-supplied) — safe to
   delete now that og-image.jpg exists.
 
+### Embedded image metadata (IPTC/XMP/EXIF) — DONE 2026-06-24
+- Tool: `exiftool 13.50`, **lossless** (no pixel re-encode; ~+0.2 KB/file).
+- **8 illustrations + 56 photos** (webp): XMP-dc Creator/Title/Description/Subject/
+  Rights + photoshop:Credit + xmpRights (Marked/WebStatement/UsageTerms) +
+  plus:LicensorURL + EXIF Artist/Copyright/ImageDescription. License URL =
+  `https://www.sergio-ayala.com/#contact` (matches the JSON-LD `acquireLicensePage`
+  → reinforces Google "Licensable" eligibility; the embedded copy survives
+  hotlinking/scraping where JSON-LD can't).
+- **Photos:** GPS + camera serial **stripped** (privacy) while credit/copyright
+  added — selective metadata.
+- **og-image.jpg** (jpeg): full IPTC IIM + XMP + EXIF (by-line/copyright/credit/
+  caption/keywords).
+- **QR PNGs:** self-documenting only — a `PNG:Comment` recording the encoded URL +
+  EC level (maintenance/provenance, **not** SEO; QRs intentionally stay out of
+  the sitemap and image index). Verified still scannable post-write.
+- Regenerate with `qrenv`/exiftool; keep embedded metadata in sync with the
+  JSON-LD if image copy/licensing changes.
+
 ### Recommended next steps (not started)
 - **Responsive visual passes** still open for: #about, #art-direction, #photo,
   #illustration, #contact — review each live on a phone and tune in
