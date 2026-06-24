@@ -130,6 +130,74 @@
     gap: var(--spacing-xl);
     bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
   }
+
+  /* ── Mobile neon frame ────────────────────────────────────────────────────
+     Desktop draws an orange (#ff3c00) glowing bracket around the hero via the
+     .cyber-panel sidebar + .panel-line--top/--bottom/--right (all hidden above:
+     their viewport-tuned geometry — calc(100vw-100px), translateY(210px-50vh),
+     a 36px left body — collapses on a ~390px screen). Instead of bending that
+     fragile geometry we re-express the SAME visual idea — orange edge +
+     --glow-orange bloom + an accent tab + a clipped corner — on the inert,
+     empty <div class="intro-frame-mobile">. It carries zero desktop CSS, so the
+     desktop render is byte-for-byte unchanged. Decorative + non-focusable. */
+  #intro .intro-frame-mobile {
+    position: absolute;
+    /* clear the fixed header up top; hug the safe-area edges elsewhere so the
+       glow never collides with the notch / home indicator. */
+    top: calc(var(--header-height, 60px) + var(--spacing-xs));
+    left:  max(var(--spacing-sm), env(safe-area-inset-left));
+    right: max(var(--spacing-sm), env(safe-area-inset-right));
+    bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+    z-index: var(--z-layer-10);
+    pointer-events: none;
+    border: var(--border-medium) solid var(--orange);
+    border-radius: 2px;
+    box-shadow: var(--glow-orange);   /* same bloom as the desktop .panel-line */
+    /* one-time power-on. Base state (no transform, opacity 1) already equals the
+       final frame, so prefers-reduced-motion (animation neutralized below) shows
+       the finished frame with no motion. */
+    animation: introFrameOn 0.9s var(--easing-ease-out) 0.4s both;
+  }
+
+  /* Right-rail accent tab — echoes .cyber-panel__backdrop::after /
+     .panel-line--right::before (clipped orange tab on the right edge). */
+  #intro .intro-frame-mobile::before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 2rem;
+    width: var(--border-thick);
+    height: 34%;
+    background: var(--orange);
+    opacity: 0.85;
+    clip-path: polygon(0 0, 0 100%, 100% calc(100% - 6px), 100% 6px);
+    box-shadow: var(--glow-orange);
+  }
+
+  /* Bottom-right clipped corner — echoes the .cyber-panel__backdrop notch +
+     .corner::after diagonal bar: a 135° orange slash across the corner. */
+  #intro .intro-frame-mobile::after {
+    content: "";
+    position: absolute;
+    right: calc(-1 * var(--border-medium));
+    bottom: calc(-1 * var(--border-medium));
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, transparent 0 42%, var(--orange) 42% 58%, transparent 58%);
+    box-shadow: var(--glow-orange);
+  }
+}
+
+@keyframes introFrameOn {
+  0%   { opacity: 0; transform: scale(0.985); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Reduced motion: skip the power-on; the base rule already paints the final
+   frame. (No-op on desktop — the element is empty/unstyled there.) */
+@media (prefers-reduced-motion: reduce) {
+  #intro .intro-frame-mobile { animation: none; }
 }
 
 
