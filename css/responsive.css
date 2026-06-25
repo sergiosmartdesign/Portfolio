@@ -164,6 +164,61 @@
        (animation neutralized below) shows the shell fully lit, no motion. */
     animation: introFrameIgnite 1.15s var(--easing-ease-out) 0.3s both;
   }
+
+  /* ── Ticker on the lower top bar ───────────────────────────────────────────
+     A looping marquee that rides the second capsule bar (rect y=33.09 h=8.75 in
+     the SVG's 410.66-tall viewBox). The bar fills the div via background-size
+     100% 100%, so the bar maps linearly: top = 33.09/410.66 = 8.06%, height =
+     8.75/410.66 = 2.13% of the frame box → the overlay lands pixel-on-bar at any
+     phone size. Text is a separate HTML layer (NOT inside the stretched SVG) so
+     it never distorts; translateX is GPU-cheap and constant-speed. */
+  #intro .intro-frame-mobile .ifm-ticker {
+    position: absolute;
+    top: 8.06%;
+    height: 2.13%;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    /* feather the text in/out at the bar ends instead of a hard clip */
+    -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  #intro .intro-frame-mobile .ifm-ticker-track {
+    display: flex;
+    width: max-content;        /* two seqs wide → -50% == exactly one seq */
+    will-change: transform;
+    animation: ifmTicker 30s linear infinite;
+  }
+  #intro .intro-frame-mobile .ifm-ticker-seq {
+    flex: none;
+    white-space: nowrap;
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 800;                       /* bold */
+    text-transform: uppercase;
+    font-size: clamp(9px, 2.9vw, 12px);
+    letter-spacing: 0.16em;
+    line-height: 1;
+    color: #001219;                         /* dark on the orange bar — LED-tape look */
+  }
+
+  /* Pause the loop while the hero is off-screen (battery). The intro observer
+     toggles .paused-animations on #intro. */
+  #intro.paused-animations .intro-frame-mobile .ifm-ticker-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Continuous one-direction marquee; -50% of the 2-seq track recycles seamlessly. */
+@keyframes ifmTicker {
+  to { transform: translateX(-50%); }
+}
+
+/* Desktop: never render the mobile frame (and its ticker). It was an empty,
+   unstyled div above 768px before, so display:none keeps desktop byte-for-byte. */
+@media (min-width: 769px) {
+  #intro .intro-frame-mobile { display: none; }
 }
 
 /* Power-on flicker (cheap: opacity only). */
@@ -178,10 +233,11 @@
   42%, 100% { opacity: 1; }
 }
 
-/* Reduced motion: skip the ignition; the base rule already paints the lit shell.
-   (No-op on desktop — the element is empty/unstyled there.) */
+/* Reduced motion: skip the ignition + freeze the ticker (static text).
+   (No-op on desktop — the element is hidden there.) */
 @media (prefers-reduced-motion: reduce) {
   #intro .intro-frame-mobile { animation: none; }
+  #intro .intro-frame-mobile .ifm-ticker-track { animation: none; }
 }
 
 

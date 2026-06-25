@@ -874,9 +874,18 @@
             </div>
 
             <!-- Mobile-only hero frame: the dnacapsule1.svg shell, scaled to the
-                 viewport edge. Inert + empty + zero base CSS, so desktop renders
-                 nothing; all styling lives in css/responsive.css (≤768px). -->
-            <div class="intro-frame-mobile" aria-hidden="true"></div>
+                 viewport edge. Desktop renders nothing (hidden ≥769px); all styling
+                 lives in css/responsive.css (≤768px). Houses a looping ticker that
+                 rides the lower top bar of the capsule. Decorative (aria-hidden). -->
+            <div class="intro-frame-mobile" aria-hidden="true">
+                <div class="ifm-ticker">
+                    <div class="ifm-ticker-track">
+                        <!-- two identical sequences → translateX(-50%) loops seamlessly -->
+                        <span class="ifm-ticker-seq">Senior Art Director · Photographer · Bogotá&nbsp; ✦ &nbsp;Open to Work · Available for Freelance &amp; Full-time&nbsp; ✦ &nbsp;Let's Build Something · mail@sergio-ayala.com&nbsp; ✦ &nbsp;Branding · Art Direction · 3D · Editorial · Photography&nbsp; ✦ &nbsp;</span>
+                        <span class="ifm-ticker-seq">Senior Art Director · Photographer · Bogotá&nbsp; ✦ &nbsp;Open to Work · Available for Freelance &amp; Full-time&nbsp; ✦ &nbsp;Let's Build Something · mail@sergio-ayala.com&nbsp; ✦ &nbsp;Branding · Art Direction · 3D · Editorial · Photography&nbsp; ✦ &nbsp;</span>
+                    </div>
+                </div>
+            </div>
 
             <div class="scanlines"></div>
             <div class="vhs-static"></div>
