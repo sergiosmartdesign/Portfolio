@@ -17,26 +17,26 @@
     shadow = true,
     throttleEvery = 1,
     resizeDebounce = 0,
+    vertical = false,        // true → vertical line (4px wide, full viewport height)
   } = {}) {
     const ctx = canvasEl.getContext('2d');
     let animId = null;
     let frameCount = 0;
     let resizeTimer = null;
 
+    const sizeCanvas = () => {
+      if (vertical) { canvasEl.width = 4;                 canvasEl.height = window.innerHeight; }
+      else          { canvasEl.width = window.innerWidth; canvasEl.height = 4; }
+    };
     const resize = () => {
       if (resizeDebounce > 0) {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          canvasEl.width  = window.innerWidth;
-          canvasEl.height = 4;
-        }, resizeDebounce);
+        resizeTimer = setTimeout(sizeCanvas, resizeDebounce);
       } else {
-        canvasEl.width  = window.innerWidth;
-        canvasEl.height = 4;
+        sizeCanvas();
       }
     };
-    canvasEl.width  = window.innerWidth;
-    canvasEl.height = 4;
+    sizeCanvas();
     window.addEventListener('resize', resize, { passive: true });
 
     const draw = () => {
@@ -47,13 +47,20 @@
       const h = canvasEl.height;
       ctx.clearRect(0, 0, w, h);
 
+      // Main cyan jitter trace + a sparser white sparkle pass. A vertical line
+      // walks Y and jitters X around the centre axis (w/2); horizontal walks X
+      // and jitters Y around h/2.
+      const cx = w / 2, cy = h / 2;
       ctx.beginPath();
       ctx.strokeStyle = '#0ef';
       ctx.lineWidth   = 1.5;
       if (shadow) { ctx.shadowColor = '#0ef'; ctx.shadowBlur = 6; }
-      ctx.moveTo(0, h / 2);
-      for (let x = 0; x < w; x += 3) {
-        ctx.lineTo(x, h / 2 + (Math.random() - 0.5) * h * 2);
+      if (vertical) {
+        ctx.moveTo(cx, 0);
+        for (let y = 0; y < h; y += 3) ctx.lineTo(cx + (Math.random() - 0.5) * w * 2, y);
+      } else {
+        ctx.moveTo(0, cy);
+        for (let x = 0; x < w; x += 3) ctx.lineTo(x, cy + (Math.random() - 0.5) * h * 2);
       }
       ctx.stroke();
 
@@ -61,11 +68,15 @@
       ctx.strokeStyle = 'rgba(255,255,255,0.8)';
       ctx.lineWidth   = 1;
       if (shadow) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 3; }
-      for (let x = 0; x < w; x += 3) {
-        if (Math.random() > 0.7) {
-          ctx.lineTo(x, h / 2 + (Math.random() - 0.5) * h);
-        } else {
-          ctx.moveTo(x, h / 2);
+      if (vertical) {
+        for (let y = 0; y < h; y += 3) {
+          if (Math.random() > 0.7) ctx.lineTo(cx + (Math.random() - 0.5) * w, y);
+          else                     ctx.moveTo(cx, y);
+        }
+      } else {
+        for (let x = 0; x < w; x += 3) {
+          if (Math.random() > 0.7) ctx.lineTo(x, cy + (Math.random() - 0.5) * h);
+          else                     ctx.moveTo(x, cy);
         }
       }
       ctx.stroke();

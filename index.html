@@ -726,6 +726,10 @@
                 <a href="#photo" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.photography">[ · p h o t o g r a p h y · ]</a>
                 <a href="#illustration" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.illustration">[ · i l l u s t r a t i o n · ]</a>
                 <a href="#contact" class="nav-btn glitch-text" data-splitting data-i18n-split="nav.contact">[ · c o n t a c t · ]</a>
+                <!-- Vertical electric-static line on the drawer's left edge (mobile
+                     only). Last child so the .nav-btn:nth-child stagger stays 1–5.
+                     Driven by MobileNav (show on open / hide on close). -->
+                <canvas class="nav-static-line" aria-hidden="true"></canvas>
             </div>
 
             <div class="nav-backdrop" id="nav-backdrop" aria-hidden="true"></div>

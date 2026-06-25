@@ -89,6 +89,43 @@
   .main-nav.is-open .nav-btn { animation: none; }
 }
 
+/* ── Drawer panel: more transparent + frosted ────────────────────────────────
+   Drop the near-opaque rgba(0,12,18,.97) (styles.css) so the hero / orange frame
+   shows through; backdrop-filter keeps the nav text legible over the busy hero. */
+@media (max-width: 768px) {
+  .main-nav {
+    background-color: rgba(0, 12, 18, 0.6);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+            backdrop-filter: blur(10px) saturate(140%);
+  }
+
+  /* Vertical electric-static line on the drawer's left edge — the desktop
+     section-edge static line (cyan #0ef jitter canvas), rotated. The canvas is
+     sized 4×innerHeight by makeStaticLine({vertical:true}); MobileNav toggles
+     .active on open/close. Sits in the 48px left padding, clear of the text. */
+  .main-nav .nav-static-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+    pointer-events: none;
+  }
+  .main-nav .nav-static-line.active {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px #0ef) drop-shadow(0 0 7px #0ef);
+  }
+}
+
+/* Desktop: the drawer canvas is a no-op there (nav is horizontal) — hide it so it
+   never renders at its default 300×150 size in the row. */
+@media (min-width: 769px) {
+  .nav-static-line { display: none; }
+}
+
 
 /* ════════════════════════════════════════════════════════════════════════════
    2 · PRELOADER (loading screen)

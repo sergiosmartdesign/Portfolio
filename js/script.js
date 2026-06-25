@@ -590,6 +590,16 @@ class NavigationManager {
     this.drawer.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => this.closeDrawer());
     });
+
+    // Vertical electric-static line on the drawer's left edge (phones only —
+    // the desktop nav is horizontal and the canvas is display:none there). Shown
+    // while the menu is open. shadow:false → the cyan glow comes from CSS filter.
+    const navStaticCanvas = this.drawer.querySelector('.nav-static-line');
+    if (navStaticCanvas && window.makeStaticLine && App.BrowserDetect?.isMobile) {
+      this.navStatic = window.makeStaticLine(navStaticCanvas, {
+        vertical: true, shadow: false, throttleEvery: 2,
+      });
+    }
   }
 
   toggleDrawer() {
@@ -604,6 +614,7 @@ class NavigationManager {
     this.hamburger.setAttribute('aria-expanded', 'true');
     this.hamburger.setAttribute('aria-label', 'Close navigation menu');
     document.addEventListener('keydown', this._boundKeydown);
+    this.navStatic?.show();
 
     // Re-fire the intro-text glitch on the section words every time the menu
     // opens — the same glitch-switch the logo/name uses on load (the CSS handles
@@ -621,6 +632,7 @@ class NavigationManager {
     this.drawer.classList.remove('is-open');
     this.backdrop.classList.remove('is-visible');
     document.body.classList.remove('nav-open');
+    this.navStatic?.hide();
     this.hamburger.setAttribute('aria-expanded', 'false');
     this.hamburger.setAttribute('aria-label', 'Open navigation menu');
     document.removeEventListener('keydown', this._boundKeydown);
