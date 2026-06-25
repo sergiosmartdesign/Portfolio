@@ -188,8 +188,8 @@
     -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
             mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   }
-  #intro .intro-frame-mobile .ifm-ticker--top    { top: 3.73%; }  /* 1st bar (y=15.32) */
-  #intro .intro-frame-mobile .ifm-ticker--bottom { top: 8.06%; }  /* 2nd bar (y=33.09) */
+  #intro .intro-frame-mobile .ifm-ticker--top    { top: 3.73%; }   /* 1st bar (y=15.32) */
+  #intro .intro-frame-mobile .ifm-ticker--bottom { top: 10.23%; }  /* 2nd bar (y=42) */
   #intro .intro-frame-mobile .ifm-ticker-track {
     display: flex;
     width: max-content;        /* two seqs wide → -50% == exactly one seq */
