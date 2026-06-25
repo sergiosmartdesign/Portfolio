@@ -160,9 +160,11 @@
        strokes (box-shadow would only halo the rectangular box). */
     filter: drop-shadow(0 0 6px var(--orange))
             drop-shadow(0 0 16px rgba(255, 60, 0, 0.5));
-    /* one-time power-on flicker; base == final, so prefers-reduced-motion
-       (animation neutralized below) shows the shell fully lit, no motion. */
-    animation: introFrameIgnite 1.15s var(--easing-ease-out) 0.3s both;
+    /* Intro entrance: start small + hidden; the grow-in plays once the preloader
+       clears (gated below) so it's seen, not hidden behind the loading overlay. */
+    opacity: 0;
+    transform: scale(0.7);
+    transform-origin: center;
   }
 
   /* ── Tickers on the two top bars ───────────────────────────────────────────
@@ -178,6 +180,7 @@
     height: 2.13%;
     left: 0;
     right: 0;
+    opacity: 0;                /* hidden until the glitch-in plays (gated below) */
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -215,6 +218,21 @@
   #intro.paused-animations .intro-frame-mobile .ifm-ticker-track {
     animation-play-state: paused;
   }
+
+  /* ── Intro entrance (plays after the preloader clears, in view) ──────────────
+     body.preloading is removed on preloaderDone (js/preloader.js); applying the
+     animations only then starts each one fresh from 0, so they're seen instead of
+     running behind the loading overlay. (1) the frame grows to size, then (2) the
+     two text bars glitch in, staggered. */
+  body:not(.preloading) #intro .intro-frame-mobile {
+    animation: ifmGrow 0.7s var(--easing-ease-out) forwards;
+  }
+  body:not(.preloading) #intro .intro-frame-mobile .ifm-ticker--top {
+    animation: ifmTickerGlitchIn 0.55s linear 0.75s both;
+  }
+  body:not(.preloading) #intro .intro-frame-mobile .ifm-ticker--bottom {
+    animation: ifmTickerGlitchIn 0.55s linear 0.95s both;
+  }
 }
 
 /* Continuous one-direction marquee; -50% of the 2-seq track recycles seamlessly. */
@@ -228,23 +246,41 @@
   #intro .intro-frame-mobile { display: none; }
 }
 
-/* Power-on flicker (cheap: opacity only). */
-@keyframes introFrameIgnite {
-  0%   { opacity: 0; }
-  9%   { opacity: 0.55; }
-  13%  { opacity: 0.1; }
-  18%  { opacity: 0.85; }
-  23%  { opacity: 0.25; }
-  31%  { opacity: 1; }
-  36%  { opacity: 0.45; }
-  42%, 100% { opacity: 1; }
+/* Frame grows to its final size + fades in (uniform scale → no distortion). */
+@keyframes ifmGrow {
+  0%   { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-/* Reduced motion: skip the ignition + freeze the ticker (static text).
-   (No-op on desktop — the element is hidden there.) */
+/* Text-bar glitch entrance: clip-path slices + horizontal jitter + flicker that
+   settles to a clean, fully-revealed band. This glitches the ticker CONTAINER,
+   not the track, so it never fights the marquee's translateX (which keeps
+   scrolling inside throughout). */
+@keyframes ifmTickerGlitchIn {
+  0%   { opacity: 0; clip-path: inset(40% 0 55% 0); transform: translate3d(-8px, 0, 0); }
+  15%  { opacity: 1; clip-path: inset(0 0 78% 0);   transform: translate3d(7px, 0, 0); }
+  30%  {             clip-path: inset(68% 0 8% 0);   transform: translate3d(-5px, 0, 0); }
+  45%  {             clip-path: inset(22% 0 46% 0);  transform: translate3d(4px, 0, 0); }
+  60%  {             clip-path: inset(6% 0 60% 0);   transform: translate3d(-3px, 0, 0); }
+  78%  {             clip-path: inset(0 0 0 0);      transform: translate3d(2px, 0, 0); }
+  100% { opacity: 1; clip-path: inset(0 0 0 0);      transform: translate3d(0, 0, 0); }
+}
+
+/* Reduced motion: skip grow + glitch, freeze the marquee (static text).
+   !important beats the more-specific body:not(.preloading) entrance rules. */
 @media (prefers-reduced-motion: reduce) {
-  #intro .intro-frame-mobile { animation: none; }
-  #intro .intro-frame-mobile .ifm-ticker-track { animation: none; }
+  #intro .intro-frame-mobile {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  #intro .intro-frame-mobile .ifm-ticker {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  #intro .intro-frame-mobile .ifm-ticker-track { animation: none !important; }
 }
 
 
