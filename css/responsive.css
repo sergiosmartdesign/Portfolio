@@ -63,10 +63,11 @@
 /* ── Mobile menu: replay the load-in on every open ───────────────────────────
    The drawer slides in via transform (it's never display:none), so the page-load
    lineGrow on .nav-btn (styles.css) plays off-screen once and never repeats.
-   Cancel it on phones and re-bind a fresh line-grow + text glitch to the
-   .is-open state: every time the hamburger opens the menu, each row's orange
-   top-line grows in with a glitch, staggered down the list — the same effect as
-   the initial menu load. Re-applying the animation on each open re-triggers it. */
+   Cancel it on phones and re-bind a fresh lineGrow to the .is-open state, so every
+   hamburger open grows each row's orange top-line back in, staggered down the
+   list. The CHARACTER glitch on the words is fired in JS via
+   GlitchSystem.triggerGlitchBatch() in openDrawer() — the same glitch-switch the
+   logo/name uses — so it's the real intro-text glitch, not a positional shake. */
 @media (max-width: 768px) {
   .main-nav .nav-btn {
     animation: none;                       /* drop the unseen page-load run */
@@ -75,11 +76,7 @@
     animation: lineGrow var(--duration-slow) var(--easing-ease-out) backwards;
     animation-delay: calc(var(--nav-i, 0) * 0.12s);
   }
-  .main-nav.is-open .nav-btn .word {
-    animation: nav-btn-glitch 0.4s steps(1, end) 1 backwards;
-    animation-delay: calc(var(--nav-i, 0) * 0.12s);   /* inherits --nav-i from the row */
-  }
-  /* per-row stagger index, shared by the line-grow and the glitch */
+  /* per-row stagger index for the line-grow */
   .main-nav .nav-btn:nth-child(1) { --nav-i: 0; }
   .main-nav .nav-btn:nth-child(2) { --nav-i: 1; }
   .main-nav .nav-btn:nth-child(3) { --nav-i: 2; }
@@ -87,10 +84,9 @@
   .main-nav .nav-btn:nth-child(5) { --nav-i: 4; }
 }
 
-/* Reduced motion: open the menu instantly (no grow, no glitch). */
+/* Reduced motion: open the menu instantly (no line-grow). */
 @media (prefers-reduced-motion: reduce) {
-  .main-nav.is-open .nav-btn,
-  .main-nav.is-open .nav-btn .word { animation: none; }
+  .main-nav.is-open .nav-btn { animation: none; }
 }
 
 
@@ -185,19 +181,46 @@
     bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     z-index: var(--z-layer-10);
     pointer-events: none;
-    /* Orange line-art variant of dnacapsule1.svg (cyan glow-fill removed, strokes
-       recoloured #ff3c00) stretched to fill the exact footprint of the old drawn
-       border. Only the borders show — no filled background. */
-    background: url("../images/dnacapsule1-frame.svg") center / 100% 100% no-repeat;
-    /* the old orange neon glow, applied via drop-shadow so it traces the SVG
+    /* the orange neon glow, applied via drop-shadow so it traces the inline SVG
        strokes (box-shadow would only halo the rectangular box). */
     filter: drop-shadow(0 0 6px var(--orange))
             drop-shadow(0 0 16px rgba(255, 60, 0, 0.5));
-    /* Intro entrance: start small + hidden; the grow-in plays once the preloader
-       clears (gated below) so it's seen, not hidden behind the loading overlay. */
-    opacity: 0;
-    transform: scale(0.7);
+  }
+
+  /* Inline capsule (was a background image) so each line can scale-grow on entry.
+     preserveAspectRatio="none" stretches it to fill the frame, exactly as the old
+     background did, so the bars still map to the ticker top: %s above. */
+  #intro .intro-frame-mobile .ifm-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  #intro .intro-frame-mobile .ifm-svg path {
+    fill: none;
+    stroke: var(--orange);
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  #intro .intro-frame-mobile .ifm-svg rect,
+  #intro .intro-frame-mobile .ifm-svg polygon {
+    fill: var(--orange);
+  }
+  /* Per-line grow — mirrors the desktop .panel-line draw (scale 0→1 along the
+     line). transform-box: fill-box puts the origin on each element's own bbox, so
+     ifm-gx grows from its left edge and ifm-gy from its centre. Base state is
+     collapsed (scale 0); the grow (gated on body:not(.preloading)) plays it open. */
+  #intro .intro-frame-mobile .ifm-gx,
+  #intro .intro-frame-mobile .ifm-gy {
+    transform-box: fill-box;
+  }
+  #intro .intro-frame-mobile .ifm-gx {
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+  #intro .intro-frame-mobile .ifm-gy {
     transform-origin: center;
+    transform: scaleY(0);
   }
 
   /* ── Tickers on the two top bars ───────────────────────────────────────────
@@ -257,8 +280,11 @@
      animations only then starts each one fresh from 0, so they're seen instead of
      running behind the loading overlay. (1) the frame grows to size, then (2) the
      two text bars glitch in, staggered. */
-  body:not(.preloading) #intro .intro-frame-mobile {
-    animation: ifmGrow 0.7s var(--easing-ease-out) forwards;
+  body:not(.preloading) #intro .intro-frame-mobile .ifm-gx {
+    animation: ifmGrowX 0.6s var(--easing-ease-out) var(--d, 0s) forwards;
+  }
+  body:not(.preloading) #intro .intro-frame-mobile .ifm-gy {
+    animation: ifmGrowY 0.45s var(--easing-ease-out) var(--d, 0s) forwards;
   }
   body:not(.preloading) #intro .intro-frame-mobile .ifm-ticker--top {
     animation: ifmTickerGlitchIn 0.55s linear 0.75s both;
@@ -279,11 +305,9 @@
   #intro .intro-frame-mobile { display: none; }
 }
 
-/* Frame grows to its final size + fades in (uniform scale → no distortion). */
-@keyframes ifmGrow {
-  0%   { opacity: 0; transform: scale(0.7); }
-  100% { opacity: 1; transform: scale(1); }
-}
+/* Per-line scale-grow — same idea as the desktop .panel-line draw (scale 0→1). */
+@keyframes ifmGrowX { to { transform: scaleX(1); } }
+@keyframes ifmGrowY { to { transform: scaleY(1); } }
 
 /* Text-bar glitch entrance: clip-path slices + horizontal jitter + flicker that
    settles to a clean, fully-revealed band. This glitches the ticker CONTAINER,
@@ -302,8 +326,8 @@
 /* Reduced motion: skip grow + glitch, freeze the marquee (static text).
    !important beats the more-specific body:not(.preloading) entrance rules. */
 @media (prefers-reduced-motion: reduce) {
-  #intro .intro-frame-mobile {
-    opacity: 1 !important;
+  #intro .intro-frame-mobile .ifm-gx,
+  #intro .intro-frame-mobile .ifm-gy {
     transform: none !important;
     animation: none !important;
   }

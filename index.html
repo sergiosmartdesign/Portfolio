@@ -873,11 +873,20 @@
                 <span class="iscue-text">[ · Scroll to explore · ]</span>
             </div>
 
-            <!-- Mobile-only hero frame: the dnacapsule1.svg shell, scaled to the
-                 viewport edge. Desktop renders nothing (hidden ≥769px); all styling
-                 lives in css/responsive.css (≤768px). Houses two looping tickers,
-                 one per top bar of the capsule. Decorative (aria-hidden). -->
+            <!-- Mobile-only hero frame: the dnacapsule1 capsule shell, scaled to
+                 the viewport edge. Desktop renders nothing (hidden ≥769px); all
+                 styling lives in css/responsive.css (≤768px). Houses two looping
+                 tickers, one per top bar of the capsule. Decorative (aria-hidden). -->
             <div class="intro-frame-mobile" aria-hidden="true">
+                <!-- Capsule frame, inlined so each line can scale-grow on entry
+                     like the desktop .panel-line draw. Sits behind the tickers. -->
+                <svg class="ifm-svg" viewBox="5 0 193 410.66" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path    class="ifm-gx" style="--d:0s"    d="M13.73,409.34h184.05c0-133.12,0-266.23,0-399.35l-7.77-8.71c-52.81-.65-70.27,0-97.98,0-3.37,0-7.05,7.11-10.42,7.11-17.58,0-35.15,0-52.73,0-3.68,0-7.04-7.11-10.72-7.11-4.09,0-8.18,0-12.27,0v396.55l7.83,11.5Z"/>
+                    <polygon class="ifm-gy" style="--d:0.25s" points="5.89 117.36 0 125.44 0 268.15 5.89 277.23 5.89 117.36"/>
+                    <polygon class="ifm-gy" style="--d:0.5s"  points="197.78 409.34 207.55 400.69 207.55 309.48 198.5 300.43 197.78 409.34"/>
+                    <rect    class="ifm-gx" style="--d:0.3s"  x="5.89" y="15.32" width="191.88" height="8.75"/>
+                    <rect    class="ifm-gx" style="--d:0.4s"  x="5.89" y="42" width="191.88" height="8.75"/>
+                </svg>
                 <!-- Top bar (y=15.32): invitation, counter-scrolls -->
                 <div class="ifm-ticker ifm-ticker--top">
                     <div class="ifm-ticker-track">

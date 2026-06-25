@@ -604,6 +604,14 @@ class NavigationManager {
     this.hamburger.setAttribute('aria-expanded', 'true');
     this.hamburger.setAttribute('aria-label', 'Close navigation menu');
     document.addEventListener('keydown', this._boundKeydown);
+
+    // Re-fire the intro-text glitch on the section words every time the menu
+    // opens — the same glitch-switch the logo/name uses on load (the CSS handles
+    // the orange top-line grow). triggerGlitchBatch restarts it with one reflow.
+    if (this.navButtons?.length) {
+      GlitchSystem.triggerGlitchBatch(Array.from(this.navButtons));
+    }
+
     // Move focus into drawer
     const firstFocusable = this._getFocusable()[0];
     if (firstFocusable) firstFocusable.focus();
