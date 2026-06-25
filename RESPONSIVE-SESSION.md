@@ -201,6 +201,54 @@ URL is a project-pages preview at the `/Portfolio/` subpath.
 - Regenerate with `qrenv`/exiftool; keep embedded metadata in sync with the
   JSON-LD if image copy/licensing changes.
 
+---
+
+## 🧷 Session close — 2026-06-25
+
+**Git:** clean, `main` synced. This session built the phone-only **#intro hero
+frame** + tickers + entrance, and the **menu open replay**. Key commits: `20c7708`
+(neon frame) · `fa2b6ed` (cyberpunk HUD) · swap to the dnacapsule shell + recolor
+orange + crop/clean (`b87eb72`→`a2afca1`) · `8aaa79c` (space the two bars) ·
+`8b7527b` (menu line-grow) · tickers (`3816f54`/`ffb0a5d`) · `0b319d7` (per-line
+grow + real glitch-text on menu open).
+⚠️ An earlier inline staggered **stroke-draw** entrance (`ed7572f`) was
+force-reset off `main` — it looked janky. See the lesson below.
+
+### #intro — mobile hero frame (NEW)
+- **What/where:** orange (`#ff3c00`) capsule frame around the hero, **inlined** in
+  `index.html` as `<svg class="ifm-svg">` inside `<div class="intro-frame-mobile"
+  aria-hidden>`. Derived from `images/dnacapsule1.svg` (the #about/#contact DNA
+  capsule) but it is NOT that file (the original stays cyan + shared; **do not
+  edit it**) and NOT a background image (inline so each line can animate).
+- **Geometry:** `viewBox="5 0 193 410.66" preserveAspectRatio="none"`, full-bleed
+  (`left/right:0`) so the side walls touch the screen edges. Stripped the cyan
+  glow-fill, binary text, left instrument lines and bottom barcode; strokes →
+  `#ff3c00`; neon glow via CSS `filter: drop-shadow` on the container. The two top
+  bars were spaced apart (bar2 `y 33.09 → 42`) so each hosts a readable ticker.
+- **Two tickers** on the bars (`.ifm-ticker--top` y=15.32 → `top:3.73%`,
+  `--bottom` y=42 → `top:10.23%`): seamless marquees (2 seqs + `translateX(-50%)`),
+  uppercase bold (Funnel Display 800), dark `#001219` on orange, edge-fade `mask`,
+  pause off-screen via `.paused-animations`. Top = "· MORE TO EXPLORE ON DESKTOP ✦"
+  (counter-scrolls); bottom = positioning/status/CTA/skills. Text is a separate
+  HTML layer (never inside the stretched SVG → no distortion).
+- **Entrance** (gated on `body:not(.preloading)` so it plays in view, not behind
+  the loader): each capsule line scale-grows (`ifmGrowX`/`ifmGrowY`, scale 0→1,
+  `transform-box: fill-box`, staggered via inline `--d`) — mirrors the desktop
+  `.panel-line` draw. Then the tickers glitch in (`ifmTickerGlitchIn`).
+- **Desktop-safe:** hidden ≥769px (`@media (min-width:769px){display:none}`) + all
+  styling ≤768px → desktop byte-for-byte.
+- ⚠️ **Lesson:** do NOT animate the entrance with `stroke-dashoffset` "draw" on the
+  outline — `preserveAspectRatio="none"` distorts the stroke and varies the pen
+  speed → janky. Uniform `transform: scale` is clean.
+
+### Nav — menu open replays the load-in (NEW)
+- Drawer slides in via transform (never `display:none`), so the page-load
+  `lineGrow` ran off-screen once. Now (phones) the base run is cancelled and a
+  fresh `lineGrow` (orange top-line grows per row, staggered via `--nav-i`) binds
+  to `.main-nav.is-open`, and the **real** character glitch fires from JS:
+  `GlitchSystem.triggerGlitchBatch(this.navButtons)` in `MobileNav.openDrawer()`
+  (same `glitch-switch` as the logo/name) — not a positional shake.
+
 ### Recommended next steps (not started)
 - **Responsive visual passes** still open for: #about, #art-direction, #photo,
   #illustration, #contact — review each live on a phone and tune in
