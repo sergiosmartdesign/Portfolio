@@ -206,11 +206,12 @@ URL is a project-pages preview at the `/Portfolio/` subpath.
 ## 🧷 Session close — 2026-06-25
 
 **Git:** clean, `main` synced. This session built the phone-only **#intro hero
-frame** + tickers + entrance, and the **menu open replay**. Key commits: `20c7708`
-(neon frame) · `fa2b6ed` (cyberpunk HUD) · swap to the dnacapsule shell + recolor
-orange + crop/clean (`b87eb72`→`a2afca1`) · `8aaa79c` (space the two bars) ·
-`8b7527b` (menu line-grow) · tickers (`3816f54`/`ffb0a5d`) · `0b319d7` (per-line
-grow + real glitch-text on menu open).
+frame** + tickers + entrance, the **menu open replay**, and the **drawer frost +
+vertical static line**. Key commits: `20c7708` (neon frame) · `fa2b6ed`
+(cyberpunk HUD) · swap to the dnacapsule shell + recolor orange + crop/clean
+(`b87eb72`→`a2afca1`) · `8aaa79c` (space the two bars) · `8b7527b` (menu
+line-grow) · tickers (`3816f54`/`ffb0a5d`) · `0b319d7` (per-line grow + real
+glitch-text on menu open) · `0ab5313` (drawer frost + vertical static line).
 ⚠️ An earlier inline staggered **stroke-draw** entrance (`ed7572f`) was
 force-reset off `main` — it looked janky. See the lesson below.
 
@@ -248,6 +249,20 @@ force-reset off `main` — it looked janky. See the lesson below.
   to `.main-nav.is-open`, and the **real** character glitch fires from JS:
   `GlitchSystem.triggerGlitchBatch(this.navButtons)` in `MobileNav.openDrawer()`
   (same `glitch-switch` as the logo/name) — not a positional shake.
+
+### Nav — drawer frost + vertical static line (NEW)
+- **Frost:** drawer bg `rgba(0,12,18,.97)` → `.6` + `backdrop-filter: blur(10px)
+  saturate(140%)` (override in `responsive.css`) so the hero/orange frame shows
+  through while nav text stays legible.
+- **Vertical static line on the drawer's left edge:** `makeStaticLine()` gained a
+  `{vertical:true}` mode (walks Y, jitters X; canvas sized `4×innerHeight`) — the
+  same cyan `#0ef` electric-static the desktop section edges use (those bind a
+  canvas to a section's top/bottom edge via `bindSectionEdge`, shown only while
+  that edge is in the scroll viewport, hidden 150ms after scroll stops). HTML:
+  `<canvas class="nav-static-line">` is the drawer's **last child** (keeps the
+  `.nav-btn:nth-child` stagger 1–5). `MobileNav` creates it (isMobile-gated, in
+  `setupMobileNav`) and `show()/hide()`s it in `openDrawer`/`closeDrawer`. Sits in
+  the 48px left padding (clear of text); hidden ≥769px.
 
 ### Recommended next steps (not started)
 - **Responsive visual passes** still open for: #about, #art-direction, #photo,
