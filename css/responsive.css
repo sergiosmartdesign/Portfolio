@@ -60,6 +60,39 @@
   }
 }
 
+/* ── Mobile menu: replay the load-in on every open ───────────────────────────
+   The drawer slides in via transform (it's never display:none), so the page-load
+   lineGrow on .nav-btn (styles.css) plays off-screen once and never repeats.
+   Cancel it on phones and re-bind a fresh line-grow + text glitch to the
+   .is-open state: every time the hamburger opens the menu, each row's orange
+   top-line grows in with a glitch, staggered down the list — the same effect as
+   the initial menu load. Re-applying the animation on each open re-triggers it. */
+@media (max-width: 768px) {
+  .main-nav .nav-btn {
+    animation: none;                       /* drop the unseen page-load run */
+  }
+  .main-nav.is-open .nav-btn {
+    animation: lineGrow var(--duration-slow) var(--easing-ease-out) backwards;
+    animation-delay: calc(var(--nav-i, 0) * 0.12s);
+  }
+  .main-nav.is-open .nav-btn .word {
+    animation: nav-btn-glitch 0.4s steps(1, end) 1 backwards;
+    animation-delay: calc(var(--nav-i, 0) * 0.12s);   /* inherits --nav-i from the row */
+  }
+  /* per-row stagger index, shared by the line-grow and the glitch */
+  .main-nav .nav-btn:nth-child(1) { --nav-i: 0; }
+  .main-nav .nav-btn:nth-child(2) { --nav-i: 1; }
+  .main-nav .nav-btn:nth-child(3) { --nav-i: 2; }
+  .main-nav .nav-btn:nth-child(4) { --nav-i: 3; }
+  .main-nav .nav-btn:nth-child(5) { --nav-i: 4; }
+}
+
+/* Reduced motion: open the menu instantly (no grow, no glitch). */
+@media (prefers-reduced-motion: reduce) {
+  .main-nav.is-open .nav-btn,
+  .main-nav.is-open .nav-btn .word { animation: none; }
+}
+
 
 /* ════════════════════════════════════════════════════════════════════════════
    2 · PRELOADER (loading screen)
