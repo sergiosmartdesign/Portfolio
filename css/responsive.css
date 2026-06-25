@@ -165,16 +165,16 @@
     animation: introFrameIgnite 1.15s var(--easing-ease-out) 0.3s both;
   }
 
-  /* ── Ticker on the lower top bar ───────────────────────────────────────────
-     A looping marquee that rides the second capsule bar (rect y=33.09 h=8.75 in
-     the SVG's 410.66-tall viewBox). The bar fills the div via background-size
-     100% 100%, so the bar maps linearly: top = 33.09/410.66 = 8.06%, height =
-     8.75/410.66 = 2.13% of the frame box → the overlay lands pixel-on-bar at any
-     phone size. Text is a separate HTML layer (NOT inside the stretched SVG) so
-     it never distorts; translateX is GPU-cheap and constant-speed. */
+  /* ── Tickers on the two top bars ───────────────────────────────────────────
+     Looping marquees that ride the capsule's two top bars (rects y=15.32 and
+     y=33.09, both h=8.75, in the SVG's 410.66-tall viewBox). The bars fill the
+     div via background-size 100% 100%, so they map linearly: top bar at
+     15.32/410.66 = 3.73%, bottom bar at 33.09/410.66 = 8.06%, height 8.75/410.66
+     = 2.13% → each overlay lands pixel-on-bar at any phone size. Text is a
+     separate HTML layer (NOT inside the stretched SVG) so it never distorts;
+     translateX is GPU-cheap and constant-speed. */
   #intro .intro-frame-mobile .ifm-ticker {
     position: absolute;
-    top: 8.06%;
     height: 2.13%;
     left: 0;
     right: 0;
@@ -185,11 +185,18 @@
     -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
             mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   }
+  #intro .intro-frame-mobile .ifm-ticker--top    { top: 3.73%; }  /* 1st bar (y=15.32) */
+  #intro .intro-frame-mobile .ifm-ticker--bottom { top: 8.06%; }  /* 2nd bar (y=33.09) */
   #intro .intro-frame-mobile .ifm-ticker-track {
     display: flex;
     width: max-content;        /* two seqs wide → -50% == exactly one seq */
     will-change: transform;
     animation: ifmTicker 30s linear infinite;
+  }
+  /* counter-scroll the top ticker (dual-HUD feel), slightly desynced speed */
+  #intro .intro-frame-mobile .ifm-ticker--top .ifm-ticker-track {
+    animation-duration: 24s;
+    animation-direction: reverse;
   }
   #intro .intro-frame-mobile .ifm-ticker-seq {
     flex: none;
