@@ -416,10 +416,11 @@
     top: 0;
     left: 0;
     width: auto;
-    height: 100vw;
-    /* rotate→horizontal, then scaleX(1.5) thickens the bar 50% (length stays
-       full-width, capped to the screen); origin top-left pins it to the edge. */
-    transform: rotate(90deg) translateY(-100%) scaleX(1.5);
+    /* +50% bigger at natural proportions: 150vw long axis → the bar is 1.5×
+       and its dotted-line tail simply runs past the right viewport edge (fine).
+       width:auto keeps aspect, so no distortion. */
+    height: 150vw;
+    transform: rotate(90deg) translateY(-100%);
     transform-origin: top left;
   }
   /* The desktop reveal (slideDownFade) animates transform and would clobber the
