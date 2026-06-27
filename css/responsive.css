@@ -410,13 +410,16 @@
        rotate(90deg) translateY(-100%) (origin top-left) pivots it down-right so
        it spans x:[0→100vw], y:[0→thickness] off the top border. */
   #about .decoration-bar2 {
-    /* offset below the fixed header (z:1000 > svg-decorations z:999, so top:0
-       would hide the bar behind it) — sit it at the visible top of the section */
-    top: calc(var(--header-height, 60px) + var(--spacing-sm));
+    /* sit exactly on the top-edge static line: bindSectionEdge() draws the
+       cyan static at the section's rect.top, and svg-decorations top:0 == that
+       same edge, so the bar rides right on the line. */
+    top: 0;
     left: 0;
     width: auto;
     height: 100vw;
-    transform: rotate(90deg) translateY(-100%);
+    /* rotate→horizontal, then scaleX(1.5) thickens the bar 50% (length stays
+       full-width, capped to the screen); origin top-left pins it to the edge. */
+    transform: rotate(90deg) translateY(-100%) scaleX(1.5);
     transform-origin: top left;
   }
   /* The desktop reveal (slideDownFade) animates transform and would clobber the
