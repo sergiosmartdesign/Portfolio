@@ -398,7 +398,39 @@
   .cert-cube-nav {
     justify-content: center;
   }
+
+  /* The .decoration-bar2 timeline bar is a tall vertical flag ("[·About·]" star
+     label reading bottom-to-top, viewBox 37.5×997.6) sitting at left:80px — it
+     reads as an awkward sliver on a phone. Rotate it 90° clockwise so the label
+     reads left-to-right and lay it along the section's TOP edge: a thin
+     full-width horizontal rule with the star/label flag at the left and the
+     dashed line trailing right.
+       height:100vw → the SVG's long axis maps to the screen width after rotate;
+       width:auto keeps its aspect (≈3.8vw thickness). The compound transform
+       rotate(90deg) translateY(-100%) (origin top-left) pivots it down-right so
+       it spans x:[0→100vw], y:[0→thickness] off the top border. */
+  #about .decoration-bar2 {
+    /* offset below the fixed header (z:1000 > svg-decorations z:999, so top:0
+       would hide the bar behind it) — sit it at the visible top of the section */
+    top: calc(var(--header-height, 60px) + var(--spacing-sm));
+    left: 0;
+    width: auto;
+    height: 100vw;
+    transform: rotate(90deg) translateY(-100%);
+    transform-origin: top left;
+  }
+  /* The desktop reveal (slideDownFade) animates transform and would clobber the
+     rotation — swap it for a fade that leaves transform alone. */
+  #about .decoration-bar2.element-visible {
+    animation: aboutBar2FadeIn var(--duration-rise) ease-out 0s forwards;
+  }
+  #about .decoration-bar2.element-exit {
+    animation: aboutBar2FadeOut 0.5s ease-in 0s forwards;
+  }
 }
+
+@keyframes aboutBar2FadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes aboutBar2FadeOut { from { opacity: 1; } to { opacity: 0; } }
 
 
 /* ════════════════════════════════════════════════════════════════════════════
