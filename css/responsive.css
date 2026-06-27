@@ -434,6 +434,37 @@
   #about .decoration-bar2.element-exit {
     animation: aboutBar2FadeOut 0.5s ease-in 0s forwards;
   }
+
+  /* ── "·Hello! I'm Sergio Ayala·" hero title ──────────────────────────────────
+     Desktop puts the title + bio + id badge in one left-aligned row. On a phone
+     stack the head as a single column and center the big title in the orange
+     (amber-duotone) backdrop, just below the bar2 svg; the bio, badge, quote and
+     two-column block then flow below it. */
+  #about .about-top-head {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+  #about .about-intro {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  #about #abouttitle {
+    text-align: center;
+    align-self: center;
+    /* drop the title down into the centre of the orange field, clear of the
+       bar2 svg riding the top edge */
+    margin-top: var(--spacing-3xl);
+  }
+  /* keep the bio left-aligned (centred body copy is hard to read) and full-width
+     below the centred title */
+  #about .about-top-head #aboutp1 {
+    text-align: left;
+    align-self: stretch;
+    max-width: 60ch;
+    margin-top: 0;
+  }
 }
 
 @keyframes aboutBar2FadeIn  { from { opacity: 0; } to { opacity: 1; } }
