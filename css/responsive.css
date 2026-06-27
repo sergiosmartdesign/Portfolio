@@ -71,6 +71,8 @@
 @media (max-width: 768px) {
   .main-nav .nav-btn {
     animation: none;                       /* drop the unseen page-load run */
+    --glitch-count: 4;                     /* halve the open-menu char glitch (8→4)
+                                              so each row settles/reads sooner */
   }
   .main-nav.is-open .nav-btn {
     animation: lineGrow var(--duration-slow) var(--easing-ease-out) backwards;
