@@ -416,11 +416,14 @@
     top: 0;
     left: 0;
     width: auto;
-    /* +50% bigger at natural proportions: 150vw long axis → the bar is 1.5×
-       and its dotted-line tail simply runs past the right viewport edge (fine).
+    /* +50% bigger at natural proportions: 150vw long axis → the bar is 1.5×.
        width:auto keeps aspect, so no distortion. */
     height: 150vw;
-    transform: rotate(90deg) translateY(-100%);
+    /* The "[·About·]" flag is at the SVG's far end → after rotate it lands at
+       x≈150vw, off the right edge. Shift the whole bar left by the 50vw overhang
+       (plus a small inset) so the flag reads complete against the right viewport
+       edge; the dotted tail runs off the LEFT instead (body overflow-x:hidden). */
+    transform: translateX(calc(-50vw - 8px)) rotate(90deg) translateY(-100%);
     transform-origin: top left;
   }
   /* The desktop reveal (slideDownFade) animates transform and would clobber the
