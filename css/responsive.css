@@ -449,13 +449,17 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    /* hero: fill the first screen of the orange field below the bar2 svg so the
+       title can sit in its vertical middle */
+    min-height: calc(100svh - var(--header-height, 60px) - var(--spacing-3xl));
   }
   #about #abouttitle {
     text-align: center;
     align-self: center;
-    /* drop the title down into the centre of the orange field, clear of the
-       bar2 svg riding the top edge */
-    margin-top: var(--spacing-3xl);
+    /* center the title vertically in the hero (auto margins absorb the free
+       space); the bio is pushed to the bottom and the rest flows below */
+    margin-top: auto;
+    margin-bottom: auto;
   }
   /* keep the bio left-aligned (centred body copy is hard to read) and full-width
      below the centred title */
