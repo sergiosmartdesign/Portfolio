@@ -467,25 +467,33 @@
        viewport edge to edge. */
     width: 100%;
   }
+  /* Dissolve .about-intro's box so its children (title + bio) become flex items
+     of .about-top-head alongside .about-id-stack — lets us order them as a clean
+     vertical stack: title → id badge → bio. (about-title-fit.js measures
+     .about-top-head for width, since .about-intro now has no box.) */
   #about .about-intro {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    /* hero: fill the first screen of the orange field below the bar2 svg so the
-       title can sit in its vertical middle */
-    min-height: calc(100svh - var(--header-height, 60px) - var(--spacing-3xl));
+    display: contents;
   }
   #about #abouttitle {
     text-align: center;
     align-self: center;
-    /* center the title vertically in the hero (auto margins absorb the free
-       space); the bio is pushed to the bottom and the rest flows below */
-    margin-top: auto;
-    margin-bottom: auto;
+    order: 0;
+    /* small gap under the top bar; -1.4em collapses the title's empty bottom
+       (line-4 sits high) so the badge tucks right under it — scales because the
+       fitter sets font-size, em-relative. */
+    margin: var(--spacing-md) 0 -1.4em;
   }
-  /* keep the bio left-aligned (centred body copy is hard to read) and full-width
-     below the centred title */
+  /* full-width ID badge, directly below the title message */
+  #about .about-id-stack {
+    order: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    align-self: stretch;
+  }
+  /* bio: below the badge, left-aligned (centred body copy reads poorly) */
   #about .about-top-head #aboutp1 {
+    order: 2;
     text-align: left;
     align-self: stretch;
     max-width: 60ch;
