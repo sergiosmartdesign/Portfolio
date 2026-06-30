@@ -41,15 +41,27 @@
 /* ── Time-traveler figure (centre of the vortex) ──────────────────────────
    Inlined SVG centred in the swarm's vortex, sized to sit inside the ~320px
    ring. The source art is solid black, so CSS recolours it to a luminous
-   cyan-white with a soft static halo. No per-element animation for now — the
-   figure simply fades in/out by riding the overlay's opacity (cover/reveal). */
+   cyan-white with a soft static halo. The figure fades in only AFTER the dark
+   cover + particle swarm have established (delay ≈ cover duration), then rides
+   the overlay's opacity for the fade-out on reveal. */
 #section-transition .st-traveler {
   position: absolute;
   top: 50%;
   left: 50%;
-  opacity: 0.5;                      /* the figure sits at 50% */
+  opacity: 0;                        /* the delayed fade-in drives this while running */
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+
+/* Wait out the cover (~460ms) so the bg + particles are visible first, then
+   fade the figure to 50% and hold it (forwards) until the reveal fades it out. */
+#section-transition.is-running .st-traveler {
+  animation: stTravelerFade 240ms ease-out 460ms both;
+}
+
+@keyframes stTravelerFade {
+  from { opacity: 0; }
+  to   { opacity: 0.5; }
 }
 
 #section-transition .st-traveler svg {

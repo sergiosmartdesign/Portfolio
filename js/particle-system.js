@@ -40,6 +40,8 @@ class ParticleSystem {
       bgInit: 'rgba(0, 0, 0, 1)',      // initial canvas fill
       bgFade: 'rgba(0, 0, 0, 0.1)',    // per-frame fade (trail dissolve)
       inlinePosition: false,    // set position:absolute/inset inline (no CSS rule)
+      maxPop: null,             // override the desktop particle count (e.g. a lighter
+                                // swarm for the short-lived nav-transition overlay)
       // Optional per-instance phone tuning (only applied when isMobile). Lets one
       // swarm shrink further on phones without touching desktop or other swarms.
       maxPopMobile: null,       // override particle count on phones
@@ -55,7 +57,8 @@ class ParticleSystem {
     this.config = {
       lifespan: 1000,
       popPerBirth: 1,
-      maxPop: isMobile ? 60 : (isSafari ? 100 : 150),  // smaller on phones / Safari
+      maxPop: isMobile ? 60 : (this.opts.maxPop != null ? this.opts.maxPop
+                                : (isSafari ? 100 : 150)),  // smaller on phones / Safari
       birthFreq: 2,
       gridSize: 8,
       gridRadius: 500,
@@ -466,34 +469,37 @@ class ParticleSystem {
     // Get cached color
     const color = this.getColor(particle);
 
-    // Transform coordinates
-    const last = this.dataToCanvasXY(particle.xLast, particle.yLast);
-    const now = this.dataToCanvasXY(particle.x, particle.y);
+    // Transform coordinates inline (no per-particle {x,y} allocations — at
+    // maxPop this loop ran ~36k times/sec and the garbage churned the GC).
+    const xC = this.xC, yC = this.yC, z = this.config.zoom;
+    const lastX = xC + particle.xLast * z, lastY = yC + particle.yLast * z;
+    const nowX  = xC + particle.x     * z, nowY  = yC + particle.y     * z;
 
-    const attracSpot = this.grid[particle.attractor.gridSpotIndex];
-    const attracXY = this.dataToCanvasXY(attracSpot.x, attracSpot.y);
-
+    const attracSpot    = this.grid[particle.attractor.gridSpotIndex];
     const oldAttracSpot = this.grid[particle.attractor.oldIndex];
-    const oldAttracXY = this.dataToCanvasXY(oldAttracSpot.x, oldAttracSpot.y);
+    const attracX    = xC + attracSpot.x    * z, attracY    = yC + attracSpot.y    * z;
+    const oldAttracX = xC + oldAttracSpot.x * z, oldAttracY = yC + oldAttracSpot.y * z;
+
+    const ctx = this.ctx;
 
     // Draw particle trail
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = color;
-    this.ctx.lineWidth = 1.5;
-    this.ctx.moveTo(last.x, last.y);
-    this.ctx.lineTo(now.x, now.y);
-    this.ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(nowX, nowY);
+    ctx.stroke();
 
     // Draw attractor positions
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = color;
-    this.ctx.fillStyle = color;
-    this.ctx.lineWidth = 1.5;
-    this.ctx.moveTo(oldAttracXY.x, oldAttracXY.y);
-    this.ctx.lineTo(attracXY.x, attracXY.y);
-    this.ctx.arc(attracXY.x, attracXY.y, 1.5, 0, 2 * Math.PI, false);
-    this.ctx.stroke();
-    this.ctx.fill();
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(oldAttracX, oldAttracY);
+    ctx.lineTo(attracX, attracY);
+    ctx.arc(attracX, attracY, 1.5, 0, 2 * Math.PI, false);
+    ctx.stroke();
+    ctx.fill();
   }
 
   /**

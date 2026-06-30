@@ -40,10 +40,10 @@
 (function () {
   'use strict';
 
-  const COVER_MS       = 600;  // overlay #001219 + particles fade IN
-  const HOLD_MS        = 150;  // particles breathe at full before the reveal
-  const REVEAL_MS      = 750;  // overlay fades OUT, revealing the destination
-  const CANVAS_LEAD_MS = 150;  // particles lag the bg by this much during cover
+  const COVER_MS       = 460;  // overlay #001219 + particles fade IN
+  const HOLD_MS        = 320;  // bg+particles+figure hold at full before the reveal
+  const REVEAL_MS      = 520;  // overlay fades OUT, revealing the destination
+  const CANVAS_LEAD_MS = 110;  // particles lag the bg by this much during cover
 
   // One full bottom→top sweep of the electric-static scan-line spans the whole
   // transition, so it rides over the cover, the hidden nav, AND the reveal.
@@ -133,6 +133,7 @@
       bgInit: 'rgba(0, 18, 25, 1)',
       bgFade: 'rgba(0, 18, 25, 0.1)',
       inlinePosition: true,
+      maxPop: 80,   // lighter than the 150 desktop default — it only lives ~1.4s
     });
     fx.pause();
     canvas = overlay.querySelector('canvas');
