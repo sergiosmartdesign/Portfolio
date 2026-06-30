@@ -523,7 +523,7 @@
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: -10px;             /* move "Sergio"+"Ayala·" up 10px as a group */
+    top: -40px;             /* move "Sergio"+"Ayala·" up 40px as a group */
     margin-top: 0;
   }
 }
