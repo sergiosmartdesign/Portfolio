@@ -38,6 +38,62 @@
   will-change: opacity;
 }
 
+/* ── Time-traveler figure (centre of the vortex) ──────────────────────────
+   The source SVG is a solid-black silhouette, so invert(1) turns it luminous
+   and the drop-shadows give it the cyan (#00d5df, the project's --id-glow)
+   halo. Centred in the swarm's vortex, sized to sit inside the ~320px ring.
+   Materialises during the cover and breathes a soft glow while the overlay is
+   up; rides the overlay's opacity for the fade-out on reveal. */
+#section-transition .st-traveler {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: clamp(130px, 22vh, 190px);
+  width: auto;
+  opacity: 0;                       /* the materialise animation drives this while running */
+  transform: translate(-50%, -50%); /* the glitch animation owns transform while running */
+  pointer-events: none;
+  filter: invert(1) drop-shadow(0 0 6px #00d5df) drop-shadow(0 0 16px rgba(0, 213, 223, 0.55));
+}
+
+/* Three non-overlapping tracks so they never fight over a property:
+   In → opacity (fades to 50%) · Glow → filter · Glitch → transform + clip-path. */
+#section-transition.is-running .st-traveler {
+  animation:
+    stTravelerIn     600ms  ease-out both,
+    stTravelerGlow   2400ms ease-in-out infinite,
+    stTravelerGlitch 2200ms steps(1, end) infinite;
+}
+
+/* Materialise to half opacity (the figure stays at 50%). */
+@keyframes stTravelerIn {
+  0%   { opacity: 0; }
+  100% { opacity: 0.5; }
+}
+
+/* Gentle glow breathing (invert(1) must persist across every keyframe, since
+   `filter` is one animatable property). */
+@keyframes stTravelerGlow {
+  0%, 100% { filter: invert(1) drop-shadow(0 0 6px #00d5df)  drop-shadow(0 0 16px rgba(0, 213, 223, 0.50)); }
+  50%      { filter: invert(1) drop-shadow(0 0 10px #00d5df) drop-shadow(0 0 28px rgba(0, 213, 223, 0.75)); }
+}
+
+/* Digital glitch: the figure mostly holds still, then snaps into sliced,
+   horizontally-displaced fragments for a couple of frames at a time. steps(1)
+   makes each keyframe a hard cut (no smooth interpolation) — the jittery look.
+   translate(-50%,-50%) is rebaked into every keyframe to keep it centred. */
+@keyframes stTravelerGlitch {
+  0%,  40% { transform: translate(-50%, -50%);                clip-path: inset(0 0 0 0); }
+  41%      { transform: translate(calc(-50% + 5px), -50%);    clip-path: inset(15% 0 58% 0); }
+  43%      { transform: translate(calc(-50% - 6px), -50%);    clip-path: inset(62% 0 12% 0); }
+  44%      { transform: translate(-50%, -50%);                clip-path: inset(0 0 0 0); }
+  68%      { transform: translate(-50%, -50%);                clip-path: inset(0 0 0 0); }
+  69%      { transform: translate(calc(-50% + 7px), -50%);    clip-path: inset(42% 0 33% 0); }
+  71%      { transform: translate(calc(-50% - 4px), -50%);    clip-path: inset(8% 0 72% 0); }
+  72%      { transform: translate(calc(-50% + 3px), -50%);    clip-path: inset(78% 0 6% 0); }
+  73%, 100%{ transform: translate(-50%, -50%);                clip-path: inset(0 0 0 0); }
+}
+
 /* ── Traveling scan-line ──────────────────────────────────────────────────
    Horizontal "electric static" line (reuses js/static-line.js for the look)
    that sweeps from the bottom of the viewport up and out the top, ON TOP of

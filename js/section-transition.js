@@ -139,6 +139,18 @@
     lastW = window.innerWidth;
     lastH = window.innerHeight;
 
+    // Glowing "time traveler" figure that materialises inside the swarm's
+    // central vortex (the particles orbit a radial field ~320px wide at the
+    // canvas centre). Child of the overlay so it fades with the cover/reveal;
+    // painted above the particle canvas but below the scan-lines. The source
+    // art is solid black, so CSS recolours it (invert) + adds the cyan glow.
+    const traveler = document.createElement('img');
+    traveler.className = 'st-traveler';
+    traveler.src = 'images/time%20traveler.svg';
+    traveler.alt = '';
+    traveler.setAttribute('aria-hidden', 'true');
+    overlay.appendChild(traveler);
+
     // Sibling scan-line above the cover (z-index 9991): kept OUT of the overlay
     // so it stays crisp during the reveal fade instead of dimming with it.
     if (typeof makeStaticLine === 'function') {

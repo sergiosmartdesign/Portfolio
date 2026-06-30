@@ -477,6 +477,20 @@
     max-width: 60ch;
     margin-top: 0;
   }
+
+  /* The stacked title's line offsets are hard-coded px tuned for 4rem. Express
+     them in em (relative to each line's own size) so the whole composition
+     scales when about-title-fit.js sizes the title to fill the viewport width. */
+  #about #abouttitle .title-line-2 {
+    margin-top: -0.5em;     /* was -70px @140.8px */
+    margin-left: -0.05em;   /* was -7px */
+  }
+  #about #abouttitle .title-line-3 {
+    top: -1em;              /* was -64px @64px */
+  }
+  #about #abouttitle .title-line-4 {
+    top: -1.28em;           /* was -90px @70.4px */
+  }
 }
 
 @keyframes aboutBar2FadeIn  { from { opacity: 0; } to { opacity: 1; } }
