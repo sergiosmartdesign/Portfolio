@@ -448,10 +448,24 @@
      stack the head as a single column and center the big title in the orange
      (amber-duotone) backdrop, just below the bar2 svg; the bio, badge, quote and
      two-column block then flow below it. */
+  /* .about-top carries a desktop-only margin-left:54px (aligns its border to the
+     vertical bar2 svg) + spacing-md side padding — both just steal width on a
+     phone, where bar2 is now a horizontal top bar. Drop them so .about-top spans
+     the full section content width and the title can fill it. */
+  #about .about-top {
+    margin-left: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
   #about .about-top-head {
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-lg);
+    /* #about is a flex column with align-items:center, so without an explicit
+       width the head shrinks to its content — which caps how wide the title can
+       grow. Force full width so the hero column (and the fitted title) span the
+       viewport edge to edge. */
+    width: 100%;
   }
   #about .about-intro {
     flex-direction: column;
