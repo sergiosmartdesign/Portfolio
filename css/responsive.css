@@ -452,10 +452,17 @@
      vertical bar2 svg) + spacing-md side padding — both just steal width on a
      phone, where bar2 is now a horizontal top bar. Drop them so .about-top spans
      the full section content width and the title can fill it. */
+  /* Pull the whole stack up under the bar2 svg. The section's 64px top padding
+     leaves a big gap below the bar; shrink it to just clear the rotated bar's
+     thickness (height:150vw × 37.5/997.6 ≈ 5.64vw) plus a hair. */
+  #about {
+    padding-top: calc(5.64vw + 6px);
+  }
   #about .about-top {
     margin-left: 0;
     padding-left: 0;
     padding-right: 0;
+    padding-top: 0;
   }
   #about .about-top-head {
     flex-direction: column;
@@ -478,10 +485,10 @@
     text-align: center;
     align-self: center;
     order: 0;
-    /* small gap under the top bar; -1.4em collapses the title's empty bottom
-       (line-4 sits high) so the badge tucks right under it — scales because the
-       fitter sets font-size, em-relative. */
-    margin: var(--spacing-md) 0 -1.4em;
+    /* no top gap (the section padding already clears the bar2); -1.4em collapses
+       the title's empty bottom (line-4 sits high) so the badge tucks right under
+       it — scales because the fitter sets font-size, em-relative. */
+    margin: 0 0 -1.4em;
   }
   /* full-width ID badge, directly below the title message */
   #about .about-id-stack {
