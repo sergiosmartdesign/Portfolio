@@ -456,7 +456,10 @@
      leaves a big gap below the bar; shrink it to just clear the rotated bar's
      thickness (height:150vw × 37.5/997.6 ≈ 5.64vw) plus a hair. */
   #about {
-    padding-top: calc(5.64vw + 6px);
+    /* clear the rotated bar2 (~5.64vw thick) + extra room: the title's tight
+       line-height lets line-1 glyphs overshoot their box top, so give it a bit
+       more so "·Hello!" never rides up into the bar. */
+    padding-top: calc(5.64vw + var(--spacing-lg));
   }
   #about .about-top {
     margin-left: 0;
