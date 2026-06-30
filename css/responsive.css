@@ -485,10 +485,13 @@
     text-align: center;
     align-self: center;
     order: 0;
-    /* no top gap (the section padding already clears the bar2); -1.4em collapses
-       the title's empty bottom (line-4 sits high) so the badge tucks right under
-       it — scales because the fitter sets font-size, em-relative. */
-    margin: 0 0 -1.4em;
+    /* Tight line-height packs the 4 lines so they barely touch — and unlike the
+       old `top:-Xem` shifts (visual only → left phantom flow space that needed a
+       -1.4em margin hack and overlapped the badge), line-height changes the real
+       line boxes, so the title's flow height matches what's drawn and the badge
+       sits cleanly below (about-top-head gap). */
+    margin: 0;
+    line-height: 0.82;
   }
   /* full-width ID badge, directly below the title message */
   #about .about-id-stack {
@@ -511,14 +514,13 @@
      them in em (relative to each line's own size) so the whole composition
      scales when about-title-fit.js sizes the title to fill the viewport width. */
   #about #abouttitle .title-line-2 {
-    margin-top: -0.3em;     /* loosened so Hello!/I'm barely touch */
+    margin-top: 0;
     margin-left: -0.05em;   /* was -7px */
   }
-  #about #abouttitle .title-line-3 {
-    top: -0.4em;            /* loosened so I'm/Sergio barely touch */
-  }
+  #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: -0.6em;            /* keep Sergio/Ayala rhythm in step */
+    top: 0;                 /* drop the phantom-space relative shifts */
+    margin-top: 0;
   }
 }
 
