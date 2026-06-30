@@ -519,7 +519,7 @@
   #about #abouttitle .title-line-2 {
     margin-top: 0;
     margin-left: -0.05em;   /* was -7px */
-    top: -10px;             /* nudge just "I'm" up 10px (relative; flow unchanged) */
+    top: -8px;              /* nudge just "I'm" up 8px (relative; flow unchanged) */
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
