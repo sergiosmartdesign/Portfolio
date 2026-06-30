@@ -193,6 +193,12 @@ class ParticleSystem {
     this.gridSteps = Math.floor((gridRadius * 2) / gridSize);
     this.grid = [];
 
+    // Only spots a particle has actually occupied ever carry busyAge > 0, so we
+    // track them here and age just those (see updateGridAges). Without this the
+    // age pass scans the full ~15,625-spot grid every frame — wasted budget that
+    // shows up as jank when a heavy reflow shares the frame (the nav transition).
+    this.busySpots = new Set();
+
     let spotIndex = 0;
     const edgeMin = -gridRadius;
     const edgeMax = edgeMin + gridSize * (this.gridSteps - 1);
@@ -245,11 +251,9 @@ class ParticleSystem {
    * Increment busy ages for all grid spots
    */
   updateGridAges() {
-    for (let i = 0; i < this.grid.length; i++) {
-      if (this.grid[i].busyAge > 0) {
-        this.grid[i].busyAge++;
-      }
-    }
+    // Equivalent to "for every spot with busyAge > 0, busyAge++" — but only the
+    // touched spots are ever in that set, so this skips the full-grid scan.
+    for (const spot of this.busySpots) spot.busyAge++;
   }
 
   /**
@@ -376,6 +380,7 @@ class ParticleSystem {
       particle.attractor.oldIndex = index;
       particle.attractor.gridSpotIndex = maxFieldSpot.spotIndex;
       maxFieldSpot.busyAge = 1;
+      this.busySpots.add(maxFieldSpot);   // now needs per-frame ageing
       return maxFieldSpot;
     }
 

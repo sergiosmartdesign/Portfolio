@@ -37,6 +37,64 @@
   document.body.prepend(overlay);
   document.body.classList.add('preloading');
 
+  /* ── Electric scan-lines (decorative) ──────────────────────────────────────
+     A few static lines sweep the viewport at random — some up, some down — for
+     the life of the preloader. Reuses makeStaticLine (static-line.js), which is
+     loaded via a DEFERRED script and therefore not defined yet at this point;
+     wait for DOMContentLoaded (deferred scripts have run by then, well before
+     100%). Degrades to a no-op if static-line.js is unavailable. (Not gated on
+     reduced-motion — the loader's particles + glitch text already animate.) */
+  (function initScanLines() {
+    const start = () => {
+      if (typeof window.makeStaticLine !== 'function') return; // graceful no-op
+
+      const layer = document.createElement('div');
+      layer.className = 'preloader-lines';
+      layer.setAttribute('aria-hidden', 'true');
+      overlay.appendChild(layer);
+
+      const LINE_COUNT = 3;
+      const fxList = [];
+      let stopped = false;
+
+      for (let i = 0; i < LINE_COUNT; i++) {
+        const cv = document.createElement('canvas');
+        cv.className = 'preloader-line';
+        layer.appendChild(cv);
+
+        const fx = window.makeStaticLine(cv, { shadow: false }); // glow via CSS
+        fx.show();                       // start the per-frame static jitter
+        fxList.push(fx);
+
+        // One pass: random direction + speed; relaunches itself after a random
+        // gap so the field of lines never falls into a fixed rhythm.
+        const sweep = () => {
+          if (stopped) return;
+          const dir = Math.random() < 0.5 ? 'plLineUp' : 'plLineDown';
+          const dur = 900 + Math.random() * 1400;   // 0.9–2.3s per pass
+          cv.style.animation = 'none';
+          void cv.offsetWidth;                       // reflow → replay
+          cv.style.animation = `${dir} ${dur}ms linear forwards`;
+        };
+        cv.addEventListener('animationend', () => {
+          if (stopped) return;
+          setTimeout(sweep, 200 + Math.random() * 900);   // random gap
+        });
+        setTimeout(sweep, Math.random() * 1200);     // staggered first launch
+      }
+
+      // Stop scheduling + cancel the jitter rAFs the moment the loader exits,
+      // so nothing keeps running once the overlay is removed.
+      window.addEventListener('preloaderExiting', () => {
+        stopped = true;
+        fxList.forEach(fx => fx.hide());
+      }, { once: true });
+    };
+
+    if (typeof window.makeStaticLine === 'function') start();
+    else window.addEventListener('DOMContentLoaded', start, { once: true });
+  }());
+
   /* ── Helpers ────────────────────────────────────────────────────────────── */
   function makeGlitchSpan(char, charIndex) {
     const span = document.createElement('span');

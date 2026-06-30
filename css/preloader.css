@@ -48,12 +48,51 @@ body.preloading header *::after {
    which is also the stage's center). */
 .preloader-stage {
   position: relative;
-  z-index: 1; /* above the #particleCanvas injected by particle-system.js */
+  z-index: 2; /* above the scan-lines (z 1) and the #particleCanvas (z auto) */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 90px;
+}
+
+/* ── Electric scan-lines ──────────────────────────────────────────────────
+   A few "electric static" lines (reuse js/static-line.js) sweep the viewport
+   at random — some up, some down — for the life of the preloader. They sit
+   ABOVE the particle canvas but BELOW the loading text, so [ LOADING ] and the
+   % stay crisp. Travel + fade run on the compositor (transform + opacity). */
+.preloader-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;       /* clip the glow as a line exits past an edge */
+}
+
+.preloader-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  opacity: 0;             /* keyframes fade each pass in/out at the ends */
+  will-change: transform, opacity;
+  transform: translate3d(0, 100vh, 0);   /* parked off-screen at rest */
+  filter: drop-shadow(0 0 3px #0ef) drop-shadow(0 0 7px #0ef);
+}
+
+@keyframes plLineUp {
+  0%   { transform: translate3d(0, 100vh, 0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate3d(0, -8px, 0);  opacity: 0; }
+}
+
+@keyframes plLineDown {
+  0%   { transform: translate3d(0, -8px, 0);  opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate3d(0, 100vh, 0); opacity: 0; }
 }
 
 /* ── Label (above the line) + percentage counter (below it) ─────────────── */

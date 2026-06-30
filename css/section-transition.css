@@ -1,0 +1,78 @@
+/* ═══ SECTION TRANSITION — interstitial particle wipe (desktop only) ════════
+   Full-viewport overlay that masks the instant scroll jump between sections.
+   Reuses the ParticleSystem class — the same multicolor #001219 swarm as the
+   #preloader — driven by js/section-transition.js and orchestrated from
+   NavigationManager.goToSection.
+
+   Fades are COMPOSITOR-DRIVEN: js sets `transition: opacity …` inline per phase,
+   so the cover keeps gliding off the main thread even while the main thread is
+   stalled doing the navigation reflow (the source of the old stutter). Fully
+   inert (visibility:hidden, pointer-events:none) when no transition is running.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+#section-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;            /* below #preloader (9999), above all page content */
+  background: #001219;      /* the dark the viewport turns into */
+  opacity: 0;               /* CSS-transitioned 0→1 (cover) then 1→0 (reveal) */
+  pointer-events: none;     /* never traps input; re-entry guarded in JS */
+  visibility: hidden;       /* inert at rest — JS adds .is-running for a cycle */
+  contain: layout paint;    /* isolate the per-frame canvas repaint from the page */
+}
+
+#section-transition.is-running {
+  visibility: visible;
+  will-change: opacity;     /* promote to its own compositor layer for the fade */
+}
+
+/* The ParticleSystem injects its <canvas> as firstChild (inlinePosition:true →
+   position:absolute; inset:0). Its opacity is faded separately, lagging the
+   #001219 base so the dark establishes first and the particles bloom a beat
+   later ("luego a la par"). */
+#section-transition canvas {
+  opacity: 0;
+}
+
+#section-transition.is-running canvas {
+  will-change: opacity;
+}
+
+/* ── Traveling scan-line ──────────────────────────────────────────────────
+   Horizontal "electric static" line (reuses js/static-line.js for the look)
+   that sweeps from the bottom of the viewport up and out the top, ON TOP of
+   the cover + particle swarm, once per transition. A SIBLING of the overlay
+   (z-index 9991, not a child) so it stays crisp through the reveal fade
+   instead of dimming with it. Travel + fade run as a compositor CSS animation
+   (transform + opacity only) — smooth even while the main thread does the
+   navigation reflow. The cyan glow is a CSS drop-shadow (makeStaticLine is
+   called with shadow:false, so no per-frame canvas shadowBlur). */
+#section-transition-scanline {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  z-index: 9991;            /* above the cover/particles (9990), below #preloader (9999) */
+  opacity: 0;               /* the keyframes fade it in at the bottom, out at the top */
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform: translate3d(0, 100vh, 0);   /* parked just below the viewport at rest */
+  filter: drop-shadow(0 0 3px #0ef) drop-shadow(0 0 7px #0ef);
+}
+
+/* Bottom→top sweep. JS picks this or stScanTravelDown at random per transition. */
+@keyframes stScanTravel {
+  0%   { transform: translate3d(0, 100vh, 0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate3d(0, -8px, 0);  opacity: 0; }
+}
+
+/* Top→bottom sweep (the reverse). */
+@keyframes stScanTravelDown {
+  0%   { transform: translate3d(0, -8px, 0);  opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate3d(0, 100vh, 0); opacity: 0; }
+}

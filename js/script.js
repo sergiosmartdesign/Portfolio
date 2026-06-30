@@ -298,6 +298,10 @@ class NavigationManager {
     this.sectionToButton = new Map();
     this.scrollTimeout = null;
 
+    // Interstitial particle transition (section-transition.js) state.
+    this._reducedMotion   = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this._navTransitioning = false;
+
     this.init();
   }
 
@@ -451,6 +455,30 @@ class NavigationManager {
    * stack duplicate history entries.
    */
   goToSection(sectionId, { pushHash = true } = {}) {
+    // Desktop-only interstitial particle transition (≈1.5s) masks the otherwise
+    // instant scroll jump. Mobile and prefers-reduced-motion keep the original
+    // immediate navigation. The lock stops rapid clicks stacking overlays.
+    // Only on real menu clicks (pushHash true) — deep-links and back/forward
+    // (pushHash false) navigate instantly, no curtain on load or history moves.
+    const useTransition = pushHash
+      && window.SectionTransition
+      && !(window.App && App.BrowserDetect && App.BrowserDetect.isMobile)
+      && !this._reducedMotion.matches;
+
+    if (!useTransition) { this._performNav(sectionId, pushHash); return; }
+    if (this._navTransitioning) return;
+    this._navTransitioning = true;
+    window.SectionTransition.run(() => this._performNav(sectionId, pushHash))
+      .finally(() => { this._navTransitioning = false; });
+  }
+
+  /**
+   * The actual navigation work: scroll target + entrance trigger per section
+   * type. Split out of goToSection so the transition layer can invoke it while
+   * the viewport is hidden under the cover (it's also the direct path when the
+   * transition is disabled).
+   */
+  _performNav(sectionId, pushHash = true) {
     // Tell section widgets a nav jump is happening so they can tear down
     // open overlays (e.g. the art-direction project modal) before the
     // viewport moves — the instant scroll may not trip their observers.
