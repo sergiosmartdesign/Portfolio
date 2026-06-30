@@ -435,6 +435,14 @@
     animation: aboutBar2FadeOut 0.5s ease-in 0s forwards;
   }
 
+  /* The amber robot backdrop (#about::after) is inset left:50px right:50px on
+     desktop, leaving dark bands down both sides on a phone. Pull it full-bleed
+     so the image runs edge to edge. */
+  #about::after {
+    left: 0;
+    right: 0;
+  }
+
   /* ── "·Hello! I'm Sergio Ayala·" hero title ──────────────────────────────────
      Desktop puts the title + bio + id badge in one left-aligned row. On a phone
      stack the head as a single column and center the big title in the orange
