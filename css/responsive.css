@@ -511,14 +511,14 @@
      them in em (relative to each line's own size) so the whole composition
      scales when about-title-fit.js sizes the title to fill the viewport width. */
   #about #abouttitle .title-line-2 {
-    margin-top: -0.5em;     /* was -70px @140.8px */
+    margin-top: -0.3em;     /* loosened so Hello!/I'm barely touch */
     margin-left: -0.05em;   /* was -7px */
   }
   #about #abouttitle .title-line-3 {
-    top: -1em;              /* was -64px @64px */
+    top: -0.4em;            /* loosened so I'm/Sergio barely touch */
   }
   #about #abouttitle .title-line-4 {
-    top: -1.28em;           /* was -90px @70.4px */
+    top: -0.6em;            /* keep Sergio/Ayala rhythm in step */
   }
 }
 
