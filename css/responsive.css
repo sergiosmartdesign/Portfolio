@@ -232,19 +232,24 @@
     bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     z-index: var(--z-layer-10);
     pointer-events: none;
-    /* the orange neon glow, applied via drop-shadow so it traces the inline SVG
-       strokes (box-shadow would only halo the rectangular box). */
-    filter: drop-shadow(0 0 6px var(--orange))
-            drop-shadow(0 0 16px rgba(255, 60, 0, 0.5));
+    /* NOTE: the orange neon glow filter used to live HERE, on the wrapper. It was
+       moved down onto .ifm-svg because iOS/WebKit fails to paint compositing
+       descendants (the ticker overlays' animated transforms) that sit inside a
+       filtered ancestor → the tickers rendered blank on iPhone. The glow only
+       ever traced the SVG strokes anyway, so the visual is unchanged. */
   }
 
   /* Inline capsule (was a background image) so each line can scale-grow on entry.
      preserveAspectRatio="none" stretches it to fill the frame, exactly as the old
-     background did, so the bars still map to the ticker top: %s above. */
+     background did, so the bars still map to the ticker top: %s above.
+     The neon glow drop-shadow lives here (not on the wrapper) so the tickers are
+     NOT inside a filtered ancestor — see the iOS note above. */
   #intro .intro-frame-mobile .ifm-svg {
     display: block;
     width: 100%;
     height: 100%;
+    filter: drop-shadow(0 0 6px var(--orange))
+            drop-shadow(0 0 16px rgba(255, 60, 0, 0.5));
   }
   #intro .intro-frame-mobile .ifm-svg path {
     fill: none;
@@ -349,6 +354,28 @@
 @keyframes ifmTicker {
   to { transform: translateX(-50%); }
 }
+
+/* ── iOS / WebKit ticker hardening ──────────────────────────────────────────
+   iPhone Safari & Chrome (both WebKit) painted the tickers blank. Two WebKit
+   quirks: (1) content inside a filtered ancestor + will-change/clip-path fails
+   to composite (the wrapper filter was already moved onto .ifm-svg above), and
+   (2) animating clip-path with fill-mode:both can pin the element on frame-0
+   (opacity 0). Here we drop the layer-promotion hint and swap the clip-path
+   glitch-in for a plain opacity fade — WebKit-bulletproof, keeps the marquee.
+   @supports(-webkit-touch-callout) matches ONLY iOS WebKit (inert on desktop
+   Safari AND Android/Blink), so desktop + Android stay byte-for-byte. */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 768px) {
+    #intro .intro-frame-mobile .ifm-ticker-track { will-change: auto; }
+    body:not(.preloading) #intro .intro-frame-mobile .ifm-ticker--top {
+      animation: ifmTickerFadeIn 0.5s linear 0.75s both;
+    }
+    body:not(.preloading) #intro .intro-frame-mobile .ifm-ticker--bottom {
+      animation: ifmTickerFadeIn 0.5s linear 0.95s both;
+    }
+  }
+}
+@keyframes ifmTickerFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* Desktop: never render the mobile frame (and its ticker). It was an empty,
    unstyled div above 768px before, so display:none keeps desktop byte-for-byte. */

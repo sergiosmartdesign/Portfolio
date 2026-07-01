@@ -95,6 +95,21 @@ body.preloading header *::after {
   100% { transform: translate3d(0, 100vh, 0); opacity: 0; }
 }
 
+/* ── iOS / WebKit fix ────────────────────────────────────────────────────────
+   On iPhone (Safari & Chrome, both WebKit) the scan-lines never appeared. A
+   <canvas> carrying BOTH `will-change` and a `filter: drop-shadow` is promoted
+   to a compositor layer that WebKit then fails to paint (works on desktop &
+   Android/Blink). Fix: on iOS drop the will-change hint and the CSS filter, and
+   render the cyan glow INSIDE the canvas instead (preloader.js passes
+   shadow:true on iOS). @supports(-webkit-touch-callout) is iOS-WebKit only, so
+   desktop + Android are byte-for-byte unchanged. */
+@supports (-webkit-touch-callout: none) {
+  .preloader-line {
+    will-change: auto;
+    filter: none;
+  }
+}
+
 /* ── Label (above the line) + percentage counter (below it) ─────────────── */
 .preloader-label,
 .preloader-pct {

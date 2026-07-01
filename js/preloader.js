@@ -44,6 +44,13 @@
      wait for DOMContentLoaded (deferred scripts have run by then, well before
      100%). Degrades to a no-op if static-line.js is unavailable. (Not gated on
      reduced-motion — the loader's particles + glitch text already animate.) */
+  // iOS WebKit (Safari + Chrome-iOS) mis-paints a canvas that carries both a
+  // will-change hint and a CSS drop-shadow filter → the scan-lines were blank on
+  // iPhone. On iOS we drop that CSS filter (see preloader.css @supports block)
+  // and draw the glow inside the canvas instead (shadow:true, below).
+  const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
   (function initScanLines() {
     const start = () => {
       if (typeof window.makeStaticLine !== 'function') return; // graceful no-op
@@ -62,7 +69,9 @@
         cv.className = 'preloader-line';
         layer.appendChild(cv);
 
-        const fx = window.makeStaticLine(cv, { shadow: false }); // glow via CSS
+        // Desktop/Android: glow via CSS filter. iOS: glow drawn in-canvas
+        // (the CSS filter is disabled on iOS to avoid the blank-layer bug).
+        const fx = window.makeStaticLine(cv, { shadow: IS_IOS });
         fx.show();                       // start the per-frame static jitter
         fxList.push(fx);
 
