@@ -552,12 +552,11 @@
     margin-top: 0;
   }
 
-  /* The Paul Rand quote has a desktop top:-100px nudge that, on a phone, drags
-     it up over the bio. Drop it so the animated block sits in flow below the
-     id1.svg/bio, and shrink the type a touch so the line fits the viewport. */
+  /* Remove the animated Paul Rand quote on phones (owner request 2026-07-01).
+     Desktop keeps it (this is inside the ≤768px block). about-pin.js still runs
+     its visibility-gated loop on the now-hidden node — harmless (no layout/paint). */
   #about .paul-rands-quote {
-    top: 0;
-    font-size: clamp(1.4rem, 6.6vw, 2.4rem);
+    display: none;
   }
 
   /* The stacked title's line offsets are hard-coded px tuned for 4rem. Express
