@@ -570,7 +570,8 @@
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: -40px;             /* "Sergio"+"Ayala·" as a group (was -80px; block +40px down) */
+    top: 0px;               /* "Sergio"+"Ayala·" group — dropped +40px more so it clears
+                               the tall 2.2em "I'm" (was -40px, orig -80px) */
     margin-top: 0;
   }
 }
