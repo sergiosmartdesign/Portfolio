@@ -572,7 +572,7 @@
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: -37px;             /* "Sergio"+"Ayala·" group (dropped 30px from -67px, which
+    top: -39px;             /* "Sergio"+"Ayala·" group (dropped 28px from -67px, which
                                overlapped "I'm" too much) */
     margin-top: 0;
   }
