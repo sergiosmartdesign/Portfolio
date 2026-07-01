@@ -572,8 +572,8 @@
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: -65px;             /* "Sergio"+"Ayala·" pulled up to just touch the bottom of
-                               "I'm" (was -40px; -80px overlapped) */
+    top: -70px;             /* "Sergio"+"Ayala·" pulled up to touch the bottom of
+                               "I'm" (was -65px, small gap; -80px overlapped) */
     margin-top: 0;
   }
 }
