@@ -37,4 +37,8 @@ Thumbs.db
 
 # Archivos temporales
 *.tmp
-*.swpexample/images/*.mp4
+*.swp
+example/images/*.mp4
+
+# Brief local del agente Robotino (notas de sesión responsive) — NO subir a GitHub
+RESPONSIVE-SESSION.md
