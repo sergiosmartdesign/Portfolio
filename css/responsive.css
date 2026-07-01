@@ -566,11 +566,11 @@
   #about #abouttitle .title-line-2 {
     margin-top: 0;
     margin-left: -0.05em;   /* was -7px */
-    top: -8px;              /* nudge just "I'm" up 8px (relative; flow unchanged) */
+    top: 32px;              /* "I'm" (was -8px; whole I'm/Sergio/Ayala block +40px down) */
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: -80px;             /* move "Sergio"+"Ayala·" up 80px as a group */
+    top: -40px;             /* "Sergio"+"Ayala·" as a group (was -80px; block +40px down) */
     margin-top: 0;
   }
 }
