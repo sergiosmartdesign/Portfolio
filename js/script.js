@@ -908,26 +908,33 @@ function initAboutAnimations() {
   // SVG decoration bars — looser threshold so they trigger reliably on short screens
   // (the -20% rootMargin in elementObserverOptions pushes bar1 off-screen at ~900 px height).
   const decorationObserverOptions = { threshold: 0.1, rootMargin: '0px' };
-  const createDecorationObserver = (selector) => {
+  const isMobileDevice = !!(window.App && App.BrowserDetect && App.BrowserDetect.isMobile);
+  const createDecorationObserver = (selector, opts = {}) => {
     document.querySelectorAll(selector).forEach(el => {
       let hasEntered = false;
-      new IntersectionObserver((entries) => {
+      const io = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             hasEntered = true;
             el.classList.remove('element-exit');
             el.classList.add('element-visible');
+            // Mobile only: play the entrance once and keep it. The default
+            // enter/exit toggle re-added element-visible on every scroll-in, so
+            // bar2 re-ran its slide-in — read as a glitchy flicker on phones.
+            // Desktop keeps the full enter/exit pair (unchanged).
+            if (opts.onceOnMobile && isMobileDevice) io.unobserve(el);
           } else if (hasEntered) {
             el.classList.remove('element-visible');
             el.classList.add('element-exit');
           }
         });
-      }, decorationObserverOptions).observe(el);
+      }, decorationObserverOptions);
+      io.observe(el);
     });
   };
 
   createDecorationObserver('.decoration-bar1');
-  createDecorationObserver('.decoration-bar2');
+  createDecorationObserver('.decoration-bar2', { onceOnMobile: true });
   createDecorationObserver('.decoration-certs1');
   createDecorationObserver('.decoration-vtv1');
 
