@@ -179,20 +179,22 @@ const WORKS_DATA = {
     },
     {
       num: '04', cat: 'Identity', title: 'Bon Appétit', sub: 'Diseño de logo para marca de panadería',
-      desc: 'Logo para una panadería local. El concepto transforma las iniciales de Bon Appétit —la "B" y la "A"— en una espiga de trigo. La clienta buscaba un diseño elegante y artesanal; el proyecto se centró en el logotipo, sin desarrollar piezas adicionales de marca.',
+      desc: 'Logo para una panadería local. El concepto transforma las iniciales de Bon Appétit —la "B" y la "A"— en una espiga de trigo. La clienta buscaba un diseño elegante y artesanal.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2019'],['Mode','Freelance']],
       tags: ['Logo','Bakery','Food Brand'],
       bg: 'images/art-direction/logos/sergio-ayala-bon-apetit-bakery-logo-design-colombia-2019.webp'
     },
     {
-      num: '05', cat: 'Identity', title: 'Ceres', sub: 'Logo for natural products e-commerce',
+      num: '05', cat: 'Identity', title: 'Ceres', sub: 'Logo para e-commerce de productos naturales',
+      desc: 'Logo para un emprendimiento de venta de productos naturales. El símbolo parte de una espiga de trigo que se transforma en un horizonte, evocando un amanecer o atardecer sobre un cultivo. La tipografía custom, de inspiración clásica, remite a Ceres —la diosa romana de la agricultura y las cosechas—. El conjunto busca un tono elegante y artesanal, a la vez que moderno.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Organic','E-Commerce'],
       whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/logos/sergio-ayala-ceres-natural-products-ecommerce-logo-2020.webp'
     },
     {
-      num: '06', cat: 'Identity', title: 'Magistrado', sub: 'Logo for Latin experimental music band',
+      num: '06', cat: 'Identity', title: 'Magistrado Tocineta', sub: 'Logo/mascota para banda de música experimental',
+      desc: 'Logo y mascota para <a href="https://www.instagram.com/magistrado_tocineta_oficial" target="_blank" rel="noopener noreferrer">Magistrado Tocineta</a>, una banda de rock y fusión latina experimental. El personaje es un cerdo corrupto y politiquero —con corbatín de tocino— inspirado en los <em>cartoons</em> vintage de los años 20 y 30, presentado dentro de un sello que parodia el de aprobación de contratos políticos.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
       tags: ['Logo','Music','Identity'],
       whiteBg: true, // logo has transparency — render on a white surface
@@ -203,7 +205,11 @@ const WORKS_DATA = {
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
       tags: ['Logo','Startup','Food Brand'],
       whiteBg: true, // logo has transparency — render on a white surface
-      bg: 'images/art-direction/logos/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp'
+      bg: 'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp',
+      images: [
+        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp',
+        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-recipe-card-oyster-mushroom-brand-colombia-2020.webp'
+      ]
     },
     {
       num: '08', cat: 'Identity', title: 'RetroTech', sub: 'Logo for recycled tech furniture brand',
