@@ -37,6 +37,18 @@
      decorative elements that bleed past the viewport edge on small screens. */
   html {
     overflow-x: clip;
+    /* iOS/WebKit hardening (inert on desktop engines):
+       · text-size-adjust — stop Safari inflating type on orientation change,
+         which would blow up the width-fitted #about title.
+       · tap-highlight — remove the gray flash when tapping nav/links. */
+    -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Momentum scrolling for any inner scroll areas on iOS. */
+  body {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
