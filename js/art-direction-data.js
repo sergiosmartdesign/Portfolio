@@ -145,8 +145,8 @@ const WORKS_DATA = {
   ],
   identity: [
     {
-      num: '01', cat: 'Identity', title: 'Travels Gourmet', sub: 'Full brand identity for culinary tourism',
-      desc: 'Complete identity for a culinary tourism venture operating between Colombia and Chile — logo system, stationery and print collateral built around a warm gastronomic palette. The mark pairs travel iconography with kitchen craft, extended across <a href="#" target="_blank" rel="noopener noreferrer">letterhead</a> and a <a href="#" target="_blank" rel="noopener noreferrer">presentation folder</a>.',
+      num: '01', cat: 'Identity', title: 'Travels Gourmet', sub: 'Identidad de marca para logística y alimentos',
+      desc: 'Identidad completa para una empresa de logística y productos alimenticios con sede en Colombia y Chile — sistema de logo y papelería. El cliente buscaba un diseño simple y corporativo: una paleta neutra apoyada en un juego tipográfico define el tono de la marca y unifica todas las piezas del sistema.',
       specs: [['Scope','Logo · Stationery · Print'],['Tools','Illustrator · InDesign'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Identity','Print'],
       whiteBg: true, // artwork has transparency — render on a white surface
@@ -160,7 +160,8 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '02', cat: 'Identity', title: 'Cata — Event Manager', sub: 'Business card & stationery system',
+      num: '02', cat: 'Identity', title: 'Cata — Event Manager', sub: 'Tarjeta de presentación y sistema de papelería',
+      desc: 'Marca personal para <a href="https://www.linkedin.com/in/catalina-ballesteros-a75a4527/" target="_blank" rel="noopener noreferrer">Catalina Ballesteros</a>, en ese momento organizadora independiente de eventos corporativos. El concepto es colorido y dinámico: un juego tipográfico transforma la "C" en un bombillo encendido —el referente universal de la idea— sobre un fondo de engranajes que representa cómo las ideas de Catalina encajan con las de sus clientes para desarrollar grandes eventos. La clienta buscaba una tarjeta de presentación personal, colorida y con elementos que hicieran referencia a sus ideas y a su trabajo en equipo.',
       specs: [['Scope','Business Card · Stationery'],['Tools','Illustrator · InDesign'],['Year','2021'],['Mode','Freelance']],
       tags: ['Stationery','Print','Identity'],
       bg: 'images/art-direction/Cata/sergio-ayala-event-manager-business-card-design-2021.webp',
@@ -171,12 +172,14 @@ const WORKS_DATA = {
     },
     {
       num: '03', cat: 'Identity', title: 'Animated Personal Logo', sub: '169-frame brand animation, 8 seconds',
-      specs: [['Scope','Identity · Motion · Brand'],['Tools','After Effects · Illustrator'],['Year','2019'],['Mode','Personal']],
+      desc: 'Logo animado que usé como marca de mi antigua página web (hoy fuera de línea). Es un juego de palabras entre mis iniciales y la palabra <em>smart</em>, que a su vez contiene <em>art</em>: la "a" —destacada en forma de lápiz— es la de mi apellido, Ayala. La pieza ilustra cómo se exprime un cerebro para sacar la idea, dibujada con un trazo continuo que al final se transforma en la "A". Animada cuadro a cuadro en Procreate como parte de mi propio branding.',
+      specs: [['Scope','Identity · Motion · Brand'],['Tools','Procreate'],['Year','2019'],['Mode','Personal']],
       tags: ['Identity','Motion','Brand'],
       bg: 'images/art-direction/sergio-ayala-animated-portfolio-logo-art-direction.webp'
     },
     {
-      num: '04', cat: 'Identity', title: 'Bon Appétit', sub: 'Logo design for bakery food brand',
+      num: '04', cat: 'Identity', title: 'Bon Appétit', sub: 'Diseño de logo para marca de panadería',
+      desc: 'Logo para una panadería local. El concepto transforma las iniciales de Bon Appétit —la "B" y la "A"— en una espiga de trigo. La clienta buscaba un diseño elegante y artesanal; el proyecto se centró en el logotipo, sin desarrollar piezas adicionales de marca.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2019'],['Mode','Freelance']],
       tags: ['Logo','Bakery','Food Brand'],
       bg: 'images/art-direction/logos/sergio-ayala-bon-apetit-bakery-logo-design-colombia-2019.webp'
