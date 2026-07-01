@@ -550,6 +550,10 @@
     margin: 0;
     align-self: stretch;
   }
+  /* nudge the id1.svg badge up 30px (owner request 2026-07-01) */
+  #about #id1svg {
+    margin-top: -30px;
+  }
   /* bio: below the badge, left-aligned (centred body copy reads poorly) */
   #about .about-top-head #aboutp1 {
     order: 2;
