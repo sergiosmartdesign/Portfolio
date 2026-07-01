@@ -91,8 +91,31 @@
   let fx       = null;    // pooled ParticleSystem instance
   let scanline = null;    // pooled electric-static scan-line canvas
   let scanFx   = null;    // its makeStaticLine() controller ({ show, hide })
+  let traveler = null;    // pooled flipbook container
   let running  = false;
   let lastW    = 0, lastH = 0;
+
+  const travelerFrames = [];      // the 4 stacked .st-frame elements
+  const FRAME_MS = 140;           // per-frame hold for the walk-cycle loop
+  let frameTimer = null;
+  let frameIdx   = 0;
+
+  // Advance the flipbook: exactly one frame carries .is-active at a time.
+  function startFlipbook() {
+    if (!travelerFrames.length) return;
+    stopFlipbook();
+    frameIdx = 0;
+    travelerFrames.forEach((f, i) => f.classList.toggle('is-active', i === 0));
+    frameTimer = setInterval(() => {
+      travelerFrames[frameIdx].classList.remove('is-active');
+      frameIdx = (frameIdx + 1) % travelerFrames.length;
+      travelerFrames[frameIdx].classList.add('is-active');
+    }, FRAME_MS);
+  }
+
+  function stopFlipbook() {
+    if (frameTimer) { clearInterval(frameTimer); frameTimer = null; }
+  }
 
   /**
    * Restart the bottom→top scan-line sweep. The electric-static look reuses the
@@ -140,20 +163,27 @@
     lastW = window.innerWidth;
     lastH = window.innerHeight;
 
-    // Glowing "time traveler" figure that materialises inside the swarm's
-    // central vortex (the particles orbit a radial field ~320px wide at the
-    // canvas centre). Child of the overlay so it fades with the cover/reveal;
-    // painted above the particle canvas but below the scan-lines. Inlined (not
-    // an <img>) so CSS can recolour + glow each of its paths individually and
-    // stagger them in. The source art is solid black; CSS sets the fill.
-    const traveler = document.createElement('div');
+    // Glowing "time traveler" figure at the centre of the swarm's vortex (the
+    // particles orbit a radial field ~320px wide at the canvas centre). Child of
+    // the overlay so it fades with the cover/reveal; painted above the particle
+    // canvas but below the scan-lines. It's a 4-frame flipbook: each frame is an
+    // inlined SVG (solid-black art, recoloured + glowed by CSS) stacked in the
+    // same box; run() cycles which one is visible for a looping walk.
+    traveler = document.createElement('div');
     traveler.className = 'st-traveler';
     traveler.setAttribute('aria-hidden', 'true');
     overlay.appendChild(traveler);
-    fetch('images/time%20traveler.svg')
-      .then(r => r.text())
-      .then(txt => { traveler.innerHTML = txt.replace(/<\?xml[^>]*\?>/i, ''); })
-      .catch(() => { /* no figure if it can't load — transition still runs */ });
+
+    for (let i = 1; i <= 4; i++) {
+      const frame = document.createElement('div');
+      frame.className = 'st-frame';
+      traveler.appendChild(frame);
+      travelerFrames.push(frame);
+      fetch(`images/time%20travel%20svg/${i}.svg`)
+        .then(r => r.text())
+        .then(txt => { frame.innerHTML = txt.replace(/<\?xml[^>]*\?>/i, ''); })
+        .catch(() => { /* a missing frame just drops from the loop */ });
+    }
 
     // Sibling scan-line above the cover (z-index 9991): kept OUT of the overlay
     // so it stays crisp during the reveal fade instead of dimming with it.
@@ -189,6 +219,7 @@
     overlay.classList.add('is-running');
     fx.resume();
     startScanline();   // one bottom→top sweep, spanning the whole transition
+    startFlipbook();   // loop the 4-frame walk cycle (fades in with the figure)
 
     // ── COVER ───────────────────────────────────────────────────────────────
     // #001219 base establishes first; the swarm blooms a beat later.
@@ -217,6 +248,7 @@
     canvas.style.opacity    = '0';
     fx.pause();
     stopScanline();
+    stopFlipbook();
     running = false;
   }
 
