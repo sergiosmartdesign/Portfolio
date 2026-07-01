@@ -908,33 +908,47 @@ function initAboutAnimations() {
   // SVG decoration bars — looser threshold so they trigger reliably on short screens
   // (the -20% rootMargin in elementObserverOptions pushes bar1 off-screen at ~900 px height).
   const decorationObserverOptions = { threshold: 0.1, rootMargin: '0px' };
-  const isMobileDevice = !!(window.App && App.BrowserDetect && App.BrowserDetect.isMobile);
-  const createDecorationObserver = (selector, opts = {}) => {
+  // Match the EXACT breakpoint that owns bar2's slide-in CSS (responsive.css
+  // @media max-width:768px), not App.BrowserDetect.isMobile — the UA/isMobile
+  // flag can disagree with the width query, which left the flicker in place.
+  const isPhoneWidth = window.matchMedia('(max-width: 768px)').matches;
+  const createDecorationObserver = (selector) => {
     document.querySelectorAll(selector).forEach(el => {
       let hasEntered = false;
-      const io = new IntersectionObserver((entries) => {
+      new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             hasEntered = true;
             el.classList.remove('element-exit');
             el.classList.add('element-visible');
-            // Mobile only: play the entrance once and keep it. The default
-            // enter/exit toggle re-added element-visible on every scroll-in, so
-            // bar2 re-ran its slide-in — read as a glitchy flicker on phones.
-            // Desktop keeps the full enter/exit pair (unchanged).
-            if (opts.onceOnMobile && isMobileDevice) io.unobserve(el);
           } else if (hasEntered) {
             el.classList.remove('element-visible');
             el.classList.add('element-exit');
           }
         });
-      }, decorationObserverOptions);
-      io.observe(el);
+      }, decorationObserverOptions).observe(el);
     });
   };
 
   createDecorationObserver('.decoration-bar1');
-  createDecorationObserver('.decoration-bar2', { onceOnMobile: true });
+  // bar2: on phones, slide it in ONCE when #about is ≥20% visible, then leave it
+  // in its final position (no enter/exit toggle → no re-slide / flicker). Desktop
+  // keeps the standard per-element enter/exit observer, unchanged.
+  if (isPhoneWidth && aboutSection) {
+    let bar2Entered = false;
+    new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !bar2Entered) {
+          bar2Entered = true;
+          document.querySelectorAll('.decoration-bar2')
+            .forEach(el => { el.classList.remove('element-exit'); el.classList.add('element-visible'); });
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.2 }).observe(aboutSection);
+  } else {
+    createDecorationObserver('.decoration-bar2');
+  }
   createDecorationObserver('.decoration-certs1');
   createDecorationObserver('.decoration-vtv1');
 
