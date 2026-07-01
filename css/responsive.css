@@ -513,6 +513,14 @@
     margin-top: 0;
   }
 
+  /* The Paul Rand quote has a desktop top:-100px nudge that, on a phone, drags
+     it up over the bio. Drop it so the animated block sits in flow below the
+     id1.svg/bio, and shrink the type a touch so the line fits the viewport. */
+  #about .paul-rands-quote {
+    top: 0;
+    font-size: clamp(1.4rem, 6.6vw, 2.4rem);
+  }
+
   /* The stacked title's line offsets are hard-coded px tuned for 4rem. Express
      them in em (relative to each line's own size) so the whole composition
      scales when about-title-fit.js sizes the title to fill the viewport width. */
