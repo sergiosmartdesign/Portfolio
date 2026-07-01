@@ -466,13 +466,11 @@
     transform-origin: top left;
   }
   /* The desktop reveal (slideDownFade) animates transform and would clobber the
-     rotation. Instead draw the bar in with a clip-path wipe: it composes UNDER
-     the transform (clip is applied in the element's local space, then rotated),
-     so the rotation is preserved. The wipe runs along the SVG's long axis (its
-     height), which maps to screen-width after rotate(90deg) — the bar draws in
-     from the left and plants the "[·About·]" flag at the right edge last. */
+     rotation. Slide the bar in instead: the keyframes carry the FULL transform
+     (rotation preserved) and add a leading screen-space translateX that starts
+     the bar off the left edge and settles it into place. */
   #about .decoration-bar2.element-visible {
-    animation: aboutBar2DrawIn 1s cubic-bezier(.22, 1, .36, 1) 0s forwards;
+    animation: aboutBar2SlideIn 0.8s cubic-bezier(.22, 1, .36, 1) 0s forwards;
   }
   @media (prefers-reduced-motion: reduce) {
     #about .decoration-bar2.element-visible {
@@ -587,13 +585,12 @@
 }
 
 @keyframes aboutBar2FadeIn  { from { opacity: 0; } to { opacity: 1; } }
-/* Draw the rotated bar2 in along its long axis (left→right on screen, flag last).
-   inset(0 0 100% 0) = clipped from the bottom up (only the y=0 end shows) →
-   inset(0) fully revealed. opacity pops early so the growing edge is visible. */
-@keyframes aboutBar2DrawIn {
-  from { opacity: 0; clip-path: inset(0 0 100% 0); }
-  15%  { opacity: 1; }
-  to   { opacity: 1; clip-path: inset(0 0 0 0); }
+/* Slide the rotated bar2 in from off the left edge. The leading translateX is a
+   screen-space (pre-rotate) shift that adds to the base translateX; the rest of
+   the transform matches the base rule so `forwards` fill lands with no jump. */
+@keyframes aboutBar2SlideIn {
+  from { opacity: 0; transform: translateX(-100vw) translateX(calc(-50vw - 8px)) rotate(90deg) translateY(-100%); }
+  to   { opacity: 1; transform: translateX(0)      translateX(calc(-50vw - 8px)) rotate(90deg) translateY(-100%); }
 }
 @keyframes aboutBar2FadeOut { from { opacity: 1; } to { opacity: 0; } }
 
