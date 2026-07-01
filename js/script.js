@@ -931,21 +931,25 @@ function initAboutAnimations() {
   };
 
   createDecorationObserver('.decoration-bar1');
-  // bar2: on phones, slide it in ONCE when #about is ≥20% visible, then leave it
-  // in its final position (no enter/exit toggle → no re-slide / flicker). Desktop
-  // keeps the standard per-element enter/exit observer, unchanged.
-  if (isPhoneWidth && aboutSection) {
-    let bar2Entered = false;
-    new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !bar2Entered) {
-          bar2Entered = true;
-          document.querySelectorAll('.decoration-bar2')
-            .forEach(el => { el.classList.remove('element-exit'); el.classList.add('element-visible'); });
-          obs.disconnect();
-        }
-      });
-    }, { threshold: 0.2 }).observe(aboutSection);
+  // bar2: on phones, observe the bar element itself (reliably fires as #about's
+  // top edge enters — the section is taller than the viewport so a 20%-of-section
+  // threshold could never be met, leaving bar2 invisible). ONE-SHOT: on the first
+  // intersection add element-visible and disconnect, so the slide-in plays once
+  // and holds its final position — no enter/exit toggle, no re-slide flicker.
+  // Desktop keeps the standard per-element enter/exit observer, unchanged.
+  if (isPhoneWidth) {
+    document.querySelectorAll('.decoration-bar2').forEach(el => {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            el.classList.remove('element-exit');
+            el.classList.add('element-visible');
+            io.disconnect();
+          }
+        });
+      }, decorationObserverOptions);
+      io.observe(el);
+    });
   } else {
     createDecorationObserver('.decoration-bar2');
   }
