@@ -563,15 +563,16 @@
   /* The stacked title's line offsets are hard-coded px tuned for 4rem. Express
      them in em (relative to each line's own size) so the whole composition
      scales when about-title-fit.js sizes the title to fill the viewport width. */
+  /* I'm/Sergio/Ayala move as one block (same -40px delta on both) — keeps their
+     internal spacing (no re-overlap) while pulling the group up closer to ·Hello!. */
   #about #abouttitle .title-line-2 {
     margin-top: 0;
     margin-left: -0.05em;   /* was -7px */
-    top: 32px;              /* "I'm" (was -8px; whole I'm/Sergio/Ayala block +40px down) */
+    top: -8px;              /* "I'm" (block pulled up 40px toward ·Hello!) */
   }
   #about #abouttitle .title-line-3,
   #about #abouttitle .title-line-4 {
-    top: 0px;               /* "Sergio"+"Ayala·" group — dropped +40px more so it clears
-                               the tall 2.2em "I'm" (was -40px, orig -80px) */
+    top: -40px;             /* "Sergio"+"Ayala·" group (same 40px up as "I'm") */
     margin-top: 0;
   }
 }
