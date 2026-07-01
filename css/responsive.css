@@ -512,16 +512,17 @@
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
-  }
-  #about .about-top-head {
-    flex-direction: column;
+    /* .about-top is already display:flex/column (base). Own the vertical stack's
+       centering + spacing here since .about-top-head is dissolved below. */
     align-items: center;
     gap: var(--spacing-lg);
-    /* #about is a flex column with align-items:center, so without an explicit
-       width the head shrinks to its content — which caps how wide the title can
-       grow. Force full width so the hero column (and the fitted title) span the
-       viewport edge to edge. */
-    width: 100%;
+  }
+  /* Dissolve .about-top-head so title/badge/bio become flex items of .about-top
+     directly — alongside the bar1 divider — so bar1 can be ordered to sit right
+     under the id badge (title 0 → badge 1 → bar1 2 → bio 3). about-title-fit.js
+     now measures .about-top for width (this node has no box). */
+  #about .about-top-head {
+    display: contents;
   }
   /* Dissolve .about-intro's box so its children (title + bio) become flex items
      of .about-top-head alongside .about-id-stack — lets us order them as a clean
@@ -554,9 +555,13 @@
   #about #id1svg {
     margin-top: -30px;
   }
+  /* bar1 divider sits directly below the id badge (order 1), above the bio (3) */
+  #about .decoration-bar1 {
+    order: 2;
+  }
   /* bio: below the badge, left-aligned (centred body copy reads poorly) */
   #about .about-top-head #aboutp1 {
-    order: 2;
+    order: 3;
     text-align: left;
     align-self: stretch;
     max-width: 60ch;

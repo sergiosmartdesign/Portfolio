@@ -13,9 +13,10 @@
     const title = document.getElementById('abouttitle');
     if (!title) return;
 
-    // Measure the head, not .about-intro: on mobile .about-intro is display:contents
-    // (no box → clientWidth 0). .about-top-head is the full-width hero column.
-    const intro = title.closest('.about-top-head') || title.parentElement;
+    // Measure .about-top: on mobile both .about-intro and .about-top-head are
+    // display:contents (no box → clientWidth 0). .about-top is the full-width
+    // hero column that actually holds the stacked title/badge/bar1/bio.
+    const intro = title.closest('.about-top') || title.parentElement;
     const lines = title.querySelectorAll(
       '.title-line-1, .title-line-2, .title-line-3, .title-line-4'
     );
