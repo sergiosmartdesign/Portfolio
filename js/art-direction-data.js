@@ -81,20 +81,11 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '06', cat: 'Web', title: 'Global Trading Website', sub: 'Web design for food ingredients brand',
-      specs: [['Scope','Web Design · UI · Responsive'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Client']],
+      num: '06', cat: 'Web', title: 'Global Trading Website', sub: 'Sitio web para comercializadora de alimentos',
+      desc: 'Diseño del sitio web de <a href="https://www.instagram.com/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">Global Trading de Colombia</a>, comercializadora de ingredientes alimenticios, principalmente frutos secos, semillas y granos para abastecer negocios. El sitio, bilingüe y en versiones de escritorio y móvil sobre la paleta naranja de la marca, organizaba el catálogo de productos por categorías e incluía un sistema de SEO para optimizar su búsqueda en motores como Google. Es un cliente con el que he trabajado en varios frentes: sus catálogos y piezas impresas para la feria Alimentec están en la disciplina Editorial.',
+      specs: [['Scope','Web Design · SEO · Responsive'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Freelance']],
       tags: ['Web','Responsive','Brand'],
       bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-design-desktop-mobile-2021.webp'
-    },
-    {
-      num: '07', cat: 'Web', title: 'Siemens — Pollaya', sub: 'Copa América prediction game for Siemens employees',
-      specs: [['Scope','Web Design · UI · Game'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Agency']],
-      tags: ['Web','Game','UX/UI'],
-      bg: 'images/art-direction/Sieemens/pollaya/sergio-ayala-siemens-healthineers-pollaya-copa-america-dashboard-2021.png',
-      images: [
-        'images/art-direction/Sieemens/pollaya/sergio-ayala-siemens-healthineers-pollaya-copa-america-dashboard-2021.png',
-        'images/art-direction/Sieemens/pollaya/sergio-ayala-siemens-healthineers-pollaya-copa-america-registro-2021.png'
-      ]
     }
   ],
   editorial: [
