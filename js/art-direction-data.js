@@ -10,7 +10,8 @@
 const WORKS_DATA = {
   web: [
     {
-      num: '01', cat: 'Web', title: 'Alquería Virtual Event', sub: 'UX/UI for virtual event platform',
+      num: '01', cat: 'Web', title: 'Alquería Virtual Event', sub: 'UX/UI para plataforma de evento virtual',
+      desc: 'Diseño UX/UI de la plataforma para un evento virtual de Alquería, la compañía láctea colombiana, realizado durante la pandemia por encargo de la agencia <a href="https://www.linkedin.com/in/amparo-sarmiento-066bb76a/" target="_blank" rel="noopener noreferrer">Somos Producciones</a>. El sitio cubre el flujo completo del asistente: registro, login y sala de streaming con chat en vivo. La gráfica parte del universo de la marca para llevar la identidad al entorno digital del evento.',
       specs: [['Scope','Landing · Login · UX/UI'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Studio']],
       tags: ['UX/UI','Landing','Virtual Event'],
       bg: 'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-01-2021.webp',
@@ -18,10 +19,6 @@ const WORKS_DATA = {
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-01-2021.webp',
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-mockup-02-2021.webp',
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-login-2021.webp',
-        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-streaming-2021.webp',
-        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-landing-homepage-screen-2021.jpg',
-        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-login-screen-2021.jpg',
-        'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-streaming-screen-2021.jpg',
         'images/art-direction/Alqueria/sergio-ayala-alqueria-virtual-event-streaming-logos-screen-2021.jpg'
       ]
     },
