@@ -146,7 +146,7 @@ const WORKS_DATA = {
   identity: [
     {
       num: '01', cat: 'Identity', title: 'Travels Gourmet', sub: 'Identidad de marca para logística y alimentos',
-      desc: 'Identidad completa para una empresa de logística y productos alimenticios con sede en Colombia y Chile — sistema de logo y papelería. El cliente buscaba un diseño simple y corporativo: una paleta neutra apoyada en un juego tipográfico define el tono de la marca y unifica todas las piezas del sistema.',
+      desc: 'Identidad completa para una empresa de logística y productos alimenticios con sede en Colombia y Chile: sistema de logo y papelería. El cliente buscaba un diseño simple y corporativo: una paleta neutra apoyada en un juego tipográfico define el tono de la marca y unifica todas las piezas del sistema.',
       specs: [['Scope','Logo · Stationery · Print'],['Tools','Illustrator · InDesign'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Identity','Print'],
       whiteBg: true, // artwork has transparency — render on a white surface
@@ -161,7 +161,7 @@ const WORKS_DATA = {
     },
     {
       num: '02', cat: 'Identity', title: 'Cata — Event Manager', sub: 'Tarjeta de presentación y sistema de papelería',
-      desc: 'Marca personal para <a href="https://www.linkedin.com/in/catalina-ballesteros-a75a4527/" target="_blank" rel="noopener noreferrer">Catalina Ballesteros</a>, en ese momento organizadora independiente de eventos corporativos. El concepto es colorido y dinámico: un juego tipográfico transforma la "C" en un bombillo encendido —el referente universal de la idea— sobre un fondo de engranajes que representa cómo las ideas de Catalina encajan con las de sus clientes para desarrollar grandes eventos. La clienta buscaba una tarjeta de presentación personal, colorida y con elementos que hicieran referencia a sus ideas y a su trabajo en equipo.',
+      desc: 'Marca personal para <a href="https://www.linkedin.com/in/catalina-ballesteros-a75a4527/" target="_blank" rel="noopener noreferrer">Catalina Ballesteros</a>, en ese momento organizadora independiente de eventos corporativos. El concepto es colorido y dinámico: un juego tipográfico transforma la "C" en un bombillo encendido, el referente universal de la idea, sobre un fondo de engranajes que representa cómo las ideas de Catalina encajan con las de sus clientes para desarrollar grandes eventos. La clienta buscaba una tarjeta de presentación personal, colorida y con elementos que hicieran referencia a sus ideas y a su trabajo en equipo.',
       specs: [['Scope','Business Card · Stationery'],['Tools','Illustrator · InDesign'],['Year','2021'],['Mode','Freelance']],
       tags: ['Stationery','Print','Identity'],
       bg: 'images/art-direction/Cata/sergio-ayala-event-manager-business-card-design-2021.webp',
@@ -172,21 +172,21 @@ const WORKS_DATA = {
     },
     {
       num: '03', cat: 'Identity', title: 'Animated Personal Logo', sub: '169-frame brand animation, 8 seconds',
-      desc: 'Logo animado que usé como marca de mi antigua página web (hoy fuera de línea). Es un juego de palabras entre mis iniciales y la palabra <em>smart</em>, que a su vez contiene <em>art</em>: la "a" —destacada en forma de lápiz— es la de mi apellido, Ayala. La pieza ilustra cómo se exprime un cerebro para sacar la idea, dibujada con un trazo continuo que al final se transforma en la "A". Animada cuadro a cuadro en Procreate como parte de mi propio branding.',
+      desc: 'Logo animado que usé como marca de mi antigua página web (hoy fuera de línea). Es un juego de palabras entre mis iniciales y la palabra <em>smart</em>, que a su vez contiene <em>art</em>: la "a" destacada en forma de lápiz es la de mi apellido, Ayala. La pieza ilustra cómo se exprime un cerebro para sacar la idea, dibujada con un trazo continuo que al final se transforma en la "A". Animada cuadro a cuadro en Procreate como parte de mi propio branding.',
       specs: [['Scope','Identity · Motion · Brand'],['Tools','Procreate'],['Year','2019'],['Mode','Personal']],
       tags: ['Identity','Motion','Brand'],
       bg: 'images/art-direction/sergio-ayala-animated-portfolio-logo-art-direction.webp'
     },
     {
       num: '04', cat: 'Identity', title: 'Bon Appétit', sub: 'Diseño de logo para marca de panadería',
-      desc: 'Logo para una panadería local. El concepto transforma las iniciales de Bon Appétit —la "B" y la "A"— en una espiga de trigo. La clienta buscaba un diseño elegante y artesanal.',
+      desc: 'Logo para una panadería local. El concepto transforma las iniciales de Bon Appétit, la "B" y la "A", en una espiga de trigo. La clienta buscaba un diseño elegante y artesanal.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2019'],['Mode','Freelance']],
       tags: ['Logo','Bakery','Food Brand'],
       bg: 'images/art-direction/logos/sergio-ayala-bon-apetit-bakery-logo-design-colombia-2019.webp'
     },
     {
       num: '05', cat: 'Identity', title: 'Ceres', sub: 'Logo para e-commerce de productos naturales',
-      desc: 'Logo para un emprendimiento de venta de productos naturales. El símbolo parte de una espiga de trigo que se transforma en un horizonte, evocando un amanecer o atardecer sobre un cultivo. La tipografía custom, de inspiración clásica, remite a Ceres —la diosa romana de la agricultura y las cosechas—. El conjunto busca un tono elegante y artesanal, a la vez que moderno.',
+      desc: 'Logo para un emprendimiento de venta de productos naturales. El símbolo parte de una espiga de trigo que se transforma en un horizonte, evocando un amanecer o atardecer sobre un cultivo. La tipografía custom, de inspiración clásica, remite a Ceres, la diosa romana de la agricultura y las cosechas. El conjunto busca un tono elegante y artesanal, a la vez que moderno.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2020'],['Mode','Freelance']],
       tags: ['Logo','Organic','E-Commerce'],
       whiteBg: true, // logo has transparency — render on a white surface
@@ -194,16 +194,16 @@ const WORKS_DATA = {
     },
     {
       num: '06', cat: 'Identity', title: 'Magistrado Tocineta', sub: 'Logo/mascota para banda de música experimental',
-      desc: 'Logo y mascota para <a href="https://www.instagram.com/magistrado_tocineta_oficial" target="_blank" rel="noopener noreferrer">Magistrado Tocineta</a>, una banda de rock y fusión latina experimental. El personaje es un cerdo corrupto y politiquero —con corbatín de tocino— inspirado en los <em>cartoons</em> vintage de los años 20 y 30, presentado dentro de un sello que parodia el de aprobación de contratos políticos.',
+      desc: 'Logo y mascota para <a href="https://www.instagram.com/magistrado_tocineta_oficial" target="_blank" rel="noopener noreferrer">Magistrado Tocineta</a>, una banda de rock y fusión latina experimental. El personaje es un cerdo corrupto y politiquero, con corbatín de tocino, inspirado en los <em>cartoons</em> vintage de los años 20 y 30, presentado dentro de un sello que parodia el de aprobación de contratos políticos.',
       specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
       tags: ['Logo','Music','Identity'],
       whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/logos/sergio-ayala-magistrado-latin-experimental-music-band-logo-2017.webp'
     },
     {
-      num: '07', cat: 'Identity', title: 'Quindiorellanas', sub: 'Identidad y personajes para marca de orellanas',
-      desc: 'Identidad para Quindiorellanas, un emprendimiento quindiano de cultivo de orellanas (setas ostra). El logo es un sello de inspiración vintage: un racimo de orellanas dibujado a mano dentro de una insignia circular. La marca luego se expandió hacia material educativo —recetarios ilustrados y los personajes Hugo y Molly: un hongo grande y sabio, y una pequeña micelio que aprende de sus enseñanzas—, diseños simples para presentaciones y capacitaciones dirigidas al público infantil.',
-      specs: [['Scope','Logo · Identity · Characters'],['Tools','Illustrator'],['Year','2017–2020'],['Mode','Freelance']],
+      num: '07', cat: 'Identity', title: 'Quindiorellanas', sub: 'Identidad, personajes, plantillas para redes y página web',
+      desc: 'Identidad para <a href="https://www.instagram.com/quindiorellanas/" target="_blank" rel="noopener noreferrer">Quindiorellanas</a>, un emprendimiento quindiano de cultivo de setas, principalmente orellanas. El logo es un sello de inspiración vintage: un racimo de orellanas dibujado a mano dentro de una insignia circular. La marca luego se expandió hacia el material educativo: se diseñó una plantilla para recetarios ilustrados y los personajes Hugo y Molly, un hongo grande y sabio y una pequeña micelio que aprende de sus enseñanzas. Son diseños simples para presentaciones y capacitaciones dirigidas al público infantil. Además se desarrolló su página web en WordPress y su blog <a href="https://bajoelsombrerofungi.blogspot.com/" target="_blank" rel="noopener noreferrer">Bajo el Sombrero Fungi</a>.',
+      specs: [['Scope','Identity · Characters · Web'],['Tools','Illustrator · WordPress'],['Year','2017–2020'],['Mode','Freelance']],
       tags: ['Logo','Characters','Food Brand'],
       whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp',
@@ -215,10 +215,11 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '08', cat: 'Identity', title: 'RetroTech', sub: 'Logo for recycled tech furniture brand',
-      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2022'],['Mode','Freelance']],
+      num: '08', cat: 'Identity', title: 'RetroTech', sub: 'Logo para marca de arte con tecnología reciclada',
+      desc: 'Logo para RetroTech, un emprendimiento de arte y mobiliario creado a partir de tecnología reciclada. La mascota es un robot ensamblado con piezas recuperadas: cabeza de bombillo, cuerpo de parlante vintage y extremidades de tubo flexible, irradiando rayos eléctricos. El diseño está inspirado en el art déco y la publicidad radial de los años 20, con tipografía de la época y una paleta de dorado sobre negro que refuerzan el espíritu retro de la marca.',
+      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2021'],['Mode','Freelance']],
       tags: ['Logo','Sustainable','Identity'],
-      bg: 'images/art-direction/logos/sergio-ayala-retrotech-recycled-tech-furniture-brand-logo-2022.webp'
+      bg: 'images/art-direction/logos/sergio-ayala-retrotech-recycled-tech-furniture-brand-logo-2021.webp'
     }
   ],
   // 3D entries carry a `model` (GLB) — the modal stage renders an interactive
