@@ -98,6 +98,7 @@ const WORKS_DATA = {
   editorial: [
     {
       num: '01', cat: 'Editorial', title: 'Catálogos Global Trading 2026', sub: 'Catálogos general y de panificación para Alimentec',
+      desc: 'Pareja de catálogos para <a href="https://www.instagram.com/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">Global Trading de Colombia</a>, diseñados en conjunto para la feria Alimentec 2026: un catálogo general del portafolio y uno especializado en panificación y repostería. Ambos comparten el mismo sistema editorial bajo el lema "Ingredientes que inspiran creación": retículas de producto numeradas con presentaciones y gramajes, fotografía sobre fondo oscuro y la paleta naranja y azul de la marca, presente también en <a href="https://www.linkedin.com/company/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">LinkedIn</a>. Selecciona cada catálogo en las miniaturas para hojearlo.',
       specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2026'],['Mode','Freelance']],
       tags: ['Print','Catalog','Food Industry'],
       bg: 'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-01-2026.webp',
@@ -146,7 +147,7 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '03', cat: 'Editorial', title: 'Global Trading — Product Catalog', sub: 'Catálogo de productos, frutos secos y semillas',
+      num: '03', cat: 'Editorial', title: 'Catálogo Global Trading 2021', sub: 'Catálogo de productos, frutos secos y semillas',
       desc: 'Catálogo de productos de Global Trading de Colombia, una pieza extra que la marca encargó junto al sitio web. Sus 20 páginas organizan el portafolio de frutos secos, semillas, granos y demás ingredientes por categorías, con la misma gráfica del sitio: tipografía manuscrita, paleta naranja y fotografía de producto. El diseño del sitio web se encuentra en la disciplina Web.',
       specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2021'],['Mode','Freelance']],
       tags: ['Print','Catalog','Food Industry'],
