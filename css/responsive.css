@@ -595,10 +595,15 @@
   #about .decoration-bar1 {
     order: 2;
   }
-  /* bio: below the badge, left-aligned (centred body copy reads poorly) */
+  /* bio: below the badge, fully justified so it reads as a clean rectangular
+     block (owner request 2026-07-01). Hyphenation keeps the narrow phone
+     column from opening word-gap "rivers"; iOS needs the -webkit prefix and
+     honors the page's lang attr (en/es both hyphenate). */
   #about .about-top-head #aboutp1 {
     order: 3;
-    text-align: left;
+    text-align: justify;
+    -webkit-hyphens: auto;
+            hyphens: auto;
     align-self: stretch;
     max-width: 60ch;
     margin-top: 0;
