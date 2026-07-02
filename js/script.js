@@ -884,6 +884,14 @@ function initAboutAnimations() {
     if (p4El && p4Anchor) {
       p4Anchor.insertAdjacentElement('afterend', p4El);
     }
+    // Certificate gallery closes the stack below the #aboutp4 tail (owner
+    // request 2026-07-02): same composition as desktop, scaled to the
+    // viewport by responsive.css (455px design box → 100vw).
+    const certLayer  = document.querySelector('.cert-gallery-layer');
+    const certAnchor = p4El || p4Anchor;
+    if (certLayer && certAnchor) {
+      certAnchor.insertAdjacentElement('afterend', certLayer);
+    }
   }
 
   createVisibilityObserver([...new Set([

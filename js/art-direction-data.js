@@ -262,22 +262,27 @@ const WORKS_DATA = {
   // the modal backdrop stays the shared discipline image.
   '3d': [
     {
-      num: '01', cat: '3D & Motion', title: 'Pikapool', sub: 'Stylized character mashup — interactive 3D model',
-      specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
-      tags: ['3D','Character','Real-Time'],
+      num: '01', cat: '3D & Motion', title: 'Pikapool', sub: 'Mashup esculpido por encargo para impresión 3D',
+      desc: 'Encargo de un cliente particular: un mashup de Pikachu y Deadpool esculpido en Blender para impresión 3D. El personaje combina la silueta y las orejas del Pokémon con el traje, las armas y la actitud del mercenario, con detalles como el cinturón de pokebola, las pistolas y la katana. El modelo de esta página es el mismo sculpt optimizado para verlo en 360° directamente en el navegador.',
+      specs: [['Scope','Character · 3D Print'],['Tools','Blender'],['Year','2026'],['Mode','Freelance']],
+      tags: ['3D','Character','3D Print'],
+      bg: 'images/art-direction/3d/sergio-ayala-pikapool-3d-character-turntable-2026.webp',
       model: 'images/3D/Pikapool-web.glb'
     },
     {
-      num: '02', cat: '3D & Motion', title: 'Tib', sub: 'Original character — interactive 3D model',
-      specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
-      tags: ['3D','Character','Real-Time'],
+      num: '02', cat: '3D & Motion', title: 'Tib', sub: 'Personaje esculpido por encargo para impresión 3D',
+      desc: 'Tib es un tiburón cartoon esculpido en Blender por encargo de un cliente particular para impresión 3D. La pieza se construyó alrededor de su expresión: la sonrisa cargada de dientes y la mirada desafiante debían leerse igual de bien en pantalla que en la figura impresa. Puedes examinar el modelo en 360° aquí mismo.',
+      specs: [['Scope','Character · 3D Print'],['Tools','Blender'],['Year','2026'],['Mode','Freelance']],
+      tags: ['3D','Character','3D Print'],
+      bg: 'images/art-direction/3d/sergio-ayala-tib-3d-character-turntable-2026.webp',
       model: 'images/3D/Tib-web.glb'
     },
     {
-      num: '03', cat: '3D & Motion', title: 'Throg', sub: 'Creature character sculpt — interactive 3D model',
-      specs: [['Scope','Character · 3D Model'],['Tools','Blender'],['Year','2026'],['Mode','Personal']],
-      tags: ['3D','Character','Real-Time'],
-      bg: 'images/art-direction/3d/sergio-ayala-throg-3d-character-sculpt-2026.png',
+      num: '03', cat: '3D & Motion', title: 'Throg', sub: 'La rana Thor de Marvel, esculpida para impresión 3D',
+      desc: 'La versión rana de Thor en Marvel, esculpida en Blender por encargo de un cliente particular para impresión 3D. Casco alado, discos en el peto y anatomía de guerrero anfibio, presentados en gris neutro para que el volumen y el detalle hablen por sí solos.',
+      specs: [['Scope','Character · 3D Print'],['Tools','Blender'],['Year','2026'],['Mode','Freelance']],
+      tags: ['3D','Character','3D Print'],
+      bg: 'images/art-direction/3d/sergio-ayala-throg-3d-character-turntable-2026.webp',
       model: 'images/3D/Throg-web.glb'
     }
   ]

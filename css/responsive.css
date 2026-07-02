@@ -435,17 +435,47 @@
    ════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* The certificate cube is absolutely positioned at left:120px / 240px wide —
-     off-center and cramped on a phone. Center it and shrink to the viewport. */
-  .cert-cube-wrapper {
-    --cs: min(58vw, 220px);
-    left: 50%;
-    transform: translateX(-50%);
-    align-items: center;
+  /* Certificate gallery — the DESKTOP composition, scaled to the viewport
+     (owner 2026-07-02; replaces the older centered-cube-only treatment).
+     On phones script.js reparents the layer into the .about-top stack right
+     under the #aboutp4 tail (order 9). Desktop lays the art in a 455px-wide
+     box: certs1 strip x:0 w:30, vtv frame x:35,y:50 420×350, cube x:120,y:95
+     240px — all absolute px. Mapping that box to 100vw keeps the identical
+     layout edge-to-edge: every desktop px becomes calc(100vw * N / 455).
+     The --cs var carries the scale into the cube faces' translateZ on its
+     own; perspective scales along so the 3D foreshortening matches desktop.
+     Nav row inherits cube-left alignment like desktop; fonts unscaled. */
+  #about .cert-gallery-layer {
+    align-self: center;
+    order: 9;
+    width: 100vw;
+    max-width: none;
+    height: calc(100vw * 500 / 455);
   }
-
-  .cert-cube-nav {
-    justify-content: center;
+  #about .cert-gallery-layer .decoration-certs1 {
+    width: calc(100vw * 30 / 455);
+  }
+  #about .cert-gallery-layer .decoration-vtv1 {
+    top: calc(100vw * 50 / 455);
+    left: calc(100vw * 35 / 455);
+    width: calc(100vw * 420 / 455);
+    height: calc(100vw * 350 / 455);
+  }
+  #about .cert-gallery-layer .cert-cube-wrapper {
+    --cs: calc(100vw * 240 / 455);
+    top: calc(100vw * 95 / 455);
+    left: calc(100vw * 120 / 455);
+    gap: calc(100vw * 18 / 455);
+  }
+  #about .cert-gallery-layer .cert-cube-scene {
+    perspective: calc(100vw * 600 / 455);
+  }
+  /* After the reparents .about-right holds only the hidden DNA wrapper —
+     collapse its padding/margins so no dead band sits between the gallery
+     and the seal (the amber ::before line gets no height to draw on). */
+  #about .about-right {
+    padding: 0;
+    margin-top: 0;
   }
 
   /* The .decoration-bar2 timeline bar is a tall vertical flag ("[·About·]" star
