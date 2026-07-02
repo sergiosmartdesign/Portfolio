@@ -608,6 +608,16 @@
     max-width: 60ch;
     margin-top: 0;
   }
+  /* availability pill ("Available for freelance — 2026" + pulsing dot):
+     script.js reparents it under the bio on phones; slot it right after the
+     bio in the stack (order 4) and pull it snug against the block it belongs
+     to, left-aligned with the justified text. Selector only matches after the
+     reparent (it sits in .about-left on desktop). */
+  #about .about-top #about-availability {
+    order: 4;
+    align-self: flex-start;
+    margin-top: calc(var(--spacing-sm) - var(--spacing-lg));
+  }
 
   /* Remove the animated Paul Rand quote on phones (owner request 2026-07-01).
      Desktop keeps it (this is inside the ≤768px block). about-pin.js still runs

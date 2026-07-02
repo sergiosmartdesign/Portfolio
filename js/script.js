@@ -839,6 +839,19 @@ function initAboutAnimations() {
     });
   };
 
+  // Phones: the availability pill ("Available for freelance — 2026" + pulsing
+  // dot) reads as part of the intro stack — reparent it directly under the
+  // justified bio (#aboutp1), where responsive.css orders it (owner request
+  // 2026-07-01). matchMedia-gated (same breakpoint as the CSS, never the UA
+  // flag) so desktop keeps its .about-left position byte-for-byte. Done BEFORE
+  // the observer below is armed; the IO tracks the node itself, so the
+  // slideInFromLeft reveal keeps working from the new position.
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const availEl = document.getElementById('about-availability');
+    const bioEl   = document.getElementById('aboutp1');
+    if (availEl && bioEl) bioEl.insertAdjacentElement('afterend', availEl);
+  }
+
   createVisibilityObserver([
     document.getElementById('abouttitle'),
     ...document.querySelectorAll('#about .about-left p'),
