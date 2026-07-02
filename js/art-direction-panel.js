@@ -376,8 +376,9 @@ class ArtWorksPanel {
         this._teardownModelViewer();
         this._teardownFlipbook();
 
+        const hasCatalogs = Array.isArray(work.catalogs) && work.catalogs.length > 0;
         const useFlip = this.activeDiscipline === 'editorial'
-            && Array.isArray(work.images) && work.images.length > 1
+            && (hasCatalogs || (Array.isArray(work.images) && work.images.length > 1))
             && !!window.ADFlipbook;
 
         if (work.model) this._mountModelViewer(work);
@@ -419,7 +420,26 @@ class ArtWorksPanel {
         this.modalTags.innerHTML = work.tags.map(t => `
             <span class="ad-pm-tag"><span class="ad-pm-dot"></span>${t}</span>`).join('');
 
-        if (this.modalThumbs && useFlip) {
+        if (this.modalThumbs && useFlip && hasCatalogs) {
+            // Multi-catalog project — the thumb strip becomes a catalog
+            // selector: one cover per book, click swaps the flipbook.
+            this.modalThumbs.innerHTML = work.catalogs.map((cat, i) =>
+                `<div class="ad-pm-thumb${i === 0 ? ' is-active' : ''}" role="listitem"
+                      style="background-image:url('${cat.images[0]}')"
+                      tabindex="0" title="${cat.label}"
+                      aria-label="${cat.label} (${i + 1} de ${work.catalogs.length})"></div>`
+            ).join('');
+            this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((thumb, i) => {
+                const pick = () => this._switchCatalog(work, i);
+                thumb.addEventListener('click', pick);
+                thumb.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        pick();
+                    }
+                });
+            });
+        } else if (this.modalThumbs && useFlip) {
             // The flipbook carries its own page navigation — no thumb strip.
             this.modalThumbs.innerHTML = '';
         } else if (this.modalThumbs) {
@@ -497,12 +517,27 @@ class ArtWorksPanel {
 
     // ── Flipbook stage — editorial catalogs (js/ad-flipbook.js) ─────────────────
 
-    _mountFlipbook(work) {
+    _mountFlipbook(work, catalogIndex = 0) {
         if (!this.modalStage || !window.ADFlipbook) return;
+        const cat = Array.isArray(work.catalogs) && work.catalogs.length
+            ? work.catalogs[Math.min(catalogIndex, work.catalogs.length - 1)]
+            : null;
         this.modalStage.classList.add('has-book');
-        this._flipbook = new ADFlipbook(this.modalStage, work.images, {
-            label: `${work.title} — catalog`,
+        this._flipbook = new ADFlipbook(this.modalStage, cat ? cat.images : work.images, {
+            label: cat ? `${work.title} — ${cat.label}` : `${work.title} — catalog`,
         });
+    }
+
+    // Swap the mounted book for another catalog of the same work (multi-catalog
+    // projects); the thumb strip acts as the selector.
+    _switchCatalog(work, index) {
+        this._teardownFlipbook();
+        this._mountFlipbook(work, index);
+        if (this.modalThumbs) {
+            this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((t, i) => {
+                t.classList.toggle('is-active', i === index);
+            });
+        }
     }
 
     _teardownFlipbook() {

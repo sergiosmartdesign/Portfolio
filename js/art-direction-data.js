@@ -83,47 +83,58 @@ const WORKS_DATA = {
     {
       num: '06', cat: 'Web', title: 'Global Trading Website', sub: 'Sitio web para comercializadora de alimentos',
       desc: 'Diseño del sitio web de <a href="https://www.instagram.com/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">Global Trading de Colombia</a>, comercializadora de ingredientes alimenticios, principalmente frutos secos, semillas y granos para abastecer negocios. El sitio, bilingüe y en versiones de escritorio y móvil sobre la paleta naranja de la marca, organizaba el catálogo de productos por categorías e incluía un sistema de SEO para optimizar su búsqueda en motores como Google. Es un cliente con el que he trabajado en varios frentes: sus catálogos y piezas impresas para la feria Alimentec están en la disciplina Editorial.',
-      specs: [['Scope','Web Design · SEO · Responsive'],['Tools','Figma · Photoshop'],['Year','2021'],['Mode','Freelance']],
+      specs: [['Scope','Web Design · SEO · Responsive'],['Tools','WordPress · Photoshop · Illustrator'],['Year','2021'],['Mode','Freelance']],
       tags: ['Web','Responsive','Brand'],
-      bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-design-desktop-mobile-2021.webp'
+      bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-design-desktop-mobile-2021.webp',
+      images: [
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-design-desktop-mobile-2021.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-home-desktop-mobile-2021.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-desktop-mockup-nut-butters-2021.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-mobile-mockup-seeds-2021.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-website-laptop-mockup-alimentec-2021.webp'
+      ]
     }
   ],
   editorial: [
     {
-      num: '01', cat: 'Editorial', title: 'Global Trading — General Catalog', sub: 'Product catalog for Alimentec food fair',
-      specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2026'],['Mode','Client']],
+      num: '01', cat: 'Editorial', title: 'Catálogos Global Trading 2026', sub: 'Catálogos general y de panificación para Alimentec',
+      specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2026'],['Mode','Freelance']],
       tags: ['Print','Catalog','Food Industry'],
       bg: 'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-01-2026.webp',
-      images: [
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-01-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-02-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-03-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-04-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-05-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-06-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-07-2026.webp',
-        'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-08-2026.webp'
+      // Two books in one project — the modal thumb strip becomes a catalog
+      // selector (cover per catalog) and swaps the flipbook on click.
+      catalogs: [
+        {
+          label: 'Catálogo General',
+          images: [
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-01-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-02-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-03-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-04-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-05-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-06-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-07-2026.webp',
+            'images/art-direction/Global trading de col/catalogo general/sergio-ayala-global-trading-catalogo-general-page-08-2026.webp'
+          ]
+        },
+        {
+          label: 'Catálogo de Panificación',
+          images: [
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-01-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-02-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-03-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-04-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-05-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-06-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-07-2026.webp',
+            'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-08-2026.webp'
+          ]
+        }
       ]
     },
     {
-      num: '02', cat: 'Editorial', title: 'Global Trading — Bakery Catalog', sub: 'Specialty catalog for baking ingredients',
-      specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2026'],['Mode','Client']],
-      tags: ['Print','Bakery','Catalog'],
-      bg: 'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-01-2026.webp',
-      images: [
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-01-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-02-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-03-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-04-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-05-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-06-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-07-2026.webp',
-        'images/art-direction/Global trading de col/panificacion catalogo/sergio-ayala-global-trading-panificacion-catalog-page-08-2026.webp'
-      ]
-    },
-    {
-      num: '03', cat: 'Editorial', title: 'Global Trading — Trade Fair Print', sub: 'Flyer & lightbox banner for Alimentec',
-      specs: [['Scope','Flyer · Large Format'],['Tools','Illustrator · Photoshop'],['Year','2026'],['Mode','Client']],
+      num: '02', cat: 'Editorial', title: 'Global Trading — Trade Fair Print', sub: 'Flyer & lightbox banner for Alimentec',
+      specs: [['Scope','Flyer · Large Format'],['Tools','Illustrator · Photoshop'],['Year','2026'],['Mode','Freelance']],
       tags: ['Print','Large Format','Trade Fair'],
       bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
       images: [
@@ -132,6 +143,35 @@ const WORKS_DATA = {
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-booth-photo-2026.webp',
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-event-photo-2026.png',
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-product-info-sheet-2026.png'
+      ]
+    },
+    {
+      num: '03', cat: 'Editorial', title: 'Global Trading — Product Catalog', sub: 'Catálogo de productos, frutos secos y semillas',
+      desc: 'Catálogo de productos de Global Trading de Colombia, una pieza extra que la marca encargó junto al sitio web. Sus 20 páginas organizan el portafolio de frutos secos, semillas, granos y demás ingredientes por categorías, con la misma gráfica del sitio: tipografía manuscrita, paleta naranja y fotografía de producto. El diseño del sitio web se encuentra en la disciplina Web.',
+      specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2021'],['Mode','Freelance']],
+      tags: ['Print','Catalog','Food Industry'],
+      bg: 'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-01.webp',
+      images: [
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-01.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-02.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-03.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-04.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-05.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-06.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-07.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-08.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-09.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-10.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-11.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-12.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-13.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-14.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-15.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-16.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-17.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-18.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-19.webp',
+        'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-20.webp'
       ]
     }
   ],
