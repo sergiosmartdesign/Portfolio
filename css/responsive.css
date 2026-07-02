@@ -662,6 +662,32 @@
     height: auto;
   }
 
+  /* ── FAILURE-SAFE reveals (mobile) ──────────────────────────────────────────
+     Same principle as the #intro frame fix (2026-07-01): once JS marks an
+     element revealed (.element-visible), a dropped entrance animation (RM
+     tier-1 collapse, a WebKit quirk) must never strand it invisible. These are
+     plain declarations, so ANY running or fill-forwards animation overrides
+     them — the happy path is pixel-identical; they only matter when the
+     animation never plays. transform:none is safe here because every listed
+     base transform is an entrance offset (translateX/Y, scale), not
+     positioning. Excluded on purpose: bar2 (base transform IS positioning —
+     its rotate — and its base opacity is already 1) and the DNA capsule's
+     internal parts (staged per-part reveal; root gets the opacity guard only). */
+  #about #id1svg.element-visible,
+  #about .about-left p.element-visible,
+  #about .decoration-bar1.element-visible,
+  #about #about-availability.element-visible,
+  #about #about-metrics.element-visible,
+  #about .decoration-skills.element-visible,
+  #about #seal-cta.element-visible,
+  #about #dnatitle.element-visible {
+    opacity: 1;
+    transform: none;
+  }
+  #about #dnacapsule1.element-visible {
+    opacity: 1;
+  }
+
   /* Remove the animated Paul Rand quote on phones (owner request 2026-07-01).
      Desktop keeps it (this is inside the ≤768px block). about-pin.js still runs
      its visibility-gated loop on the now-hidden node — harmless (no layout/paint). */
