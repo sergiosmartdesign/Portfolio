@@ -134,13 +134,17 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '02', cat: 'Editorial', title: 'Global Trading — Trade Fair Print', sub: 'Flyer & lightbox banner for Alimentec',
+      num: '02', cat: 'Editorial', title: 'Flyer y Pendón Alimentec', sub: 'Impresos para la feria Alimentec 2026',
+      desc: 'Piezas impresas para el stand de <a href="https://www.instagram.com/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">Global Trading de Colombia</a> en la feria Alimentec 2026: un pendón lightbox de gran formato con el mensaje "Ingredientes para la industria de alimentos" y el flyer de The Kitchen Contest, un show de cocina en vivo de The Kitchen Brothers con recetas preparadas con los productos de la marca. La gráfica lleva el sistema de los catálogos al espacio físico de la feria, donde estas piezas recibieron a los visitantes del stand.',
       specs: [['Scope','Flyer · Large Format'],['Tools','Illustrator · Photoshop'],['Year','2026'],['Mode','Freelance']],
       tags: ['Print','Large Format','Trade Fair'],
+      noFlip: true, // loose fair pieces, not a catalog — standard image + thumbs modal
       bg: 'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
       images: [
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-2026.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-lightbox-banner-booth-photo-2026.webp',
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-kitchen-brothers-flyer-2026.webp',
+        'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-kitchen-contest-flyer-handout-2026.webp',
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-booth-photo-2026.webp',
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-alimentec-event-photo-2026.png',
         'images/art-direction/Global trading de col/sergio-ayala-global-trading-product-info-sheet-2026.png'
@@ -148,7 +152,7 @@ const WORKS_DATA = {
     },
     {
       num: '03', cat: 'Editorial', title: 'Catálogo Global Trading 2021', sub: 'Catálogo de productos, frutos secos y semillas',
-      desc: 'Catálogo de productos de Global Trading de Colombia, una pieza extra que la marca encargó junto al sitio web. Sus 20 páginas organizan el portafolio de frutos secos, semillas, granos y demás ingredientes por categorías, con la misma gráfica del sitio: tipografía manuscrita, paleta naranja y fotografía de producto. El diseño del sitio web se encuentra en la disciplina Web.',
+      desc: 'Catálogo de productos de <a href="https://www.instagram.com/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">Global Trading de Colombia</a>, una pieza extra que la marca encargó junto al sitio web. Sus 20 páginas organizan el portafolio de frutos secos, semillas, granos y demás ingredientes por categorías, con la misma gráfica del sitio: tipografía manuscrita, paleta naranja y fotografía de producto, en línea con la identidad que la marca proyecta también en <a href="https://www.linkedin.com/company/globaltradingdecolombia/" target="_blank" rel="noopener noreferrer">LinkedIn</a>. El diseño del sitio web se encuentra en la disciplina Web.',
       specs: [['Scope','Print · Catalog · Layout'],['Tools','InDesign · Illustrator'],['Year','2021'],['Mode','Freelance']],
       tags: ['Print','Catalog','Food Industry'],
       bg: 'images/art-direction/Global trading de col/catalogo productos/sergio-ayala-global-trading-catalogo-productos-page-01.webp',

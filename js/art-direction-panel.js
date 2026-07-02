@@ -378,6 +378,7 @@ class ArtWorksPanel {
 
         const hasCatalogs = Array.isArray(work.catalogs) && work.catalogs.length > 0;
         const useFlip = this.activeDiscipline === 'editorial'
+            && !work.noFlip // loose print pieces opt out — standard image + thumbs
             && (hasCatalogs || (Array.isArray(work.images) && work.images.length > 1))
             && !!window.ADFlipbook;
 
