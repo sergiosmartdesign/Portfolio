@@ -201,14 +201,17 @@ const WORKS_DATA = {
       bg: 'images/art-direction/logos/sergio-ayala-magistrado-latin-experimental-music-band-logo-2017.webp'
     },
     {
-      num: '07', cat: 'Identity', title: 'Quindiorellanas', sub: 'Logo for mushroom food startup',
-      specs: [['Scope','Logo · Identity'],['Tools','Illustrator'],['Year','2017'],['Mode','Freelance']],
-      tags: ['Logo','Startup','Food Brand'],
+      num: '07', cat: 'Identity', title: 'Quindiorellanas', sub: 'Identidad y personajes para marca de orellanas',
+      desc: 'Identidad para Quindiorellanas, un emprendimiento quindiano de cultivo de orellanas (setas ostra). El logo es un sello de inspiración vintage: un racimo de orellanas dibujado a mano dentro de una insignia circular. La marca luego se expandió hacia material educativo —recetarios ilustrados y los personajes Hugo y Molly: un hongo grande y sabio, y una pequeña micelio que aprende de sus enseñanzas—, diseños simples para presentaciones y capacitaciones dirigidas al público infantil.',
+      specs: [['Scope','Logo · Identity · Characters'],['Tools','Illustrator'],['Year','2017–2020'],['Mode','Freelance']],
+      tags: ['Logo','Characters','Food Brand'],
       whiteBg: true, // logo has transparency — render on a white surface
       bg: 'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp',
       images: [
         'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-mushroom-brand-logo-colombia-2017.webp',
-        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-recipe-card-oyster-mushroom-brand-colombia-2020.webp'
+        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-recipe-card-oyster-mushroom-brand-colombia-2020.webp',
+        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-hugo-wise-mushroom-mascot-character-colombia.webp',
+        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-molly-mycelium-mascot-character-colombia.webp'
       ]
     },
     {
