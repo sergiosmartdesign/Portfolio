@@ -874,6 +874,16 @@ function initAboutAnimations() {
     if (p3El && p3Anchor) {
       p3Anchor.insertAdjacentElement('afterend', p3El);
     }
+    // #aboutp4 rides right under the highlight line (owner request
+    // 2026-07-02): moved out of .about-right; on phones only its
+    // .about-p4-keep tail ("Let's work together…" + certificates paragraph)
+    // survives — same font-size:0 collapse trick, span present in index.html
+    // AND both locale strings so it survives language switches.
+    const p4El     = document.getElementById('aboutp4');
+    const p4Anchor = p3El || p3Anchor;
+    if (p4El && p4Anchor) {
+      p4Anchor.insertAdjacentElement('afterend', p4El);
+    }
   }
 
   createVisibilityObserver([...new Set([

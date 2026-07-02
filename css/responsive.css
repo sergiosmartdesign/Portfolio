@@ -704,6 +704,45 @@
   #about .about-right .dna-title-wrapper {
     display: none;
   }
+  /* #aboutp4 under the highlight line (owner request 2026-07-02): on phones
+     only the tail from the CTA onward survives ("Let's work together…" +
+     the certificates paragraph) — same font-size:0 collapse as #aboutp3, with
+     .about-p4-keep (span kept in index.html AND both locales) restoring
+     itself. Unlike p3, the base #about #aboutp4 rules (styles.css) are
+     ID-keyed and still match after the reparent, so the desktop
+     translateX(100px) offset and slide/exit animations must be overridden
+     here — a 100vw block shifted 100px would force horizontal overflow.
+     The mid-paragraph .about-highlight span sits in the collapsed region and
+     inherits font-size:0, so it stays invisible. */
+  #about .about-top #aboutp4 {
+    order: 8;
+    font-size: 0;
+    line-height: 0;
+    opacity: 0;
+    transform: none;
+    align-self: center;
+    width: 100vw;
+    max-width: none;
+    box-sizing: border-box;
+    padding: 0 var(--spacing-md);
+    text-align: justify;
+    -webkit-hyphens: auto;
+            hyphens: auto;
+  }
+  #about .about-top #aboutp4 .about-p4-keep {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+  /* Same plain fades as p3 (reusing its keyframes); the opacity:1 doubles as
+     the failure-safe (see the block below — p4 left .about-left, so the
+     .about-left p guard no longer reaches it). */
+  #about .about-top #aboutp4.element-visible {
+    opacity: 1;
+    animation: aboutP3FadeIn 0.8s ease-out 0s forwards;
+  }
+  #about .about-top #aboutp4.element-exit {
+    animation: aboutBar2FadeOut 0.5s ease-in 0s forwards;
+  }
 
   /* ── FAILURE-SAFE reveals (mobile) ──────────────────────────────────────────
      Same principle as the #intro frame fix (2026-07-01): once JS marks an
