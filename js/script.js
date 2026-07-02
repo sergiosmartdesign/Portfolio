@@ -997,11 +997,15 @@ function initAboutAnimations() {
     let skillsShown = false;
     let skillsTimer = null;
 
-    // Phones: #aboutp2 is display:none (never intersects) and the skills
-    // graphic now lives in the top stack — observe the graphic ITSELF so the
-    // fade-in fires as it scrolls into view. Desktop keeps the #aboutp2 proxy.
+    // Phones: #aboutp2 is display:none (never intersects). Key the reveal to
+    // the MESSAGES right above the graphic — #about-metrics (fallback: the
+    // availability pill, then the graphic itself) — so the svg fades in just
+    // after they enter the viewport (the 800ms delay below lands it right as
+    // their slide-in settles). Desktop keeps the #aboutp2 proxy.
     const skillsTriggerEl = window.matchMedia('(max-width: 768px)').matches
-      ? decorationSkills
+      ? (document.getElementById('about-metrics') ||
+         document.getElementById('about-availability') ||
+         decorationSkills)
       : document.getElementById('aboutp2');
     if (skillsTriggerEl) {
       new IntersectionObserver((entries) => {
