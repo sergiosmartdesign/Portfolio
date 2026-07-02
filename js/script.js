@@ -847,9 +847,16 @@ function initAboutAnimations() {
   // the observer below is armed; the IO tracks the node itself, so the
   // slideInFromLeft reveal keeps working from the new position.
   if (window.matchMedia('(max-width: 768px)').matches) {
-    const availEl = document.getElementById('about-availability');
-    const bioEl   = document.getElementById('aboutp1');
+    const availEl   = document.getElementById('about-availability');
+    const bioEl     = document.getElementById('aboutp1');
+    const metricsEl = document.getElementById('about-metrics');
     if (availEl && bioEl) bioEl.insertAdjacentElement('afterend', availEl);
+    // metrics strip ("10+ years · 50+ projects · …") rides right under the
+    // pill (owner request 2026-07-01); ordered by responsive.css (order 5).
+    const metricsAnchor = availEl || bioEl;
+    if (metricsEl && metricsAnchor) {
+      metricsAnchor.insertAdjacentElement('afterend', metricsEl);
+    }
   }
 
   createVisibilityObserver([
@@ -896,12 +903,13 @@ function initAboutAnimations() {
     });
   };
 
-  // Phones: #aboutp2 is display:none (responsive.css) and a hidden node never
-  // intersects, so the DNA group would never enter. Re-anchor the entry
-  // trigger to #about-metrics — the next visible block in .about-left, at
-  // effectively the same scroll depth. Desktop keeps #aboutp2.
+  // Phones: #aboutp2 is display:none (responsive.css) and #about-metrics got
+  // reparented to the top stack — a hidden/relocated node can't time the DNA
+  // reveal. Re-anchor the entry trigger to #aboutp3, the last visible block in
+  // .about-left, sitting directly above the capsule in the phone flow.
+  // Desktop keeps #aboutp2.
   const aboutp2El = window.matchMedia('(max-width: 768px)').matches
-    ? (document.getElementById('about-metrics') || document.getElementById('aboutp2'))
+    ? (document.getElementById('aboutp3') || document.getElementById('aboutp2'))
     : document.getElementById('aboutp2');
   if (aboutp2El) {
     let entryTimer = null;

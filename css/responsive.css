@@ -625,6 +625,14 @@
     width: 10px;
     height: 10px;
   }
+  /* metrics strip ("10+ years · 50+ projects · Bogotá → Worldwide"): script.js
+     reparents it right after the pill on phones; slot it under the pill
+     (order 5) and pull it into the same visual group (8px from the pill). */
+  #about .about-top #about-metrics {
+    order: 5;
+    align-self: flex-start;
+    margin-top: calc(var(--spacing-xs) - var(--spacing-lg));
+  }
 
   /* Remove the animated Paul Rand quote on phones (owner request 2026-07-01).
      Desktop keeps it (this is inside the ≤768px block). about-pin.js still runs
@@ -636,7 +644,7 @@
   /* Remove the UX/UI + vibe-coding paragraph on phones (owner request
      2026-07-01) — the justified bio already carries the story on mobile.
      Desktop keeps it. NOTE: #aboutp2 is the DNA group's entry trigger in
-     script.js; on phones that observer is re-anchored to #about-metrics
+     script.js; on phones that observer is re-anchored to #aboutp3
      (a display:none node never intersects). */
   #about #aboutp2 {
     display: none;
