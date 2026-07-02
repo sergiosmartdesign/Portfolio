@@ -696,6 +696,14 @@
     opacity: 1;
     animation: aboutP3FadeIn 0.8s ease-out 0s forwards;
   }
+  /* DNA capsule + "·Let's discover…DNA·" title removed on phones (owner
+     2026-07-02). display:none on the wrapper takes out #dnacapsule1 and
+     #dnatitle together; the rest of .about-right (#aboutp4, cert gallery,
+     seal) and its amber ::before line stay. The DNA reveal observer still
+     watches .about-right — it just toggles classes on unpainted nodes. */
+  #about .about-right .dna-title-wrapper {
+    display: none;
+  }
 
   /* ── FAILURE-SAFE reveals (mobile) ──────────────────────────────────────────
      Same principle as the #intro frame fix (2026-07-01): once JS marks an
