@@ -633,6 +633,34 @@
     align-self: flex-start;
     margin-top: calc(var(--spacing-xs) - var(--spacing-lg));
   }
+  /* skills.svg graphic below the metrics strip, full-bleed edge to edge
+     (owner request 2026-07-01). script.js reparents it out of .about-left, so
+     the .about-left overrides stop applying and the base .decoration-skills
+     (absolute @ top:1050px/left:200px, h:600px, scale .8) would take over —
+     re-ground it fully for the .about-top stack. width:100vw + align-self:
+     center bleeds it past #about's side padding to the viewport edges
+     (html overflow-x:clip absorbs any rounding overflow). The skillsFadeIn
+     reveal (element-visible, fill:forwards) lands on scale(1)/opacity(1). */
+  #about .about-top .decoration-skills {
+    order: 6;
+    position: relative;
+    top: auto;
+    left: auto;
+    height: auto;
+    transform: none;
+    display: block;
+    width: 100vw;
+    max-width: 100vw;
+    align-self: center;
+    margin-top: calc(var(--spacing-sm) - var(--spacing-lg));
+  }
+  #about .about-top .decoration-skills .skills-svg {
+    position: static;
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+  }
 
   /* Remove the animated Paul Rand quote on phones (owner request 2026-07-01).
      Desktop keeps it (this is inside the ≤768px block). about-pin.js still runs

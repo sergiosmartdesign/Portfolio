@@ -857,6 +857,14 @@ function initAboutAnimations() {
     if (metricsEl && metricsAnchor) {
       metricsAnchor.insertAdjacentElement('afterend', metricsEl);
     }
+    // skills.svg graphic below the metrics strip, full-bleed (owner request
+    // 2026-07-01). Its .about-left styles stop applying after the move —
+    // responsive.css restyles it for the .about-top stack (order 6, 100vw).
+    const skillsGraphic = document.querySelector('.decoration-skills');
+    const skillsAnchor  = metricsEl || metricsAnchor;
+    if (skillsGraphic && skillsAnchor) {
+      skillsAnchor.insertAdjacentElement('afterend', skillsGraphic);
+    }
   }
 
   createVisibilityObserver([
@@ -989,7 +997,12 @@ function initAboutAnimations() {
     let skillsShown = false;
     let skillsTimer = null;
 
-    const skillsTriggerEl = document.getElementById('aboutp2');
+    // Phones: #aboutp2 is display:none (never intersects) and the skills
+    // graphic now lives in the top stack — observe the graphic ITSELF so the
+    // fade-in fires as it scrolls into view. Desktop keeps the #aboutp2 proxy.
+    const skillsTriggerEl = window.matchMedia('(max-width: 768px)').matches
+      ? decorationSkills
+      : document.getElementById('aboutp2');
     if (skillsTriggerEl) {
       new IntersectionObserver((entries) => {
         entries.forEach(entry => {
