@@ -1473,6 +1473,24 @@ body.ad-section-live #art-direction .ad-explore-card {
   45%      { opacity: 0.3; text-shadow: 0 0 4px rgba(187, 62, 3, 0.35); }
 }
 
+/* ── nav-below variant — landscape catalogs (WORKS_DATA `navBelow`) ──────────
+   Wide pages fill the stage, so the flanking arrows would sit on the artwork.
+   Drop the whole control row under the book: arrows flank the counter in a
+   centred bottom strip. */
+.ad-pm-stage.nav-below .ad-book-btn {
+  top: auto;
+  bottom: -16px;
+  transform: none;
+}
+.ad-pm-stage.nav-below .ad-book-prev { left: calc(50% - 150px); }
+.ad-pm-stage.nav-below .ad-book-next { right: calc(50% - 150px); }
+.ad-pm-stage.nav-below .ad-book-prev:hover:not(:disabled) { transform: translateX(-3px); }
+.ad-pm-stage.nav-below .ad-book-next:hover:not(:disabled) { transform: translateX(3px); }
+.ad-pm-stage.nav-below .ad-book-counter {
+  top: auto;
+  bottom: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ad-book-chevs i { animation: none; opacity: 1; }
 }

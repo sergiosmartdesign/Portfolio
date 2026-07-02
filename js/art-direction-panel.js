@@ -524,6 +524,9 @@ class ArtWorksPanel {
             ? work.catalogs[Math.min(catalogIndex, work.catalogs.length - 1)]
             : null;
         this.modalStage.classList.add('has-book');
+        // Landscape books fill the stage width — flanking arrows would sit on
+        // the pages, so these works drop the control row below the book.
+        this.modalStage.classList.toggle('nav-below', !!work.navBelow);
         this._flipbook = new ADFlipbook(this.modalStage, cat ? cat.images : work.images, {
             label: cat ? `${work.title} — ${cat.label}` : `${work.title} — catalog`,
         });
@@ -543,7 +546,7 @@ class ArtWorksPanel {
 
     _teardownFlipbook() {
         if (this._flipbook) { this._flipbook.destroy(); this._flipbook = null; }
-        this.modalStage?.classList.remove('has-book');
+        this.modalStage?.classList.remove('has-book', 'nav-below');
     }
 
     // ── 3D model stage ────────────────────────────────────────────────────────
