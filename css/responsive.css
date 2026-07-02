@@ -661,6 +661,33 @@
     max-width: none;
     height: auto;
   }
+  /* #aboutp3 below the graphic (owner request 2026-07-02): only the amber
+     .about-highlight sentence ("I strongly believe…") survives on phones.
+     CSS can't select bare text nodes, so the lifestyle text collapses via
+     font-size:0/line-height:0 and the span restores its own size — this also
+     survives the i18n innerHTML re-render on language switch (both locales
+     keep the span). After the reparent the .about-left p base/reveal rules
+     stop matching, so visibility is re-keyed here: base hidden → fade on its
+     own .element-visible, with the plain opacity:1 as the failure-safe. */
+  #about .about-top #aboutp3 {
+    order: 7;
+    font-size: 0;
+    line-height: 0;
+    opacity: 0;
+    transform: none;
+    align-self: center;
+    text-align: center;
+    max-width: 34ch;
+    margin-top: calc(var(--spacing-sm) - var(--spacing-lg));
+  }
+  #about .about-top #aboutp3 .about-highlight {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+  #about .about-top #aboutp3.element-visible {
+    opacity: 1;
+    animation: aboutP3FadeIn 0.8s ease-out 0s forwards;
+  }
 
   /* ── FAILURE-SAFE reveals (mobile) ──────────────────────────────────────────
      Same principle as the #intro frame fix (2026-07-01): once JS marks an
@@ -731,6 +758,8 @@
     opacity: 0.8;
   }
 }
+
+@keyframes aboutP3FadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @keyframes aboutBar2FadeIn  { from { opacity: 0; } to { opacity: 1; } }
 /* Slide the rotated bar2 in from off the left edge. The leading translateX is a

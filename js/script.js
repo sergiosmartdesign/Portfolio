@@ -865,18 +865,31 @@ function initAboutAnimations() {
     if (skillsGraphic && skillsAnchor) {
       skillsAnchor.insertAdjacentElement('afterend', skillsGraphic);
     }
+    // #aboutp3 closes the stack below the graphic (owner request 2026-07-02):
+    // on phones only its .about-highlight sentence survives — responsive.css
+    // hides the lifestyle text via font-size:0 (text nodes have no selector),
+    // which also survives i18n innerHTML re-renders on language switch.
+    const p3El     = document.getElementById('aboutp3');
+    const p3Anchor = skillsGraphic || skillsAnchor;
+    if (p3El && p3Anchor) {
+      p3Anchor.insertAdjacentElement('afterend', p3El);
+    }
   }
 
-  createVisibilityObserver([
+  createVisibilityObserver([...new Set([
     document.getElementById('abouttitle'),
     ...document.querySelectorAll('#about .about-left p'),
+    // phones: #aboutp3 was reparented OUT of .about-left above, so the
+    // selector misses it — list it explicitly (the Set dedupes on desktop,
+    // where the selector still matches it).
+    document.getElementById('aboutp3'),
     document.getElementById('about-availability'),
     document.getElementById('about-metrics'),
     document.getElementById('seal-cta'),
     document.getElementById('paulrand-quote'),
     document.getElementById('paulrand-author'),
     document.getElementById('aboutp4'),
-  ].filter(Boolean));
+  ])].filter(Boolean));
   // Note: ID1 SVG observer is set up after SVG conversion — see svg-inline.js
 
   // DNA group — dnatitle + dnacapsule1 + .about-right yellow line.
@@ -911,13 +924,13 @@ function initAboutAnimations() {
     });
   };
 
-  // Phones: #aboutp2 is display:none (responsive.css) and #about-metrics got
-  // reparented to the top stack — a hidden/relocated node can't time the DNA
-  // reveal. Re-anchor the entry trigger to #aboutp3, the last visible block in
-  // .about-left, sitting directly above the capsule in the phone flow.
-  // Desktop keeps #aboutp2.
+  // Phones: every .about-left text block is now hidden or reparented to the
+  // top stack, so none can time the DNA reveal from its original spot.
+  // Anchor the entry trigger to .about-right ITSELF — the column holding the
+  // capsule — so the reveal fires as it scrolls into view. Desktop keeps
+  // the #aboutp2 proxy.
   const aboutp2El = window.matchMedia('(max-width: 768px)').matches
-    ? (document.getElementById('aboutp3') || document.getElementById('aboutp2'))
+    ? (document.querySelector('#about .about-right') || document.getElementById('aboutp2'))
     : document.getElementById('aboutp2');
   if (aboutp2El) {
     let entryTimer = null;
