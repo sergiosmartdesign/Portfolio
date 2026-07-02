@@ -264,19 +264,22 @@
   }
   /* Per-line grow — mirrors the desktop .panel-line draw (scale 0→1 along the
      line). transform-box: fill-box puts the origin on each element's own bbox, so
-     ifm-gx grows from its left edge and ifm-gy from its centre. Base state is
-     collapsed (scale 0); the grow (gated on body:not(.preloading)) plays it open. */
+     ifm-gx grows from its left edge and ifm-gy from its centre.
+     FAILURE-SAFE: the collapsed state (scale 0) lives in the grow keyframes'
+     `from` (fill-mode:both holds it through the stagger delay), NOT here — so if
+     the animation is ever dropped (reduced-motion tier-1 collapse, a WebKit
+     compositing quirk), the frame renders fully drawn instead of invisible.
+     During body.preloading nothing animates, but the opaque #preloader overlay
+     covers the hero, so the momentary full-scale state is never seen. */
   #intro .intro-frame-mobile .ifm-gx,
   #intro .intro-frame-mobile .ifm-gy {
     transform-box: fill-box;
   }
   #intro .intro-frame-mobile .ifm-gx {
     transform-origin: left center;
-    transform: scaleX(0);
   }
   #intro .intro-frame-mobile .ifm-gy {
     transform-origin: center;
-    transform: scaleY(0);
   }
 
   /* ── Tickers on the two top bars ───────────────────────────────────────────
@@ -287,12 +290,15 @@
      = 2.13% → each overlay lands pixel-on-bar at any phone size. Text is a
      separate HTML layer (NOT inside the stretched SVG) so it never distorts;
      translateX is GPU-cheap and constant-speed. */
+  /* FAILURE-SAFE: no opacity:0 base state here — the hidden state lives in the
+     entrance keyframes' 0% frame (fill-mode:both holds it through the delay).
+     If the entrance is ever dropped (reduced-motion, WebKit quirk), the ticker
+     shows statically instead of being stranded invisible. */
   #intro .intro-frame-mobile .ifm-ticker {
     position: absolute;
     height: 2.13%;
     left: 0;
     right: 0;
-    opacity: 0;                /* hidden until the glitch-in plays (gated below) */
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -337,10 +343,10 @@
      running behind the loading overlay. (1) the frame grows to size, then (2) the
      two text bars glitch in, staggered. */
   body:not(.preloading) #intro .intro-frame-mobile .ifm-gx {
-    animation: ifmGrowX 0.6s var(--easing-ease-out) var(--d, 0s) forwards;
+    animation: ifmGrowX 0.6s var(--easing-ease-out) var(--d, 0s) both;
   }
   body:not(.preloading) #intro .intro-frame-mobile .ifm-gy {
-    animation: ifmGrowY 0.45s var(--easing-ease-out) var(--d, 0s) forwards;
+    animation: ifmGrowY 0.45s var(--easing-ease-out) var(--d, 0s) both;
   }
   body:not(.preloading) #intro .intro-frame-mobile .ifm-ticker--top {
     animation: ifmTickerGlitchIn 0.55s linear 0.75s both;
@@ -383,9 +389,10 @@
   #intro .intro-frame-mobile { display: none; }
 }
 
-/* Per-line scale-grow — same idea as the desktop .panel-line draw (scale 0→1). */
-@keyframes ifmGrowX { to { transform: scaleX(1); } }
-@keyframes ifmGrowY { to { transform: scaleY(1); } }
+/* Per-line scale-grow — same idea as the desktop .panel-line draw (scale 0→1).
+   The `from` carries the collapsed base state (see the failure-safe note above). */
+@keyframes ifmGrowX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ifmGrowY { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 
 /* Text-bar glitch entrance: clip-path slices + horizontal jitter + flicker that
    settles to a clean, fully-revealed band. This glitches the ticker CONTAINER,
@@ -402,7 +409,10 @@
 }
 
 /* Reduced motion: skip grow + glitch, freeze the marquee (static text).
-   !important beats the more-specific body:not(.preloading) entrance rules. */
+   !important beats the more-specific body:not(.preloading) entrance rules.
+   This is the mobile layer's "tier-3 visibility repair" (see styles.css RM
+   block): under RM the frame + tickers must render fully, statically —
+   reduce the MOTION, never the content. */
 @media (prefers-reduced-motion: reduce) {
   #intro .intro-frame-mobile .ifm-gx,
   #intro .intro-frame-mobile .ifm-gy {

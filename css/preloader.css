@@ -110,6 +110,16 @@ body.preloading header *::after {
   }
 }
 
+/* ── Reduced motion ──────────────────────────────────────────────────────────
+   The sweeps are pure decorative MOTION — omit them under reduce. This is not
+   a visual change on any platform: the global RM tier-1 collapse (styles.css)
+   already forced every 0.001ms pass to complete instantly ON its opacity:0 end
+   keyframe, i.e. the lines were permanently invisible while still burning rAF
+   on the canvas jitter. preloader.js skips creating them under RM too. */
+@media (prefers-reduced-motion: reduce) {
+  .preloader-lines { display: none; }
+}
+
 /* ── Label (above the line) + percentage counter (below it) ─────────────── */
 .preloader-label,
 .preloader-pct {

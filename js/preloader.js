@@ -51,7 +51,18 @@
   const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+  // System "Reduce Motion" (very common on iPhone — one Accessibility toggle
+  // covers Safari AND Chrome-iOS): the sweeps are pure decorative motion, so
+  // skip them entirely. Visually identical on every platform: the global RM
+  // tier-1 collapse (styles.css) already ended each instant pass stranded on
+  // its opacity:0 keyframe — the lines were never visible under RM, just
+  // burning rAF. preloader.css also display:none's the layer under RM.
+  const REDUCED_MOTION = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   (function initScanLines() {
+    if (REDUCED_MOTION) return;
+
     const start = () => {
       if (typeof window.makeStaticLine !== 'function') return; // graceful no-op
 
@@ -77,18 +88,41 @@
 
         // One pass: random direction + speed; relaunches itself after a random
         // gap so the field of lines never falls into a fixed rhythm.
+        // Desktop/Android: CSS keyframes (plLineUp/Down) — unchanged.
+        // iOS: WebKit mis-painted the composited keyframe passes even after the
+        // filter/will-change workarounds, so drive the pass with rAF instead —
+        // same travel + 10%-in/10%-out fade math, but zero dependency on the
+        // CSS animation pipeline (the jitter itself is already rAF-drawn).
+        const scheduleNext = () => {
+          if (!stopped) setTimeout(sweep, 200 + Math.random() * 900);   // random gap
+        };
         const sweep = () => {
           if (stopped) return;
-          const dir = Math.random() < 0.5 ? 'plLineUp' : 'plLineDown';
+          const up  = Math.random() < 0.5;
           const dur = 900 + Math.random() * 1400;   // 0.9–2.3s per pass
-          cv.style.animation = 'none';
-          void cv.offsetWidth;                       // reflow → replay
-          cv.style.animation = `${dir} ${dur}ms linear forwards`;
+          if (!IS_IOS) {
+            cv.style.animation = 'none';
+            void cv.offsetWidth;                     // reflow → replay
+            cv.style.animation = `${up ? 'plLineUp' : 'plLineDown'} ${dur}ms linear forwards`;
+            return;                                  // animationend → scheduleNext
+          }
+          const h  = window.innerHeight;
+          const y0 = up ? h : -8;
+          const y1 = up ? -8 : h;
+          const t0 = performance.now();
+          const step = (now) => {
+            if (stopped) return;
+            const p = Math.min((now - t0) / dur, 1);
+            cv.style.transform = 'translate3d(0,' + (y0 + (y1 - y0) * p) + 'px,0)';
+            cv.style.opacity   = p < 0.1 ? String(p / 0.1)
+                               : p > 0.9 ? String((1 - p) / 0.1)
+                               : '1';
+            if (p < 1) requestAnimationFrame(step);
+            else scheduleNext();
+          };
+          requestAnimationFrame(step);
         };
-        cv.addEventListener('animationend', () => {
-          if (stopped) return;
-          setTimeout(sweep, 200 + Math.random() * 900);   // random gap
-        });
+        cv.addEventListener('animationend', scheduleNext);
         setTimeout(sweep, Math.random() * 1200);     // staggered first launch
       }
 
