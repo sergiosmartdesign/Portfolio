@@ -675,9 +675,13 @@
     line-height: 0;
     opacity: 0;
     transform: none;
-    align-self: center;
-    text-align: center;
-    max-width: 34ch;
+    /* full-width justified block, mirroring the bio (#aboutp1) treatment —
+       the centered narrow version read as a bad column (owner 2026-07-02) */
+    align-self: stretch;
+    text-align: justify;
+    -webkit-hyphens: auto;
+            hyphens: auto;
+    max-width: 60ch;
     margin-top: calc(var(--spacing-sm) - var(--spacing-lg));
   }
   #about .about-top #aboutp3 .about-highlight {
