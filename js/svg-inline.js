@@ -213,6 +213,47 @@
     const id1svg = document.getElementById('id1svg');
     if (!id1svg) return;
 
+    // Phones (match the responsive.css breakpoint, never the UA flag): the
+    // badge and the scroll hint each hide only once 50% OF THE ELEMENT ITSELF
+    // is out of the viewport (owner request 2026-07-01). The desktop proxy
+    // below keys off #abouttitle, which exits too eagerly on the tall phone
+    // column. Observing the elements directly is safe here: the phone #about
+    // layout keeps both in normal flow inside the section box, so the
+    // overflow:clip caveat (see desktop comment) never clips them.
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      const halfVisibleToggle = (watchEl, targets, withExit) => {
+        let entered = false;
+        new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.intersectionRatio >= 0.5) {
+              entered = true;
+              targets.forEach(t => {
+                t.classList.remove('element-exit');
+                t.classList.add('element-visible');
+              });
+            } else if (entered) {
+              targets.forEach(t => {
+                t.classList.remove('element-visible');
+                if (withExit) t.classList.add('element-exit');
+              });
+            }
+          });
+        }, { threshold: 0.5 }).observe(watchEl);
+      };
+
+      // Badge: element-exit drives its slideUpFade out (styles.css).
+      halfVisibleToggle(id1svg, [id1svg], true);
+
+      // Scroll hint (text + chevrons) moves as ONE unit keyed to the arrow —
+      // its own observer, decoupled from the badge chain (responsive.css
+      // re-keys the reveal to the hint's own class on phones). No exit class:
+      // base opacity:0 + the 0.45s transition handles the fade-out.
+      const arrow  = document.querySelector('#about .about-id-arrow');
+      const scroll = document.querySelector('#about .about-id-scroll');
+      if (arrow) halfVisibleToggle(arrow, [arrow, scroll].filter(Boolean), false);
+      return;
+    }
+
     const proxyEl =
       document.getElementById('abouttitle') ||
       document.getElementById('about-availability') ||
