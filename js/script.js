@@ -896,7 +896,13 @@ function initAboutAnimations() {
     });
   };
 
-  const aboutp2El = document.getElementById('aboutp2');
+  // Phones: #aboutp2 is display:none (responsive.css) and a hidden node never
+  // intersects, so the DNA group would never enter. Re-anchor the entry
+  // trigger to #about-metrics — the next visible block in .about-left, at
+  // effectively the same scroll depth. Desktop keeps #aboutp2.
+  const aboutp2El = window.matchMedia('(max-width: 768px)').matches
+    ? (document.getElementById('about-metrics') || document.getElementById('aboutp2'))
+    : document.getElementById('aboutp2');
   if (aboutp2El) {
     let entryTimer = null;
     new IntersectionObserver((entries) => {

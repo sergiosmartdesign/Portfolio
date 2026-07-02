@@ -617,12 +617,28 @@
     order: 4;
     align-self: flex-start;
     margin-top: calc(var(--spacing-sm) - var(--spacing-lg));
+    /* bigger read on phones (owner request): 0.82rem → 1.05rem, dot scaled to
+       match so the pair keeps its proportion */
+    font-size: 1.05rem;
+  }
+  #about .about-top #about-availability .availability-dot {
+    width: 10px;
+    height: 10px;
   }
 
   /* Remove the animated Paul Rand quote on phones (owner request 2026-07-01).
      Desktop keeps it (this is inside the ≤768px block). about-pin.js still runs
      its visibility-gated loop on the now-hidden node — harmless (no layout/paint). */
   #about .paul-rands-quote {
+    display: none;
+  }
+
+  /* Remove the UX/UI + vibe-coding paragraph on phones (owner request
+     2026-07-01) — the justified bio already carries the story on mobile.
+     Desktop keeps it. NOTE: #aboutp2 is the DNA group's entry trigger in
+     script.js; on phones that observer is re-anchored to #about-metrics
+     (a display:none node never intersects). */
+  #about #aboutp2 {
     display: none;
   }
 
