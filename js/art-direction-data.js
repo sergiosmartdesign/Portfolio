@@ -23,27 +23,25 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '02', cat: 'Web', title: 'Siemens Couch Party', sub: 'New Year virtual event, Siemens Healthineers',
+      num: '02', cat: 'Web', title: 'Siemens Couch Party', sub: 'Evento virtual de fin de año para Siemens Healthineers',
+      desc: 'Dirección de arte para Couch Party, la celebración virtual de fin de año de Siemens Healthineers durante la pandemia, por encargo de la agencia <a href="https://www.linkedin.com/company/moments-lab/" target="_blank" rel="noopener noreferrer">Moments Lab</a>. El concepto lleva la fiesta a la sala de cada empleado: un letrero de neón sobre una pared de ladrillo ambienta la landing del evento, que integró streaming en vivo, chat, playlist y un menú de cena y coctelería a cargo de un chef y un mixólogo invitados, entregado en la casa de cada asistente. El sistema se extendió a logo animado, correos de invitación y save the date animados, y las piezas del kit de bienvenida.',
       specs: [['Scope','Landing · Email · Motion'],['Tools','Figma · After Effects'],['Year','2020'],['Mode','Agency']],
       tags: ['Virtual Event','Motion','Email Design'],
       bg: 'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-virtual-event-mockup-2020.webp',
       images: [
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-virtual-event-mockup-2020.webp',
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-new-year-event-landing-2020.webp',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-invitation-email-animated-2020.webp',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-save-the-date-animated-2020.webp',
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-virtual-event-logo-animated-2020logo.webp',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-login-animation-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-save-the-date-animation-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-menu-animation-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-02-2020.gif',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-save-the-date-animated-2020.webp',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-invitation-email-animated-2020.webp',
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-email-animation-03-2020.gif',
-        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-web-experience-2020.jpg',
+        'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-menu-animation-2020.gif',
         'images/art-direction/Sieemens/couch party/sergio-ayala-siemens-healthineers-couch-party-welcome-kit-2020.jpg'
       ]
     },
     {
-      num: '03', cat: 'Web', title: 'Siemens Together Land', sub: 'Virtual event platform, Siemens Healthineers',
+      num: '03', cat: 'Web', title: 'Siemens Together Land', sub: 'Experiencia virtual para Siemens Healthineers',
+      desc: 'Dirección de arte para Together Land Evening, una noche virtual de premios, juegos y risas para los empleados de Siemens Healthineers, desarrollada nuevamente con la agencia <a href="https://www.linkedin.com/company/moments-lab/" target="_blank" rel="noopener noreferrer">Moments Lab</a>. El universo gráfico es un collage de stickers: bocas riendo a carcajadas, tornamesas y patrones retro sobre un azul vibrante. El sistema cubrió el key visual del evento, el save the date y los correos animados, y la campaña de expectativa en redes, con acceso a la plataforma mediante un PIN.',
       specs: [['Scope','Landing · Email · Motion'],['Tools','Figma · After Effects'],['Year','2021'],['Mode','Agency']],
       tags: ['Virtual Event','Motion','Landing'],
       bg: 'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-01-2021.webp',
@@ -51,8 +49,7 @@ const WORKS_DATA = {
         'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-01-2021.webp',
         'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-virtual-event-mockup-02-2021.webp',
         'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-event-animated-2021.webp',
-        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp',
-        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-poster-2021.png'
+        'images/art-direction/Sieemens/together land/sergio-ayala-siemens-healthineers-together-land-invitation-email-animated-2021.webp'
       ]
     },
     {
