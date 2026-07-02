@@ -53,7 +53,8 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '04', cat: 'Web', title: 'CAF-LIF Contest', sub: 'Entrepreneurship contest landing page',
+      num: '04', cat: 'Web', title: 'CAF-LIF Contest', sub: 'Landing para el Demo Day del laboratorio CAF',
+      desc: 'Landing para el Demo Day del L.i.F., el Laboratorio de Inclusión Financiera de CAF, el banco de desarrollo de América Latina, por encargo de <a href="https://www.linkedin.com/company/corporaci-n-ventures/" target="_blank" rel="noopener noreferrer">Corporación Ventures</a>. La página recibía a los emprendimientos preseleccionados y reunía las bases del concurso, los proyectos finalistas y los ganadores, con acceso directo al evento virtual de la semifinal y la final. La gráfica retoma los puntos de color del logo del laboratorio y los convierte en círculos que acompañan el recorrido sobre un fondo oscuro.',
       specs: [['Scope','Landing · UX · Art Direction'],['Tools','Figma · Photoshop'],['Year','2020'],['Mode','Freelance']],
       tags: ['Landing','Contest','Innovation'],
       whiteBg: true, // artwork has transparency — render on a white surface
@@ -64,13 +65,19 @@ const WORKS_DATA = {
       ]
     },
     {
-      num: '05', cat: 'Web', title: 'Reality Shift', sub: 'Platzi × Lovable AI contest website',
+      num: '05', cat: 'Web', title: 'Reality Shift', sub: 'Web app con IA para el concurso Platzi × Lovable',
+      desc: 'Reality Shift es una web app que parte de una pregunta: ¿qué hubiera pasado si hubieras tomado una decisión diferente? La IA genera escenarios alternativos de tu vida a partir de un recorrido en tres pasos sobre tu mentalidad, tu contexto y tus metas, y los visualiza como una línea de tiempo interactiva con cartas de tarot. Diseñé la identidad y la interfaz, un mapa estelar con constelaciones zodiacales y un logo de neón retro, y construí el producto con Lovable para el concurso de Platzi.',
       specs: [['Scope','Web Design · UI · AI Build'],['Tools','Lovable · Figma'],['Year','2025'],['Mode','Contest']],
       tags: ['AI Build','Web','Contest'],
       bg: 'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-2025.webp',
       images: [
         'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-2025.webp',
-        'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-detail-2025.png'
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-lovable-platzi-contest-website-detail-2025.png',
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-ai-web-app-login-screen-2025.webp',
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-ai-web-app-onboarding-welcome-2025.webp',
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-ai-web-app-personality-mindset-form-2025.webp',
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-ai-web-app-life-context-form-2025.webp',
+        'images/art-direction/reality shift/sergio-ayala-reality-shift-ai-web-app-destiny-avatar-generator-2025.webp'
       ]
     },
     {
