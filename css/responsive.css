@@ -743,6 +743,46 @@
     max-width: none;
     height: auto;
   }
+  /* skills.svg per-element entrance (owner 2026-07-03, id1-style): svg-inline.js
+     converts the <img> to inline SVG on phones, wraps each text line in
+     <g class="skills-row"> (global top-down --row-index across both columns)
+     and tags the card bg / sidebar. The container then paints immediately
+     (its stock skillsFadeIn handed over — .skills-inline) and the reveal is
+     carried by the parts, keyed to the same element-visible the script.js
+     observer already toggles: card → sidebar → rows cascading down.
+     Failure-safe: plain opacity:1 rides next to each animation (if a future
+     RM tier strips animation-name, the parts still paint); if the inline
+     conversion itself fails the <img> keeps the stock container fade. */
+  #about .about-top .decoration-skills.skills-inline {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  #about .decoration-skills .skills-anim :is(.skills-card, .skills-side, .skills-row) {
+    opacity: 0;
+  }
+  #about .decoration-skills.element-visible .skills-anim .skills-card {
+    opacity: 1;
+    animation: skillsPartDrop 0.4s ease-out 0s backwards;
+  }
+  #about .decoration-skills.element-visible .skills-anim .skills-side {
+    opacity: 1;
+    animation: skillsPartDrop 0.35s ease-out 0.15s backwards;
+  }
+  #about .decoration-skills.element-visible .skills-anim .skills-row {
+    opacity: 1;
+    animation: skillsPartDrop 0.35s ease-out calc(0.25s + var(--row-index) * 0.04s) backwards;
+  }
+  @keyframes skillsPartDrop {
+    from {
+      opacity: 0;
+      transform: translateY(-14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
   /* #aboutp3 below the graphic (owner request 2026-07-02): only the amber
      .about-highlight sentence ("I strongly believe…") survives on phones.
      CSS can't select bare text nodes, so the lifestyle text collapses via

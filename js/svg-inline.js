@@ -275,5 +275,96 @@
     }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' }).observe(proxyEl);
   }
 
+  // ── skills.svg — phone-only inline conversion + per-row entrance ────────
+  // (owner request 2026-07-03: entrance like id1's, each element appearing.)
+  // The graphic is an Illustrator export with outlined text: two anonymous
+  // top-level <g> columns holding one <path> per glyph, no per-line grouping.
+  // Rows are recovered geometrically — cluster each column's direct children
+  // by the y of their path's first M command (rows sit ≥7 user units apart;
+  // first-point spread within a row is <3.5) — then wrapped in <g
+  // class="skills-row"> with a global top-down --row-index across BOTH
+  // columns, so the responsive.css stagger reads as one cascade down the
+  // card. Desktop keeps the plain <img> (this never runs there); on any
+  // fetch/parse failure the <img> also stays and the stock container fade
+  // still reveals the full graphic.
+  function convertSkillsSvgToInline() {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    const imgElement = document.querySelector('.decoration-skills .skills-svg');
+    if (!imgElement || imgElement.tagName !== 'IMG') return;
+
+    fetch(imgElement.src)
+      .then(response => response.text())
+      .then(data => {
+        const svgElement = new DOMParser()
+          .parseFromString(data, 'image/svg+xml').documentElement;
+        const SVG_ID = 'skillssvg';
+
+        // Same collision hygiene as the id1 conversion: prefix internal ids
+        // (Layer_2 is shared across Illustrator exports) and scope the .stN
+        // stylesheet before it becomes document-global.
+        svgElement.querySelectorAll('[id]').forEach(el =>
+          el.setAttribute('id', 'skills-' + el.getAttribute('id')));
+        svgElement.querySelectorAll('style').forEach(styleEl => {
+          styleEl.textContent = styleEl.textContent
+            .replace(/\.st(\d+)\b/g, `#${SVG_ID} .st$1`);
+        });
+        svgElement.setAttribute('id', SVG_ID);
+        svgElement.setAttribute('class', imgElement.className + ' skills-anim');
+        svgElement.setAttribute('role', 'img');
+        if (imgElement.alt) svgElement.setAttribute('aria-label', imgElement.alt);
+
+        // Named parts: orange card bg first, then the [·Skills·] sidebar
+        // (dark column + glyphs) with its full-height rule line.
+        const card = svgElement.querySelector('path.st1');
+        if (card) card.classList.add('skills-card');
+        const sideLine = svgElement.querySelector('line.st3');
+        if (sideLine) sideLine.classList.add('skills-side');
+        const sideGroup = svgElement.querySelector('#skills-skills');
+        if (sideGroup) sideGroup.classList.add('skills-side');
+
+        const firstMY = node => {
+          const d = node.tagName === 'path'
+            ? node.getAttribute('d')
+            : (node.querySelector('path') || { getAttribute: () => '' }).getAttribute('d');
+          const m = /^M([\d.-]+)[,\s]([\d.-]+)/.exec(d || '');
+          return m ? parseFloat(m[2]) : null;
+        };
+
+        const rows = [];
+        svgElement.querySelectorAll(':scope > g:not([id])').forEach(column => {
+          let current = null;
+          Array.from(column.children)
+            .map(node => ({ node, y: firstMY(node) }))
+            .filter(k => k.y !== null)
+            .sort((a, b) => a.y - b.y)
+            .forEach(k => {
+              if (!current || k.y - current.lastY > 3.5) {
+                current = { y0: k.y, lastY: k.y, nodes: [] };
+                rows.push(current);
+              }
+              current.lastY = k.y;
+              current.nodes.push(k.node);
+            });
+        });
+        rows.sort((a, b) => a.y0 - b.y0);
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        rows.forEach((row, i) => {
+          const g = document.createElementNS(SVG_NS, 'g');
+          g.setAttribute('class', 'skills-row');
+          g.style.setProperty('--row-index', i);
+          row.nodes[0].parentNode.insertBefore(g, row.nodes[0]);
+          row.nodes.forEach(n => g.appendChild(n));
+        });
+
+        imgElement.parentNode.replaceChild(svgElement, imgElement);
+        // Flags the container so responsive.css hands the reveal over to the
+        // per-part stagger (container paints immediately; parts are hidden
+        // until its element-visible arrives from the script.js observer).
+        svgElement.closest('.decoration-skills').classList.add('skills-inline');
+      })
+      .catch(error => console.error('[Skills SVG] Error loading SVG:', error));
+  }
+
   window.convertID1SvgToInline = convertID1SvgToInline;
+  window.convertSkillsSvgToInline = convertSkillsSvgToInline;
 }());

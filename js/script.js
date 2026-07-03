@@ -1493,6 +1493,7 @@ App.LanguageManager.ready.then(() => {
 
   safeInit('date',       updateDate);
   safeInit('svg-inline', convertID1SvgToInline);
+  safeInit('skills-inline', convertSkillsSvgToInline); // phone-only no-op on desktop
   safeInit('lang-loop',  initInfoInterfaceLangLoop);
   safeInit('info-hints', initInfoInterfaceHints);
 
