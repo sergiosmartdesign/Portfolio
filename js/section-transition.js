@@ -156,7 +156,9 @@
       bgInit: 'rgba(0, 18, 25, 1)',
       bgFade: 'rgba(0, 18, 25, 0.1)',
       inlinePosition: true,
-      maxPop: 80,   // lighter than the 150 desktop default — it only lives ~1.4s
+      // lighter than the 150 desktop default — it only lives ~1.4s; phones get
+      // roughly half again (mobile enabled 2026-07-03, smaller thermal budget).
+      maxPop: window.matchMedia('(max-width: 768px)').matches ? 48 : 80,
     });
     fx.pause();
     canvas = overlay.querySelector('canvas');

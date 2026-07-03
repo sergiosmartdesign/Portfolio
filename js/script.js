@@ -455,14 +455,15 @@ class NavigationManager {
    * stack duplicate history entries.
    */
   goToSection(sectionId, { pushHash = true } = {}) {
-    // Desktop-only interstitial particle transition (≈1.5s) masks the otherwise
-    // instant scroll jump. Mobile and prefers-reduced-motion keep the original
-    // immediate navigation. The lock stops rapid clicks stacking overlays.
-    // Only on real menu clicks (pushHash true) — deep-links and back/forward
-    // (pushHash false) navigate instantly, no curtain on load or history moves.
+    // Interstitial particle transition (≈1.5s) masks the otherwise instant
+    // scroll jump. All viewports since 2026-07-03 (owner request; phones get a
+    // lighter swarm — see section-transition.js maxPop). prefers-reduced-motion
+    // keeps the original immediate navigation. The lock stops rapid clicks
+    // stacking overlays. Only on real menu clicks (pushHash true) — deep-links
+    // and back/forward (pushHash false) navigate instantly, no curtain on load
+    // or history moves.
     const useTransition = pushHash
       && window.SectionTransition
-      && !(window.App && App.BrowserDetect && App.BrowserDetect.isMobile)
       && !this._reducedMotion.matches;
 
     if (!useTransition) { this._performNav(sectionId, pushHash); return; }
