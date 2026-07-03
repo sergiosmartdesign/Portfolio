@@ -140,6 +140,7 @@
     const navCard   = section.querySelector('.ad-explore-card');
     const navLabels = [...section.querySelectorAll('.ad-explore-card .adnav-label[data-content]')];
     const hasNav    = navCard && navLabels.length;
+    const dnaSpans  = [...section.querySelectorAll('.ad-dna .text span')];
     let sectionLive = false;
 
     const triggerSectionLive = () => {
@@ -151,7 +152,12 @@
       setTimeout(() => {
         section.classList.add('ad-intro-animate');
         window.scrambleText(section.querySelector('.iad-header[data-content]'), NAV_SCRAMBLE);
-      }, 2000);
+      }, 700);
+      // DNA ring letters — reveal after the capsule finishes growing (0.9s
+      // delay + 1.2s grow). Guarded so a reset mid-stagger can't re-reveal.
+      dnaSpans.forEach((span, i) => {
+        setTimeout(() => { if (sectionLive) span.classList.add('revealed'); }, 1600 + i * 60);
+      });
     };
 
     const resetSectionLive = () => {
@@ -161,6 +167,7 @@
       section.classList.remove('ad-intro-animate');
       section.classList.add('ad-intro-active');
       navLabels.forEach(label => { label.textContent = label.getAttribute('data-content'); });
+      dnaSpans.forEach(span => span.classList.remove('revealed'));
       ['.iad-header[data-content]'].forEach(sel => {
         const el = section.querySelector(sel);
         if (el) el.textContent = el.getAttribute('data-content');

@@ -8,7 +8,7 @@
 #art-direction .ad-intro-text {
   position: absolute;
   left: calc(min(75vh, 75vw) + 2vw + 80px);
-  width: min(calc(100% - min(75vh, 75vw) - 4vw - 80px), 520px);
+  width: min(calc(100% - min(75vh, 75vw) - 4vw - 80px), 480px);
   top: calc(50% - 150px);
   transform: translateY(-50%);
   z-index: 5;
@@ -103,7 +103,7 @@
 }
 
 body.ad-section-live #art-direction.ad-intro-active .ad-intro-arrow-label {
-  animation: adfrm-arrow-in 0.6s ease-out 2.8s forwards;
+  animation: adfrm-arrow-in 0.6s ease-out 1.2s forwards;
 }
 
 body.ad-section-live #art-direction .ad-intro-svg {
@@ -118,7 +118,7 @@ body.ad-section-live #art-direction .ad-intro-svg {
   100% { opacity: 1;   clip-path: inset(0 0% 0 0); }
 }
 
-/* ── SVG internal elements — hidden until SVG frame finishes entering (~2.5s) ── */
+/* ── SVG internal elements — hidden until SVG frame finishes entering (~0.7s) ── */
 #art-direction .ad-intro-svg #animate_3 { opacity: 0; }
 #art-direction .ad-intro-svg #animate_2 { opacity: 0; }
 #art-direction .ad-intro-svg #animate1  { opacity: 0; }
@@ -126,8 +126,8 @@ body.ad-section-live #art-direction .ad-intro-svg {
 /* animate_3 — dashed vertical line: draws top→bottom, then pulses like a signal */
 body.ad-section-live #art-direction .ad-intro-svg #animate_3 {
   animation:
-    adfrm-line-draw  1.4s ease-out  2.5s forwards,
-    adfrm-line-pulse 13s ease-in-out 3.9s infinite;
+    adfrm-line-draw  1.4s ease-out  0.8s forwards,
+    adfrm-line-pulse 13s ease-in-out 2.2s infinite;
 }
 @keyframes adfrm-line-draw {
   0%   { opacity: 1; clip-path: inset(0 0 100% 0); }
@@ -145,8 +145,8 @@ body.ad-section-live #art-direction .ad-intro-svg #animate_3 {
 /* animate_2 — diagonal hatching: wipes in, then scans like a radar sweep */
 body.ad-section-live #art-direction .ad-intro-svg #animate_2 {
   animation:
-    adfrm-hatch-wipe 0.5s ease-out   2.6s forwards,
-    adfrm-hatch-scan 17s ease-in-out 3.1s infinite;
+    adfrm-hatch-wipe 0.5s ease-out   0.9s forwards,
+    adfrm-hatch-scan 17s ease-in-out 1.4s infinite;
 }
 @keyframes adfrm-hatch-wipe {
   0%   { opacity: 1; clip-path: inset(0 0 0 100%); }
@@ -164,8 +164,8 @@ body.ad-section-live #art-direction .ad-intro-svg #animate_2 {
 /* animate1 — binary text: flickers on, then loops like live data streaming */
 body.ad-section-live #art-direction .ad-intro-svg #animate1 {
   animation:
-    adfrm-binary-flicker 1s  ease-out  2.7s forwards,
-    adfrm-binary-stream  11s ease-in-out 3.7s infinite;
+    adfrm-binary-flicker 1s  ease-out  1.0s forwards,
+    adfrm-binary-stream  11s ease-in-out 2.0s infinite;
 }
 @keyframes adfrm-binary-flicker {
   0%   { opacity: 0; }
@@ -180,7 +180,7 @@ body.ad-section-live #art-direction .ad-intro-svg #animate1 {
 }
 /* adfrm-arrow — HUD-style down indicator pointing at the DISCIPLINES nav card.
    Visible only while the intro is active (ad-intro-active drops on first
-   discipline selection); enters with the other frame internals (~2.8s), then
+   discipline selection); enters with the other frame internals (~1.2s), then
    the three chevrons pulse top-to-bottom — a data-stream "descend" cue. */
 #art-direction .ad-intro-svg #adfrm-arrow {
   opacity: 0;
@@ -193,7 +193,7 @@ body.ad-section-live #art-direction .ad-intro-svg #animate1 {
 #art-direction .ad-intro-svg #adfrm-arrow .adfrm-6 { fill: #CA6702; }
 
 body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg #adfrm-arrow {
-  animation: adfrm-arrow-in 0.6s ease-out 2.8s forwards;
+  animation: adfrm-arrow-in 0.6s ease-out 1.2s forwards;
 }
 
 @keyframes adfrm-arrow-in {
@@ -210,13 +210,13 @@ body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg #adfrm-arrow {
 }
 
 body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-0 {
-  animation: adfrm-chev-seq 1.4s linear 3.40s infinite;
+  animation: adfrm-chev-seq 1.4s linear 1.80s infinite;
 }
 body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-1 {
-  animation: adfrm-chev-seq 1.4s linear 3.58s infinite;
+  animation: adfrm-chev-seq 1.4s linear 1.98s infinite;
 }
 body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-2 {
-  animation: adfrm-chev-seq 1.4s linear 3.76s infinite;
+  animation: adfrm-chev-seq 1.4s linear 2.16s infinite;
 }
 
 @keyframes adfrm-chev-seq {
@@ -242,6 +242,114 @@ body.ad-section-live #art-direction.ad-intro-active .ad-intro-svg .adfrm-chev-2 
     animation: none;
     opacity: 1;
   }
+}
+
+/* ── DNA capsule (reused from #about) — band right of the intro copy ──────
+   Recolored to the frame red (#BB3E03) with the frame's glow. The ring text
+   rides the GLOBAL .texts/.text/.text span 3D geometry from styles.css
+   (whose animation gates are #about-scoped), so this block re-creates the
+   gates under body.ad-section-live. adk-* classes dodge styles.css's global
+   .capsule-* opacity:0 staging. Anchored right so it clears the intro text
+   (narrowed to 480px below) and sits above the arrow label (top: 72%). */
+#art-direction .ad-dna {
+  position: absolute;
+  right: 4.5%;
+  top: 14%;
+  height: 55%;
+  aspect-ratio: 207.55 / 410.66;
+  pointer-events: none;
+}
+
+#art-direction .ad-dna-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  transform: scale(0);
+  transform-origin: bottom left;
+  filter: drop-shadow(0 0 6px #BB3E03) drop-shadow(0 0 18px rgba(155, 34, 38, 0.7));
+}
+
+#art-direction .ad-dna-svg .adk-s {
+  fill: none;
+  stroke: #BB3E03;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2px;
+}
+#art-direction .ad-dna-svg .adk-dash1 { stroke-dasharray: 1.02 5.1 1.02 5.1; }
+#art-direction .ad-dna-svg .adk-dash2 { stroke-dasharray: 1.02 5.1 1.02 5.1 1.02 5.1; }
+#art-direction .ad-dna-svg .adk-f { fill: #BB3E03; }
+#art-direction .ad-dna-svg .adk-t {
+  fill: #BB3E03;
+  font-family: 'Funnel Display', sans-serif;
+  font-size: 5.66px;
+  font-weight: 700;
+}
+
+/* Enters after the frame wipe (0.7s) — same capsuleGrow as #about. */
+body.ad-section-live #art-direction.ad-intro-active .ad-dna-svg {
+  animation: capsuleGrow 1.2s ease-out 0.9s forwards;
+}
+
+#art-direction .ad-dna .scene {
+  position: absolute;
+  inset: 0;
+  perspective: 600px;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+/* Capsule height is 55% of the 56vh frame → font tracks it like #about's
+   3.5vmin does its fixed 400px capsule (≈ height / 12.7). */
+#art-direction .ad-dna .texts { font-size: 2.4vh; }
+
+body.ad-section-live #art-direction.ad-intro-active .ad-dna .texts {
+  animation: texts 12s infinite linear, ad-dna-fade 0.6s ease-out 1.6s forwards;
+}
+body.ad-section-live #art-direction.ad-intro-active .ad-dna .text {
+  animation: text 8s calc(var(--text) * -2s) infinite linear;
+}
+
+@keyframes ad-dna-fade { to { opacity: 1; } }
+
+/* Ring colors — section palette (cream + amber) over the global hsl() */
+#art-direction .ad-dna .text[style*="--text: 0"] { color: #E9D8A6; }
+#art-direction .ad-dna .text[style*="--text: 2"] { color: #EE9B00; }
+
+@media (prefers-reduced-motion: reduce) {
+  #art-direction .ad-dna-svg {
+    animation: none !important;
+    transform: none;
+  }
+  #art-direction .ad-dna .texts {
+    animation: none !important;
+    opacity: 1;
+  }
+  #art-direction .ad-dna .text { animation: none !important; }
+  #art-direction .ad-dna .text span { opacity: 1; }
+}
+
+/* Tighter band on smaller desktops; below 1220px the works panel/nav are
+   already hidden and the text reclaims the frame width — drop the capsule. */
+@media (max-width: 1366px) {
+  #art-direction .ad-intro-text {
+    width: min(calc(100% - min(75vh, 75vw) - 4vw - 80px), 440px);
+  }
+  #art-direction .ad-dna {
+    height: 48%;
+    top: 16%;
+    right: 3.5%;
+  }
+  #art-direction .ad-dna .texts { font-size: 2.1vh; }
+}
+
+@media (max-width: 1219px) {
+  #art-direction .ad-dna { display: none; }
 }
 
 @keyframes adfrm-binary-stream {
