@@ -275,20 +275,20 @@
     }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' }).observe(proxyEl);
   }
 
-  // ── skills.svg — phone-only inline conversion + per-row entrance ────────
-  // (owner request 2026-07-03: entrance like id1's, each element appearing.)
+  // ── skills.svg — inline conversion + per-row entrance (all viewports) ───
+  // (owner request 2026-07-03: entrance like id1's, each element appearing;
+  // extended from phones to desktop the same day.)
   // The graphic is an Illustrator export with outlined text: two anonymous
   // top-level <g> columns holding one <path> per glyph, no per-line grouping.
   // Rows are recovered geometrically — cluster each column's direct children
   // by the y of their path's first M command (rows sit ≥7 user units apart;
   // first-point spread within a row is <3.5) — then wrapped in <g
   // class="skills-row"> with a global top-down --row-index across BOTH
-  // columns, so the responsive.css stagger reads as one cascade down the
-  // card. Desktop keeps the plain <img> (this never runs there); on any
-  // fetch/parse failure the <img> also stays and the stock container fade
+  // columns, so the stagger reads as one cascade down the card (desktop
+  // cascade CSS in styles.css, phone twin in responsive.css). On any
+  // fetch/parse failure the <img> stays and the stock container fade
   // still reveals the full graphic.
   function convertSkillsSvgToInline() {
-    if (!window.matchMedia('(max-width: 768px)').matches) return;
     const imgElement = document.querySelector('.decoration-skills .skills-svg');
     if (!imgElement || imgElement.tagName !== 'IMG') return;
 

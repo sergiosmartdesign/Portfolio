@@ -902,78 +902,79 @@ function initAboutAnimations() {
     if (sealWrapper && sealAnchor) {
       sealAnchor.insertAdjacentElement('afterend', sealWrapper);
     }
-    // Bio glitch entrance (owner request 2026-07-02): phones give #aboutp1
-    // the same Splitting.js glitch-switch reveal as the titles/nav. The
-    // split happens here because GlitchSystem.initSplitting only saw the
-    // .glitch-text elements that existed at construction. The load-time
-    // auto-run is suppressed and re-fired the first time the bio scrolls in
-    // (same suppress → flush → fire dance as the logo/nav). Desktop
-    // untouched: class, attr and split exist only in this branch.
-    // responsive.css re-tempos the firing stagger for paragraph length and
-    // recolors the ::after glyphs (--glitch-final-color is white; the bio
-    // reads #001219).
-    // Extended to the rest of the section's text (owner request 2026-07-03):
-    // availability pill, metrics strip, and the surviving spans of #aboutp3 /
-    // #aboutp4. Per target: `host` carries the suppress/fire classes, the
-    // tuning vars (responsive.css) and the entrance observer — it must be a
-    // node that SURVIVES i18n innerHTML rewrites; `split()` returns the node
-    // whose text is actually split. p3/p4 split only their surviving span so
-    // --char-index (and the firing stagger) starts at the visible text, not
-    // at the font-size:0 collapsed region. NOTE: only #aboutp1 gets the
-    // .glitch-text class — its white-space:pre would re-break wrapping on
-    // the others (the exact overflow fixed on 07-03); the suppress→fire CSS
-    // only needs [data-char] children, not the class.
-    if (window.Splitting) {
-      [
-        { hostId: 'aboutp1', split: el => el, i18n: true, glitchTextClass: true },
-        { hostId: 'about-availability', split: el => el, i18n: false },
-        { hostId: 'about-metrics', split: el => el, i18n: false },
+  }
+
+  // Glitch entrance for the section's copy (owner 2026-07-02 bio; extended
+  // 2026-07-03 to the pill / metrics / p3 / p4 and, same day, from phones to
+  // ALL viewports at the same tempo — desktop tuning lives in styles.css,
+  // the phone twin in responsive.css). Per target: `host` carries the
+  // suppress/fire classes, the tuning vars and the entrance observer — it
+  // must be a node that SURVIVES i18n innerHTML rewrites; `split()` returns
+  // the node whose text is actually split. On phones p3/p4 split only their
+  // surviving span (the rest is font-size:0 collapsed) so the firing stagger
+  // starts at the visible text; desktop shows the full paragraphs and splits
+  // them whole, plus #aboutp2 (display:none on phones — never intersects).
+  // NOTE: only #aboutp1 gets the .glitch-text class — its white-space:pre
+  // would re-break the others' wrapping (the exact overflow fixed on 07-03);
+  // the suppress→fire CSS only needs [data-char] children, not the class.
+  // styles.css restores normal wrapping on the desktop bio.
+  if (window.Splitting) {
+    const phoneCopy = window.matchMedia('(max-width: 768px)').matches;
+    [
+      { hostId: 'aboutp1', split: el => el, i18n: true, glitchTextClass: true },
+      { hostId: 'about-availability', split: el => el, i18n: false },
+      { hostId: 'about-metrics', split: el => el, i18n: false },
+      ...(phoneCopy ? [
         { hostId: 'aboutp3', split: el => el.querySelector('.about-highlight'), i18n: true },
         { hostId: 'aboutp4', split: el => el.querySelector('.about-p4-keep'), i18n: true },
-      ].forEach(({ hostId, split, i18n, glitchTextClass }) => {
-        const hostEl = document.getElementById(hostId);
-        if (!hostEl) return;
-        if (glitchTextClass) {
-          hostEl.classList.add('glitch-text', 'reveal--0');
-          hostEl.setAttribute('data-splitting', '');
-        }
-        const splitTarget = () => {
-          const target = split(hostEl);
-          if (!target) return;
-          // Splitting memoizes per element under el['🍌'] and would hand back
-          // the stale (detached) spans after i18n rewrites the innerHTML —
-          // the same reason the stock [data-i18n-split] re-split silently
-          // no-ops for the nav buttons. Drop the memo to force a real split.
-          delete target['🍌'];
-          const results = window.Splitting({ target, by: 'chars' });
-          results.forEach(result => {
-            result.chars.forEach(char => {
-              char.style.setProperty('--count', Math.random() * 5 + 1);
-              for (let g = 0; g < 10; g++) {
-                const randomChar = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
-                char.style.setProperty(`--char-${g}`, `"${randomChar}"`);
-              }
-            });
+      ] : [
+        { hostId: 'aboutp2', split: el => el, i18n: true },
+        { hostId: 'aboutp3', split: el => el, i18n: true },
+        { hostId: 'aboutp4', split: el => el, i18n: true },
+      ]),
+    ].forEach(({ hostId, split, i18n, glitchTextClass }) => {
+      const hostEl = document.getElementById(hostId);
+      if (!hostEl) return;
+      if (glitchTextClass) {
+        hostEl.classList.add('glitch-text', 'reveal--0');
+        hostEl.setAttribute('data-splitting', '');
+      }
+      const splitTarget = () => {
+        const target = split(hostEl);
+        if (!target) return;
+        // Splitting memoizes per element under el['🍌'] and would hand back
+        // the stale (detached) spans after i18n rewrites the innerHTML —
+        // the same reason the stock [data-i18n-split] re-split silently
+        // no-ops for the nav buttons. Drop the memo to force a real split.
+        delete target['🍌'];
+        const results = window.Splitting({ target, by: 'chars' });
+        results.forEach(result => {
+          result.chars.forEach(char => {
+            char.style.setProperty('--count', Math.random() * 5 + 1);
+            for (let g = 0; g < 10; g++) {
+              const randomChar = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+              char.style.setProperty(`--char-${g}`, `"${randomChar}"`);
+            }
           });
-        };
-        splitTarget();
-        // Every i18n apply rewrites the host's innerHTML (including the async
-        // default-locale apply shortly after load), destroying the char spans
-        // — re-split on each. If the entrance already fired, the host still
-        // carries glitch-suppressed + glitch-firing, so fresh chars glitch in
-        // on insertion; if not, they stay static until the observer fires.
-        // Non-i18n hosts (pill, metrics) must NOT re-split: their spans are
-        // never rewritten and a second pass would nest .word/.char wrappers.
-        if (i18n) document.addEventListener('languagechanged', splitTarget);
-        hostEl.classList.add('glitch-suppressed');
-        new IntersectionObserver((entries, obs) => {
-          if (entries.some(entry => entry.isIntersecting)) {
-            GlitchSystem.triggerGlitch(hostEl);
-            obs.disconnect();
-          }
-        }, { threshold: 0.3 }).observe(hostEl);
-      });
-    }
+        });
+      };
+      splitTarget();
+      // Every i18n apply rewrites the host's innerHTML (including the async
+      // default-locale apply shortly after load), destroying the char spans
+      // — re-split on each. If the entrance already fired, the host still
+      // carries glitch-suppressed + glitch-firing, so fresh chars glitch in
+      // on insertion; if not, they stay static until the observer fires.
+      // Non-i18n hosts (pill, metrics) must NOT re-split: their spans are
+      // never rewritten and a second pass would nest .word/.char wrappers.
+      if (i18n) document.addEventListener('languagechanged', splitTarget);
+      hostEl.classList.add('glitch-suppressed');
+      new IntersectionObserver((entries, obs) => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          GlitchSystem.triggerGlitch(hostEl);
+          obs.disconnect();
+        }
+      }, { threshold: 0.3 }).observe(hostEl);
+    });
   }
 
   createVisibilityObserver([...new Set([
@@ -1503,7 +1504,7 @@ App.LanguageManager.ready.then(() => {
 
   safeInit('date',       updateDate);
   safeInit('svg-inline', convertID1SvgToInline);
-  safeInit('skills-inline', convertSkillsSvgToInline); // phone-only no-op on desktop
+  safeInit('skills-inline', convertSkillsSvgToInline); // all viewports since 2026-07-03
   safeInit('lang-loop',  initInfoInterfaceLangLoop);
   safeInit('info-hints', initInfoInterfaceHints);
 
