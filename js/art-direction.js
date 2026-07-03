@@ -143,6 +143,30 @@
     const dnaSpans  = [...section.querySelectorAll('.ad-dna .text span')];
     let sectionLive = false;
 
+    // Intro paragraph — about-style Splitting glitch entrance (owner
+    // 2026-07-03, same tempo as #about's copy: tuning + char wave live in
+    // art-direction-panel.css). The host keeps glitch-suppressed for life;
+    // firing is (re)triggered with the intro reveal below and undone on
+    // reset so nav-button replays re-run the wave.
+    const iadBody = section.querySelector('.iad-body');
+    const splitIadBody = () => {
+      if (!iadBody || !window.Splitting) return;
+      // i18n rewrites the innerHTML — drop Splitting's memo (el['🍌']) or
+      // the re-split silently hands back the stale, detached chars.
+      delete iadBody['🍌'];
+      window.Splitting({ target: iadBody, by: 'chars' }).forEach(result => {
+        result.chars.forEach(char => {
+          char.style.setProperty('--count', Math.random() * 5 + 1);
+          for (let g = 0; g < 10; g++) {
+            const rc = window.GLITCH_CHARS[Math.floor(Math.random() * window.GLITCH_CHARS.length)];
+            char.style.setProperty(`--char-${g}`, `"${rc}"`);
+          }
+        });
+      });
+    };
+    splitIadBody();
+    if (iadBody) iadBody.classList.add('glitch-suppressed');
+
     const triggerSectionLive = () => {
       if (sectionLive) return;
       sectionLive = true;
@@ -152,6 +176,13 @@
       setTimeout(() => {
         section.classList.add('ad-intro-animate');
         window.scrambleText(section.querySelector('.iad-header[data-content]'), NAV_SCRAMBLE);
+        if (iadBody) {
+          // suppress → flush → fire (the cross-browser restart dance from
+          // GlitchSystem.triggerGlitch) so replays re-run the char wave.
+          iadBody.classList.remove('glitch-firing');
+          void iadBody.offsetWidth;
+          iadBody.classList.add('glitch-firing');
+        }
       }, 700);
       // DNA ring letters — reveal after the capsule finishes growing (0.9s
       // delay + 1.2s grow). Guarded so a reset mid-stagger can't re-reveal.
@@ -168,6 +199,7 @@
       section.classList.add('ad-intro-active');
       navLabels.forEach(label => { label.textContent = label.getAttribute('data-content'); });
       dnaSpans.forEach(span => span.classList.remove('revealed'));
+      if (iadBody) iadBody.classList.remove('glitch-firing');
       ['.iad-header[data-content]'].forEach(sel => {
         const el = section.querySelector(sel);
         if (el) el.textContent = el.getAttribute('data-content');
@@ -178,6 +210,9 @@
     // textContent — keep the attributes in sync so a post-toggle scramble
     // (or resetSectionLive) can't restore the previous language.
     document.addEventListener('languagechanged', () => {
+      // i18n just rewrote the intro paragraph — re-split it. If the host is
+      // still glitch-firing, the fresh chars re-run the wave on insertion.
+      splitIadBody();
       const el = section.querySelector('.iad-header[data-content]');
       const t  = App.LanguageManager?.translate('ad.intro.header');
       if (el && t) el.setAttribute('data-content', t);

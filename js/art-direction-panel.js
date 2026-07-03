@@ -183,6 +183,7 @@ class ArtWorksPanel {
         this._glitchSplit(this.modalSub);
         if (this.modalDesc) {
             this.modalDesc.innerHTML = this._trKey(disc, work.num, 'desc') ?? work.desc ?? AD_PM_DESC_PLACEHOLDER;
+            this._glitchCopy(this.modalDesc);
         }
         if (Array.isArray(work.catalogs) && this.modalThumbs) {
             const ofWord = App.LanguageManager?.translate('ad.of') ?? 'de';
@@ -469,6 +470,7 @@ class ArtWorksPanel {
 
         if (this.modalDesc) {
             this.modalDesc.innerHTML = this._trKey(disc, work.num, 'desc') ?? work.desc ?? AD_PM_DESC_PLACEHOLDER;
+            this._glitchCopy(this.modalDesc);
         }
 
         this.modalSpecs.innerHTML = work.specs.map(([k, v]) => `
@@ -537,6 +539,22 @@ class ArtWorksPanel {
     // Run Splitting.js on an element and seed each char with 10 random glyphs so
     // the CSS glitch-switch animation has frames to cycle through before settling
     // on the real character. Same recipe as GlitchSystem.initSplitting (script.js).
+    // about-style glitch entrance for the desc paragraph (owner 2026-07-03,
+    // same tempo as #about's copy — tuning + char wave in the panel css).
+    // The innerHTML was just rewritten: Splitting's memo (el['🍌']) points at
+    // the stale, detached chars, so drop it before re-splitting; then the
+    // suppress → flush → fire dance (GlitchSystem.triggerGlitch's) restarts
+    // the wave on every open / language re-render.
+    _glitchCopy(el) {
+        if (!el || !window.Splitting) return;
+        delete el['🍌'];
+        this._glitchSplit(el);
+        el.classList.add('glitch-suppressed');
+        el.classList.remove('glitch-firing');
+        void el.offsetWidth;
+        el.classList.add('glitch-firing');
+    }
+
     _glitchSplit(el) {
         if (!el || !window.Splitting) return;
         const results = window.Splitting({ target: el, by: 'chars' });

@@ -352,6 +352,40 @@ body.ad-section-live #art-direction.ad-intro-active .ad-dna .text {
   #art-direction .ad-dna { display: none; }
 }
 
+/* ── Section copy — about-style Splitting glitch entrance ─────────────────
+   (owner 2026-07-03: same effect and tempo as #about's paragraphs.)
+   Hosts: .iad-body (fired with the intro reveal, art-direction.js) and
+   .ad-pm-desc (fired on each modal open / re-render, art-direction-panel.js
+   _glitchCopy). The ::after char-cycle comes from the global
+   .glitch-suppressed.glitch-firing rule in styles.css; this block owns the
+   tempo, the glyph colors (--glitch-final-color defaults to white) and the
+   progressive wave: chars pop in exactly when their glitch slot arrives.
+   Hiding the [data-char] SPAN (not the ::after) also hides the ::after's
+   `backwards` from-state garbage glyph. Failure-safe: plain opacity:1 rides
+   the firing state, and fill-mode backwards still lands content:var(--txt)
+   on a collapsed/instant (Reduce Motion) run. */
+#art-direction .iad-body,
+#art-direction .ad-pm-desc {
+  --glitch-stagger: 0.004s;
+  --glitch-count: 4;
+}
+#art-direction .iad-body    { --glitch-final-color: #E9D8A6; }
+#art-direction .ad-pm-desc  { --glitch-final-color: rgba(233, 216, 166, 0.78); }
+#art-direction .iad-body [data-char],
+#art-direction .ad-pm-desc [data-char] {
+  opacity: 0;
+}
+#art-direction .iad-body.glitch-firing [data-char],
+#art-direction .ad-pm-desc.glitch-firing [data-char] {
+  opacity: 1;
+  animation: ad-glitch-char-in 0.01s linear
+    calc(var(--char-index) * var(--glitch-stagger, 0.05s)) backwards;
+}
+@keyframes ad-glitch-char-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 @keyframes adfrm-binary-stream {
   0%,100% { opacity: 1; }
   8%      { opacity: 0.5; }
