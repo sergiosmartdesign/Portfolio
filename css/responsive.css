@@ -210,6 +210,17 @@
     gap: var(--spacing-xl);
     bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
   }
+  /* The 3s entrance delay (styles.css) waits for the desktop panel-line sweep
+     to pass the bottom edge — those lines are display:none here, so the icons
+     just sat invisible for 3 seconds (owner 2026-07-03: too slow). 0.6s reads
+     as "right after the frame lands". The li a rule is the load-time hover
+     autoplay, synced to the same start. */
+  #intro .cyber-panel.active ~ .social-media-icons {
+    animation-delay: 0.6s;
+  }
+  #intro .cyber-panel.active ~ .social-media-icons li a {
+    animation-delay: 0.6s;
+  }
 
   /* ── Mobile neon frame ────────────────────────────────────────────────────
      Desktop draws an orange (#ff3c00) glowing bracket around the hero via the
