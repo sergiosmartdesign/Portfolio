@@ -1059,17 +1059,26 @@
     height: auto;
   }
 
-  /* Letter masthead sized off the widest row (owner 2026-07-03): TION is the
-     reference — its 4 squares span the full viewport edge to edge, so each
-     cell is 100vw/4; ART / DI / REC sit above it left-justified (the grid's
-     stock flex-start). Left margin 0 pins the block to the left screen edge. */
+  /* Letter masthead re-broken as ART / DIR / ECT / ION (owner 2026-07-03 v2):
+     four rows of 3 squares, each spanning the viewport edge to edge. The
+     markup rows (ART/DI/REC/TION, shared with desktop) can't change, so the
+     phone re-break is pure CSS: the grid becomes 3 equal columns and the
+     .art-row boxes dissolve (display:contents) — the 12 cells flow in DOM
+     order and regroup as ART/DIR/ECT/ION on their own. Cells go fluid
+     (100%/aspect-ratio) so each row fills the width exactly, no vw rounding
+     gap; the letters keep scaling via their container queries. */
   #art-direction .art-direction-grid {
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     margin: calc(var(--header-height, 60px) + var(--spacing-md)) 0 var(--spacing-lg);
   }
+  #art-direction .art-row {
+    display: contents;
+  }
   #art-direction .art-cell {
-    width: 25vw;
-    height: 25vw;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 
   /* Decorative framing / vertical bars that have no room on a phone. */
