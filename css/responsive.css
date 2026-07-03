@@ -1081,10 +1081,31 @@
     aspect-ratio: 1 / 1;
   }
 
-  /* Decorative framing / vertical bars that have no room on a phone. */
-  #art-direction .ad-intro-frame,
+  /* Decorative vertical bars that have no room on a phone. */
   #art-direction .ad-skills-bar,
   #art-direction .ad-projects-bar {
+    display: none;
+  }
+  /* Red intro frame back on phones (owner 2026-07-03: "solo el svg rojo",
+     empty for now — content slots in later). Desktop hangs it absolute off
+     the letter grid (left: min(75vh,75vw)+2vw, 56vh tall — huge here);
+     re-ground it in the flow at phone scale: full width minus gutters, its
+     own viewBox ratio (950.9×632.7) so preserveAspectRatio=none causes no
+     distortion. The ad-frame-enter reveal + internal line/chevron loops key
+     off body.ad-section-live and run as-is. The chevron HUD label is part of
+     the "content" that stays off for now. */
+  #art-direction .ad-intro-frame {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: calc(100vw - 2 * var(--spacing-md));
+    height: auto;
+    aspect-ratio: 950.9 / 632.7;
+    margin: 0 var(--spacing-md) var(--spacing-xl);
+  }
+  #art-direction .ad-intro-arrow-label {
     display: none;
   }
 
