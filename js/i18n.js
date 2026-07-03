@@ -36,7 +36,10 @@
 
   function _fetchLocale(lang) {
     if (_cache[lang]) return Promise.resolve();
-    return fetch(LOCALES_PATH + lang + '.json')
+    // no-cache: always revalidate with the server (304 when unchanged) —
+    // locale json has no ?v= cache-bust, and a heuristically-cached stale
+    // copy silently drops every key added since (WebKit bit us here).
+    return fetch(LOCALES_PATH + lang + '.json', { cache: 'no-cache' })
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -66,9 +69,17 @@
      */
     init() {
       const saved = localStorage.getItem(STORAGE_KEY) || DEFAULT_LANG;
-      this._apply(saved, false);
-      this._setupButtons();
-      _resolveReady();
+      // Only the default locale is prefetched at parse time — a saved
+      // non-default language must be fetched here or _apply() silently
+      // no-ops and the page boots untranslated (long-standing es bug).
+      const boot = () => {
+        if (_cache[saved]) this._apply(saved, false);
+        else if (_cache[DEFAULT_LANG]) this._apply(DEFAULT_LANG, false);
+        this._setupButtons();
+        _resolveReady();
+      };
+      if (_cache[saved]) boot();
+      else _fetchLocale(saved).then(boot);
     },
 
     /**
