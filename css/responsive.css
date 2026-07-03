@@ -1039,15 +1039,17 @@
     height: auto;
   }
 
-  /* Compact, centered letter masthead at the top. art-cell is already fluid
-     (min(100vh/4,100vw/4)); cap it smaller so the grid reads as a header. */
+  /* Letter masthead sized off the widest row (owner 2026-07-03): TION is the
+     reference — its 4 squares span the full viewport edge to edge, so each
+     cell is 100vw/4; ART / DI / REC sit above it left-justified (the grid's
+     stock flex-start). Left margin 0 pins the block to the left screen edge. */
   #art-direction .art-direction-grid {
-    align-items: center;
-    margin: calc(var(--header-height, 60px) + var(--spacing-md)) auto var(--spacing-lg);
+    align-items: flex-start;
+    margin: calc(var(--header-height, 60px) + var(--spacing-md)) 0 var(--spacing-lg);
   }
   #art-direction .art-cell {
-    width: min(19vw, 84px);
-    height: min(19vw, 84px);
+    width: 25vw;
+    height: 25vw;
   }
 
   /* Decorative framing / vertical bars that have no room on a phone. */
