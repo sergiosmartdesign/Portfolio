@@ -892,6 +892,16 @@ function initAboutAnimations() {
     if (certLayer && certAnchor) {
       certAnchor.insertAdjacentElement('afterend', certLayer);
     }
+    // Seal CTA + social icons centered below the cert gallery (owner request
+    // 2026-07-03): the wrapper lives at .about-container level in the markup
+    // (it only LOOKED stacked — it trailed the section off-center). Move it
+    // into the same stack, right after the gallery (responsive.css order 10 +
+    // full width; the wrapper is already a centering flex column).
+    const sealWrapper = document.querySelector('.seal-cta-wrapper');
+    const sealAnchor  = certLayer || certAnchor;
+    if (sealWrapper && sealAnchor) {
+      sealAnchor.insertAdjacentElement('afterend', sealWrapper);
+    }
     // Bio glitch entrance (owner request 2026-07-02): phones give #aboutp1
     // the same Splitting.js glitch-switch reveal as the titles/nav. The
     // split happens here because GlitchSystem.initSplitting only saw the

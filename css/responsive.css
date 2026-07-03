@@ -477,6 +477,18 @@
     padding: 0;
     margin-top: 0;
   }
+  /* Seal CTA + social icons centered under the cert gallery (owner request
+     2026-07-03): script.js reparents the wrapper into the stack after the
+     gallery — in the markup it's an .about-container child and trailed the
+     section ~28px off-center. It's already a centering flex column (seal
+     over icons, styles.css), so full width + order is all it needs; the
+     desktop 70px top pad shrinks to close ranks with the gallery above. */
+  #about .about-top .seal-cta-wrapper {
+    order: 10;
+    width: 100%;
+    align-self: center;
+    padding: var(--spacing-md) 0 var(--spacing-lg);
+  }
 
   /* The .decoration-bar2 timeline bar is a tall vertical flag ("[·About·]" star
      label reading bottom-to-top, viewBox 37.5×997.6) sitting at left:80px — it
