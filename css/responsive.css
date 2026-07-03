@@ -659,11 +659,25 @@
      so recolor the painted glyphs to match.
      Failure-safe: fill-mode stays `backwards`, so a collapsed/instant run
      (Reduce Motion) still lands on content:var(--txt) — the real text. */
-  #about .about-top-head #aboutp1 {
-    --glitch-stagger: 0.007s;
-    --glitch-count: 5;
+  /* Tempo shared by every glitch host in the section (owner 2026-07-03:
+     "acelerado un poco" vs the bio's original 0.007s/5): last bio char now
+     starts ≈2s in, each char settles in 0.8s. Short hosts (pill, metrics,
+     p3/p4 spans) ride the same wave speed. */
+  #about .about-top-head #aboutp1,
+  #about .about-top #about-availability,
+  #about .about-top #about-metrics,
+  #about .about-top #aboutp3,
+  #about .about-top #aboutp4 {
+    --glitch-stagger: 0.004s;
+    --glitch-count: 4;
   }
-  #about .about-top-head #aboutp1[data-splitting] [data-char]::after {
+  /* dark-text hosts: the ::after glyphs default to --glitch-final-color
+     (white) — recolor to the text they replace. #aboutp4's surviving tail is
+     white, so it keeps the default. */
+  #about .about-top-head #aboutp1[data-splitting] [data-char]::after,
+  #about .about-top #about-availability [data-char]::after,
+  #about .about-top #about-metrics [data-char]::after,
+  #about .about-top #aboutp3 [data-char]::after {
     color: #001219;
   }
   /* The teal .about-highlight sweep keys off an `.element-visible` ancestor
