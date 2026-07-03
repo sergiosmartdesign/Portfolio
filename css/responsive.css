@@ -717,12 +717,13 @@
     --glitch-count: 4;
   }
   /* dark-text hosts: the ::after glyphs default to --glitch-final-color
-     (white) — recolor to the text they replace. #aboutp4's surviving tail is
-     white, so it keeps the default. */
+     (white) — recolor to the text they replace. #aboutp4 joined the dark
+     family 2026-07-03 (its tail switched white → #001219, owner request). */
   #about .about-top-head #aboutp1[data-splitting] [data-char]::after,
   #about .about-top #about-availability [data-char]::after,
   #about .about-top #about-metrics [data-char]::after,
-  #about .about-top #aboutp3 [data-char]::after {
+  #about .about-top #aboutp3 [data-char]::after,
+  #about .about-top #aboutp4 [data-char]::after {
     color: #001219;
   }
   /* Progressive reveal riding the wave (owner 2026-07-03, like the quote's
@@ -928,6 +929,14 @@
   #about .about-top #aboutp4 .about-p4-keep {
     font-size: 1.05rem;
     line-height: 1.55;
+    /* owner 2026-07-03: the tail read white on the orange bg — same dark ink
+       as the rest of the phone stack. */
+    color: #001219;
+  }
+  /* owner 2026-07-03: single highlight family — the cream CTA marker joins
+     the teal (#94D2BD) the p1/p3 highlights already use. */
+  #about .about-top #aboutp4 .about-cta-marker {
+    background-image: linear-gradient(#94D2BD, #94D2BD);
   }
   /* Same plain fades as p3 (reusing its keyframes); the opacity:1 doubles as
      the failure-safe (see the block below — p4 left .about-left, so the
