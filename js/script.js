@@ -892,6 +892,52 @@ function initAboutAnimations() {
     if (certLayer && certAnchor) {
       certAnchor.insertAdjacentElement('afterend', certLayer);
     }
+    // Bio glitch entrance (owner request 2026-07-02): phones give #aboutp1
+    // the same Splitting.js glitch-switch reveal as the titles/nav. The
+    // split happens here because GlitchSystem.initSplitting only saw the
+    // .glitch-text elements that existed at construction. The load-time
+    // auto-run is suppressed and re-fired the first time the bio scrolls in
+    // (same suppress → flush → fire dance as the logo/nav). Desktop
+    // untouched: class, attr and split exist only in this branch.
+    // responsive.css re-tempos the firing stagger for paragraph length and
+    // recolors the ::after glyphs (--glitch-final-color is white; the bio
+    // reads #001219).
+    const bioGlitchEl = document.getElementById('aboutp1');
+    if (bioGlitchEl && window.Splitting) {
+      bioGlitchEl.classList.add('glitch-text', 'reveal--0');
+      bioGlitchEl.setAttribute('data-splitting', '');
+      const splitBio = () => {
+        // Splitting memoizes per element under el['🍌'] and would hand back
+        // the stale (detached) spans after i18n rewrites the innerHTML —
+        // the same reason the stock [data-i18n-split] re-split silently
+        // no-ops for the nav buttons. Drop the memo to force a real split.
+        delete bioGlitchEl['🍌'];
+        const bioSplit = window.Splitting({ target: bioGlitchEl, by: 'chars' });
+        bioSplit.forEach(result => {
+          result.chars.forEach(char => {
+            char.style.setProperty('--count', Math.random() * 5 + 1);
+            for (let g = 0; g < 10; g++) {
+              const randomChar = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+              char.style.setProperty(`--char-${g}`, `"${randomChar}"`);
+            }
+          });
+        });
+      };
+      splitBio();
+      // Every i18n apply rewrites the bio's innerHTML (including the async
+      // default-locale apply shortly after load), destroying the char spans
+      // — re-split on each. If the entrance already fired, the p still
+      // carries glitch-suppressed + glitch-firing, so fresh chars glitch in
+      // on insertion; if not, they stay static until the observer fires.
+      document.addEventListener('languagechanged', splitBio);
+      bioGlitchEl.classList.add('glitch-suppressed');
+      new IntersectionObserver((entries, obs) => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          GlitchSystem.triggerGlitch(bioGlitchEl);
+          obs.disconnect();
+        }
+      }, { threshold: 0.3 }).observe(bioGlitchEl);
+    }
   }
 
   createVisibilityObserver([...new Set([

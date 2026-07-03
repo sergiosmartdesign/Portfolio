@@ -638,6 +638,24 @@
     max-width: 60ch;
     margin-top: 0;
   }
+  /* Bio glitch entrance (owner 2026-07-02; split + trigger live in the
+     script.js mobile branch). The reveal runs through the suppress→fire path
+     (styles.css), which reads two vars per element — defaults are sized for
+     ~40-char titles/buttons, so re-tempo them for a ~500-char paragraph:
+     --glitch-stagger 0.05s→0.007s (last char starts ≈3.5s in, not 25s) and
+     --glitch-count 10→5 flickers (1s per char, wave settles ≈4.5s total).
+     COLOR — [data-char] glyphs paint via ::after with --glitch-final-color
+     (white at this scope); the bio reads #001219 (highlight span included),
+     so recolor the painted glyphs to match.
+     Failure-safe: fill-mode stays `backwards`, so a collapsed/instant run
+     (Reduce Motion) still lands on content:var(--txt) — the real text. */
+  #about .about-top-head #aboutp1 {
+    --glitch-stagger: 0.007s;
+    --glitch-count: 5;
+  }
+  #about .about-top-head #aboutp1[data-splitting] [data-char]::after {
+    color: #001219;
+  }
   /* availability pill ("Available for freelance — 2026" + pulsing dot):
      script.js reparents it under the bio on phones; slot it right after the
      bio in the stack (order 4) and pull it snug against the block it belongs
