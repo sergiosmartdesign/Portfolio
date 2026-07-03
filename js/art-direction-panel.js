@@ -33,6 +33,12 @@ class ArtWorksPanel {
 
         this.activeDiscipline = null;
         this._transitioning   = false;
+        this._modalWork       = null;
+
+        // WORKS_DATA copy is authored in Spanish (the fallback); English lives
+        // in locales/en.json under ad.<discipline>.<num>.<field>. Re-render the
+        // translatable copy whenever the language toggle fires.
+        document.addEventListener('languagechanged', () => this._onLanguageChanged());
 
         this.init();
     }
@@ -103,7 +109,7 @@ class ArtWorksPanel {
             .find(item => item.dataset.discipline === key)
             ?.querySelector('.adnav-label');
 
-        const label = `· ${DISCIPLINE_LABELS[key] ?? (key.charAt(0).toUpperCase() + key.slice(1))} ·`;
+        const label = `· ${this._discLabel(key)} ·`;
 
         if (immediate) {
             this._renderRows(key);
@@ -138,6 +144,56 @@ class ArtWorksPanel {
         if (this.discName) this._scrambleText(this.discName, null, label);
     }
 
+    // ── i18n ──────────────────────────────────────────────────────────────────
+
+    // A missing key (es locale, or locale not loaded yet) returns undefined —
+    // callers fall back to the Spanish string in WORKS_DATA, so copy can never
+    // render blank.
+    _trKey(disc, num, field) {
+        return App.LanguageManager?.translate(`ad.${disc}.${num}.${field}`);
+    }
+
+    // Discipline display label (works heading, modal category) — translated
+    // when the locale carries ad.disc.<key>, else the static label constant.
+    _discLabel(key) {
+        return App.LanguageManager?.translate(`ad.disc.${key}`)
+            ?? DISCIPLINE_LABELS[key]
+            ?? (key.charAt(0).toUpperCase() + key.slice(1));
+    }
+
+    _onLanguageChanged() {
+        // Rows re-render in place (skip mid-transition — the next discipline
+        // switch renders in the new language anyway).
+        if (this.activeDiscipline && !this._transitioning) {
+            this._renderRows(this.activeDiscipline);
+        }
+        if (this.activeDiscipline && this.discName) {
+            this.discName.textContent = `· ${this._discLabel(this.activeDiscipline)} ·`;
+        }
+
+        const work = this._modalWork;
+        if (!work || !this.modal?.classList.contains('is-open')) return;
+
+        const disc = this.activeDiscipline;
+        this.modalCat.textContent   = `· ${this._discLabel(disc).toUpperCase()} ·`;
+        this.modalTitle.textContent = this._trKey(disc, work.num, 'title') ?? work.title;
+        this.modalSub.textContent   = this._trKey(disc, work.num, 'sub')   ?? work.sub;
+        this._glitchSplit(this.modalCat);
+        this._glitchSplit(this.modalTitle);
+        this._glitchSplit(this.modalSub);
+        if (this.modalDesc) {
+            this.modalDesc.innerHTML = this._trKey(disc, work.num, 'desc') ?? work.desc ?? AD_PM_DESC_PLACEHOLDER;
+        }
+        if (Array.isArray(work.catalogs) && this.modalThumbs) {
+            const ofWord = App.LanguageManager?.translate('ad.of') ?? 'de';
+            this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((thumb, i) => {
+                const label = this._trKey(disc, work.num, `catalog.${i}`) ?? work.catalogs[i]?.label ?? '';
+                thumb.title = label;
+                thumb.setAttribute('aria-label', `${label} (${i + 1} ${ofWord} ${work.catalogs.length})`);
+            });
+        }
+    }
+
     // ── Row rendering ─────────────────────────────────────────────────────────
 
     _renderRows(key) {
@@ -152,12 +208,13 @@ class ArtWorksPanel {
         }
 
         this.table.innerHTML = works.map(w => {
+            const title = this._trKey(key, w.num, 'title') ?? w.title;
             const scope = w.specs.find(s => s[0] === 'Scope')?.[1] ?? '—';
             const tools = w.specs.find(s => s[0] === 'Tools')?.[1] ?? '—';
             const year  = w.specs.find(s => s[0] === 'Year')?.[1]  ?? '—';
             return `
-            <div class="ad-work-item" role="listitem" tabindex="0" aria-label="Open ${w.title}">
-                <span class="ad-work-data ad-work-title">${w.title}</span>
+            <div class="ad-work-item" role="listitem" tabindex="0" aria-label="Open ${title}">
+                <span class="ad-work-data ad-work-title">${title}</span>
                 <span class="ad-work-data ad-work-scope">${scope}</span>
                 <span class="ad-work-data ad-work-tools">${tools}</span>
                 <span class="ad-work-data ad-work-year">${year}</span>
@@ -396,10 +453,12 @@ class ArtWorksPanel {
         }
         this.modal.classList.toggle('is-flipbook', useFlip);
 
+        this._modalWork = work;
+        const disc = this.activeDiscipline;
         this.modalNum.textContent   = work.num;
-        this.modalCat.textContent   = `· ${work.cat.toUpperCase()} ·`;
-        this.modalTitle.textContent = work.title;
-        this.modalSub.textContent   = work.sub;
+        this.modalCat.textContent   = `· ${this._discLabel(disc).toUpperCase()} ·`;
+        this.modalTitle.textContent = this._trKey(disc, work.num, 'title') ?? work.title;
+        this.modalSub.textContent   = this._trKey(disc, work.num, 'sub')   ?? work.sub;
 
         // Re-split on each open so the fresh [data-char] pseudo-elements re-fire
         // the glitch-switch char-cycle (keyframes in styles.css). The plain-text
@@ -409,7 +468,7 @@ class ArtWorksPanel {
         this._glitchSplit(this.modalSub);
 
         if (this.modalDesc) {
-            this.modalDesc.innerHTML = work.desc ?? AD_PM_DESC_PLACEHOLDER;
+            this.modalDesc.innerHTML = this._trKey(disc, work.num, 'desc') ?? work.desc ?? AD_PM_DESC_PLACEHOLDER;
         }
 
         this.modalSpecs.innerHTML = work.specs.map(([k, v]) => `
@@ -424,12 +483,14 @@ class ArtWorksPanel {
         if (this.modalThumbs && useFlip && hasCatalogs) {
             // Multi-catalog project — the thumb strip becomes a catalog
             // selector: one cover per book, click swaps the flipbook.
-            this.modalThumbs.innerHTML = work.catalogs.map((cat, i) =>
-                `<div class="ad-pm-thumb${i === 0 ? ' is-active' : ''}" role="listitem"
+            const ofWord = App.LanguageManager?.translate('ad.of') ?? 'de';
+            this.modalThumbs.innerHTML = work.catalogs.map((cat, i) => {
+                const label = this._trKey(disc, work.num, `catalog.${i}`) ?? cat.label;
+                return `<div class="ad-pm-thumb${i === 0 ? ' is-active' : ''}" role="listitem"
                       style="background-image:url('${cat.images[0]}')"
-                      tabindex="0" title="${cat.label}"
-                      aria-label="${cat.label} (${i + 1} de ${work.catalogs.length})"></div>`
-            ).join('');
+                      tabindex="0" title="${label}"
+                      aria-label="${label} (${i + 1} ${ofWord} ${work.catalogs.length})"></div>`;
+            }).join('');
             this.modalThumbs.querySelectorAll('.ad-pm-thumb').forEach((thumb, i) => {
                 const pick = () => this._switchCatalog(work, i);
                 thumb.addEventListener('click', pick);
@@ -511,6 +572,7 @@ class ArtWorksPanel {
         document.body.style.overflow = '';
         this._triggerEl?.focus({ preventScroll: true });
         this._triggerEl = null;
+        this._modalWork = null;
         this._teardownFlipbook();
         // Free the WebGL context once the fade-out (0.22s) has finished.
         this._mvTeardownTimer = setTimeout(() => this._teardownModelViewer(), 240);
@@ -527,8 +589,13 @@ class ArtWorksPanel {
         // Landscape books fill the stage width — flanking arrows would sit on
         // the pages, so these works drop the control row below the book.
         this.modalStage.classList.toggle('nav-below', !!work.navBelow);
+        const disc     = this.activeDiscipline;
+        const title    = this._trKey(disc, work.num, 'title') ?? work.title;
+        const catLabel = cat
+            ? (this._trKey(disc, work.num, `catalog.${catalogIndex}`) ?? cat.label)
+            : null;
         this._flipbook = new ADFlipbook(this.modalStage, cat ? cat.images : work.images, {
-            label: cat ? `${work.title} — ${cat.label}` : `${work.title} — catalog`,
+            label: cat ? `${title} — ${catLabel}` : `${title} — catalog`,
         });
     }
 

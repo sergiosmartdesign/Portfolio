@@ -150,5 +150,24 @@
   "illus.hud.s4": "- E N T R A R -",
   "illus.hud.s5": "p a r a",
   "illus.hud.s6": "v e r ·",
-  "illus.expand":  "[ · c l i c | p a r a | e x p a n d i r · ]"
+  "illus.expand":  "[ · c l i c | p a r a | e x p a n d i r · ]",
+
+  "ad.intro.header": "[ · DIRECCIÓN DE ARTE · ]",
+  "ad.intro.body": "Director de arte senior con más de 10 años de práctica en identidad de marca, diseño editorial, motion y producto digital. El trabajo está organizado por disciplinas: selecciona una en el panel de abajo para explorar proyectos seleccionados.",
+  "ad.intro.arrow": "[ · Selecciona una disciplina para comenzar · ]",
+  "ad.bar.projects": "[ · p r o y e c t o s · ]",
+  "ad.nav.title": "[ · DISCIPLINAS · ]",
+  "ad.nav.label.identity": "· 01 · IDENTIDAD",
+  "ad.nav.sub.identity": "logos · sistemas de marca · papelería",
+  "ad.nav.label.web": "· 02 · WEB",
+  "ad.nav.sub.web": "landings · eventos virtuales · ux/ui",
+  "ad.nav.label.editorial": "· 03 · EDITORIAL",
+  "ad.nav.sub.editorial": "catálogos · impresos · gran formato",
+  "ad.nav.label.3d": "· 04 · 3D & MOTION",
+  "ad.nav.sub.3d": "personajes · modelos interactivos",
+  "ad.nav.hint": "· elige una categoría para ver proyectos ·",
+  "ad.disc.identity": "Identidad",
+  "ad.disc.web": "Web",
+  "ad.disc.editorial": "Editorial",
+  "ad.disc.3d": "3D & Motion"
 }

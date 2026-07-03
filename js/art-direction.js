@@ -167,6 +167,20 @@
       });
     };
 
+    // Scrambled texts resolve to data-content, but i18n only rewrites
+    // textContent — keep the attributes in sync so a post-toggle scramble
+    // (or resetSectionLive) can't restore the previous language.
+    document.addEventListener('languagechanged', () => {
+      const el = section.querySelector('.iad-header[data-content]');
+      const t  = App.LanguageManager?.translate('ad.intro.header');
+      if (el && t) el.setAttribute('data-content', t);
+      navLabels.forEach(label => {
+        const disc = label.closest('[data-discipline]')?.dataset.discipline;
+        const lt   = disc && App.LanguageManager?.translate(`ad.nav.label.${disc}`);
+        if (lt) label.setAttribute('data-content', lt);
+      });
+    });
+
     // Nav button — letters play first, then the nav card decodes after they finish.
     const lettersDone = (TOTAL - 1) * 120 + 400;
     section.addEventListener('artEntrancePlay', () => {
