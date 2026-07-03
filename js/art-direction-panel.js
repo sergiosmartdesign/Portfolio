@@ -20,6 +20,12 @@ const AD_PANEL_SCRAMBLE = { chars: '!<>-_\\/[]{}—=+*^?#∆◊§øΩ†‡', fr
 // site-wide GLITCH_CHARS used on headings (script.js).
 const AD_PM_GLITCH_CHARS = '`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/'.split('');
 
+// Owner 2026-07-03: the modal title lands on a DIFFERENT portfolio-palette
+// color on every open (never repeating the previous one). All four read
+// comfortably over the dark #001219 backdrop images; the split glyphs pick
+// the value up via --ad-pm-title-color in art-direction-panel.css.
+const AD_PM_TITLE_COLORS = ['#EE9B00', '#94D2BD', '#E9D8A6', '#CA6702'];
+
 class ArtWorksPanel {
     constructor() {
         this.panel    = document.querySelector('#art-direction .ad-works-panel');
@@ -461,6 +467,11 @@ class ArtWorksPanel {
         this.modalTitle.textContent = this._trKey(disc, work.num, 'title') ?? work.title;
         this.modalSub.textContent   = this._trKey(disc, work.num, 'sub')   ?? work.sub;
 
+        // Rotate the title color BEFORE the split so the fresh glyphs settle
+        // on it. Language re-renders (_refreshModalContent) deliberately keep
+        // the current color: same project, same open.
+        this.modalTitle.style.setProperty('--ad-pm-title-color', this._nextTitleColor());
+
         // Re-split on each open so the fresh [data-char] pseudo-elements re-fire
         // the glitch-switch char-cycle (keyframes in styles.css). The plain-text
         // assignment above wipes any prior split, so Splitting starts clean.
@@ -539,6 +550,17 @@ class ArtWorksPanel {
     // Run Splitting.js on an element and seed each char with 10 random glyphs so
     // the CSS glitch-switch animation has frames to cycle through before settling
     // on the real character. Same recipe as GlitchSystem.initSplitting (script.js).
+    // Next palette color for the modal title — random, but never the one the
+    // previous open landed on ("siempre un color diferente").
+    _nextTitleColor() {
+        let c;
+        do {
+            c = AD_PM_TITLE_COLORS[Math.floor(Math.random() * AD_PM_TITLE_COLORS.length)];
+        } while (c === this._lastTitleColor && AD_PM_TITLE_COLORS.length > 1);
+        this._lastTitleColor = c;
+        return c;
+    }
+
     // about-style glitch entrance for the desc paragraph (owner 2026-07-03,
     // same tempo as #about's copy — tuning + char wave in the panel css).
     // The innerHTML was just rewritten: Splitting's memo (el['🍌']) points at

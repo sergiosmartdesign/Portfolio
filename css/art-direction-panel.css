@@ -1154,7 +1154,7 @@ body.ad-section-live #art-direction .ad-explore-card {
   animation-iteration-count: calc(var(--char-index) * 0.55);
 }
 .ad-pm-cat[data-splitting]   [data-char]:after { color: #EE9B00; }
-.ad-pm-title[data-splitting] [data-char]:after { color: #E9D8A6; }
+.ad-pm-title[data-splitting] [data-char]:after { color: var(--ad-pm-title-color, #E9D8A6); }
 .ad-pm-sub[data-splitting]   [data-char]:after { color: rgba(233, 216, 166, 0.55); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1182,7 +1182,10 @@ body.ad-section-live #art-direction .ad-explore-card {
   font-family: 'Funnel Display', sans-serif;
   font-size: clamp(32px, 4vw, 52px);
   font-weight: 700;
-  color: #E9D8A6;
+  /* Rotated per open by _nextTitleColor() (art-direction-panel.js) — the
+     base color matters for selection highlights/fallbacks; the visible
+     glyphs are the [data-char]::after copies above, same var. */
+  color: var(--ad-pm-title-color, #E9D8A6);
   line-height: 1.1;
   margin: 0 0 8px 0;
 }
