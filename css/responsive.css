@@ -692,6 +692,35 @@
   #about .about-top #aboutp3 [data-char]::after {
     color: #001219;
   }
+  /* Progressive reveal riding the wave (owner 2026-07-03, like the quote's
+     yellow ending on desktop): chars start invisible and pop in exactly when
+     their glitch slot arrives. Hiding the [data-char] SPAN (not the ::after)
+     also hides the ::after's `backwards` from-state — the random glitch
+     glyph every char otherwise shows while waiting its turn. Delay formula
+     matches the styles.css firing rule 1:1, so the opacity front and the
+     glitch front travel together. Failure-safe: plain opacity:1 rides the
+     firing state (backwards fill carries the hidden phase); i18n re-splits
+     insert fresh chars into a still-.glitch-firing host, so they re-reveal. */
+  #about .about-top-head #aboutp1 [data-char],
+  #about .about-top #about-availability [data-char],
+  #about .about-top #about-metrics [data-char],
+  #about .about-top #aboutp3 [data-char],
+  #about .about-top #aboutp4 [data-char] {
+    opacity: 0;
+  }
+  #about .about-top-head #aboutp1.glitch-firing [data-char],
+  #about .about-top #about-availability.glitch-firing [data-char],
+  #about .about-top #about-metrics.glitch-firing [data-char],
+  #about .about-top #aboutp3.glitch-firing [data-char],
+  #about .about-top #aboutp4.glitch-firing [data-char] {
+    opacity: 1;
+    animation: glitchCharIn 0.01s linear
+      calc(var(--char-index) * var(--glitch-stagger, 0.05s)) backwards;
+  }
+  @keyframes glitchCharIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
   /* The teal .about-highlight sweep keys off an `.element-visible` ancestor
      (styles.css), but #aboutp1 sits in .about-top-head — outside the
      .about-left observer list — so the new highlighted sentence never sweeps
