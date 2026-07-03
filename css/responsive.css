@@ -634,8 +634,18 @@
     text-align: justify;
     -webkit-hyphens: auto;
             hyphens: auto;
-    align-self: stretch;
-    max-width: 60ch;
+    /* .glitch-text (added by the script.js mobile split) is white-space:pre,
+       which forbids soft wrapping — a 500-char paragraph renders as one line
+       off the right edge of the phone (owner report 2026-07-03). Same escape
+       hatch styles.css already uses for the Paul Rand ending. */
+    white-space: normal;
+    /* viewport-wide block, left-to-right (owner 2026-07-03): same 100vw +
+       gutter recipe as #aboutp3 further down the stack. */
+    align-self: center;
+    width: 100vw;
+    max-width: none;
+    box-sizing: border-box;
+    padding: 0 var(--spacing-md);
     margin-top: 0;
   }
   /* Bio glitch entrance (owner 2026-07-02; split + trigger live in the
@@ -655,6 +665,16 @@
   }
   #about .about-top-head #aboutp1[data-splitting] [data-char]::after {
     color: #001219;
+  }
+  /* The teal .about-highlight sweep keys off an `.element-visible` ancestor
+     (styles.css), but #aboutp1 sits in .about-top-head — outside the
+     .about-left observer list — so the new highlighted sentence never sweeps
+     on phones. Ride the bio's own entrance instead: .glitch-firing is added
+     when the reveal fires and persists, and the span's stock 0.8s/0.7s-delay
+     transition still animates the fill. Failure-safe: if the entrance never
+     fires the text stays readable, just unhighlighted (same as before). */
+  #about .about-top-head #aboutp1.glitch-firing .about-highlight {
+    background-size: 100% 88%;
   }
   /* availability pill ("Available for freelance — 2026" + pulsing dot):
      script.js reparents it under the bio on phones; slot it right after the
