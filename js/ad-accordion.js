@@ -274,38 +274,25 @@
   }
 
   // ── Bottom-pin for the #photo curtain ──────────────────────────────────────
-  // On phones #art-direction is taller than the viewport and scrolls in flow,
-  // but the #photo curtain (fixed, clips open from the top) reveals over a
-  // STATIONARY section on desktop. In flow the section keeps scrolling up while
-  // the curtain only covers the top, leaving an empty band below the section's
-  // bottom. Fix: once the section's flow bottom reaches the viewport bottom,
-  // hold it there with a translateY that cancels further scroll — so it fills
-  // the viewport while the curtain descends over it — then release. The window
-  // is keyed to the spacer's live rect (same signal script.js uses to drive the
-  // clip), so it stays in sync whatever the accordion height is.
+  // On phones #art-direction is taller than the viewport, so the desktop
+  // top:0 sticky pin would hide the accordion, and leaving it in flow leaves an
+  // empty band under the section while the #photo curtain (fixed, clips open
+  // from the top) descends. Fix: keep it a NATIVE sticky pin (composited, so no
+  // scroll-frame jitter) but offset the sticky top by the section's overflow so
+  // its BOTTOM lands at the viewport bottom — it then fills the viewport while
+  // the curtain descends over it, with no gap. The offset only depends on the
+  // section height, so it's recomputed on resize and whenever the accordion
+  // changes height (ResizeObserver) — never per scroll frame.
   function initBottomPin(section) {
-    const spacer = document.querySelector('.photo-scroll-spacer');
-    if (!spacer) return;
-
-    let ticking = false;
-    const apply = () => {
-      ticking = false;
-      const vh = window.innerHeight;
-      // spacer.top (document) == section flow bottom (photo is fixed/no-flow).
-      // Unaffected by the section's own transform, so it's a stable reference.
-      const spacerTopDoc = spacer.getBoundingClientRect().top + window.scrollY;
-      const pinStart = spacerTopDoc - vh; // scrollY where section bottom hits vh
-      const offset = Math.max(0, Math.min(window.scrollY - pinStart, vh));
-      section.style.transform = offset > 0 ? `translateY(${offset}px)` : '';
+    const setTop = () => {
+      const overflow = section.offsetHeight - window.innerHeight;
+      section.style.setProperty('--ad-pin-top', overflow > 0 ? `${-overflow}px` : '0px');
     };
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(apply);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    apply();
+    setTop();
+    window.addEventListener('resize', setTop, { passive: true });
+    // Accordion open/close changes offsetHeight; --ad-pin-top only moves the
+    // sticky offset (not layout height), so this can't feed back into a loop.
+    if (window.ResizeObserver) new ResizeObserver(setTop).observe(section);
   }
 
   if (document.readyState === 'loading') {

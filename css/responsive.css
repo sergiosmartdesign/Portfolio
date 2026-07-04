@@ -1042,6 +1042,15 @@
    ════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  /* body's global overflow-x:hidden computes overflow-y to `auto`, making the
+     body a scroll container — which breaks position:sticky (the #art-direction
+     bottom-pin below sticks relative to the body span and never engages).
+     `clip` prevents the same horizontal overflow WITHOUT creating a scroll
+     container, so native sticky works again (composited → no scroll jitter).
+     html already carries overflow-x:clip (≤1024px) as the root guard. */
+  body {
+    overflow-x: clip;
+  }
   /* overflow:visible lets the now-in-flow panels define the section height
      (absolute children create none). The bg-image/scanlines stay full-bleed. */
   #art-direction {
@@ -1052,12 +1061,16 @@
        was spacing-2xl(64) here + spacing-xl(48) accordion margin = 112px;
        now spacing-lg(32) + spacing-md(24) = 56px. */
     padding-bottom: var(--spacing-lg);
-    /* In flow (desktop top-pin cancelled). js/ad-accordion.js pins the bottom
-       during the #photo curtain via transform so there's no empty gap — sticky
-       can't do it here (the 300vh spacer inside .ad-pin-wrap defers bottom-
-       sticky to the container's end). */
-    position: relative;
-    top: auto;
+    /* Native sticky pin, offset so the section's BOTTOM lands at the viewport
+       bottom (owner 2026-07-04). The section is taller than the viewport, so a
+       top:0 pin (desktop) would hide the accordion; instead we pin at a
+       negative top equal to the overflow (section height − viewport), computed
+       into --ad-pin-top by js/ad-accordion.js on resize / accordion resize.
+       Sticky is composited, so the pin is jitter-free (unlike a per-frame JS
+       transform), and it engages exactly when the bottom reaches the viewport
+       bottom — the same moment the #photo curtain starts — so no empty gap. */
+    position: sticky;
+    top: var(--ad-pin-top, 0px);
   }
   /* Restore full-bleed: the mobile section is a tall vertical flow, so the bg
      must stretch the whole height, not the fixed 100vh used on desktop. */
