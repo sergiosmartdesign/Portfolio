@@ -1372,53 +1372,91 @@
     height: auto;
   }
 
-  /* ── Project modal → full-screen sheet: media on top, scrollable details ── */
+  /* ── Project modal → clean vertical stack (owner 2026-07-04): the desktop
+     layout absolutely-positions the image stage (right 65%) over the text/
+     gallery row, which reads as overlapping junk on a phone. Rebuild the frame
+     as a flex COLUMN: the opening image pinned on top, then a scrollable detail
+     area holding title + info and, below it, the image gallery. The bg/deco
+     layers stay absolute inset:0 behind the flow (frame doesn't scroll). ── */
   .ad-pm-frame {
-    inset: max(var(--spacing-sm), env(safe-area-inset-top))
+    inset: max(calc(var(--header-height, 60px) + var(--spacing-sm)), env(safe-area-inset-top))
            var(--spacing-sm)
            max(var(--spacing-sm), env(safe-area-inset-bottom));
-  }
-  .ad-pm-stage {
-    top: var(--spacing-sm);
-    left: var(--spacing-sm);
-    right: var(--spacing-sm);
-    width: auto;
-    height: 42%;
-    padding: var(--spacing-xs);
-  }
-  .ad-pm-content {
-    left: var(--spacing-md);
-    right: var(--spacing-md);
-    bottom: var(--spacing-md);
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-sm);
-    max-height: 50%;
+    overflow: hidden;
+  }
+  /* 1 · opening image — in-flow at the top, fixed share of the frame. Flipbook
+     mid-flip pages ride 3D transforms out of the box, so clip to it. */
+  .ad-pm-stage {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    flex: 0 0 auto;
+    aspect-ratio: 4 / 3;
+    max-height: 40vh;
+    padding: var(--spacing-sm);
+    z-index: 4;
+    overflow: clip;
+  }
+  /* 2 · detail area — everything below the image, scrolls as one column:
+     title + info first, gallery after. */
+  .ad-pm-content {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+    padding: 0 var(--spacing-md) var(--spacing-md);
     overflow-y: auto;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Full-width text column (desktop width:min(40ch,30%) → ~94px, clipping the
+     title mid-word); title/num a touch smaller than desktop. */
+  .ad-pm-text {
+    order: 1;
+    width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
+    margin: 0;
   }
   .ad-pm-num {
     font-size: clamp(36px, 10vw, 52px);
   }
-  .ad-pm-desc {
-    max-width: none;
-  }
-  /* The stacked sheet never reset the desktop text column (width:min(40ch,30%)
-     → ~94px on a phone): the title clipped mid-word and the column grew
-     thousands of px tall. Full-width children in the column layout. */
-  .ad-pm-text {
-    width: 100%;
-    max-width: none;
-    flex: 0 0 auto;
-    margin-right: 0;
-  }
   .ad-pm-title {
     font-size: clamp(24px, 7vw, 32px);
   }
-  /* Flipbook mid-flip pages ride 3D transforms out of the stage and over the
-     header — clip them to the stage box (desktop keeps the free bleed). */
-  .ad-pm-stage {
-    overflow: clip;
+  .ad-pm-desc {
+    max-width: none;
+  }
+  /* 3 · gallery — a wrapping grid of thumbs under the info, 3 per row and big
+     enough to tap. */
+  .ad-pm-thumbs {
+    order: 2;
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 0;
+  }
+  .ad-pm-thumb {
+    width: calc((100% - 16px) / 3);
+    height: auto;
+    aspect-ratio: 4 / 3;
+    opacity: 0.85;
   }
 }
 
