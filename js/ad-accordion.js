@@ -28,6 +28,10 @@
     '3d': '· 3d & motion ·',
   };
 
+  // ms between consecutive rows appearing when a category expands — slow
+  // enough (owner 2026-07-04) that each line's glitch-in reads individually.
+  const OPEN_ITEM_STEP = 130;
+
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const t = key => window.App && App.LanguageManager && App.LanguageManager.translate
@@ -122,10 +126,11 @@
       gsap.to(el, {
         delay: delayMs / 1000,
         keyframes: [
-          { opacity: 1,    duration: 0.04, ease: 'none' },
-          { opacity: 0.15, duration: 0.03, ease: 'none' },
-          { opacity: 0.9,  duration: 0.04, ease: 'none' },
-          { opacity: 1,    duration: 0.05, ease: 'none' },
+          { opacity: 1,    duration: 0.06, ease: 'none' },
+          { opacity: 0.12, duration: 0.05, ease: 'none' },
+          { opacity: 0.9,  duration: 0.06, ease: 'none' },
+          { opacity: 0.3,  duration: 0.04, ease: 'none' },
+          { opacity: 1,    duration: 0.07, ease: 'none' },
         ],
       });
     };
@@ -167,7 +172,7 @@
       entry.btn.addEventListener('click', () => {
         if (chainActive) return; // don't fight the attract cycle
         if (isOpen(entry)) closeEntry(entry, false);
-        else openEntry(entry, 45);
+        else openEntry(entry, OPEN_ITEM_STEP);
       });
 
       entry.items.forEach(({ el, work }) => {
@@ -198,7 +203,7 @@
       chainActive = true;
       chainPlayed = true;
 
-      const BTN_GAP = 150, ITEM_STEP = 55, CAT_GAP = 220, REV_STEP = 25, REV_GAP = 90;
+      const BTN_GAP = 150, ITEM_STEP = 95, CAT_GAP = 240, REV_STEP = 25, REV_GAP = 90;
       let cursor = 1800; // let the letter wipe / intro text get ahead first
 
       entries.forEach(entry => {
