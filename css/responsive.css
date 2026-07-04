@@ -1048,7 +1048,10 @@
     overflow: visible;
     height: auto;            /* cancel the desktop grid-height lock */
     min-height: 100svh;
-    padding-bottom: var(--spacing-2xl);
+    /* Trim the dead space under the accordion by half (owner 2026-07-04):
+       was spacing-2xl(64) here + spacing-xl(48) accordion margin = 112px;
+       now spacing-lg(32) + spacing-md(24) = 56px. */
+    padding-bottom: var(--spacing-lg);
     position: relative;      /* cancel the desktop sticky pin */
     top: auto;
   }
@@ -1214,7 +1217,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    margin: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+    margin: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
     background: transparent;
   }
   #art-direction .ad-accordion-item {
