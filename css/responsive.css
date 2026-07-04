@@ -1508,6 +1508,14 @@
    ════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  /* The hover-reveal polaroid mockup (.photo-polaroid-frame) and its
+     "HOVER TO REVEAL THE PHOTO" hint SVG (.photo-polaroid-hint) make no sense
+     on touch — remove the whole unit (owner 2026-07-04). The item lightbox is
+     a separate body-level element, unaffected. */
+  #photo .photo-polaroid-unit {
+    display: none;
+  }
+
   /* Invert the stacked columns (owner 2026-07-04): show the right column
      (.photo-col-camera — polaroid unit + instagram) first in the viewport,
      then the left column (cta + category list). DOM order stays left→right;
