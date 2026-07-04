@@ -1403,6 +1403,20 @@
     z-index: 4;
     overflow: clip;
   }
+  /* The red cyber frame (desktop: top:100 right:100 65%×65%, i.e. the desktop
+     stage box) otherwise floats over the stacked text. Re-anchor it to the
+     mobile stage box so it becomes the FRAME of the top image — identical
+     top/width/aspect/max-height as .ad-pm-stage, so the two boxes coincide. */
+  .ad-pm-deco {
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    max-height: 40vh;
+  }
   /* 2 · detail area — everything below the image, scrolls as one column:
      title + info first, gallery after. */
   .ad-pm-content {
