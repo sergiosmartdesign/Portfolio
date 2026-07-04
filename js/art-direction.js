@@ -91,7 +91,17 @@
     const updateLetters = (rect, vh) => {
       if (playing) return;
       if (reducedMotion.matches) { revealAll(); return; }
-      const progress = clamp01((vh - rect.top) / vh);
+      // Phones: the section rests below the fixed header (scroll-margin-top),
+      // so rect.top never reaches 0 there — with a /vh span the wipe stalls at
+      // ~0.89 and the ION row stays clipped when arriving by scroll. Shrink
+      // the span so the reveal completes right at the rest position. Desktop
+      // pins at top:0 and keeps the original full-viewport span.
+      let span = vh;
+      if (App.BrowserDetect && App.BrowserDetect.isMobile) {
+        const header = document.querySelector('header');
+        span = vh - ((header ? header.offsetHeight : 0) + 8);
+      }
+      const progress = clamp01((vh - rect.top) / span);
       cells.forEach((cell, i) => {
         const start = i / TOTAL;
         const end   = (i + 1) / TOTAL;
