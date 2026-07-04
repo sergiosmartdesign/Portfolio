@@ -126,6 +126,46 @@
     opacity: 0;
 }
 
+/* Meninas process thumbnails — a column of same-width thumbs overlaid on the
+   left of the piece's cube face. Rides the face's 3D transform. Gated visible
+   by JS (.is-visible) only while the face shows the Meninas image. Clicks are
+   routed from the cube clickzone (pointer-events off here). */
+.illus-face-thumbs {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    translate: 0 -50%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease 0.35s;
+}
+.illus-face-thumbs.is-visible {
+    opacity: 1;
+    pointer-events: auto; /* thumbs sit outside the cube clickzone, so click them directly */
+}
+/* Beats the generic `.illus-face img` (which forces opacity:0 + max-* sizing) */
+.illus-face-thumbs .illus-face-thumb {
+    display: block;
+    width: 58px;        /* uniform width for every thumb */
+    height: auto;       /* natural height → full process image, no crop */
+    max-width: none;
+    max-height: none;
+    opacity: 1;
+    background: #001219;
+    border: 1.5px solid var(--illus-accent, #EE9B00);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+    cursor: zoom-in;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.illus-face-thumbs .illus-face-thumb:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+}
+
 /* ── Gallery title face — intro robot background image ───────────────────── */
 .illus-face[data-face="top"] {
     background: url('../images/sergio-ayala-robot-red-teal-duotone-illustration-section.webp') center / cover no-repeat;
@@ -277,7 +317,7 @@
 
 .illus-title-float {
     position: absolute;
-    bottom: calc(50% + 8rem);
+    bottom: calc(50% + 11.5rem); /* raised in step with .illus-strip (sits just above it) */
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -623,7 +663,10 @@
 /* ── Navigation dots — mirrors titleFloat anchor just below it ────────────── */
 .illus-strip {
     position: absolute;
-    top: calc(50% - 8rem + 0.75rem); /* just below titleFloat bottom edge */
+    /* Raised so the (now longer) title list clears the how-to-explore SVG below.
+       Anchored to 50% with the same top on both sides — the L/R flip only swaps
+       left/right + translate, so the vertical layout is identical either side. */
+    top: calc(50% - 10.75rem); /* just below titleFloat bottom edge */
     left: 3.5rem;
     translate: 0 0;
     display: flex;
@@ -928,6 +971,16 @@
     animation-delay: calc(0.75s + var(--count, 1) * 0.05s);
 }
 
+/* Speed up every glitch text in the section to the mobile tempo. The global
+   rule (styles.css) scales iterations per character with
+   animation-iteration-count: calc(var(--char-index) * 0.55), so long bodies
+   crawl (last char flickers ~110×0.2s ≈ 22s). Mobile uses a fixed short count
+   (--glitch-count: 4); match it here so each char settles in 4×0.2s = 0.8s
+   regardless of position. Covers tag, word-art, title-float, category, body. */
+#illustration [data-char]::after {
+    animation-iteration-count: 4;
+}
+
 /* "LUST" accent — color driven by --illus-lust-accent, updated by JS on every stop change.
    Specificity (1,5,1) beats the base word-art rule (1,4,1) to override color only here.
    The transition fires from --illus-fg to the new color each time the section becomes .active,
@@ -1010,6 +1063,20 @@
     text-transform: uppercase;
     color: var(--illus-muted);
     opacity: 0.8;
+}
+
+/* Artist-reference link inside the meta row — reads as an attribution credit */
+a.illus-meta-link {
+    pointer-events: auto;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--illus-accent) 55%, transparent);
+    transition: color 0.25s ease, opacity 0.25s ease, border-color 0.25s ease;
+}
+a.illus-meta-link:hover,
+a.illus-meta-link:focus-visible {
+    color: var(--illus-accent);
+    opacity: 1;
+    border-color: var(--illus-accent);
 }
 
 .illus-meta-sep {
@@ -1497,7 +1564,7 @@
 /* ── Illustration how-to info panel (vertical SVG) ──────────────────────── */
 .illus-info-svg {
     position: absolute;
-    top: calc(50% + 2rem);
+    top: calc(50% + 4rem); /* lowered to clear the longer title list above */
     left: 3.5rem;
     width: 16.5rem;
     height: auto;

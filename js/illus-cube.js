@@ -5,11 +5,11 @@
         'images/illustration/sergio-ayala-themberchaud-dnd-dragon-concept-art.webp', // stop 0 — gallery title face; image hidden behind label
         'images/illustration/sergio-ayala-themberchaud-dnd-dragon-concept-art.webp',
         'images/illustration/sergio-ayala-hada-de-los-andes-andean-fairy-illustration-2024.webp',
-        'images/illustration/sergio-ayala-meninas-canido-tarot-illustration-ferrol-2024.webp',
+        'images/illustration/meninas/sergio-ayala-meninas-canido-tarot-illustration-ferrol-2024.webp',
         'images/illustration/sergio-ayala-rocker-ghost-geisha-yurei-illustration-2024.webp',
-        'images/illustration/sergio-ayala-holy-vandal-canido-baroque-concept-art-2024.webp',
+        'images/illustration/meninas/sergio-ayala-holy-vandal-canido-baroque-concept-art-2024.webp',
         'images/illustration/sergio-ayala-mujer-crustaceo-surrealist-mixed-media-2014.webp',
-        'images/illustration/sergio-ayala-reconciliacion-watercolor-digital-2014.webp',
+        'images/illustration/faber castell/sergio-ayala-reconciliacion-watercolor-digital-2014.webp',
         'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
         'images/illustration/sergio-ayala-colibri-hummingbird-surrealist-mixed-media-2024.webp',
         'images/illustration/sergio-ayala-illustration-muse-mixed-media-2024.webp',
@@ -202,11 +202,12 @@
     // so each image always appears right-side-up to the viewer.
     //
     // - Side faces (front/right/left): rotateY never affects the vertical axis → no correction.
-    // - Back face: rotateY(180deg) mirrors the X axis → scaleX(-1).
+    // - Back face: only ever visible at ry≡180°, where the cube's rotateY(180) exactly
+    //   cancels the face's own authored rotateY(180) (Ry(180)·Ry(180)=identity) → no
+    //   correction. (A scaleX(-1) here would MIRROR an already-correct image.)
     // - Top face (rx=90): accumulated ry tilts the image; correction = rotateZ(-ry).
     // - Bottom face (rx=-90): same but opposite sign → rotateZ(+ry).
     function getFaceCorrection(faceIdx, stopIdx) {
-        if (faceIdx === 3) return 'scaleX(-1)';
         if (faceIdx === 0 || faceIdx === 5) {
             const ryN  = ((STOPS[stopIdx].ry % 360) + 360) % 360;
             if (ryN === 0) return '';
@@ -233,13 +234,58 @@
             '<span class="illus-gallery-indent">A R T · ]</span>';
     }
 
+    // ── Meninas process thumbnails — column overlaid on the piece's cube face ──
+    // Two process images (concept sketch + press clipping) stack in a column to
+    // the LEFT of the final image (text panel is on the right for this stop),
+    // riding the same 3D face so they rotate with it. Shown only while that face
+    // displays the Meninas image; clicks are routed from the cube clickzone by
+    // hit-testing each thumb's projected rect (a flat overlay sits above the 3D
+    // subtree, so per-thumb pointer-events can't win — hit-testing does).
+    const MENINAS_STOP = IMAGES.findIndex(s => s.includes('meninas-canido-tarot-illustration'));
+    const MENINAS_FACE = MENINAS_STOP >= 0 ? FACE_MAP[MENINAS_STOP] : -1;
+    const MENINAS_DIR  = 'images/illustration/meninas/';
+    let thumbEls   = [];
+    let thumbsWrap = null;
+    if (MENINAS_FACE >= 0) {
+        thumbsWrap = document.createElement('div');
+        thumbsWrap.className = 'illus-face-thumbs';
+        [
+            { base: 'sergio-ayala-meninas-canido-tarot-sketch-process-ferrol-2024',
+              alt:  'Meninas de Canido — tarot concept sketch (process) by Sergio Ayala, 2024' },
+            { base: 'sergio-ayala-meninas-canido-la-voz-de-galicia-press-2024',
+              alt:  'Meninas de Canido — featured in La Voz de Galicia, 2024' },
+        ].forEach(t => {
+            const el = new Image();
+            el.className = 'illus-face-thumb';
+            el.src = `${MENINAS_DIR}${t.base}-thumb.webp`;
+            el.alt = t.alt;
+            el.loading = 'lazy';
+            el.dataset.full = `${MENINAS_DIR}${t.base}.webp`;
+            el.dataset.alt  = t.alt;
+            // Thumbs sit left of the cube clickzone, so nothing overlays them —
+            // a direct click handler works (clickzone hit-test below is a fallback).
+            el.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                lbShow(el.dataset.full, el.dataset.alt);
+            });
+            thumbsWrap.appendChild(el);
+            thumbEls.push(el);
+        });
+        faces[MENINAS_FACE].appendChild(thumbsWrap);
+    }
+
     async function setFaceImage(faceIdx, imgIdx) {
         if (faceImgIdx[faceIdx] === imgIdx) return;
         faceImgIdx[faceIdx] = imgIdx;
 
+        // Toggle the process-thumbnail column with the Meninas image identity.
+        if (thumbsWrap && faceIdx === MENINAS_FACE) {
+            thumbsWrap.classList.toggle('is-visible', imgIdx === MENINAS_STOP);
+        }
+
         // Stop 0 reclaims the gallery-title face: clear photo and restore title label
         if (faceIdx === INTRO_FACE && imgIdx === 0) {
-            const staleImg = faces[INTRO_FACE].querySelector('img');
+            const staleImg = faces[INTRO_FACE].querySelector('img.illus-main-img');
             if (staleImg) {
                 staleImg.classList.remove('illus-img-enter');
                 staleImg.removeAttribute('src');
@@ -257,8 +303,8 @@
         const src = IMAGES[imgIdx];
         await preloadImage(src);
         if (faceImgIdx[faceIdx] !== imgIdx) return;
-        let img = faces[faceIdx].querySelector('img');
-        if (!img) { img = new Image(); faces[faceIdx].appendChild(img); }
+        let img = faces[faceIdx].querySelector('img.illus-main-img');
+        if (!img) { img = new Image(); img.className = 'illus-main-img'; faces[faceIdx].appendChild(img); }
         // Release any forwards-fill from a previous scan animation so the per-frame
         // dot-product opacity can take back control of this face's image.
         img.classList.remove('illus-img-enter');
@@ -350,7 +396,7 @@
     function updateFaceOpacities() {
         const rx = _rxRad, ry = _ryRad;
         for (let fi = 0; fi < 6; fi++) {
-            const img = faces[fi]?.querySelector('img');
+            const img = faces[fi]?.querySelector('img.illus-main-img');
             // Skip faces with no image or still running the scan-reveal animation
             // (the animation's fill-mode controls opacity while it is active).
             if (!img || !img.src || img.classList.contains('illus-img-enter')) continue;
@@ -449,7 +495,7 @@
         triggerExpandHintGlitch();
         triggerTitleFloatGlitch();
 
-        const img = face?.querySelector('img');
+        const img = face?.querySelector('img.illus-main-img');
         if (!img) return;
 
         // If the image faded in organically during the approach rotation (opacity > 0.85),
@@ -646,7 +692,7 @@
         tunnel.classList.remove('illus-electric-active');
 
         // Evict any stale photo and restore the gallery label — always, on every visit
-        const titleFaceImg = faces[INTRO_FACE].querySelector('img');
+        const titleFaceImg = faces[INTRO_FACE].querySelector('img.illus-main-img');
         if (titleFaceImg) {
             titleFaceImg.classList.remove('illus-img-enter');
             titleFaceImg.removeAttribute('src');
@@ -755,9 +801,20 @@
     clickZone.setAttribute('aria-label', 'Expand image');
     tunnel.appendChild(clickZone);
 
-    clickZone.addEventListener('click', () => {
+    clickZone.addEventListener('click', (e) => {
         const stop = Math.max(0, lastStop);
-        const img  = faces[FACE_MAP[stop]]?.querySelector('img');
+        // On the Meninas stop, a click landing on a process thumb opens that
+        // thumb's full image; the flat clickzone owns the pointer, so hit-test
+        // each visible thumb's projected screen rect instead of relying on z-order.
+        if (stop === MENINAS_STOP && thumbsWrap?.classList.contains('is-visible')) {
+            const hit = thumbEls.find(t => {
+                const r = t.getBoundingClientRect();
+                return r.width && e.clientX >= r.left && e.clientX <= r.right &&
+                       e.clientY >= r.top && e.clientY <= r.bottom;
+            });
+            if (hit) { lbShow(hit.dataset.full, hit.dataset.alt); return; }
+        }
+        const img  = faces[FACE_MAP[stop]]?.querySelector('img.illus-main-img');
         if (img?.src) lbShow(img.src, img.alt);
     });
     clickZone.addEventListener('keydown', e => {
