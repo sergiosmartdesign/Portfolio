@@ -147,6 +147,11 @@
     opacity: 1;
     pointer-events: auto; /* thumbs sit outside the cube clickzone, so click them directly */
 }
+/* Right-side column (used when the text card is on the left) */
+.illus-face-thumbs--right {
+    left: auto;
+    right: 12px;
+}
 /* Beats the generic `.illus-face img` (which forces opacity:0 + max-* sizing) */
 .illus-face-thumbs .illus-face-thumb {
     display: block;

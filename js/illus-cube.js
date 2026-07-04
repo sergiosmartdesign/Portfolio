@@ -7,10 +7,9 @@
         'images/illustration/sergio-ayala-hada-de-los-andes-andean-fairy-illustration-2024.webp',
         'images/illustration/meninas/sergio-ayala-meninas-canido-tarot-illustration-ferrol-2024.webp',
         'images/illustration/sergio-ayala-rocker-ghost-geisha-yurei-illustration-2024.webp',
-        'images/illustration/meninas/sergio-ayala-holy-vandal-canido-baroque-concept-art-2024.webp',
         'images/illustration/sergio-ayala-mujer-crustaceo-surrealist-mixed-media-2014.webp',
         'images/illustration/faber castell/sergio-ayala-reconciliacion-watercolor-digital-2014.webp',
-        'images/art-direction/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
+        'images/illustration/draconic love/sergio-ayala-draconic-love-dragon-illustration-2019.webp',
         'images/illustration/sergio-ayala-colibri-hummingbird-surrealist-mixed-media-2024.webp',
         'images/illustration/sergio-ayala-illustration-muse-mixed-media-2024.webp',
         'images/illustration/sergio-ayala-photography-fujifilm-camera-mixed-media-2024.webp',
@@ -234,54 +233,63 @@
             '<span class="illus-gallery-indent">A R T · ]</span>';
     }
 
-    // ── Meninas process thumbnails — column overlaid on the piece's cube face ──
-    // Two process images (concept sketch + press clipping) stack in a column to
-    // the LEFT of the final image (text panel is on the right for this stop),
-    // riding the same 3D face so they rotate with it. Shown only while that face
-    // displays the Meninas image; clicks are routed from the cube clickzone by
-    // hit-testing each thumb's projected rect (a flat overlay sits above the 3D
-    // subtree, so per-thumb pointer-events can't win — hit-testing does).
-    const MENINAS_STOP = IMAGES.findIndex(s => s.includes('meninas-canido-tarot-illustration'));
-    const MENINAS_FACE = MENINAS_STOP >= 0 ? FACE_MAP[MENINAS_STOP] : -1;
-    const MENINAS_DIR  = 'images/illustration/meninas/';
-    let thumbEls   = [];
-    let thumbsWrap = null;
-    if (MENINAS_FACE >= 0) {
-        thumbsWrap = document.createElement('div');
-        thumbsWrap.className = 'illus-face-thumbs';
-        [
-            { base: 'sergio-ayala-meninas-canido-tarot-sketch-process-ferrol-2024',
-              alt:  'Meninas de Canido — tarot concept sketch (process) by Sergio Ayala, 2024' },
-            { base: 'sergio-ayala-meninas-canido-la-voz-de-galicia-press-2024',
-              alt:  'Meninas de Canido — featured in La Voz de Galicia, 2024' },
-        ].forEach(t => {
+    // ── Process thumbnails overlaid on a piece's cube face ────────────────────
+    // Some pieces carry extra process/proof images (sketches, press clippings,
+    // award certificates). They stack in a column on the side OPPOSITE the text
+    // card (card is --right on odd stops, so thumbs go left on odd stops, right
+    // on even), ride the same 3D face so they rotate with it, and show only while
+    // that face displays the piece. Clicks: thumbs sit outside the cube clickzone
+    // so a direct handler works (clickzone hit-test below is a fallback).
+    const THUMB_SETS = [
+        { match: 'meninas-canido-tarot-illustration', dir: 'images/illustration/meninas/', items: [
+            { base: 'sergio-ayala-meninas-canido-tarot-sketch-process-ferrol-2024', alt: 'Meninas de Canido — tarot concept sketch (process) by Sergio Ayala, 2024' },
+            { base: 'sergio-ayala-meninas-canido-la-voz-de-galicia-press-2024',      alt: 'Meninas de Canido — featured in La Voz de Galicia, 2024' },
+            { base: 'sergio-ayala-holy-vandal-canido-baroque-concept-art-2024',      alt: 'Holy Vandal — Meninas de Canido concept (process) by Sergio Ayala, 2024' },
+        ]},
+        { match: 'reconciliacion-watercolor-digital', dir: 'images/illustration/faber castell/', items: [
+            { base: 'sergio-ayala-reconciliacion-faber-castell-award-certificate-2014', alt: 'Reconciliación — Faber-Castell IV National Drawing Contest certificate, 2014' },
+        ]},
+        { match: 'draconic-love-dragon-illustration', dir: 'images/illustration/draconic love/', items: [
+            { base: 'sergio-ayala-draconic-love-tshirt-mockup-2019',   alt: 'Draconic Love — t-shirt merchandise mockup by Sergio Ayala, 2019' },
+            { base: 'sergio-ayala-draconic-love-tote-bag-mockup-2019', alt: 'Draconic Love — tote bag merchandise mockup by Sergio Ayala, 2019' },
+        ]},
+    ];
+    const thumbWraps = [];   // { wrap, stop, face }
+    let   thumbEls   = [];
+    THUMB_SETS.forEach(set => {
+        const stop = IMAGES.findIndex(s => s.includes(set.match));
+        if (stop < 0) return;
+        const face = FACE_MAP[stop];
+        const wrap = document.createElement('div');
+        // Thumbs opposite the text card: card is --right on odd stops → thumbs left;
+        // even stops → card left → thumbs right.
+        wrap.className = 'illus-face-thumbs' + (stop % 2 === 0 ? ' illus-face-thumbs--right' : '');
+        set.items.forEach(t => {
             const el = new Image();
             el.className = 'illus-face-thumb';
-            el.src = `${MENINAS_DIR}${t.base}-thumb.webp`;
+            el.src = `${set.dir}${t.base}-thumb.webp`;
             el.alt = t.alt;
             el.loading = 'lazy';
-            el.dataset.full = `${MENINAS_DIR}${t.base}.webp`;
+            el.dataset.full = `${set.dir}${t.base}.webp`;
             el.dataset.alt  = t.alt;
-            // Thumbs sit left of the cube clickzone, so nothing overlays them —
-            // a direct click handler works (clickzone hit-test below is a fallback).
-            el.addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                lbShow(el.dataset.full, el.dataset.alt);
-            });
-            thumbsWrap.appendChild(el);
+            // Click is handled by a capture-phase hit-test on the tunnel (see below),
+            // not a per-element handler: Chromium doesn't reliably deliver pointer
+            // events to children of a 3D-rotated face (works for the front face only).
+            wrap.appendChild(el);
             thumbEls.push(el);
         });
-        faces[MENINAS_FACE].appendChild(thumbsWrap);
-    }
+        faces[face].appendChild(wrap);
+        thumbWraps.push({ wrap, stop, face });
+    });
 
     async function setFaceImage(faceIdx, imgIdx) {
         if (faceImgIdx[faceIdx] === imgIdx) return;
         faceImgIdx[faceIdx] = imgIdx;
 
-        // Toggle the process-thumbnail column with the Meninas image identity.
-        if (thumbsWrap && faceIdx === MENINAS_FACE) {
-            thumbsWrap.classList.toggle('is-visible', imgIdx === MENINAS_STOP);
-        }
+        // Toggle any process-thumbnail column bound to this face by image identity.
+        thumbWraps.forEach(tw => {
+            if (tw.face === faceIdx) tw.wrap.classList.toggle('is-visible', imgIdx === tw.stop);
+        });
 
         // Stop 0 reclaims the gallery-title face: clear photo and restore title label
         if (faceIdx === INTRO_FACE && imgIdx === 0) {
@@ -801,19 +809,22 @@
     clickZone.setAttribute('aria-label', 'Expand image');
     tunnel.appendChild(clickZone);
 
-    clickZone.addEventListener('click', (e) => {
+    // Capture-phase hit-test for process thumbnails: works regardless of where the
+    // thumb projects (in/outside the clickzone) and regardless of 3D pointer quirks,
+    // because it tests click coordinates against each visible thumb's rendered rect
+    // rather than relying on the event target being the 3D-transformed <img>.
+    tunnel.addEventListener('click', (e) => {
+        const hit = thumbEls.find(t => {
+            if (!t.closest('.illus-face-thumbs')?.classList.contains('is-visible')) return false;
+            const r = t.getBoundingClientRect();
+            return r.width && e.clientX >= r.left && e.clientX <= r.right &&
+                   e.clientY >= r.top && e.clientY <= r.bottom;
+        });
+        if (hit) { e.stopPropagation(); lbShow(hit.dataset.full, hit.dataset.alt); }
+    }, true);
+
+    clickZone.addEventListener('click', () => {
         const stop = Math.max(0, lastStop);
-        // On the Meninas stop, a click landing on a process thumb opens that
-        // thumb's full image; the flat clickzone owns the pointer, so hit-test
-        // each visible thumb's projected screen rect instead of relying on z-order.
-        if (stop === MENINAS_STOP && thumbsWrap?.classList.contains('is-visible')) {
-            const hit = thumbEls.find(t => {
-                const r = t.getBoundingClientRect();
-                return r.width && e.clientX >= r.left && e.clientX <= r.right &&
-                       e.clientY >= r.top && e.clientY <= r.bottom;
-            });
-            if (hit) { lbShow(hit.dataset.full, hit.dataset.alt); return; }
-        }
         const img  = faces[FACE_MAP[stop]]?.querySelector('img.illus-main-img');
         if (img?.src) lbShow(img.src, img.alt);
     });
