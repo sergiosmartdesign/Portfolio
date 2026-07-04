@@ -28,6 +28,7 @@
       this._infoAnimInterval = null;
       this._streamLbOpen     = false;
       this._streamLbHide     = null;
+      this._lbResumePlay     = false;
       this._onCardClick      = null;
 
       this._cameraEl       = null;
@@ -106,6 +107,9 @@
       });
       if (this._cardHidden)    this._cardHidden.fill(true);
       if (this._cardLastPhase) this._cardLastPhase.fill(-1);
+      // A full reset must leave the stream stopped — drop any pending
+      // lightbox-resume so _streamLbHide doesn't flip canPlay back on.
+      this._lbResumePlay = false;
       if (this._streamLbOpen) this._streamLbHide?.();
     }
 
@@ -371,6 +375,10 @@
         lb.setAttribute('aria-hidden', 'false');
         lb.classList.add('open');
         this._streamLbOpen = true;
+        // Freeze the stream while the lightbox is open; remember whether it was
+        // playing so hide() only resumes what was actually running.
+        this._lbResumePlay  = this._streamCanPlay;
+        this._streamCanPlay = false;
         document.body.style.overflow = 'hidden';
         if (lbTimer) { clearTimeout(lbTimer); lbTimer = null; }
         lb.classList.remove('lb-elec-active');
@@ -387,11 +395,19 @@
         lb.classList.remove('lb-elec-active', 'open');
         lb.setAttribute('aria-hidden', 'true');
         this._streamLbOpen = false;
+        // Resume the stream exactly where it froze. Resetting the RAF timestamp
+        // keeps the first post-resume dt from including the paused time.
+        if (this._lbResumePlay) {
+          this._introLastTs   = 0;
+          this._streamCanPlay = true;
+        }
+        this._lbResumePlay = false;
         document.body.style.overflow = '';
         setTimeout(() => { if (!this._streamLbOpen) lbImg.src = ''; }, 500);
       };
 
-      lb.addEventListener('click', e => { if (e.target === lb) this._streamLbHide(); });
+      // Any click anywhere inside the lightbox (image included) closes it.
+      lb.addEventListener('click', () => this._streamLbHide());
       lb.querySelector('.photo-stream-lb-close').addEventListener('click', this._streamLbHide);
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && this._streamLbOpen) this._streamLbHide(); });
 
