@@ -1099,8 +1099,13 @@
     right: auto;
     /* the grid's margin-top COLLAPSES through the section (it pushes the whole
        sticky section down), so the grid's border box sits at the section's own
-       top — the frame overlays from 0, not from header+margin. */
-    top: 0;
+       top — the frame overlays from 0, not from header+margin.
+       Owner 2026-07-03 v3: the SVG art is inset in its viewBox (topmost red
+       stroke = notch peak at y 20.6 − 1 half-stroke = 19.6 of 632.7), so at
+       top:0 the red line floated ~16px below the letters' top. Pull the box up
+       by that scaled inset so the red peak lands exactly on the ART row top
+       (mobile section is overflow:visible, nothing clips). */
+    top: calc(100vw * 4 / 3 * -19.6 / 632.7);
     transform: none;
     width: 100vw;
     height: calc(100vw * 4 / 3);
