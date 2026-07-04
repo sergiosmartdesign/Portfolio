@@ -1052,7 +1052,11 @@
        was spacing-2xl(64) here + spacing-xl(48) accordion margin = 112px;
        now spacing-lg(32) + spacing-md(24) = 56px. */
     padding-bottom: var(--spacing-lg);
-    position: relative;      /* cancel the desktop sticky pin */
+    /* In flow (desktop top-pin cancelled). js/ad-accordion.js pins the bottom
+       during the #photo curtain via transform so there's no empty gap — sticky
+       can't do it here (the 300vh spacer inside .ad-pin-wrap defers bottom-
+       sticky to the container's end). */
+    position: relative;
     top: auto;
   }
   /* Restore full-bleed: the mobile section is a tall vertical flow, so the bg
