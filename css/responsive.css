@@ -1114,6 +1114,12 @@
   #art-direction .ad-intro-arrow-label {
     display: none;
   }
+  /* Owner 2026-07-04: no animated down-chevron cascade on phones — on desktop
+     it points at the DISCIPLINES card below the frame; on the mobile overlay
+     it just sits on top of the letters. Brackets + 3 pulsing chevrons. */
+  #art-direction .ad-intro-svg #adfrm-arrow {
+    display: none;
+  }
 
   /* Content panels → full-width vertical flow. transform:none neutralizes the
      translateY(-50%) centering the desktop absolute layout depends on. */
