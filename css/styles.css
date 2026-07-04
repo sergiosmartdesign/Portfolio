@@ -4536,7 +4536,8 @@ img#id1svg {
   opacity: 1;
 }
 
-/* Each mockup polaroid card — position/opacity driven by JS on every scroll tick */
+/* Each polaroid card — real scanned polaroids (frame + handwritten caption
+   baked into the image), position/opacity driven by JS on every scroll tick */
 .photo-ghost-card {
   position: absolute;
   /* 50% = the stream's geometric centre, which JS locks onto the camera centre.
@@ -4547,25 +4548,12 @@ img#id1svg {
   height: 189px;
   opacity: 0;
   transform: translateX(0) translateY(-50%) rotate(-90deg);
-  border: 2px solid rgba(233, 216, 166, 0.9);
   background: #001219 center / cover no-repeat; /* fallback; JS sets url() */
   box-sizing: border-box;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
   will-change: transform, opacity;
   --ghost-rotate: 0deg;
   overflow: hidden;
-}
-
-/* Thick bottom strip — overlays the photo, polaroid print area */
-.photo-ghost-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 35px;
-  background: rgba(0, 18, 25, 0.82);
-  border-top: 1px solid rgba(233, 216, 166, 0.55);
-  z-index: 1;
 }
 
 /* Per-card tilt cycles across all 30 cards */

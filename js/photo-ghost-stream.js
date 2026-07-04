@@ -309,17 +309,29 @@
     }
 
     _setupStreamLightbox() {
-      // Distribute photo data across cards by cycling through all accordion items
-      const photoItems = Array.from(document.querySelectorAll('.photo-project-item[data-image]'));
+      // Real scanned polaroids from the travel archive. Cards cycle through the
+      // set; the stream shows the lightweight thumb (images/photo/Polaroids/stream/,
+      // 312px) and the lightbox opens the full-resolution scan.
+      const POLAROIDS = [
+        'Polaroid Barrio Gotico',
+        'Polaroid Cabo de la Vela',
+        'Polaroid Capadocia',
+        'Polaroid Cartagena',
+        'Polaroid Cudillero',
+        'Polaroid Guggenheim Bilbao',
+        'Polaroid La Habana',
+        'Polaroid Leiden',
+        'Polaroid Palacio de Schonbrunn',
+        'Polaroid Puerta de Brandenburgo',
+      ];
+      const POL_DIR = 'images/photo/Polaroids/';
       this._streamCards.forEach((card, i) => {
-        const item = photoItems[i % photoItems.length];
-        if (!item) return;
-        card.dataset.image = item.dataset.image;
-        card.style.backgroundImage    = `url("${item.dataset.image}")`;
+        const name = POLAROIDS[i % POLAROIDS.length];
+        card.dataset.image = `${POL_DIR}${name}.webp`;
+        card.style.backgroundImage    = `url("${POL_DIR}stream/${name}.webp")`;
         card.style.backgroundSize     = 'cover';
         card.style.backgroundPosition = 'center';
-        const titleEl = item.querySelector('.photo-title');
-        card.dataset.alt = titleEl ? titleEl.textContent.trim() : '';
+        card.dataset.alt = name.replace(/^Polaroid /, '');
       });
 
       const lb = document.createElement('div');
