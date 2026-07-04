@@ -206,6 +206,15 @@
           if (!p) return;
           if (p.activeDiscipline !== entry.disc) p.selectDiscipline(entry.disc, true);
           p._openModal(work);
+          // The modal detail area is a scroll container on phones; it keeps the
+          // previous project's scrollTop, so a new project could open already
+          // scrolled to its text. Reset it so every project starts at the top
+          // (image → gallery → info). rAF re-reset covers post-layout shifts.
+          const content = document.querySelector('#art-direction .ad-pm-content');
+          if (content) {
+            content.scrollTop = 0;
+            requestAnimationFrame(() => { content.scrollTop = 0; });
+          }
         };
         el.addEventListener('click', open);
         el.addEventListener('keydown', e => {
