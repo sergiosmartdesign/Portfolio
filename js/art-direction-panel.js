@@ -725,5 +725,7 @@ class ArtWorksPanel {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new ArtWorksPanel();
+    // Instance exposed for the phone-only accordion (js/ad-accordion.js),
+    // which drives selectDiscipline/_openModal directly. Inert on desktop.
+    window.ADPanel = new ArtWorksPanel();
 });

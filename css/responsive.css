@@ -1198,8 +1198,126 @@
   #art-direction .ad-works-panel {
     display: flex;
   }
+  /* Owner 2026-07-04: the yellow DISCIPLINES SVG card is replaced on phones
+     by the ad-accordion (js/ad-accordion.js builds it, photo-style attract
+     cascade + click-to-expand project lists, works modal on tap). */
   #art-direction .ad-explore-card {
-    display: block;
+    display: none;
+  }
+
+  /* ── Art-direction accordion — photo's desktop list, recolored for the dark
+     section and with TRANSPARENT backgrounds throughout (owner: no photo-style
+     dark plate). Buttons are visible by default (failure-safe: no JS/animation
+     needed to see them); only the project rows start hidden inside their
+     display:none lists. ── */
+  #art-direction .ad-accordion {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+    background: transparent;
+  }
+  #art-direction .ad-accordion-item {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+  }
+  #art-direction .adacc-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    background: none;
+    border: none;
+    border-top: 1px solid rgba(238, 155, 0, 0.28);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: #EE9B00;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    padding: 0.75rem 0;
+    transition: color 0.2s ease;
+  }
+  #art-direction .ad-accordion-item:last-child {
+    border-bottom: 1px solid rgba(238, 155, 0, 0.28);
+  }
+  #art-direction .adacc-btn.active {
+    color: #E9D8A6;
+  }
+  #art-direction .adacc-btn-indicator::before {
+    content: '[ + ]';
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 0.75em;
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+  #art-direction .adacc-btn.active .adacc-btn-indicator::before {
+    content: '[ - ]';
+    opacity: 1;
+  }
+  #art-direction .adacc-list {
+    list-style: none;
+    margin: 0 0 var(--spacing-sm) 0;
+    padding: 0;
+    display: none;
+    flex-direction: column;
+    background: transparent;
+  }
+  #art-direction .adacc-item {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 34px 1fr 44px;
+    column-gap: 0.75rem;
+    align-items: center;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid rgba(10, 147, 150, 0.25);
+    opacity: 0;
+  }
+  #art-direction .adacc-item:active {
+    background: rgba(238, 155, 0, 0.12);
+  }
+  #art-direction .adacc-num {
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #0A9396;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  #art-direction .adacc-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  #art-direction .adacc-title {
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #E9D8A6;
+    line-height: 1.15;
+  }
+  #art-direction .adacc-sub {
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 300;
+    color: rgba(233, 216, 166, 0.55);
+    line-height: 1.25;
+  }
+  #art-direction .adacc-year {
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #0A9396;
+    text-align: right;
+    line-height: 1;
   }
 
   /* works panel: drop the desktop scale()/max-height so it reads full-width. */
