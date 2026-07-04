@@ -18,12 +18,14 @@
 
   const DISCS = ['identity', 'web', 'editorial', '3d'];
 
-  // ES fallbacks mirror the SVG card's data-content (same strings in en.json).
-  const FALLBACK_LABELS = {
-    identity: '· 01 · IDENTITY',
-    web: '· 02 · WEB',
-    editorial: '· 03 · EDITORIAL',
-    '3d': '· 04 · 3D & MOTION',
+  // Category button labels (owner 2026-07-04): fixed, language-neutral
+  // discipline names in the authored casing. The wide spaced-out look is CSS
+  // letter-spacing, not baked spaces, so screen readers still read the word.
+  const CAT_LABELS = {
+    identity: '· Identity ·',
+    web: '· web ·',
+    editorial: '· editorial ·',
+    '3d': '· 3d & motion ·',
   };
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -94,11 +96,11 @@
 
     anchor.parentNode.insertBefore(acc, anchor);
 
-    // ── i18n — labels + per-project title/sub, refreshed on language switch ──
+    // ── i18n — per-project title/sub refreshed on language switch; the
+    //    category label itself is fixed (CAT_LABELS), same in both locales ──
     const fillTexts = () => {
       entries.forEach(({ disc, btn, items }) => {
-        btn.querySelector('.adacc-btn-label').textContent =
-          t(`ad.nav.label.${disc}`) || FALLBACK_LABELS[disc];
+        btn.querySelector('.adacc-btn-label').textContent = CAT_LABELS[disc];
         items.forEach(({ el, work }) => {
           el.querySelector('.adacc-title').textContent =
             t(`ad.${disc}.${work.num}.title`) || work.title;
