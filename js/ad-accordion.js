@@ -1,17 +1,19 @@
 /* ad-accordion.js — PHONE-ONLY category accordion for #art-direction.
  *
  * Replaces the yellow DISCIPLINES SVG card on phones (owner 2026-07-04) with
- * an accordion modeled on the #photo desktop list: categories auto-cascade
- * open/closed once when the section goes live, then behave as a click
- * accordion. Expanding a category lists its WORKS_DATA projects; tapping a
- * project opens the existing works modal (via window.ADPanel).
+ * an accordion modeled on the #photo desktop list. The category list simply
+ * appears when the section goes live, each label decoded with the shared
+ * window.scrambleText glitch (same as nav labels / paragraphs) — no auto
+ * open/close cascade. Categories stay closed until tapped; expanding one lists
+ * its WORKS_DATA projects; tapping a project opens the works modal (ADPanel).
  *
  * Fully gated on App.BrowserDetect.isMobile — on desktop this file builds
  * nothing and touches nothing. Styling lives in css/responsive.css (≤768px),
  * transparent backgrounds by design (unlike photo's dark plate).
  *
  * Depends on: art-direction-data.js (WORKS_DATA), art-direction-panel.js
- * (window.ADPanel), browser-detect.js, optional gsap + App.LanguageManager.
+ * (window.ADPanel), browser-detect.js, window.scrambleText (lib/scramble.js),
+ * optional gsap + App.LanguageManager.
  */
 (function () {
   'use strict';
@@ -170,7 +172,6 @@
     // ── Clicks ───────────────────────────────────────────────────────────────
     entries.forEach(entry => {
       entry.btn.addEventListener('click', () => {
-        if (chainActive) return; // don't fight the attract cycle
         if (isOpen(entry)) closeEntry(entry, false);
         else openEntry(entry, OPEN_ITEM_STEP);
       });
@@ -189,63 +190,52 @@
       });
     });
 
-    // ── Attract chain — auto open/close cascade, photo-style ────────────────
-    // Runs once each time the section goes live (body.ad-section-live, the
-    // same gate as the red frame); resets for a replay when the section fully
-    // leaves. Skipped under reduced motion (accordion just sits closed).
-    let chainActive = false;
-    let chainPlayed = false;
-    let chainTimers = [];
-    const clearChain = () => { chainTimers.forEach(clearTimeout); chainTimers = []; };
+    // ── Label reveal — glitch scramble (owner 2026-07-04) ───────────────────
+    // No auto open/close cascade anymore: the category list simply appears,
+    // each label decoded with the same window.scrambleText glitch used on the
+    // nav labels, modal title and section paragraphs. Categories stay closed
+    // until tapped. Fires once when the section goes live (body.ad-section-
+    // live, the red-frame gate); resets on leave so it replays on re-entry.
+    const glitchable = !!window.scrambleText && !reducedMotion.matches;
+    // Failure-safe: only hide labels for the reveal if we can actually glitch
+    // them back in — otherwise leave them visible.
+    entries.forEach(entry => {
+      entry.btn.querySelector('.adacc-btn-label').style.opacity = glitchable ? '0' : '1';
+    });
 
-    const runChain = () => {
-      if (chainActive || chainPlayed || reducedMotion.matches) return;
-      chainActive = true;
-      chainPlayed = true;
+    let revealed = false;
+    let revealTimers = [];
+    const clearReveal = () => { revealTimers.forEach(clearTimeout); revealTimers = []; };
 
-      const BTN_GAP = 150, ITEM_STEP = 95, CAT_GAP = 240, REV_STEP = 25, REV_GAP = 90;
-      let cursor = 1800; // let the letter wipe / intro text get ahead first
-
-      entries.forEach(entry => {
-        chainTimers.push(setTimeout(() => openEntry(entry, ITEM_STEP), cursor));
-        cursor += BTN_GAP + entry.items.length * ITEM_STEP + CAT_GAP;
+    const revealLabels = () => {
+      if (revealed) return;
+      revealed = true;
+      entries.forEach((entry, i) => {
+        const label = entry.btn.querySelector('.adacc-btn-label');
+        if (!glitchable) { label.style.opacity = '1'; return; }
+        revealTimers.push(setTimeout(() => {
+          label.style.opacity = '1';
+          window.scrambleText(label, { frameMs: 45, initialDelay: 0, stepMs: 55 });
+        }, i * 150));
       });
-
-      [...entries].reverse().forEach(entry => {
-        const closeAt = cursor;
-        chainTimers.push(setTimeout(() => {
-          entry.items.forEach(({ el }, i) => hideItem(el, (entry.items.length - 1 - i) * REV_STEP));
-          setTimeout(() => {
-            entry.btn.classList.remove('active');
-            entry.btn.setAttribute('aria-expanded', 'false');
-            entry.list.style.display = 'none';
-            if (window.gsap) {
-              gsap.killTweensOf(entry.btn);
-              gsap.fromTo(entry.btn, { y: -5 }, { y: 0, duration: 0.4, ease: 'elastic.out(1.2, 0.5)' });
-            }
-          }, entry.items.length * REV_STEP + 80);
-        }, closeAt));
-        cursor += entry.items.length * REV_STEP + 80 + REV_GAP;
-      });
-
-      chainTimers.push(setTimeout(() => { chainActive = false; }, cursor + 200));
     };
 
-    const resetChain = () => {
-      clearChain();
-      chainActive = false;
-      chainPlayed = false;
-      entries.forEach(entry => closeEntry(entry, true));
+    const resetReveal = () => {
+      clearReveal();
+      revealed = false;
+      entries.forEach(entry => {
+        closeEntry(entry, true);
+        entry.btn.querySelector('.adacc-btn-label').style.opacity = glitchable ? '0' : '1';
+      });
     };
 
     // body.ad-section-live is toggled by art-direction.js — piggyback on it.
     const bodyObserver = new MutationObserver(() => {
-      const live = document.body.classList.contains('ad-section-live');
-      if (live) runChain();
-      else resetChain();
+      if (document.body.classList.contains('ad-section-live')) revealLabels();
+      else resetReveal();
     });
     bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    if (document.body.classList.contains('ad-section-live')) runChain();
+    if (document.body.classList.contains('ad-section-live')) revealLabels();
   }
 
   if (document.readyState === 'loading') {
