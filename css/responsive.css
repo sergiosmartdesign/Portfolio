@@ -1087,23 +1087,24 @@
     display: none;
   }
   /* Red intro frame back on phones (owner 2026-07-03: "solo el svg rojo",
-     empty for now — content slots in later). Desktop hangs it absolute off
-     the letter grid (left: min(75vh,75vw)+2vw, 56vh tall — huge here);
-     re-ground it in the flow at phone scale: full width minus gutters, its
-     own viewBox ratio (950.9×632.7) so preserveAspectRatio=none causes no
-     distortion. The ad-frame-enter reveal + internal line/chevron loops key
-     off body.ad-section-live and run as-is. The chevron HUD label is part of
-     the "content" that stays off for now. */
+     empty for now — content slots in later). It overlays the ART/DIR/ECT/ION
+     masthead (owner v2): same top offset as the grid's margin, and its box IS
+     the grid's box — 100vw wide, 4 rows of 100vw/3 squares tall. The SVG is
+     preserveAspectRatio=none by design, so it stretches to frame the letters
+     exactly like desktop stretches it to its own box. Reveal + internal loops
+     (dashed line, chevrons, binary) key off body.ad-section-live and run
+     as-is; the chevron HUD label is deferred "content", still off. */
   #art-direction .ad-intro-frame {
-    position: relative;
-    left: auto;
+    left: 0;
     right: auto;
-    top: auto;
+    /* the grid's margin-top COLLAPSES through the section (it pushes the whole
+       sticky section down), so the grid's border box sits at the section's own
+       top — the frame overlays from 0, not from header+margin. */
+    top: 0;
     transform: none;
-    width: calc(100vw - 2 * var(--spacing-md));
-    height: auto;
-    aspect-ratio: 950.9 / 632.7;
-    margin: 0 var(--spacing-md) var(--spacing-xl);
+    width: 100vw;
+    height: calc(100vw * 4 / 3);
+    margin: 0;
   }
   #art-direction .ad-intro-arrow-label {
     display: none;
