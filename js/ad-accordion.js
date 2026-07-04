@@ -137,16 +137,29 @@
       });
     };
 
-    const hideItem = (el, delayMs) => {
+    // Same flicker as showItem but resolving to 0 — used to play the open
+    // reveal in reverse when a category closes (owner 2026-07-04).
+    const hideItemGlitch = (el, delayMs) => {
       if (reducedMotion.matches || !window.gsap) {
         el.style.opacity = '0';
         return;
       }
       gsap.killTweensOf(el);
-      gsap.to(el, { delay: delayMs / 1000, opacity: 0, duration: 0.12, ease: 'none' });
+      gsap.to(el, {
+        delay: delayMs / 1000,
+        keyframes: [
+          { opacity: 0.3,  duration: 0.07, ease: 'none' },
+          { opacity: 0.9,  duration: 0.04, ease: 'none' },
+          { opacity: 0.12, duration: 0.06, ease: 'none' },
+          { opacity: 0.6,  duration: 0.05, ease: 'none' },
+          { opacity: 0,    duration: 0.06, ease: 'none' },
+        ],
+      });
     };
 
     const openEntry = (entry, itemStepMs) => {
+      clearTimeout(entry.closeTimer);
+      entry.closing = false;
       entry.btn.classList.add('active');
       entry.btn.setAttribute('aria-expanded', 'true');
       entry.list.style.display = 'flex';
@@ -154,17 +167,27 @@
     };
 
     const closeEntry = (entry, immediate) => {
-      entry.btn.classList.remove('active');
-      entry.btn.setAttribute('aria-expanded', 'false');
       if (immediate) {
+        clearTimeout(entry.closeTimer);
+        entry.closing = false;
+        entry.btn.classList.remove('active');
+        entry.btn.setAttribute('aria-expanded', 'false');
         entry.items.forEach(({ el }) => { if (window.gsap) gsap.killTweensOf(el); el.style.opacity = '0'; });
         entry.list.style.display = 'none';
         return;
       }
-      entry.items.forEach(({ el }, i) => hideItem(el, i * 25));
-      setTimeout(() => {
-        if (!entry.btn.classList.contains('active')) entry.list.style.display = 'none';
-      }, entry.items.length * 25 + 160);
+      // Reverse of the open reveal: the rows glitch out bottom-to-top with the
+      // same per-row step, then the category collapses.
+      entry.closing = true;
+      const n = entry.items.length;
+      entry.items.forEach(({ el }, i) => hideItemGlitch(el, (n - 1 - i) * OPEN_ITEM_STEP));
+      const total = (n - 1) * OPEN_ITEM_STEP + 300;
+      entry.closeTimer = setTimeout(() => {
+        entry.closing = false;
+        entry.btn.classList.remove('active');
+        entry.btn.setAttribute('aria-expanded', 'false');
+        entry.list.style.display = 'none';
+      }, total);
     };
 
     const isOpen = entry => entry.btn.classList.contains('active');
@@ -172,6 +195,7 @@
     // ── Clicks ───────────────────────────────────────────────────────────────
     entries.forEach(entry => {
       entry.btn.addEventListener('click', () => {
+        if (entry.closing) return; // let the reverse-close finish first
         if (isOpen(entry)) closeEntry(entry, false);
         else openEntry(entry, OPEN_ITEM_STEP);
       });
