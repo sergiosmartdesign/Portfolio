@@ -1417,8 +1417,13 @@
     aspect-ratio: 4 / 3;
     max-height: 40vh;
   }
+  /* No visible close button on phones (owner 2026-07-04): tapping the image,
+     backdrop or text dismisses the modal (art-direction-panel.js). */
+  .ad-pm-close {
+    display: none;
+  }
   /* 2 · detail area — everything below the image, scrolls as one column:
-     title + info first, gallery after. */
+     gallery first, then title + info (owner 2026-07-04). */
   .ad-pm-content {
     position: relative;
     top: auto;
@@ -1440,7 +1445,7 @@
   /* Full-width text column (desktop width:min(40ch,30%) → ~94px, clipping the
      title mid-word); title/num a touch smaller than desktop. */
   .ad-pm-text {
-    order: 1;
+    order: 2;
     width: 100%;
     max-width: none;
     flex: 0 0 auto;
@@ -1455,10 +1460,10 @@
   .ad-pm-desc {
     max-width: none;
   }
-  /* 3 · gallery — a wrapping grid of thumbs under the info, 3 per row and big
-     enough to tap. */
+  /* 3 · gallery — a wrapping grid of thumbs directly under the image, above
+     the title/info (owner 2026-07-04), 3 per row and big enough to tap. */
   .ad-pm-thumbs {
-    order: 2;
+    order: 1;
     flex: 0 0 auto;
     display: flex;
     flex-wrap: wrap;
