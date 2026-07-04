@@ -1140,6 +1140,30 @@
     animation: none;
   }
 
+  /* Owner 2026-07-04: the intro text lives INSIDE the red frame, centered
+     over the letter masthead (this is the frame's deferred "content"). Same
+     box as the frame (grid box pulled up by the art's viewBox inset); the
+     gutters keep the copy off the red border, the corner hatching and the
+     top-right rects. z:10 floats it over frame lines (z:9) and cells (z:5).
+     Body copy matches the #about phone paragraphs: 1.05rem / 1.55. */
+  #art-direction .ad-intro-text {
+    position: absolute;
+    top: calc(100vw * 4 / 3 * -19.6 / 632.7);
+    left: 0;
+    width: 100%;
+    height: calc(100vw * 4 / 3);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 16vw 9vw 10vw;
+    justify-content: center;
+    gap: 16px;
+    z-index: 10;
+  }
+  #art-direction .ad-intro-text .iad-body {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
   /* intro-text and works-zone are mutually exclusive states. opacity alone
      would leave the inactive one occupying space — collapse it with display. */
   #art-direction:not(.ad-intro-active) .ad-intro-text {
