@@ -1163,6 +1163,24 @@
     font-size: 1.05rem;
     line-height: 1.55;
   }
+  /* Owner 2026-07-04: dim the letter masthead under the intro text so the
+     copy reads. Keyed to .ad-intro-animate (the exact class that starts the
+     text reveal) and eased over 2.2s = the text's full resolve time (header
+     scramble ≈ 300ms delay + 21 chars × 90ms; body char wave ≈ 0.9s), so the
+     darkening is a visible effect that ends with the last decoded glyph.
+     Filter on the grid container: cells (z:5) stay under frame (z:9) and
+     text (z:10). Lifts symmetrically when the intro state exits. */
+  #art-direction .art-direction-grid {
+    transition: filter 2.2s ease;
+  }
+  #art-direction.ad-intro-active.ad-intro-animate .art-direction-grid {
+    filter: brightness(0.32) saturate(0.65);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #art-direction .art-direction-grid {
+      transition: none;
+    }
+  }
 
   /* intro-text and works-zone are mutually exclusive states. opacity alone
      would leave the inactive one occupying space — collapse it with display. */
