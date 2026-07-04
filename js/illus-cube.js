@@ -15,6 +15,7 @@
         'images/illustration/sergio-ayala-illustration-muse-mixed-media-2024.webp',
         'images/illustration/sergio-ayala-photography-fujifilm-camera-mixed-media-2024.webp',
         'images/illustration/sergio-ayala-web-design-cyborg-mixed-media-2024.webp',
+        'images/art-direction/quindiorellanas/sergio-ayala-quindiorellanas-hugo-molly-mascot-characters-colombia.webp',
     ];
 
     const FACE_NAMES = IMAGES.map(src =>
