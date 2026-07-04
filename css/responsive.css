@@ -1387,10 +1387,27 @@
     overscroll-behavior: contain;
   }
   .ad-pm-num {
-    font-size: clamp(40px, 12vw, 64px);
+    font-size: clamp(36px, 10vw, 52px);
   }
   .ad-pm-desc {
     max-width: none;
+  }
+  /* The stacked sheet never reset the desktop text column (width:min(40ch,30%)
+     → ~94px on a phone): the title clipped mid-word and the column grew
+     thousands of px tall. Full-width children in the column layout. */
+  .ad-pm-text {
+    width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
+    margin-right: 0;
+  }
+  .ad-pm-title {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+  /* Flipbook mid-flip pages ride 3D transforms out of the stage and over the
+     header — clip them to the stage box (desktop keeps the free bleed). */
+  .ad-pm-stage {
+    overflow: clip;
   }
 }
 
