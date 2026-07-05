@@ -671,14 +671,14 @@
     order: 2;
   }
   /* bio: below the badge, fully justified so it reads as a clean rectangular
-     block (owner request 2026-07-01). Hyphenation keeps the narrow phone
-     column from opening word-gap "rivers"; iOS needs the -webkit prefix and
-     honors the page's lang attr (en/es both hyphenate). */
+     block (owner request 2026-07-01). Hyphenation disabled site-wide at owner
+     request 2026-07-05: no soft-hyphens at line-ends in either language, words
+     stay whole (-webkit-hyphens: none also covers iOS WebKit). */
   #about .about-top-head #aboutp1 {
     order: 3;
     text-align: justify;
-    -webkit-hyphens: auto;
-            hyphens: auto;
+    -webkit-hyphens: none;
+            hyphens: none;
     /* .glitch-text (added by the script.js mobile split) is white-space:pre,
        which forbids soft wrapping — a 500-char paragraph renders as one line
        off the right edge of the phone (owner report 2026-07-03). Same escape
@@ -881,8 +881,8 @@
     box-sizing: border-box;
     padding: 0 var(--spacing-md);
     text-align: justify;
-    -webkit-hyphens: auto;
-            hyphens: auto;
+    -webkit-hyphens: none;
+            hyphens: none;
     margin-top: calc(var(--spacing-sm) - var(--spacing-lg));
   }
   #about .about-top #aboutp3 .about-highlight {
@@ -923,8 +923,8 @@
     box-sizing: border-box;
     padding: 0 var(--spacing-md);
     text-align: justify;
-    -webkit-hyphens: auto;
-            hyphens: auto;
+    -webkit-hyphens: none;
+            hyphens: none;
   }
   #about .about-top #aboutp4 .about-p4-keep {
     font-size: 1.05rem;
@@ -1184,8 +1184,8 @@
     line-height: 1.55;
     /* Edge-to-edge justification like the #about paragraphs (owner 2026-07-05). */
     text-align: justify;
-    -webkit-hyphens: auto;
-            hyphens: auto;
+    -webkit-hyphens: none;
+            hyphens: none;
   }
   /* Owner 2026-07-04: dim the letter masthead under the intro text so the
      copy reads. Keyed to .ad-intro-animate (the exact class that starts the
@@ -1628,13 +1628,13 @@
   }
 
   /* Justify body copy edge-to-edge like the #about paragraphs (owner 2026-07-05).
-     Hyphens keep the narrow column from opening word-gap rivers. The short CTA
-     instruction is left ragged (justify looks bad on ~2 lines). */
+     Hyphenation disabled at owner request 2026-07-05: no soft-hyphens at
+     line-ends in either language. Words stay whole and wrap at spaces. */
   #photo .photo-intro,
   #photo .photo-ig-desc {
     text-align: justify;
-    -webkit-hyphens: auto;
-            hyphens: auto;
+    -webkit-hyphens: none;
+            hyphens: none;
   }
 
   /* Speed up the photo reveal glitch on phones to match the about / art-direction
@@ -1682,8 +1682,8 @@
      same escape hatch used for the #about bio. */
   #illustration .illus-body {
     text-align: justify;
-    -webkit-hyphens: auto;
-            hyphens: auto;
+    -webkit-hyphens: none;
+            hyphens: none;
     white-space: normal;
   }
 }

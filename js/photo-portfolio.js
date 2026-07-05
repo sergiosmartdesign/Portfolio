@@ -99,6 +99,25 @@
       this._enlargeLabel          = document.getElementById('photoEnlargeLabel');
       this._enlargeText           = this._enlargeLabel?.querySelector('.photo-enlarge-text') ?? null;
 
+      // Phones (≤768px): the category accordion and its "Click a category…" cta
+      // live in .photo-col-left, but the owner wants them to read *between* the
+      // intro paragraph and the Instagram block (both in .photo-col-camera).
+      // CSS `order` can't interleave nodes across the two grid items, so move
+      // the two into .photo-col-camera, right before .photo-col-instagram →
+      // final mobile order: intro → cta → accordion → Instagram. Desktop keeps
+      // the two-column layout byte-for-byte. Gate on the SAME max-width:768px as
+      // the responsive.css order flip, not the UA flag. (owner 2026-07-05)
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        const camera = this.overlay.querySelector('.photo-col-camera');
+        const ig     = this.overlay.querySelector('.photo-col-instagram');
+        const cta    = this.overlay.querySelector('.photo-cta');
+        const accord = this.overlay.querySelector('.photo-accordion');
+        if (camera && ig && cta && accord) {
+          camera.insertBefore(cta, ig);
+          camera.insertBefore(accord, ig);
+        }
+      }
+
       // Create subsystems
       this.stream  = new window.Photo.GhostStream(
         document.querySelector('.photo-ghost-stream'),
