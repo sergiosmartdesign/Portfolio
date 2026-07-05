@@ -370,26 +370,13 @@
       wrap.appendChild(frame);
     });
 
-    // Hover hand — on pointer-over, one of the two pilot hands (left/right, picked
-    // at random each time) fades in OVER the panel. Sized ~1.5× the slot and
-    // centred so the hand reads as reaching across the little screen. pointer-
-    // events:none so it never steals the click/hover from the hit-rect below.
-    const HANDS = ['images/mano%20der.svg', 'images/mano%20izq.svg'];
-    const HW = SW * 1.5, HH = SH * 1.5;
-    const hand = document.createElementNS(NS, 'image');
-    hand.setAttribute('class', 'ct-eva-hand');
-    hand.setAttribute('x', SX + SW / 2 - HW / 2);
-    hand.setAttribute('y', SY + SH / 2 - HH / 2);
-    hand.setAttribute('width', HW);
-    hand.setAttribute('height', HH);
-    hand.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    wrap.appendChild(hand);
-
     // Interaction: the panel sits frozen on frame 1 (blinking, see contact.css)
     // until clicked, then the scan flipbook plays; click again to stop. A
     // transparent hit-rect over the slot guarantees the whole panel is clickable
-    // (every frame but the first is opacity:0, so they can't catch the pointer).
+    // (every frame but the first is opacity:0, so they can't catch the pointer)
+    // and doubles as the fingertip target for the hover hand.
     const hit = document.createElementNS(NS, 'rect');
+    hit.setAttribute('id', 'ct-eva-target');
     hit.setAttribute('x', SX);
     hit.setAttribute('y', SY);
     hit.setAttribute('width', SW);
@@ -398,14 +385,21 @@
     hit.setAttribute('role', 'button');
     hit.setAttribute('tabindex', '0');
     hit.setAttribute('aria-label', 'Toggle the EVA-02 scan animation');
+
+    // Hover hand — reuse the PILOT hands (same size as the form-field hover) and
+    // aim a randomly chosen one so its fingertip lands on the EVA panel's centre,
+    // exactly like the form/social hand pointers.
+    const evaHands = [
+      makeHandPointer(handLeftEl,  '#hand-pointer_invisible',  'eva-l'),
+      makeHandPointer(handRightEl, '#handr-pointer_invisible', 'eva-r'),
+    ];
+    let evaHand = null;
     const toggleEva = () => wrap.classList.toggle('ct-eva--playing');
     const showHand = () => {
-      const src = HANDS[Math.random() < 0.5 ? 0 : 1];   // random hand each hover
-      hand.setAttribute('href', src);
-      hand.setAttributeNS(XLINK, 'xlink:href', src);    // Safari fallback
-      hand.classList.add('is-visible');
+      evaHand = evaHands[Math.random() < 0.5 ? 0 : 1];   // random hand each hover
+      evaHand.pointAt('ct-eva-target');
     };
-    const hideHand = () => hand.classList.remove('is-visible');
+    const hideHand = () => { if (evaHand) { evaHand.reset(); evaHand = null; } };
     hit.addEventListener('click', toggleEva);
     hit.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleEva(); }
