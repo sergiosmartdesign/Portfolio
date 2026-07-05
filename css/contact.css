@@ -627,32 +627,17 @@
 }
 
 /* Activated: hard-cut 8 fps scan flipbook across all 9 frames, recoloured to
-   #AE2012 (SVG tint filter) with a red glow (drop-shadow bloom). */
+   #AE2012 with a red glow — both baked into the single SVG filter (tint + bloom)
+   so it survives WebKit, which drops a url() filter chained with drop-shadow(). */
 .ct-eva--playing .ct-eva-frame {
   animation: ct-eva-scan calc(var(--ct-eva-count, 9) * var(--ct-eva-step))
              step-end infinite;
   animation-delay: calc((var(--ct-eva-i, 0) - var(--ct-eva-count, 9)) * var(--ct-eva-step));
-  filter: url(#ct-eva-tint)
-          drop-shadow(0 0 2px #AE2012)
-          drop-shadow(0 0 5px rgba(174, 32, 18, 0.8));
+  filter: url(#ct-eva-tint);
 }
 
 /* Transparent click target covering the whole EVA slot. */
 .ct-eva-hit { fill: transparent; pointer-events: all; cursor: pointer; }
-
-/* Random pilot hand that fades in over the panel on hover/focus. */
-.ct-eva-hand {
-  opacity: 0;
-  pointer-events: none;   /* never steal the hover/click from .ct-eva-hit */
-  transform-box: fill-box;
-  transform-origin: center bottom;
-  transform: translateY(6%) scale(0.94);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-.ct-eva-hand.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
 
 @keyframes ct-eva-scan {
   0%      { opacity: 1; }
@@ -787,6 +772,19 @@
   right: 0;
   transform: translate(35%, 110%);
 }
+
+/* Click pose — overlays the resting pose (identical viewBox), shown only for the
+   brief tap flash (.is-clicking, toggled in contact.js). Hiding the resting pose
+   with visibility (not display) keeps the container's height so the parked/aimed
+   transform never shifts. */
+.ct-hand-pose--click {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+}
+.ct-hand.is-clicking > svg.ct-hand-pose--click { display: block; }
+.ct-hand.is-clicking > svg.ct-hand-pose:not(.ct-hand-pose--click) { visibility: hidden; }
 
 /* ── CSS scanline grain (replaces external noise.svg) ─────────────────────── */
 .ct-grain {
@@ -1480,8 +1478,6 @@
   .ct-eva:not(.ct-eva--playing) .ct-eva-first,
   .ct-eva--playing .ct-eva-frame,
   .ct-eva-frame { animation: none; }
-  /* Hover hand: fade only, no slide/scale. */
-  .ct-eva-hand { transition: none; transform: none; }
 
   /* Interfaz screen: hold frame 1 (.ct-iz-first), no cross-fade */
   .ct-iz-frame { animation: none; }

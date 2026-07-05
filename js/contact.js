@@ -334,8 +334,12 @@
       const defs  = document.createElementNS(NS, 'defs');
       const filt  = document.createElementNS(NS, 'filter');
       filt.setAttribute('id', 'ct-eva-tint');
-      filt.setAttribute('x', '-20%'); filt.setAttribute('y', '-20%');
-      filt.setAttribute('width', '140%'); filt.setAttribute('height', '140%');
+      // Glow lives INSIDE this filter (feGaussianBlur + feMerge) — WebKit drops a
+      // url(#…) reference filter when it's CSS-chained with drop-shadow(), so the
+      // whole effect must be one url() filter. sRGB → the exact #AE2012.
+      filt.setAttribute('color-interpolation-filters', 'sRGB');
+      filt.setAttribute('x', '-40%'); filt.setAttribute('y', '-40%');
+      filt.setAttribute('width', '180%'); filt.setAttribute('height', '180%');
       const flood = document.createElementNS(NS, 'feFlood');
       flood.setAttribute('flood-color', '#AE2012');
       flood.setAttribute('result', 'tint');
@@ -343,7 +347,19 @@
       comp.setAttribute('in', 'tint');
       comp.setAttribute('in2', 'SourceGraphic');
       comp.setAttribute('operator', 'in');
+      comp.setAttribute('result', 'red');
+      const blur  = document.createElementNS(NS, 'feGaussianBlur');
+      blur.setAttribute('in', 'red');
+      blur.setAttribute('stdDeviation', '2.5');
+      blur.setAttribute('result', 'glow');
+      const merge = document.createElementNS(NS, 'feMerge');
+      ['glow', 'glow', 'red'].forEach(src => {   // double glow → stronger bloom
+        const node = document.createElementNS(NS, 'feMergeNode');
+        node.setAttribute('in', src);
+        merge.appendChild(node);
+      });
       filt.appendChild(flood); filt.appendChild(comp);
+      filt.appendChild(blur); filt.appendChild(merge);
       defs.appendChild(filt);
       svg.appendChild(defs);
     }
@@ -389,20 +405,26 @@
     // Hover hand — reuse the PILOT hands (same size as the form-field hover) and
     // aim a randomly chosen one so its fingertip lands on the EVA panel's centre,
     // exactly like the form/social hand pointers.
-    const evaHands = [
+    const evaHands   = [
       makeHandPointer(handLeftEl,  '#hand-pointer_invisible',  'eva-l'),
       makeHandPointer(handRightEl, '#handr-pointer_invisible', 'eva-r'),
     ];
-    let evaHand = null;
+    const evaHandEls = [handLeftEl, handRightEl];
+    let evaIdx = 0, evaHand = null;
     const toggleEva = () => wrap.classList.toggle('ct-eva--playing');
     const showHand = () => {
-      evaHand = evaHands[Math.random() < 0.5 ? 0 : 1];   // random hand each hover
+      evaIdx  = Math.random() < 0.5 ? 0 : 1;   // random hand each hover
+      evaHand = evaHands[evaIdx];
       evaHand.pointAt('ct-eva-target');
     };
     const hideHand = () => { if (evaHand) { evaHand.reset(); evaHand = null; } };
     hit.addEventListener('click', toggleEva);
+    // Immediate "tap" on press — the pointing hand flashes its click pose.
+    hit.addEventListener('pointerdown', () => playHandClick(evaHandEls[evaIdx]));
     hit.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleEva(); }
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); toggleEva(); playHandClick(evaHandEls[evaIdx]);
+      }
     });
     hit.addEventListener('mouseenter', showHand);
     hit.addEventListener('mouseleave', hideHand);
@@ -644,7 +666,7 @@
      Each copy gets its own id prefix and .stN class scope: the cockpit and
      both hands reuse the same Illustrator ids/class names, and inline
      <style> blocks are document-global. */
-  function injectHandSvg(handEl, url, prefix, scopeSel) {
+  function injectHandSvg(handEl, url, prefix, scopeSel, markClass) {
     if (!handEl) return;
     fetch(url)
       .then(res => res.text())
@@ -660,6 +682,7 @@
         svg.querySelectorAll('style').forEach(st => {
           st.textContent = st.textContent.replace(/\.st(\d+)\b/g, `${scopeSel} .st$1`);
         });
+        if (markClass) svg.classList.add(...markClass.split(' '));
         handEl.appendChild(svg);
       })
       .catch(err => console.error('[contact] hand SVG failed to load:', url, err));
@@ -668,8 +691,22 @@
   const handLeftEl  = section.querySelector('.ct-hand:not(.ct-hand--right)');
   const handRightEl = section.querySelector('.ct-hand--right');
 
-  injectHandSvg(handLeftEl,  'images/mano%20izq.svg', 'hand-',  '.ct-hand');
-  injectHandSvg(handRightEl, 'images/mano%20der.svg', 'handr-', '.ct-hand--right');
+  // Two poses per hand: the resting pose + a "click" pose (fingers pressed). The
+  // click pose overlays the normal one (same viewBox) and is flashed on for a
+  // beat whenever the hand taps something — see playHandClick(). Distinct id
+  // prefixes + its own style scope keep the two inline SVGs from clashing.
+  injectHandSvg(handLeftEl,  'images/mano%20izq.svg',        'hand-',   '.ct-hand',        'ct-hand-pose');
+  injectHandSvg(handRightEl, 'images/mano%20der.svg',        'handr-',  '.ct-hand--right', 'ct-hand-pose');
+  injectHandSvg(handLeftEl,  'images/mano%20izq%20click.svg', 'handlc-', '.ct-hand-pose--click', 'ct-hand-pose ct-hand-pose--click');
+  injectHandSvg(handRightEl, 'images/mano%20der%20click.svg', 'handrc-', '.ct-hand-pose--click', 'ct-hand-pose ct-hand-pose--click');
+
+  // Flash the click pose for ~160ms — the hand "taps" whatever it's pointing at.
+  function playHandClick(handEl) {
+    if (!handEl || !handEl.querySelector('.ct-hand-pose--click')) return;
+    handEl.classList.add('is-clicking');
+    clearTimeout(handEl._clickTimer);
+    handEl._clickTimer = setTimeout(() => handEl.classList.remove('is-clicking'), 160);
+  }
 
   /* ════════════════════════════════════════════════════════════════════════
      HAND POINTER — hovering/focusing a form element moves the hand so the
@@ -785,6 +822,10 @@
       if (t) ptr.pointAt(t); else ptr.reset();
     });
     form.addEventListener('pointerleave', ptr.reset);
+    // Tap: flash the click pose when pressing a field/button the hand points at.
+    form.addEventListener('pointerdown', (e) => {
+      if (targetFor(e.target)) playHandClick(handLeftEl);
+    });
 
     /* keyboard parity */
     form.addEventListener('focusin', (e) => {
