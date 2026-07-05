@@ -739,7 +739,10 @@
     letter-spacing: 0.04em;
     color: var(--illus-muted);
     opacity: 0.6;
-    pointer-events: none;
+    /* The name label is the primary click target of each strip entry (the dot
+       itself is tiny): make it clickable so a click anywhere on the name routes
+       through the [data-goto] delegate → gotoSlide. cursor inherits pointer. */
+    pointer-events: auto;
     /* translateX: dot half-width (0.125rem) + gap — places label to the right */
     transform: translateY(-50%) translateX(calc(0.125rem + 0.65rem));
     transition: color 0.3s, opacity 0.3s,
@@ -752,6 +755,13 @@
 }
 
 
+
+/* Hover affordance — the whole name lights up so it reads as clickable. */
+.illus-dot:hover::after,
+.illus-dot:focus-visible::after {
+    color: var(--illus-accent);
+    opacity: 1;
+}
 
 .illus-dot.active::after {
     color: var(--illus-accent);
