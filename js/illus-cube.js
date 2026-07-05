@@ -249,17 +249,23 @@
         { match: 'reconciliacion-watercolor-digital', dir: 'images/illustration/faber castell/', items: [
             { base: 'sergio-ayala-reconciliacion-faber-castell-award-certificate-2014', alt: 'Reconciliación — Faber-Castell IV National Drawing Contest certificate, 2014' },
         ]},
-        { match: 'draconic-love-dragon-illustration', dir: 'images/illustration/draconic love/', items: [
-            { base: 'sergio-ayala-draconic-love-tshirt-mockup-2019',   alt: 'Draconic Love — t-shirt merchandise mockup by Sergio Ayala, 2019' },
-            { base: 'sergio-ayala-draconic-love-tote-bag-mockup-2019', alt: 'Draconic Love — tote bag merchandise mockup by Sergio Ayala, 2019' },
+        { match: 'draconic-love-dragon-illustration', dir: 'images/illustration/draconic love/', inset: true, items: [
+            { base: 'sergio-ayala-draconic-love-tshirt-mockup-2019',        alt: 'Draconic Love — t-shirt merchandise mockup by Sergio Ayala, 2019' },
+            { base: 'sergio-ayala-draconic-love-tote-bag-mockup-2019',      alt: 'Draconic Love — tote bag merchandise mockup by Sergio Ayala, 2019' },
+            { base: 'sergio-ayala-draconic-love-merchandise-mockup-2019',   alt: 'Draconic Love — merchandise collection mockup by Sergio Ayala, 2019' },
+            { base: 'sergio-ayala-draconic-love-merchandise-web-banner-2019', alt: 'Draconic Love — merchandise web banner by Sergio Ayala, 2019' },
         ]},
     ];
     const thumbWraps = [];   // { wrap, stop, face }
     let   thumbEls   = [];
+    // Stops whose main image must inset (shrink + hug the far side) so it clears a
+    // tall thumb column. Value = the side the thumb column sits on.
+    const insetStops = {};   // stop -> 'left' | 'right'
     THUMB_SETS.forEach(set => {
         const stop = IMAGES.findIndex(s => s.includes(set.match));
         if (stop < 0) return;
         const face = FACE_MAP[stop];
+        if (set.inset) insetStops[stop] = (stop % 2 === 0 ? 'right' : 'left');
         const wrap = document.createElement('div');
         // Thumbs opposite the text card: card is --right on odd stops → thumbs left;
         // even stops → card left → thumbs right.
@@ -316,6 +322,10 @@
         // Release any forwards-fill from a previous scan animation so the per-frame
         // dot-product opacity can take back control of this face's image.
         img.classList.remove('illus-img-enter');
+        // Inset the main image when this stop carries a tall thumb column, so the
+        // artwork shrinks and hugs the far side instead of overlapping the thumbs.
+        img.classList.remove('illus-main-img--inset-left', 'illus-main-img--inset-right');
+        if (insetStops[imgIdx]) img.classList.add('illus-main-img--inset-' + insetStops[imgIdx]);
         img.alt = FACE_NAMES[imgIdx] ?? '';
         img.src = src;
         img.style.transform = getFaceCorrection(faceIdx, imgIdx);

@@ -171,6 +171,25 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
 }
 
+/* Inset main image — a piece with a tall thumb column (e.g. Draconic Love, 4
+   thumbs) shrinks its artwork and hugs the opposite side so the two never
+   overlap. The face reserves a gutter on the column side and pins the image
+   to the far edge; capping max-width keeps the (square) art clear of the
+   column both horizontally and vertically. */
+.illus-face:has(.illus-main-img--inset-left) {
+    justify-content: flex-end;
+    padding-left: 96px;
+}
+.illus-face:has(.illus-main-img--inset-right) {
+    justify-content: flex-start;
+    padding-right: 96px;
+}
+.illus-face img.illus-main-img--inset-left,
+.illus-face img.illus-main-img--inset-right {
+    max-width: calc(100% - 48px);
+    max-height: 82%;
+}
+
 /* ── Gallery title face — intro robot background image ───────────────────── */
 .illus-face[data-face="top"] {
     background: url('../images/sergio-ayala-robot-red-teal-duotone-illustration-section.webp') center / cover no-repeat;
