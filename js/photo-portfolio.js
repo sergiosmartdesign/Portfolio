@@ -908,9 +908,17 @@
         return;
       }
 
+      // Phones: tighten the per-item cascade stagger so the reveal reads as fast
+      // as the about / art-direction glitch (owner 2026-07-05). Desktop keeps
+      // the original 0.04s / 40ms steps. Paired with the halved photo-glitch-in
+      // duration in responsive.css.
+      const _mob   = !!(window.App && App.BrowserDetect && App.BrowserDetect.isMobile);
+      const _step  = _mob ? 0.012 : 0.04;
+      const _gstep = _mob ? 12    : 40;
+
       gsap.killTweensOf(item);
       gsap.to(item, {
-        delay: batchIndex * 0.04,
+        delay: batchIndex * _step,
         keyframes: [
           { opacity: 1,    duration: 0.04, ease: 'none' },
           { opacity: 0.15, duration: 0.03, ease: 'none' },
@@ -921,7 +929,7 @@
       });
 
       // Layer the CSS glitch-in animation in sync with the opacity reveal
-      const glitchDelay = Math.round(batchIndex * 40);
+      const glitchDelay = Math.round(batchIndex * _gstep);
       setTimeout(() => {
         item.classList.remove('photo-glitch-load');
         void item.offsetWidth; // restart animation if class was already there

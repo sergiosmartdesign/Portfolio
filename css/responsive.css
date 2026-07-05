@@ -1613,6 +1613,23 @@
     color: rgba(0, 18, 25, 0.6);
     line-height: 1.25;
   }
+
+  /* Match the #about body paragraph size on phones (owner 2026-07-05): about is
+     1.1rem / lh 1.8; the photo paragraphs were clamped down to 0.7rem (~11px). */
+  #photo .photo-intro,
+  #photo .photo-ig-desc,
+  #photo .photo-cta {
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  /* Speed up the photo reveal glitch on phones to match the about / art-direction
+     glitch feel. The per-element flicker (photo-glitch-in, 0.5s in styles.css)
+     is halved; the per-item cascade stagger is cut in js/photo-portfolio.js
+     (isMobile-gated). (owner 2026-07-05) */
+  #photo .photo-glitch-load {
+    animation-duration: 0.25s;
+  }
 }
 
 
