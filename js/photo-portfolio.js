@@ -1089,6 +1089,31 @@
 
       item.addEventListener('click', (e) => {
         if (!item.dataset.image) return;
+
+        // Phones (≤768px): the row dim/highlight is hover-driven, but touch has
+        // no reliable mouseleave — so after the lightbox closes the desktop
+        // `has-active` dim (siblings → opacity .25) and the tapped row's inline
+        // opacity get stuck, leaving the name/description text invisible. On
+        // tap, drop that stuck hover state and instead mark THIS row with a
+        // persistent `photo-item-selected` class (yellow highlight in
+        // responsive.css) so the selected photo is always readable and clearly
+        // flagged. Desktop keeps the hover system untouched. (owner bug 2026-07-05)
+        if (window.matchMedia('(max-width: 768px)').matches) {
+          const lst = item.closest('.photo-project-list');
+          if (lst) {
+            lst.classList.remove('has-active');
+            lst.querySelectorAll('.photo-project-item').forEach(el => {
+              el.classList.remove('active', 'photo-item-selected');
+              // Base CSS opacity is 0 (rows show via gsap inline opacity), so
+              // restore to 1 like the mouseleave handler does — clearing to ''
+              // would drop already-revealed rows back to the hidden base.
+              el.style.opacity = '1';
+              el.style.zIndex  = '';
+            });
+          }
+          item.classList.add('photo-item-selected');
+        }
+
         const x = this._previewTargetX || e.clientX;
         const y = this._previewTargetY || e.clientY;
         this._openItemLightbox(item, x, y);

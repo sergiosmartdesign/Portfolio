@@ -1610,12 +1610,37 @@
     grid-row: 2;
     min-width: 0;
     max-width: 100%;
-    font-size: 0.72rem;
+    /* Subtitle (location) enlarged on phones at owner request 2026-07-05
+       (0.72 → 0.85rem); still a step under the 0.9rem title so the
+       title/subtitle hierarchy holds. */
+    font-size: 0.85rem;
     font-weight: 300;
     text-transform: none;
     letter-spacing: 0.02em;
     color: rgba(0, 18, 25, 0.6);
     line-height: 1.25;
+  }
+
+  /* SELECTED-PHOTO STATE (owner bug 2026-07-05).
+     The row dim/highlight is hover-driven; touch never fires a reliable
+     mouseleave, so after the item lightbox closes the desktop `has-active`
+     dim (siblings → opacity .25) and the tapped row's inline opacity stay
+     stuck → the photo name + location read as invisible. On phones:
+     1) neutralize the dim so every row stays fully readable, and
+     2) mark the last-opened photo (js adds .photo-item-selected on tap) with
+        a persistent yellow highlight behind its name + location, so you can
+        tell which one is selected — same palette as the desktop hover sweep,
+        but it stays after the lightbox closes. */
+  #photo .photo-project-list.has-active .photo-project-item,
+  #photo .photo-project-item.active,
+  #photo .photo-project-item.photo-item-selected {
+    opacity: 1 !important;
+  }
+  #photo .photo-project-item.photo-item-selected .photo-project-data {
+    color: rgb(10, 10, 10);
+  }
+  #photo .photo-project-item.photo-item-selected .photo-project-data::after {
+    transform: scaleX(1);
   }
 
   /* Match the #about body paragraph size on phones (owner 2026-07-05): about is
