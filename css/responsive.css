@@ -1584,7 +1584,9 @@
      horizontal page scroll. Here the single content column is min-width:0 and
      each line ellipsizes, so nothing overflows. (owner 2026-07-05) */
   #photo .photo-project-item {
-    grid-template-columns: 26px minmax(0, 1fr);
+    /* 3rd column = per-row photo thumbnail (js-injected, owner 2026-07-05),
+       filling the empty space right of the short title/location. */
+    grid-template-columns: 26px minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
     column-gap: 0.7rem;
     row-gap: 3px;
@@ -1595,6 +1597,24 @@
     grid-column: 1;
     grid-row: 1 / span 2;
     align-self: start;
+  }
+  /* Per-row thumbnail — right column, spans both text rows, centered. */
+  #photo .photo-project-item .photo-thumb {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+    justify-self: end;
+    width: 64px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid rgba(10, 147, 150, 0.35);
+    display: block;
+    background: rgba(0, 18, 25, 0.05);
+  }
+  /* Selected row: amber border on its thumbnail, matching the yellow marker. */
+  #photo .photo-project-item.photo-item-selected .photo-thumb {
+    border-color: rgba(238, 155, 0, 0.9);
   }
   #photo .photo-project-item .photo-title {
     grid-column: 2;
@@ -1668,6 +1688,15 @@
      (isMobile-gated). (owner 2026-07-05) */
   #photo .photo-glitch-load {
     animation-duration: 0.25s;
+  }
+}
+
+/* Safety: the per-row thumbnails are js-injected only on phones, but if a
+   session resizes mobile → desktop the nodes persist — keep them out of the
+   frozen desktop grid. (owner 2026-07-05) */
+@media (min-width: 769px) {
+  #photo .photo-project-item .photo-thumb {
+    display: none;
   }
 }
 

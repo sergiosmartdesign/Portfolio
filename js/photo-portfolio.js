@@ -116,6 +116,25 @@
           camera.insertBefore(cta, ig);
           camera.insertBefore(accord, ig);
         }
+
+        // Per-row thumbnail: the expanded accordion row is just [number]
+        // [title/location], leaving empty space on the right → fill it with a
+        // small preview of each photo (from data-image), placed in grid col 3
+        // (styled in responsive.css). Mobile-only: these <img> nodes are never
+        // created on the frozen desktop build. Lazy so only the open category's
+        // visible thumbs decode. (owner 2026-07-05)
+        this.overlay.querySelectorAll('.photo-project-item[data-image]').forEach(item => {
+          if (item.querySelector('.photo-thumb')) return;
+          const img = document.createElement('img');
+          img.className = 'photo-thumb';
+          img.src       = item.dataset.image;
+          img.alt       = '';
+          img.setAttribute('aria-hidden', 'true');
+          img.setAttribute('draggable', 'false');
+          img.loading   = 'lazy';
+          img.decoding  = 'async';
+          item.appendChild(img);
+        });
       }
 
       // Create subsystems
