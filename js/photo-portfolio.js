@@ -258,6 +258,21 @@
 
       let cursor = introEls.length * INTRO_STEP + 250;
 
+      // Phones: remove the auto "attract" cascade (auto-open each category →
+      // reveal its photos → bounce-close). The accordion stays closed and opens
+      // only on tap (_openCategory re-reveals its items). Just reveal the
+      // (closed) buttons here. Desktop keeps the full cascade in the else below,
+      // byte-for-byte unchanged. (owner 2026-07-04, mobile-only via isMobile)
+      const isMobile = !!(window.App && App.BrowserDetect && App.BrowserDetect.isMobile);
+
+      if (isMobile) {
+        categoryBtnArray.forEach((btn, i) => {
+          const t = setTimeout(() => this._revealItem(btn, 0), cursor + i * INTRO_STEP);
+          this.chainTimers.push(t);
+        });
+        cursor += categoryBtnArray.length * INTRO_STEP + 250;
+      } else {
+
       // 2. Sequential category reveal: button → items one by one
       categoryBtnArray.forEach(btn => {
         const accordionItem = btn.closest('.photo-accordion-item');
@@ -354,6 +369,8 @@
 
         cursor = closeAt + REV_GAP;
       });
+
+      } // end desktop-only attract cascade (steps 2 + 3)
 
       // 4. Tail elements: polaroids label → desc → camera → pgallery title → desc → hint
       const tailStart = cursor;
