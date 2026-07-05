@@ -713,30 +713,23 @@
 .ct-iz-static { display: none; }
 
 .ct-iz {
-  --ct-iz-step: 2s;                /* dwell time per frame */
-  /* Teal bloom on whichever frame(s) are showing */
+  /* Teal bloom on the showing frame */
   filter: drop-shadow(0 0 2px rgba(148, 210, 189, 0.9))
           drop-shadow(0 0 6px rgba(148, 210, 189, 0.45));
 }
 
-.ct-iz-frame {
-  opacity: 0;
-  animation: ct-iz-fade calc(var(--ct-iz-count, 8) * var(--ct-iz-step))
-             ease-in-out infinite;
-  animation-delay: calc((var(--ct-iz-i, 0) - var(--ct-iz-count, 8)) * var(--ct-iz-step));
+/* Each interfaz frame is inlined (one in the DOM at a time). Its potrace paths
+   are grouped into horizontal bands that cascade in — top→bottom — every time
+   the frame changes (contact.js toggles .ct-iz-in), so the panel's ships +
+   readouts "type in" like the About skills SVG rather than a flat cross-fade. */
+.ct-iz-band { opacity: 0; }
+.ct-iz-in .ct-iz-band {
+  opacity: 1;
+  animation: ct-iz-band-in 0.38s ease-out calc(var(--band-index, 0) * 0.035s) backwards;
 }
-
-.ct-iz-first { opacity: 1; }       /* static fallback (reduced motion) */
-
-/* 8 frames → each slot = 12.5%; the on-window is widened to 18.75% so a
-   frame's fade-out overlaps the next frame's fade-in. (% are tied to 8 frames;
-   keep --ct-iz-count = 8 or retune.) */
-@keyframes ct-iz-fade {
-  0%     { opacity: 0; }
-  6.25%  { opacity: 1; }   /* fade in  (~1s) */
-  12.5%  { opacity: 1; }   /* hold     (~1s) */
-  18.75% { opacity: 0; }   /* fade out (~1s, overlaps next fade-in) */
-  100%   { opacity: 0; }
+@keyframes ct-iz-band-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ── #glow_and_blink indicator lights — own-colour glow + random blink ──────
@@ -1497,8 +1490,8 @@
   .ct-eva--playing .ct-eva-frame,
   .ct-eva-frame { animation: none; }
 
-  /* Interfaz screen: hold frame 1 (.ct-iz-first), no cross-fade */
-  .ct-iz-frame { animation: none; }
+  /* Interfaz screen: show the frame's bands statically, no cascade */
+  .ct-iz-band { opacity: 1; animation: none; }
 
   /* Second mech screen: hold frame 1 (.ct-mech-first), no spin */
   .ct-mech-frame { animation: none; }

@@ -591,7 +591,6 @@
      is already tagged and this resolves to the interfaz panel alone. */
   function buildInterfazScreen(svg) {
     const NS = 'http://www.w3.org/2000/svg';
-    const XLINK = 'http://www.w3.org/1999/xlink';
 
     // The remaining plain top-level <g>: no id, not the artwork wrapper
     // (#colors/#lines), and not either EVA group (already classed).
@@ -616,34 +615,99 @@
       [468, 880], [448, 868], [440, 858], [446, 866],
       [442, 860], [456, 874], [446, 868], [458, 842],
     ];
+    const BANDS = 12;
+    const DWELLS = [3000, 5000, 8000];   // random dwell per frame (3 / 5 / 8 s)
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Group a frame's potrace paths into horizontal bands (top→bottom) so they
+    // can cascade in on each change (à la the About skills SVG). potrace wraps
+    // its paths in <g transform="translate(0,H) scale(0.1,-0.1)">, so a path's
+    // on-screen y is tY + sY·(first M y-coord).
+    function bandGroup(rootSvg, H) {
+      const g = rootSvg.querySelector('g');
+      if (!g) return;
+      const t   = g.getAttribute('transform') || '';
+      const trY = /translate\(\s*[-\d.]+[ ,]+([-\d.]+)/.exec(t);
+      const scY = /scale\(\s*[-\d.]+[ ,]+([-\d.]+)/.exec(t);
+      const tY = trY ? parseFloat(trY[1]) : 0;
+      const sY = scY ? parseFloat(scY[1]) : 1;
+      const bandH  = H / BANDS;
+      const bucket = new Map();
+      [...g.children].filter(n => n.tagName === 'path').forEach(p => {
+        const m = /M\s*[-\d.]+[ ,]+([-\d.]+)/.exec(p.getAttribute('d') || '');
+        const vy = tY + sY * (m ? parseFloat(m[1]) : 0);
+        const k  = Math.max(0, Math.min(BANDS - 1, Math.floor(vy / bandH)));
+        (bucket.get(k) || bucket.set(k, []).get(k)).push(p);
+      });
+      [...bucket.keys()].sort((a, b) => a - b).forEach((k, order) => {
+        const bg = document.createElementNS(NS, 'g');
+        bg.setAttribute('class', 'ct-iz-band');
+        bg.style.setProperty('--band-index', order);
+        bucket.get(k)[0].parentNode.insertBefore(bg, bucket.get(k)[0]);
+        bucket.get(k).forEach(p => bg.appendChild(p));
+      });
+    }
 
     const wrap = document.createElementNS(NS, 'g');
     wrap.setAttribute('class', 'ct-iz');
-    wrap.style.setProperty('--ct-iz-count', FRAMES.length);
+    svg.appendChild(wrap);
+
+    const frameEls = new Array(FRAMES.length).fill(null);
+    let current = null, idx = 0, started = false, timer = null;
+
+    // Swap the shown frame and replay its band cascade (only one frame lives in
+    // the DOM at a time — the 8 inlined frames are ~3k paths, too many to stack).
+    function activate(i) {
+      const el = frameEls[i];
+      if (!el) return;
+      if (current && current.parentNode) current.remove();
+      current = el;
+      el.classList.remove('ct-iz-in');
+      wrap.appendChild(el);
+      if (!rm) { void el.getBoundingClientRect(); el.classList.add('ct-iz-in'); }
+    }
+
+    // Self-rescheduling so each dwell is a fresh random 3 / 5 / 8 s (not a fixed beat).
+    function scheduleNext() {
+      const delay = DWELLS[Math.floor(Math.random() * DWELLS.length)];
+      timer = setTimeout(() => {
+        if (section.classList.contains('ct-paused')) { scheduleNext(); return; }  // frozen off-screen
+        let next = idx, guard = 0;
+        do { next = (next + 1) % FRAMES.length; guard++; }
+        while (!frameEls[next] && guard <= FRAMES.length);
+        if (frameEls[next]) { idx = next; activate(idx); }
+        scheduleNext();
+      }, delay);
+    }
+    function startCycle() { if (!timer) scheduleNext(); }
 
     FRAMES.forEach(([W, H], i) => {
-      const frame = document.createElementNS(NS, 'svg');
-      frame.setAttribute('class', i === 0 ? 'ct-iz-frame ct-iz-first' : 'ct-iz-frame');
-      frame.setAttribute('x', SX.toFixed(1));
-      frame.setAttribute('y', SY.toFixed(1));
-      frame.setAttribute('width', SW.toFixed(1));
-      frame.setAttribute('height', SH.toFixed(1));
-      frame.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      frame.setAttribute('preserveAspectRatio', 'none');   // match static panel
-      frame.style.setProperty('--ct-iz-i', i);
-
-      const img = document.createElementNS(NS, 'image');
-      img.setAttribute('width', W);
-      img.setAttribute('height', H);
-      const href = `images/contact/interfaz/${i + 1}.svg`;
-      img.setAttribute('href', href);
-      img.setAttributeNS(XLINK, 'xlink:href', href);   // Safari fallback
-
-      frame.appendChild(img);
-      wrap.appendChild(frame);
+      fetch(`images/contact/interfaz/${i + 1}.svg`)
+        .then(r => r.text())
+        .then(text => {
+          const art = new DOMParser().parseFromString(text, 'image/svg+xml').documentElement;
+          if (art.nodeName !== 'svg') throw new Error('bad SVG payload');
+          art.removeAttribute('id');
+          art.removeAttribute('style');
+          art.removeAttribute('width');
+          art.removeAttribute('height');
+          art.setAttribute('class', 'ct-iz-frame');
+          art.setAttribute('x', SX.toFixed(1));
+          art.setAttribute('y', SY.toFixed(1));
+          art.setAttribute('width', SW.toFixed(1));
+          art.setAttribute('height', SH.toFixed(1));
+          art.setAttribute('viewBox', `0 0 ${W} ${H}`);
+          // Keep each frame's true aspect (like the EVA/mech/side-art screens) so
+          // the varying potrace-trimmed viewBoxes don't stretch/squish; letterboxes
+          // cleanly over the dark panel background.
+          art.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          bandGroup(art, H);
+          frameEls[i] = art;
+          // Show the first frame that arrives, then start cycling.
+          if (!started) { started = true; idx = i; activate(i); if (!rm) startCycle(); }
+        })
+        .catch(err => console.error('[contact] interfaz frame failed to load:', i + 1, err));
     });
-
-    svg.appendChild(wrap);
   }
 
   /* ════════════════════════════════════════════════════════════════════════
