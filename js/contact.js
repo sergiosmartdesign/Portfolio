@@ -1238,8 +1238,10 @@
 
   /* ════════════════════════════════════════════════════════════════════════
      CONTACT FORM — comms-console uplink
-     Transport is mocked for now: sendTransmission() resolves after a delay
-     and logs the payload. Swap its body for a real endpoint when ready.
+     Real transport: POSTs to the Cloudflare Pages Function /api/contact, which
+     verifies Turnstile and relays via Resend to the site inbox. Success
+     is shown only on a backend-confirmed send; otherwise a direct-email link is
+     revealed. See web/functions/api/contact.js + DEPLOY-CLOUDFLARE.md.
      ════════════════════════════════════════════════════════════════════════ */
 
   function initContactForm() {
@@ -1263,20 +1265,81 @@
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
-    /* TRANSPORT — no server backend yet, so the message is handed off to the
-       visitor's mail client as a prefilled email to mail@sergio-ayala.com.
-       Swap the body for e.g. fetch('/api/contact', …) once a mail backend exists. */
-    const CONTACT_EMAIL = 'mail@sergio-ayala.com';
-    function sendTransmission(payload) {
+    /* ── TRANSPORT ──────────────────────────────────────────────────────────
+       POSTs the message to the Cloudflare Pages Function at /api/contact, which
+       verifies Turnstile and relays the mail to the site inbox via Resend
+       (see web/functions/api/contact.js + DEPLOY-CLOUDFLARE.md). Before Cloudflare
+       is live (e.g. on GitHub Pages) that endpoint 404s, so sendTransmission
+       throws and the submit handler falls back to the direct email link — the UI
+       never claims success unless the backend actually confirms it. */
+    const CONTACT_ENDPOINT = '/api/contact';
+    // Assembled from parts so the literal address never sits in this source file
+    // (scraper obfuscation — matches js/email-guard.js).
+    const CONTACT_EMAIL    = ['mail', 'sergio-ayala.com'].join('@');
+    /* Cloudflare Turnstile site key. This is the official ALWAYS-PASSES *test*
+       key; swap it for the real site key at deploy (see DEPLOY-CLOUDFLARE.md). */
+    const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+
+    const mailFallbackLink = document.getElementById('ct-mail-fallback');
+
+    // ── Turnstile: explicit render, token read on submit ──────────────────
+    let turnstileWidgetId = null;
+    function renderTurnstile() {
+      const box = document.getElementById('ct-turnstile');
+      if (!box || turnstileWidgetId !== null || !window.turnstile) return;
+      try {
+        turnstileWidgetId = window.turnstile.render(box, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme:   'dark',
+          size:    'flexible',
+        });
+      } catch (_) { /* invalid key or double-render — degrade silently */ }
+    }
+    function turnstileToken() {
+      if (!window.turnstile || turnstileWidgetId === null) return '';
+      try { return window.turnstile.getResponse(turnstileWidgetId) || ''; }
+      catch (_) { return ''; }
+    }
+    function resetTurnstile() {
+      if (!window.turnstile || turnstileWidgetId === null) return;
+      try { window.turnstile.reset(turnstileWidgetId); } catch (_) {}
+    }
+    // The async api.js fires this once ready (see the ?onload= param on its tag);
+    // also attempt an immediate render in case it loaded before this ran.
+    window.onloadTurnstileCallback = renderTurnstile;
+    renderTurnstile();
+
+    // Prefilled mailto used by the failure fallback link.
+    function mailtoHref(payload) {
       const subject = `Portfolio contact — ${payload.name}`;
       const body =
         `Name: ${payload.name}\n` +
         `Email: ${payload.email}\n\n` +
         `${payload.message}\n`;
-      const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(body)}`;
-      window.location.href = href;
-      return wait(1000);
+      return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}` +
+             `&body=${encodeURIComponent(body)}`;
+    }
+
+    /* Resolves only on a backend-confirmed send; throws otherwise so the submit
+       handler can reveal the direct-email fallback. */
+    async function sendTransmission(payload) {
+      const res = await fetch(CONTACT_ENDPOINT, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    payload.name,
+          email:   payload.email,
+          message: payload.message,
+          company: honeypot ? honeypot.value : '',
+          'cf-turnstile-response': turnstileToken(),
+        }),
+      });
+      if (!res.ok) {
+        let detail = '';
+        try { detail = (await res.json()).error || ''; } catch (_) {}
+        throw new Error(`HTTP ${res.status}${detail ? ' — ' + detail : ''}`);
+      }
+      return res.json().catch(() => ({ ok: true }));
     }
 
     function announce(msg) {
@@ -1347,6 +1410,7 @@
       sending = true;
       form.classList.add('is-sending');
       sendBtn.disabled = true;
+      if (mailFallbackLink) mailFallbackLink.hidden = true;
       announce('Sending message…');
 
       const payload = {
@@ -1370,8 +1434,13 @@
         if (title) title.focus();
       } catch (err) {
         console.error('[contact] transmission failed:', err);
-        await typeLog('> SEND FAILED — RETRY OR USE EMAIL LINK');
-        announce('Sending failed. Please retry or use the email link below.');
+        await typeLog('> SEND FAILED — WRITE ME DIRECTLY ↓');
+        announce('Sending failed. Please use the direct email link below.');
+        if (mailFallbackLink) {
+          mailFallbackLink.href   = mailtoHref(payload);
+          mailFallbackLink.hidden = false;
+        }
+        resetTurnstile();
       } finally {
         sending = false;
         form.classList.remove('is-sending');
@@ -1386,6 +1455,8 @@
         form.classList.remove('is-sent');
         successEl.hidden = true;
         sendBtn.disabled = false;
+        if (mailFallbackLink) mailFallbackLink.hidden = true;
+        resetTurnstile();
         typeLog('> READY');
         announce('');
         fields[0].el.focus();

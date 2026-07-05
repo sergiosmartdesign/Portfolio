@@ -15,8 +15,14 @@
 
     <!-- ═══ SECURITY HEADERS (HTML-deliverable subset) ══════════════════════ -->
     <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self';">
+          content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self';">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Cloudflare Turnstile (contact-form anti-spam). Explicit render — the
+         widget is drawn by js/contact.js once this async script fires the
+         onloadTurnstileCallback it exposes. Harmless if it fails to load
+         (the form degrades to the email-fallback path). -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit" async defer></script>
 
     <!-- ═══ PRIMARY SEO ══════════════════════════════════════════════════════ -->
     <title>Sergio Ayala | Senior Art Director, Photographer &amp; UX/UI Designer</title>
@@ -809,13 +815,13 @@
     <link rel="stylesheet" href="css/cert-gallery.css?v=1a6bd54d">
     <link rel="stylesheet" href="css/scroll-hint.css?v=d187c30b">
     <link rel="stylesheet" href="css/preloader.css?v=88e1fa71">
-    <link rel="stylesheet" href="css/contact.css?v=aa52ea30">
+    <link rel="stylesheet" href="css/contact.css?v=d27fb437">
     <link rel="stylesheet" href="css/illus-cube.css?v=c6c6eff2">
     <link rel="stylesheet" href="css/art-direction-panel.css?v=13d9f1e4">
     <link rel="stylesheet" href="css/inf-bracket.css?v=1773ce6b">
     <link rel="stylesheet" href="css/illus-snake.css?v=a1d99486">
     <link rel="stylesheet" href="css/section-transition.css?v=12838d30">
-    <link rel="stylesheet" href="css/responsive.css?v=bbb666e7">
+    <link rel="stylesheet" href="css/responsive.css?v=fbb69999">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -1012,8 +1018,8 @@
                 <div class="ifm-ticker ifm-ticker--bottom">
                     <div class="ifm-ticker-track">
                         <!-- two identical sequences → translateX(-50%) loops seamlessly -->
-                        <span class="ifm-ticker-seq">Senior Art Director · Photographer · Bogotá&nbsp; ✦ &nbsp;Open to Work · Available for Freelance&nbsp; ✦ &nbsp;Let's Build Something · mail@sergio-ayala.com&nbsp; ✦ &nbsp;Branding · Art Direction · 3D · Editorial · Photography&nbsp; ✦ &nbsp;</span>
-                        <span class="ifm-ticker-seq">Senior Art Director · Photographer · Bogotá&nbsp; ✦ &nbsp;Open to Work · Available for Freelance&nbsp; ✦ &nbsp;Let's Build Something · mail@sergio-ayala.com&nbsp; ✦ &nbsp;Branding · Art Direction · 3D · Editorial · Photography&nbsp; ✦ &nbsp;</span>
+                        <span class="ifm-ticker-seq">Senior Art Director · Photographer · Bogotá&nbsp; ✦ &nbsp;Open to Work · Available for Freelance&nbsp; ✦ &nbsp;Let's Build Something · <span data-eml data-eml-text></span>&nbsp; ✦ &nbsp;Branding · Art Direction · 3D · Editorial · Photography&nbsp; ✦ &nbsp;</span>
+                        <span class="ifm-ticker-seq">Senior Art Director · Photographer · Bogotá&nbsp; ✦ &nbsp;Open to Work · Available for Freelance&nbsp; ✦ &nbsp;Let's Build Something · <span data-eml data-eml-text></span>&nbsp; ✦ &nbsp;Branding · Art Direction · 3D · Editorial · Photography&nbsp; ✦ &nbsp;</span>
                     </div>
                 </div>
             </div>
@@ -1035,7 +1041,7 @@
                         <span class="title-line-3">Sergio</span><br>
                         <span class="title-line-4">Ayala·</span>
                     </h2>
-                    <p id="aboutp1" data-i18n-html="about.p1">Senior Art Director &amp; Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.<br><span class="about-highlight">This portfolio itself was built using vibe coding, combining AI-assisted development with my UX/UI expertise</span> — and is fully optimized for both traditional search engines and AI-powered search.</p>
+                    <p id="aboutp1" data-i18n-html="about.p1">Senior Art Director &amp; Photographer. Based in Bogotá, Colombia. I approach projects with a global vision, talking with the client to understand their brand and its DNA, focusing on what is the best way to implement an idea for the project, and how to translate it across various media: from web architecture and user experience design, to photography, illustration, and comprehensive branding.<br><span class="about-highlight">This portfolio itself was built using vibe coding, combining AI-assisted development with my UX/UI expertise</span>, and is fully optimized for both traditional search engines and AI-powered search.</p>
                     </div>
                     <div class="about-id-stack">
                         <img id="id1svg" src="images/id1.svg" alt="Sergio Ayala — Art Director profile badge">
@@ -1228,7 +1234,7 @@
                         <h2 id="dnatitle" class="glitch-text subtitle-glitch" data-splitting>·Let's discover<br>what sets<br>your Brand<br>Apart.<br>It's<br>DNA·</h2>
                     </div>
 
-                    <p id="aboutp4" data-i18n-html="about.p4">My process begins with listening. It's not just about delivering a design, but about co-creating a visual language, that is the way to create good design. By talking with you we can <span class="about-highlight">understand your Brand's DNA,</span> translating it coherently into any format you need, whether it's relaunching your web platform, defining your photographic style, or conceptualizing your entire branding. <span class="about-p4-keep"><a href="mailto:mail@sergio-ayala.com" class="about-cta-marker"><em><strong>Let's work together</strong></em></a> to ensure your design doesn't just look good, but feels authentic and delivers a tangible impact on your audience.<br><br>You can explore what I've studied in the certificates gallery below and experience what I've done with it throughout this very project.</span></p>
+                    <p id="aboutp4" data-i18n-html="about.p4">My process begins with listening. It's not just about delivering a design, but about co-creating a visual language, that is the way to create good design. By talking with you we can <span class="about-highlight">understand your Brand's DNA,</span> translating it coherently into any format you need, whether it's relaunching your web platform, defining your photographic style, or conceptualizing your entire branding. <span class="about-p4-keep"><a href="#" class="about-cta-marker" data-eml><em><strong>Let's work together</strong></em></a> to ensure your design doesn't just look good, but feels authentic and delivers a tangible impact on your audience.<br><br>You can explore what I've studied in the certificates gallery below and experience what I've done with it throughout this very project.</span></p>
 
                     <!-- Certificate Gallery - Independent Layer -->
                     <!-- Certificate Gallery -->
@@ -1257,7 +1263,7 @@
 
                 <!-- Seal CTA — Let's Work Together -->
                 <div class="seal-cta-wrapper">
-                    <a href="mailto:mail@sergio-ayala.com" class="seal-cta" id="seal-cta" aria-label="Let's work together — send email to Sergio Ayala">
+                    <a href="#" class="seal-cta" id="seal-cta" data-eml aria-label="Let's work together — send email to Sergio Ayala">
                         <svg class="seal-svg" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
                             <g class="seal-ring-group">
                                 <circle class="seal-ring-outer" cx="100" cy="100" r="90" />
@@ -1839,7 +1845,7 @@
 
                     <!-- Left: cta + accordion categories -->
                     <div class="photo-col-left">
-                        <p class="photo-cta photo-cta--left"><span class="photo-ai-highlight" data-i18n="photo.ui.cta">Click a category to expand its list — then select any title to preview the image.</span></p>
+                        <p class="photo-cta photo-cta--left"><span class="photo-ai-highlight" data-i18n="photo.ui.cta">Click a category to expand its list, then select any title to preview the image.</span></p>
                         <div class="photo-accordion">
                             <div class="photo-accordion-item">
                                 <button class="photo-category-btn" data-category="landscapes" aria-expanded="false">
@@ -2438,7 +2444,7 @@
                             </div>
                         </div>
 
-                        <p class="photo-intro" data-i18n-html="photo.intro">Photography has been part of my professional and personal work for years — from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em></p>
+                        <p class="photo-intro" data-i18n-html="photo.intro">Photography has been part of my professional and personal work for years, from commercial and editorial projects to street and travel work across four continents. It is one of my passions, a discipline where composition translates into visually pleasing images. <em>Every photo in this archive carries <span class="photo-ai-highlight"><strong><em>AI-generated metadata</em></strong></span>, making the portfolio fully searchable by people, search engines, and AI systems alike.</em></p>
 
                         <aside class="photo-col-instagram" aria-label="Sergio Ayala Photography on Instagram">
                             <div class="photo-ig-header">
@@ -2458,7 +2464,7 @@
                             <span class="photo-ig-label" aria-hidden="true" data-i18n="photo.ig.label">· i n s t a g r a m ·</span>
                             </div>
                             <a href="https://www.instagram.com/sersh01/" class="photo-ig-handle" target="_blank" rel="noopener noreferrer" aria-label="Sergio Ayala on Instagram — @sersh01">@sersh01</a>
-                            <p class="photo-ig-desc" data-i18n="photo.ig.desc">Want to see more? I post regularly on Instagram — more variety, more places, less structure. Everything that doesn't fit in a portfolio but is still worth sharing.</p>
+                            <p class="photo-ig-desc" data-i18n="photo.ig.desc">Want to see more? I post regularly on Instagram: more variety, more places, less structure. Everything that doesn't fit in a portfolio but is still worth sharing.</p>
                             <a href="https://www.instagram.com/sersh01/" class="photo-ig-link" target="_blank" rel="noopener noreferrer" aria-label="Follow Sergio Ayala on Instagram — @sersh01">
                                 <svg class="photo-ig-icon" viewBox="0 0 448 512" aria-hidden="true"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
                                 <span class="photo-ig-cta" data-i18n="photo.ig.cta">· f o l l o w ·</span>
@@ -3284,9 +3290,9 @@
             <!-- ── Contact content (sky layer, z:50) ───── -->
             <div class="ct-content">
 
-                <!-- Comms-console contact form.
-                     Transport is mocked in contact.js (sendTransmission) until
-                     a real mail endpoint is wired up. -->
+                <!-- Comms-console contact form. Transport: POST to the Cloudflare
+                     Pages Function /api/contact (Turnstile-verified, relayed to
+                     the site inbox via Resend). See functions/api/contact.js. -->
                 <div class="ct-form-row">
 
                     <!-- Stacked rotated title — letters split + staggered in
@@ -3336,9 +3342,19 @@
                         </div>
                     </div>
 
+                    <!-- Turnstile widget mounts here (explicit render, contact.js).
+                         Empty until the Cloudflare script renders it — no visual
+                         footprint if the script is blocked/unavailable. -->
+                    <div class="ct-turnstile" id="ct-turnstile"></div>
+
                     <div class="ct-form-foot">
                         <button type="submit" class="ct-send glitch-text" data-splitting aria-label="Send message">[ ▸ s e n d ]</button>
                         <p class="ct-form-log"><span class="ct-log-text" aria-hidden="true">&gt; READY</span></p>
+                        <!-- Shown by contact.js only if the backend send fails, so the
+                             visitor always has a direct way to reach the inbox. -->
+                        <a class="ct-link ct-mail-fallback" id="ct-mail-fallback"
+                           href="#" data-eml hidden
+                           aria-label="Email Sergio Ayala directly">[ · w r i t e &nbsp; m e &nbsp; d i r e c t l y · ]</a>
                     </div>
 
                     <!-- Screen-reader status mirror (typed log is decorative) -->
@@ -3417,6 +3433,7 @@
 
     <!-- Browser detection for performance optimizations -->
     <script defer src="js/browser-detect.js?v=f975ad2c"></script>
+    <script defer src="js/email-guard.js?v=a62bedda"></script>
 
     <script defer src="js/lib/splitting.min.js?v=3b5ba9d3"></script>
     <script defer src="js/lib/scroll-out.min.js?v=a0c46cba"></script>
@@ -3429,7 +3446,7 @@
     <script defer src="js/ad-flipbook.js?v=d5fb59a8"></script>
     <script defer src="js/art-direction-panel.js?v=c023d3e1"></script>
     <!-- Phone-only category accordion for #art-direction (builds nothing on desktop) -->
-    <script defer src="js/ad-accordion.js?v=6acd6b24"></script>
+    <script defer src="js/ad-accordion.js?v=dfa2fc31"></script>
     <script defer src="js/particle-system.js?v=6d65db95"></script>
     <script defer src="js/section-transition.js?v=66c290fd"></script>
     <script defer src="js/orb-3d.js?v=1bf3538f"></script>
@@ -3454,7 +3471,7 @@
     <script defer src="js/photo-portfolio.js?v=cca039a5"></script>
     <script defer src="js/scroll-hint.js?v=ba916d8c"></script>
     <script defer src="js/ascii-ripple.js?v=13667c29"></script>
-    <script defer src="js/contact.js?v=799bb520"></script>
+    <script defer src="js/contact.js?v=0051a355"></script>
     <script defer src="js/illustration-ink-cursor.js?v=386555dc"></script>
     <script defer src="js/illus-cube.js?v=712ba36a"></script>
 

@@ -90,6 +90,23 @@
           '<span class="adacc-year"></span>';
         li.querySelector('.adacc-num').textContent = work.num;
         li.querySelector('.adacc-year').textContent = workYear(work);
+        // Per-row thumbnail (owner 2026-07-05): fill the empty space to the
+        // right of the title/sub with the project's cover image, mirroring the
+        // #photo accordion. work.bg is the cover for every discipline (identity/
+        // web/editorial = mockups, 3d = character turntable webp). Placed in the
+        // last grid column (styled in responsive.css). This whole file is
+        // isMobile-gated, so desktop never gets these nodes.
+        if (work.bg) {
+          const img = document.createElement('img');
+          img.className = 'adacc-thumb';
+          img.src       = work.bg;
+          img.alt       = '';
+          img.setAttribute('aria-hidden', 'true');
+          img.setAttribute('draggable', 'false');
+          img.loading   = 'lazy';
+          img.decoding  = 'async';
+          li.appendChild(img);
+        }
         list.appendChild(li);
         return { el: li, work };
       });

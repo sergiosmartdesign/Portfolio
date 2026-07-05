@@ -1251,7 +1251,17 @@
   align-items: center;
   gap: 1rem;
   margin-top: 0.35rem;
+  flex-wrap: wrap;
 }
+
+/* Turnstile mount — collapses to nothing until the widget is rendered (so the
+   layout is unchanged if the Cloudflare script is blocked or not yet live). */
+.ct-turnstile { margin: 0.75rem 0 0.25rem; }
+.ct-turnstile:empty { display: none; }
+
+/* Direct-email fallback link — only revealed by contact.js when a send fails. */
+.ct-mail-fallback { flex-shrink: 0; }
+.ct-mail-fallback[hidden] { display: none; }
 
 .ct-send {
   flex-shrink: 0;
