@@ -1534,6 +1534,16 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  /* Left "· Portfolio ·" bar: 37.5px wide at the screen edge (styles.css),
+     but the phone content gutter is only var(--spacing-md) = 24px, so the
+     full-size bar overlapped the intro text (starts at left:24px). Shrink it
+     to fit the free gutter with a small clearance (18px → ~6px gap; height
+     follows the SVG aspect ratio). gsap animates translateX/opacity on this
+     element, not width, so this override is safe (owner 2026-07-04). */
+  #photo .photo-section-bar-img {
+    width: 18px;
+  }
 }
 
 
