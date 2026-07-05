@@ -140,6 +140,14 @@
     const HANDOFF_START = (N * stopVh + EXIT_VH) / totalVh;
     const contactEl = document.getElementById('contact');
 
+    // Auto-handoff: once the gallery has slid out (raw past GALLERY_END) leaving
+    // only the particle background, drive the cross-dissolve into #contact on a
+    // timer so a *stopped* scroll never parks the viewport on the bare background.
+    // Manual scroll still overrides — the handoff is fed the MAX of the scroll-
+    // linked and the time-driven progress, so scrubbing forward/back stays exact.
+    const EXIT_HOLD_MS    = 650;   // ≈ the slide-out choreography duration
+    const AUTO_HANDOFF_MS = 900;   // cross-dissolve fade duration
+
     // Stamp face label + scan line into every face.
     // The gallery-title face (stop 0) gets the section descriptor instead of the expand hint.
     faces.forEach((face, fi) => {
@@ -541,6 +549,7 @@
     let stageCubeFired    = false;  // Stage B (3D cube) latched at 90% coverage
     let exiting           = false;  // inside the frozen exit band (reverse choreography)
     let handoffActive     = false;  // frozen cross-dissolve into #contact is running
+    let autoHandoffStart  = 0;      // ts (ms) the exit band was entered; 0 = idle
     const prefersReducedMotion =
         window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -860,10 +869,11 @@
     // 1→0 to reveal it. Because contact is opaque and directly behind, there is
     // never a translucent gap that could expose other sections. #contact's own
     // IntersectionObserver fires its entrance as it's revealed. Reversible.
-    function updateHandoff(raw) {
+    // wp = cross-dissolve progress 0→1 (caller blends scroll- and time-driven).
+    function updateHandoff(wp) {
         if (!contactEl) return false;
 
-        if (raw <= HANDOFF_START) {
+        if (wp <= 0) {
             if (handoffActive) {
                 handoffActive = false;
                 illus.classList.remove('illus-handoff');
@@ -875,7 +885,6 @@
             return false;
         }
 
-        const wp = Math.min(1, (raw - HANDOFF_START) / (1 - HANDOFF_START));
         if (!handoffActive) {
             handoffActive = true;
             illus.classList.add('illus-handoff');      // raise section above #contact
@@ -884,7 +893,7 @@
             // goo cursor's IntersectionObserver won't release on its own — tell it.
             window.dispatchEvent(new CustomEvent('illus:handoff', { detail: { active: true } }));
         }
-        illus.style.opacity = String(1 - wp);           // fade section out → reveal #contact
+        illus.style.opacity = String(1 - Math.min(1, wp)); // fade section out → reveal #contact
         return true;
     }
 
@@ -897,8 +906,22 @@
         const vh  = window.innerHeight;
         const raw = getProgress(bcr);
 
-        // Frozen cross-dissolve into #contact (runs in the HANDOFF band).
-        const handoff = updateHandoff(raw);
+        // Frozen cross-dissolve into #contact. Progress is the greater of the
+        // scroll-linked amount (raw past HANDOFF_START) and a time-driven auto
+        // amount that engages once the gallery has slid out (raw past GALLERY_END
+        // + a hold for the slide-out choreography) — so a parked scroll on the
+        // bare particle background still completes into #contact on its own.
+        const scrollWp = raw > HANDOFF_START
+            ? Math.min(1, (raw - HANDOFF_START) / (1 - HANDOFF_START))
+            : 0;
+        let autoWp = 0;
+        if (raw > GALLERY_END) {
+            if (!autoHandoffStart) autoHandoffStart = now;
+            autoWp = (now - autoHandoffStart - EXIT_HOLD_MS) / AUTO_HANDOFF_MS;
+        } else {
+            autoHandoffStart = 0;
+        }
+        const handoff = updateHandoff(Math.max(scrollWp, Math.max(0, Math.min(1, autoWp))));
 
         // Skip all work when section is well off-screen — cheap early exit.
         // Suspended while the handoff owns the frame so the dissolve can finish;
