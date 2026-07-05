@@ -1590,12 +1590,28 @@
     display: none;
   }
 
+  /* Remove the amber glow frame that flashes around the accordion while it
+     loads / opens (owner 2026-07-05). It's the shared .accordion-electric-
+     border box-shadow frame (styles.css), shown via .accordion-animating —
+     drop it on phones only; desktop keeps it. */
+  #photo .accordion-electric-border {
+    display: none;
+  }
+
   /* Photo rows adopt the art-direction accordion layout: number on the left,
      then the title on top with the location (description) stacked below it.
      The old side-by-side "num | title | location" grid let long location names
      (e.g. "CAJÓN DEL MAIPO, CHILE") widen the 1fr track past the viewport →
      horizontal page scroll. Here the single content column is min-width:0 and
      each line ellipsizes, so nothing overflows. (owner 2026-07-05) */
+  /* The accordion sized to its content (~280px) inside the 345px column,
+     wasting the right edge. Stretch it full-width so rows span the column and
+     the thumbnail can use that space (owner 2026-07-05). */
+  #photo .photo-accordion,
+  #photo .photo-project-list,
+  #photo .photo-accordion-item {
+    width: 100%;
+  }
   #photo .photo-project-item {
     /* 3rd column = per-row photo thumbnail (js-injected, owner 2026-07-05),
        filling the empty space right of the short title/location. */
@@ -1617,8 +1633,8 @@
     grid-row: 1 / span 2;
     align-self: center;
     justify-self: end;
-    width: 64px;
-    height: 44px;
+    width: 96px;
+    height: 64px;
     object-fit: cover;
     border-radius: 2px;
     border: 1px solid rgba(10, 147, 150, 0.35);
