@@ -1572,6 +1572,47 @@
   #photo .photo-ghost-stream {
     display: none;
   }
+
+  /* Photo rows adopt the art-direction accordion layout: number on the left,
+     then the title on top with the location (description) stacked below it.
+     The old side-by-side "num | title | location" grid let long location names
+     (e.g. "CAJÓN DEL MAIPO, CHILE") widen the 1fr track past the viewport →
+     horizontal page scroll. Here the single content column is min-width:0 and
+     each line ellipsizes, so nothing overflows. (owner 2026-07-05) */
+  #photo .photo-project-item {
+    grid-template-columns: 26px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 0.7rem;
+    row-gap: 3px;
+    align-items: start;
+    padding: 0.5rem 0;
+  }
+  #photo .photo-project-item::before {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+  }
+  #photo .photo-project-item .photo-title {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  #photo .photo-project-item .photo-location {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 0.72rem;
+    font-weight: 300;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: rgba(0, 18, 25, 0.6);
+    line-height: 1.25;
+  }
 }
 
 
