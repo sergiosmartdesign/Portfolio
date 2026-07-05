@@ -1552,6 +1552,20 @@
   #photo .photo-section-bar-img {
     width: 18px;
   }
+
+  /* Remove the whole polaroids region on phones (owner 2026-07-04): the
+     "· polaroids ·" subtitle + its description, the stream control panel,
+     the camera image, the divider above it, and the image carousel (ghost
+     stream). Mobile #photo ends with the category accordion. The ghost-stream
+     canvas is decorative (aria-hidden); hiding its container is enough. */
+  #photo .photo-col-bar1,
+  #photo .photo-polaroids-label,
+  #photo .photo-polaroids-desc,
+  #photo .pgallery-info,
+  #photo .photo-polaroids-camera,
+  #photo .photo-ghost-stream {
+    display: none;
+  }
 }
 
 
