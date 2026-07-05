@@ -616,20 +616,57 @@
 
 .ct-eva { --ct-eva-step: 0.125s; }   /* 1000ms / 8fps */
 
-.ct-eva-frame {
-  opacity: 0;
+/* The panel starts FROZEN on frame 1 (blinking); the scan flipbook only runs
+   once activated by a click (.ct-eva--playing, toggled in contact.js). */
+.ct-eva-frame { opacity: 0; }
+.ct-eva-first { opacity: 1; }        /* the frozen / idle pose (also RM fallback) */
+
+/* Idle: frame 1 blinks like a HUD panel on standby, inviting a click. */
+.ct-eva:not(.ct-eva--playing) .ct-eva-first {
+  animation: ct-eva-blink 1.4s ease-in-out infinite;
+}
+
+/* Activated: hard-cut 8 fps scan flipbook across all 9 frames, recoloured to
+   #AE2012 (SVG tint filter) with a red glow (drop-shadow bloom). */
+.ct-eva--playing .ct-eva-frame {
   animation: ct-eva-scan calc(var(--ct-eva-count, 9) * var(--ct-eva-step))
              step-end infinite;
   animation-delay: calc((var(--ct-eva-i, 0) - var(--ct-eva-count, 9)) * var(--ct-eva-step));
+  filter: url(#ct-eva-tint)
+          drop-shadow(0 0 2px #AE2012)
+          drop-shadow(0 0 5px rgba(174, 32, 18, 0.8));
 }
 
-/* Static fallback frame (reduced motion / animations paused) */
-.ct-eva-first { opacity: 1; }
+/* Transparent click target covering the whole EVA slot. */
+.ct-eva-hit { fill: transparent; pointer-events: all; cursor: pointer; }
+
+/* Random pilot hand that fades in over the panel on hover/focus. */
+.ct-eva-hand {
+  opacity: 0;
+  pointer-events: none;   /* never steal the hover/click from .ct-eva-hit */
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: translateY(6%) scale(0.94);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.ct-eva-hand.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 
 @keyframes ct-eva-scan {
   0%      { opacity: 1; }
   11.111% { opacity: 0; }   /* 1/9 of the loop */
   100%    { opacity: 0; }
+}
+
+/* Standby flicker for the frozen frame 1 — mostly lit, quick double dip. */
+@keyframes ct-eva-blink {
+  0%, 55%   { opacity: 1;    }
+  57%       { opacity: 0.12; }
+  60%       { opacity: 1;    }
+  63%       { opacity: 0.4;  }
+  66%, 100% { opacity: 1;    }
 }
 
 /* ── Second mech screen — 12-frame rotation, 4 fps, right of the EVA ────────
@@ -1438,8 +1475,13 @@
   .ct-flux-core,
   .ct-glow-layer { animation: none; }
 
-  /* EVA-02 screen: hold frame 1 (.ct-eva-first), no scan flipbook */
+  /* EVA-02 screen: hold frame 1 static — no standby blink, no scan flipbook.
+     Selectors mirror the base rules so they win on specificity under RM. */
+  .ct-eva:not(.ct-eva--playing) .ct-eva-first,
+  .ct-eva--playing .ct-eva-frame,
   .ct-eva-frame { animation: none; }
+  /* Hover hand: fade only, no slide/scale. */
+  .ct-eva-hand { transition: none; transform: none; }
 
   /* Interfaz screen: hold frame 1 (.ct-iz-first), no cross-fade */
   .ct-iz-frame { animation: none; }

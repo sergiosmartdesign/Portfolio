@@ -326,6 +326,28 @@
     wrap.setAttribute('class', 'ct-eva');
     wrap.style.setProperty('--ct-eva-count', FRAMES.length);
 
+    // Tint filter — the frame art is a single flat colour (#94d2bd), loaded via
+    // <image> so its fill can't be restyled. This recolours it to #AE2012 by its
+    // alpha (feFlood clipped to the source shape), applied only while the scan is
+    // playing (gated in CSS: .ct-eva--playing). Injected once per cockpit SVG.
+    if (!svg.querySelector('#ct-eva-tint')) {
+      const defs  = document.createElementNS(NS, 'defs');
+      const filt  = document.createElementNS(NS, 'filter');
+      filt.setAttribute('id', 'ct-eva-tint');
+      filt.setAttribute('x', '-20%'); filt.setAttribute('y', '-20%');
+      filt.setAttribute('width', '140%'); filt.setAttribute('height', '140%');
+      const flood = document.createElementNS(NS, 'feFlood');
+      flood.setAttribute('flood-color', '#AE2012');
+      flood.setAttribute('result', 'tint');
+      const comp  = document.createElementNS(NS, 'feComposite');
+      comp.setAttribute('in', 'tint');
+      comp.setAttribute('in2', 'SourceGraphic');
+      comp.setAttribute('operator', 'in');
+      filt.appendChild(flood); filt.appendChild(comp);
+      defs.appendChild(filt);
+      svg.appendChild(defs);
+    }
+
     FRAMES.forEach(([W, H], i) => {
       const frame = document.createElementNS(NS, 'svg');
       frame.setAttribute('class', i === 0 ? 'ct-eva-frame ct-eva-first' : 'ct-eva-frame');
@@ -347,6 +369,52 @@
       frame.appendChild(img);
       wrap.appendChild(frame);
     });
+
+    // Hover hand — on pointer-over, one of the two pilot hands (left/right, picked
+    // at random each time) fades in OVER the panel. Sized ~1.5× the slot and
+    // centred so the hand reads as reaching across the little screen. pointer-
+    // events:none so it never steals the click/hover from the hit-rect below.
+    const HANDS = ['images/mano%20der.svg', 'images/mano%20izq.svg'];
+    const HW = SW * 1.5, HH = SH * 1.5;
+    const hand = document.createElementNS(NS, 'image');
+    hand.setAttribute('class', 'ct-eva-hand');
+    hand.setAttribute('x', SX + SW / 2 - HW / 2);
+    hand.setAttribute('y', SY + SH / 2 - HH / 2);
+    hand.setAttribute('width', HW);
+    hand.setAttribute('height', HH);
+    hand.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    wrap.appendChild(hand);
+
+    // Interaction: the panel sits frozen on frame 1 (blinking, see contact.css)
+    // until clicked, then the scan flipbook plays; click again to stop. A
+    // transparent hit-rect over the slot guarantees the whole panel is clickable
+    // (every frame but the first is opacity:0, so they can't catch the pointer).
+    const hit = document.createElementNS(NS, 'rect');
+    hit.setAttribute('x', SX);
+    hit.setAttribute('y', SY);
+    hit.setAttribute('width', SW);
+    hit.setAttribute('height', SH);
+    hit.setAttribute('class', 'ct-eva-hit');
+    hit.setAttribute('role', 'button');
+    hit.setAttribute('tabindex', '0');
+    hit.setAttribute('aria-label', 'Toggle the EVA-02 scan animation');
+    const toggleEva = () => wrap.classList.toggle('ct-eva--playing');
+    const showHand = () => {
+      const src = HANDS[Math.random() < 0.5 ? 0 : 1];   // random hand each hover
+      hand.setAttribute('href', src);
+      hand.setAttributeNS(XLINK, 'xlink:href', src);    // Safari fallback
+      hand.classList.add('is-visible');
+    };
+    const hideHand = () => hand.classList.remove('is-visible');
+    hit.addEventListener('click', toggleEva);
+    hit.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleEva(); }
+    });
+    hit.addEventListener('mouseenter', showHand);
+    hit.addEventListener('mouseleave', hideHand);
+    hit.addEventListener('focus', showHand);
+    hit.addEventListener('blur', hideHand);
+    wrap.appendChild(hit);   // last child → renders on top, catches the click
 
     // Append at root so it renders above the cockpit artwork at the slot's
     // absolute coordinates (the slot group has no transform).
