@@ -685,6 +685,22 @@
           drop-shadow(0 0 5px rgba(148, 210, 189, 0.45));
 }
 
+/* Auto-looping "time traveller" flipbook — a hard-cut opacity cycle across the
+   4 frames (same mechanism as the EVA/mech screens), running on its own. */
+.ct-sideart-anim { --ct-sideart-step: 0.16s; }   /* ~6 fps, calm loop */
+.ct-sideart-frame {
+  opacity: 0;
+  animation: ct-sideart-cycle calc(var(--ct-sideart-count, 4) * var(--ct-sideart-step))
+             step-end infinite;
+  animation-delay: calc((var(--i, 0) - var(--ct-sideart-count, 4)) * var(--ct-sideart-step));
+}
+.ct-sideart-first { opacity: 1; }   /* static fallback (reduced motion / paused) */
+@keyframes ct-sideart-cycle {
+  0%   { opacity: 1; }
+  25%  { opacity: 0; }   /* 1/4 of the loop */
+  100% { opacity: 0; }
+}
+
 /* ── Separator — 3 vertical lines between the EVA animations and the side art ── */
 .ct-sep-bar {
   fill: #94d2bd;
@@ -752,6 +768,9 @@
   bottom: 0;
   z-index: 21;
   width: clamp(260px, 38vmin, 520px);
+  /* Both poses are absolutely stacked, so the box keeps its height from the hand
+     SVG's own ratio (viewBox 945.1 × 814.2) even while a pose is swapped out. */
+  aspect-ratio: 945.1 / 814.2;
   pointer-events: none;
   /* Parked out of the viewport (down-left); contact.js slides it in by
      setting an inline transform when a form element is hovered/focused */
@@ -773,18 +792,17 @@
   transform: translate(35%, 110%);
 }
 
-/* Click pose — overlays the resting pose (identical viewBox), shown only for the
-   brief tap flash (.is-clicking, toggled in contact.js). Hiding the resting pose
-   with visibility (not display) keeps the container's height so the parked/aimed
-   transform never shifts. */
-.ct-hand-pose--click {
+/* Resting + click poses share the same box (identical viewBox). Exactly ONE is
+   ever rendered — a clean 1-for-1 swap, never both, so no doubled fingers. The
+   container's aspect-ratio holds the height while a pose is display:none'd. */
+.ct-hand > svg.ct-hand-pose {
   position: absolute;
   top: 0;
   left: 0;
-  display: none;
 }
-.ct-hand.is-clicking > svg.ct-hand-pose--click { display: block; }
-.ct-hand.is-clicking > svg.ct-hand-pose:not(.ct-hand-pose--click) { visibility: hidden; }
+.ct-hand > svg.ct-hand-pose--click { display: none; }                              /* resting: click hidden  */
+.ct-hand.is-clicking > svg.ct-hand-pose:not(.ct-hand-pose--click) { display: none; } /* tapping: resting hidden */
+.ct-hand.is-clicking > svg.ct-hand-pose--click { display: block; }                 /* tapping: click shown   */
 
 /* ── CSS scanline grain (replaces external noise.svg) ─────────────────────── */
 .ct-grain {
@@ -1484,6 +1502,9 @@
 
   /* Second mech screen: hold frame 1 (.ct-mech-first), no spin */
   .ct-mech-frame { animation: none; }
+
+  /* Side-art flipbook: hold frame 1 (.ct-sideart-first), no loop */
+  .ct-sideart-frame { animation: none; }
 
   /* Indicator lights: stay lit + glowing, no blink */
   .ct-blink-el { animation: none; }

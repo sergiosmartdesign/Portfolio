@@ -418,13 +418,21 @@
       evaHand.pointAt('ct-eva-target');
     };
     const hideHand = () => { if (evaHand) { evaHand.reset(); evaHand = null; } };
+    // Tap, then retreat: the pointing hand flashes its click pose, then BOTH hands
+    // slide back off the viewport — so a click never leaves the pointing hand (or a
+    // stray second hand from an earlier hover) sitting on the panel.
+    const evaTapAndRetreat = () => {
+      playHandClick(evaHandEls[evaIdx]);
+      clearTimeout(hit._retreatTimer);
+      hit._retreatTimer = setTimeout(() => {
+        evaHands.forEach(h => h.reset());
+        evaHand = null;
+      }, 170);
+    };
     hit.addEventListener('click', toggleEva);
-    // Immediate "tap" on press — the pointing hand flashes its click pose.
-    hit.addEventListener('pointerdown', () => playHandClick(evaHandEls[evaIdx]));
+    hit.addEventListener('pointerdown', evaTapAndRetreat);
     hit.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault(); toggleEva(); playHandClick(evaHandEls[evaIdx]);
-      }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleEva(); evaTapAndRetreat(); }
     });
     hit.addEventListener('mouseenter', showHand);
     hit.addEventListener('mouseleave', hideHand);
@@ -495,46 +503,51 @@
   }
 
   /* ════════════════════════════════════════════════════════════════════════
-     SIDE ART — one random static illustration (glow), beside the mech
+     SIDE ART — the animated "time traveller" flipbook, auto-looping
      ════════════════════════════════════════════════════════════════════════
-     Right of the rotating mech, a single STATIC illustration picked at random
-     each load (a different one than the previous load), fitted to the EVA's
-     height and recoloured teal with a soft glow. The five candidates share the
-     viewBox 499.8×730.9; the source art is black line work, so it's fetched
-     inline and recoloured via CSS (.ct-sideart). */
+     Right of the rotating mech + separator: the SAME 4-frame flipbook the
+     section-transition curtain uses (images/time travel svg/1..4.svg — the
+     character working the virtual screens), here looping on its own in the
+     dashboard slot. Frames are solid-black art, fetched inline and recoloured
+     teal with a soft glow via CSS (.ct-sideart); a hard-cut opacity flipbook
+     (contact.css) cycles them. Paused off-screen via #contact.ct-paused;
+     reduced motion holds frame 1 (.ct-sideart-first). */
   function buildSideArt(svg) {
-    // Side art is pinned to time.svg on every load (no random rotation).
-    const pick = 'time.svg';
+    const NS = 'http://www.w3.org/2000/svg';
+    const COUNT = 4;
+    // Slot: after the separator (~x811), inside the brown screen (right edge
+    // ≤885), same top & height as the EVA. Frames (~1.11 aspect) fit by width.
+    const SX = 812, SY = 898.2, SW = 70, SH = 88.4;
 
-    // Slot: right of the mech (ends x≈784.2), same top & height as the EVA;
-    // width from the art aspect (499.8×730.9) so it isn't distorted.
-    const AW = 499.8, AH = 730.9;
-    const SY = 898.2, SH = 88.4;
-    const SW = SH * (AW / AH);          // 60.4
-    // Right edge must stay inside the brown screen rect (x597–885); end ≈882.
-    const SX = 822;
+    const wrap = document.createElementNS(NS, 'g');
+    wrap.setAttribute('class', 'ct-sideart-anim');
+    wrap.style.setProperty('--ct-sideart-count', COUNT);
+    svg.appendChild(wrap);
 
-    fetch('images/' + encodeURIComponent(pick))
-      .then(r => r.text())
-      .then(text => {
-        const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
-        const art = doc.documentElement;
-        if (art.nodeName !== 'svg') throw new Error('bad SVG payload');
-        // Drop any inline <style> so the CSS recolour wins; strip sizing.
-        art.querySelectorAll('style').forEach(s => s.remove());
-        art.removeAttribute('id');
-        art.removeAttribute('width');
-        art.removeAttribute('height');
-        art.removeAttribute('style');
-        art.setAttribute('class', 'ct-sideart');
-        art.setAttribute('x', SX);
-        art.setAttribute('y', SY);
-        art.setAttribute('width', SW.toFixed(1));
-        art.setAttribute('height', SH);
-        art.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-        svg.appendChild(art);
-      })
-      .catch(err => console.error('[contact] side art failed to load:', pick, err));
+    for (let i = 1; i <= COUNT; i++) {
+      fetch(`images/time%20travel%20svg/${i}.svg`)
+        .then(r => r.text())
+        .then(text => {
+          const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+          const art = doc.documentElement;
+          if (art.nodeName !== 'svg') throw new Error('bad SVG payload');
+          // Drop inline <style> so the CSS teal recolour wins; strip sizing.
+          art.querySelectorAll('style').forEach(s => s.remove());
+          art.removeAttribute('id');
+          art.removeAttribute('width');
+          art.removeAttribute('height');
+          art.removeAttribute('style');
+          art.setAttribute('class', 'ct-sideart ct-sideart-frame' + (i === 1 ? ' ct-sideart-first' : ''));
+          art.style.setProperty('--i', i - 1);   // flipbook slot (delay stagger)
+          art.setAttribute('x', SX);
+          art.setAttribute('y', SY);
+          art.setAttribute('width', SW);
+          art.setAttribute('height', SH);
+          art.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          wrap.appendChild(art);
+        })
+        .catch(err => console.error('[contact] side art frame failed to load:', i, err));
+    }
   }
 
   /* ════════════════════════════════════════════════════════════════════════
