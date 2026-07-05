@@ -16,6 +16,12 @@
   const _tier    = App.BrowserDetect ? App.BrowserDetect.getPerformanceTier() : 'high';
   const _samples = _tier === 'low' ? 8 : _tier === 'medium' ? 12 : 16;
 
+  // Phones only: the font size is a % of the (narrow) section width, so the
+  // desktop vw values render a tiny, unreadable title on a ~393px viewport
+  // (start size even overflows the width → clips). Mobile uses its own, larger
+  // vw curve — desktop stays byte-for-byte identical (gated below).
+  const _isMobile = !!(App.BrowserDetect && App.BrowserDetect.isMobile);
+
   const CONFIG = {
     // Text rendered in the scene
     text:             '[ · p h o t o g r a p h y · ]',
@@ -28,6 +34,16 @@
     // shrinks to small when the section is fully revealed.
     fontSizeVwStart:  12.6, // font size (% of section width) at scroll progress 0
     fontSizeVwEnd:    5.6,  // font size (% of section width) at scroll progress 1
+
+    // Phase-2 continues shrinking to (fontSizeVwEnd × this factor).
+    phase2Floor:      0.35,
+
+    // ── Mobile-only overrides (≈393px section) ──────────────────────────────
+    // 9vw ≈ 35px fills the width without clipping; 7.5vw ≈ 29px keeps the
+    // resting title readable (desktop shrank it to ~1.96vw ≈ 7.7px here).
+    fontSizeVwStartMobile: 9.0,
+    fontSizeVwEndMobile:   7.5,
+    phase2FloorMobile:     1.0, // no extra phase-2 shrink — stay legible while it parks
 
     // Section background colour — keep in sync with CSS #001219
     bgColor:          [0, 18, 25],   // [R, G, B] 0–255
@@ -320,12 +336,15 @@
 
     // ── Text mask draw + GPU upload ──────────────────────────────────────────
     function drawTextMask() {
+      // Desktop values, or the mobile overrides on phones (narrow section width).
+      const vwStart = _isMobile ? CONFIG.fontSizeVwStartMobile : CONFIG.fontSizeVwStart;
+      const vwEnd   = _isMobile ? CONFIG.fontSizeVwEndMobile   : CONFIG.fontSizeVwEnd;
+      const floor   = _isMobile ? CONFIG.phase2FloorMobile     : CONFIG.phase2Floor;
       // Phase 1: shrink from start → end size
-      const fontSizeVwP1 = CONFIG.fontSizeVwStart +
-        (CONFIG.fontSizeVwEnd - CONFIG.fontSizeVwStart) * scrollProgress;
-      // Phase 2: continue shrinking from end size → 35% of end size (half of previous 70%)
+      const fontSizeVwP1 = vwStart + (vwEnd - vwStart) * scrollProgress;
+      // Phase 2: continue shrinking from end size → (end × floor)
       const fontSizeVw = fontSizeVwP1 +
-        (CONFIG.fontSizeVwEnd * 0.35 - CONFIG.fontSizeVwEnd) * scrollProgress2;
+        (vwEnd * floor - vwEnd) * scrollProgress2;
       const fontSize = Math.round(fontSizeVw / 100 * sw * DPR);
 
       // Phase 2: move text from center toward (navBottom + 10px)
