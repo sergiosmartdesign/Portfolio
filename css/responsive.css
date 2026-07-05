@@ -1346,7 +1346,9 @@
   #art-direction .adacc-title {
     font-family: 'Funnel Display', sans-serif;
     font-size: 0.95rem;
-    font-weight: 400;
+    /* Semibold for legibility (owner 2026-07-05). 600 is a real loaded weight
+       (Funnel Display 300/600/800); 400 wasn't loaded → rendered thin. */
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: #E9D8A6;
@@ -1355,8 +1357,10 @@
   #art-direction .adacc-sub {
     font-family: 'Funnel Display', sans-serif;
     font-size: 0.72rem;
-    font-weight: 300;
-    color: rgba(233, 216, 166, 0.55);
+    /* Semibold too (owner 2026-07-05) — the 300 light + 0.55 opacity read
+       faint; hierarchy stays via smaller size and dimmer colour. */
+    font-weight: 600;
+    color: rgba(233, 216, 166, 0.7);
     line-height: 1.25;
   }
   #art-direction .adacc-year {
