@@ -1522,6 +1522,12 @@
      flip it with order on the grid items. */
   #photo .photo-col-camera {
     order: -1;
+    /* Desktop makes this column position:sticky (top:0) for the 2-col layout.
+       On the single mobile column that pinned the intro + Instagram so the
+       category accordion (and its "Click a category…" message) scrolled up and
+       overlapped them. Unstick it → intro, message and the photo list all
+       scroll together as one column, no overlap. (owner 2026-07-05) */
+    position: static;
   }
   #photo .photo-col-left {
     order: 0;
