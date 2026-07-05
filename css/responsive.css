@@ -1535,6 +1535,14 @@
     white-space: nowrap;
   }
 
+  /* The scroll-driven `[ · photography · ]` title (photo-vfx canvas) parks at
+     the top (~navHeight+fontSize band, ends ~123px on a 393px phone), but the
+     content started at padding-top:100px → the intro paragraph overlapped it.
+     Push the content down so it begins below the title band. (owner 2026-07-04) */
+  #photo .photo-portfolio-overlay {
+    padding-top: 145px;
+  }
+
   /* Left "· Portfolio ·" bar: 37.5px wide at the screen edge (styles.css),
      but the phone content gutter is only var(--spacing-md) = 24px, so the
      full-size bar overlapped the intro text (starts at left:24px). Shrink it
