@@ -1283,10 +1283,23 @@
     const mailFallbackLink = document.getElementById('ct-mail-fallback');
 
     // ── Turnstile: explicit render, token read on submit ──────────────────
+    /* The widget only pairs with the Cloudflare Pages Function backend at
+       /api/contact. On GitHub Pages / local dev that endpoint doesn't exist, so
+       the widget serves no purpose AND (with the test site key) Cloudflare paints
+       its red "For testing only — report to site owner" banner. Skip rendering
+       off the production backend; the submit handler already degrades to the
+       direct-email fallback when the endpoint is unreachable. */
+    function backendAvailable() {
+      const h = location.hostname;
+      return location.protocol !== 'file:' &&
+             !/\.github\.io$/i.test(h) &&
+             !/^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[?::1\]?)$/i.test(h);
+    }
+
     let turnstileWidgetId = null;
     function renderTurnstile() {
       const box = document.getElementById('ct-turnstile');
-      if (!box || turnstileWidgetId !== null || !window.turnstile) return;
+      if (!box || turnstileWidgetId !== null || !window.turnstile || !backendAvailable()) return;
       try {
         turnstileWidgetId = window.turnstile.render(box, {
           sitekey: TURNSTILE_SITE_KEY,
