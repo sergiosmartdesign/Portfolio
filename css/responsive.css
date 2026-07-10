@@ -108,9 +108,29 @@
    shows through; backdrop-filter keeps the nav text legible over the busy hero. */
 @media (max-width: 768px) {
   .main-nav {
-    background-color: rgba(0, 12, 18, 0.6);
+    /* Darkened 0.6 → 0.82 (owner 2026-07-10): the hero showed through too
+       loud behind the section names. Still translucent + frosted. */
+    background-color: rgba(0, 12, 18, 0.82);
     -webkit-backdrop-filter: blur(10px) saturate(140%);
             backdrop-filter: blur(10px) saturate(140%);
+  }
+
+  /* Close control redesign (owner 2026-07-10): while the drawer is open the
+     three morphing lines are replaced by a bracketed [X], matching the
+     [EN]/[ES] + [ · s e c t i o n · ] bracket language of the nav. The
+     button/JS/aria flow is untouched — lines are hidden and the glyph is
+     drawn by ::after only in the expanded state; closed state keeps the
+     stock hamburger lines. */
+  .hamburger-btn[aria-expanded="true"] .hamburger-line {
+    display: none;
+  }
+  .hamburger-btn[aria-expanded="true"]::after {
+    content: "[X]";
+    font-family: 'Funnel Display', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: var(--white);
   }
 
   /* Vertical electric-static line on the drawer's left edge — the desktop
@@ -1701,6 +1721,50 @@
   }
   #photo .photo-project-item.photo-item-selected .photo-project-data::after {
     transform: scaleX(1);
+  }
+
+  /* FLY CAPTION on phones (owner 2026-07-10): the lightbox caption clone kept
+     the desktop 6-column row grid (40px 1fr 2fr 1fr 1fr 80px, styles.css) —
+     inside the 345px mobile caption every column crushed to ~24px and the
+     info read cut off. Re-lay it as 3 lines, same yellow-sweep + glitch
+     effects (both live on the base .photo-caption-fly rules):
+       01  TITLE
+           location
+           camera · lens · year
+     NOTE: the clone is appended to <body>, NOT inside #photo — selectors here
+     must stay un-prefixed or they miss it. */
+  .photo-caption-fly {
+    grid-template-columns: 26px max-content minmax(0, 1fr) max-content;
+    grid-template-rows: auto auto auto;
+    column-gap: 0.6rem;
+    row-gap: 3px;
+    align-items: baseline;
+    padding: 6px 10px;
+  }
+  /* Spans keep justify-self:start (styles.css) so they take their natural
+     width and can spill past their track — clamp them so the base
+     nowrap+ellipsis actually engages at the cell edge. */
+  .photo-caption-fly .photo-project-data { max-width: 100%; }
+  /* The counter is dark ink for desktop's light photo backdrop; on the phone
+     lightbox it floats over #001219 — lighten it so it reads. */
+  .photo-caption-fly .photo-fly-num  { grid-column: 1; grid-row: 1; color: rgba(255, 255, 255, 0.55); }
+  .photo-caption-fly .photo-title    { grid-column: 2 / -1; grid-row: 1; font-size: 0.9rem; }
+  .photo-caption-fly .photo-location { grid-column: 2 / -1; grid-row: 2; }
+  /* camera/lens/year are display:none'd on mobile ROWS by styles.css
+     (.photo-project-data:not(.photo-title):not(.photo-location)) — restore
+     them inside the caption only. Selector carries .photo-project-data to
+     match that rule's (0,3,0) specificity; this file loads last, so it wins. */
+  .photo-caption-fly .photo-project-data.photo-camera { display: block; grid-column: 2; grid-row: 3; }
+  .photo-caption-fly .photo-project-data.photo-lens   { display: block; grid-column: 3; grid-row: 3; }
+  .photo-caption-fly .photo-project-data.photo-year   { display: block; grid-column: 4; grid-row: 3; justify-self: end; }
+  /* Tech line (camera · lens · year) compacted so the three specs share one
+     345px line; the lens (longest, least critical) ellipsizes if it still
+     can't fit its 1fr leftover. */
+  .photo-caption-fly .photo-project-data.photo-camera,
+  .photo-caption-fly .photo-project-data.photo-lens,
+  .photo-caption-fly .photo-project-data.photo-year {
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
   }
 
   /* Match the #about body paragraph size on phones (owner 2026-07-05): about is

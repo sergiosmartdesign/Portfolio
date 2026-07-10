@@ -35,7 +35,7 @@
         ? (document.querySelector('.photo-col-left')?.getBoundingClientRect().width || window.innerWidth * 0.55)
         : rect.width;
 
-      const targetTop  = Math.round(window.innerHeight * 0.975) - 32;
+      let targetTop  = Math.round(window.innerHeight * 0.975) - 32;
       const targetLeft = (window.innerWidth - captionW) / 2;
 
       // Quick-switch: clone exists but is tracking a different item
@@ -77,6 +77,15 @@
 
       gsap.set(clone, { top: startTop, left: startLeft, width: captionW, opacity: 0 });
       document.body.appendChild(clone);
+
+      // Phones stack the caption as 3 lines (responsive.css) — taller than the
+      // desktop single row the fixed targetTop was sized for, so anchor the
+      // clone's BOTTOM above the viewport edge instead. Measured after append
+      // (needs layout); clone is still opacity:0 here. Desktop path unchanged.
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        targetTop = window.innerHeight - clone.offsetHeight - 16;
+        if (itemHidden) gsap.set(clone, { top: targetTop });
+      }
       this._flyClone  = clone;
       this._flySource = item;
       if (!itemHidden) item.style.zIndex = '0';
