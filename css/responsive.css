@@ -1887,21 +1887,131 @@
   /* PERF (owner 2026-07-10, cube laggy on phone) — cut GPU fill-rate cost.
      .scanlines/.vhs-static are two full-viewport layers with infinite
      transform animations compositing over the particle canvas + 3D scene
-     every frame; .illus-face-elec is 6 extra 3D-transformed layers with
-     triple box-shadow glows toggled on every scroll-velocity change.
-     illus-cube.js also skips their JS drivers on isMobile. Desktop keeps all. */
+     every frame. illus-cube.js also skips their JS drivers on isMobile.
+     Desktop keeps them. */
   #illustration .scanlines,
-  #illustration .vhs-static,
-  #illustration .illus-face-elec {
+  #illustration .vhs-static {
     display: none;
   }
 
-  /* Tappable close button, clear of the notch. */
+  /* Electric face borders back on phones (owner 2026-07-10) in CHEAP mode:
+     same per-stop random color as desktop (--illus-face-color/-rgb, set by
+     applyFaceColor in illus-cube.js), but always-on instead of scroll-velocity
+     driven and with a single soft glow instead of the desktop triple
+     box-shadow stack — the lag came from the glow layers + per-scroll opacity
+     churn, not from the border itself. The JS velocity driver stays skipped
+     on isMobile. */
+  #illustration .illus-face-elec {
+    opacity: 1;
+    transition: none;
+    box-shadow: 0 0 10px rgba(var(--illus-face-rgb), 0.45);
+  }
+
+  /* Lightbox (owner 2026-07-10): scrollable column — large image on top,
+     the piece's title / description / links below. The .illus-lightbox-info
+     node is injected and filled by illus-cube.js only on phones (cloned from
+     the stop's hidden card); desktop lightbox never has it. The backdrop blur
+     is dropped: the backdrop is already 96% opaque and full-screen
+     backdrop-filter is a fill-rate hog on phone GPUs. */
+  .illus-lightbox {
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .illus-lightbox-frame {
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+  }
+  .illus-lightbox-img {
+    max-width: 100%;
+    max-height: 68svh;
+    margin: max(3.25rem, env(safe-area-inset-top)) auto 0;
+  }
+  .illus-lightbox-border {
+    display: none;   /* frame glow doesn't fit a scrolling column */
+  }
+  .illus-lightbox-info {
+    margin-top: 1.1rem;
+    padding: 1.15rem 1.25rem calc(2.25rem + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(148, 210, 189, 0.25);
+    font-family: 'Funnel Display', sans-serif;
+    color: #94D2BD;
+    text-align: left;
+  }
+  /* The card originals sit at opacity 0 until their .illus-section goes
+     .active (entry animations). The clones live outside that context — force
+     everything visible and static inside the info panel. */
+  .illus-lightbox-info,
+  .illus-lightbox-info * {
+    opacity: 1 !important;
+    transform: none !important;
+    translate: none !important;
+    animation: none !important;
+    transition: none !important;
+    white-space: normal !important;   /* glitch system sets pre — no wrap */
+    max-width: 100% !important;
+  }
+  /* The IG button's decorative hover-border spans paint as a huge box outside
+     the card context — the icon svg alone is the tap target here. */
+  .illus-lightbox-info .social-media-icons a > span {
+    display: none !important;
+  }
+  .illus-lightbox-info .illus-tag {
+    color: #EE9B00;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+  }
+  .illus-lightbox-info .illus-piece-title {
+    color: #E9D8A6;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    line-height: 1.35;
+    margin: 0.4rem 0 0.35rem;
+  }
+  .illus-lightbox-info .illus-h2--category {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    opacity: 0.8;
+    margin: 0 0 0.7rem;
+  }
+  .illus-lightbox-info .illus-body {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #CFE8DF;
+    margin: 0 0 0.9rem;
+  }
+  .illus-lightbox-info .illus-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+  .illus-lightbox-info .illus-meta-link {
+    color: #EE9B00;
+    text-decoration: underline;
+    padding: 0.35rem 0;   /* tap target */
+  }
+  .illus-lightbox-info .illus-ig-link {
+    margin-top: 0.85rem;
+  }
+
+  /* Tappable close button, clear of the notch. Pinned to the viewport while
+     the column scrolls — JS moves it out of the scale-transformed frame on
+     phones so position:fixed anchors to the viewport, not the frame. */
   .illus-lightbox-close {
+    position: fixed;
+    z-index: 2;
     min-width: 44px;
     min-height: 44px;
     top: max(var(--spacing-sm), env(safe-area-inset-top));
     right: max(var(--spacing-sm), env(safe-area-inset-right));
+    background: rgba(0, 18, 25, 0.75);
   }
 }
 

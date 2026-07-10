@@ -145,6 +145,47 @@
     const HANDOFF_START = (N * stopVh + EXIT_VH) / totalVh;
     const contactEl = document.getElementById('contact');
 
+    // ── Scroll-driven cube rotation — phone progressive enhancement ─────────
+    // On phones whose engine supports CSS scroll-driven animations, the cube
+    // rotation is compiled into a generated @keyframes (one stop per keyframe,
+    // offsets baked against GALLERY_END) bound to a view-timeline on
+    // #illustration, so it runs entirely on the compositor and stays smooth
+    // even when the main thread is busy. JS keeps driving everything else
+    // (image swaps, face opacities, UI, entrance/exit/handoff) and simply
+    // stops writing cube.style.transform; its smoothing snaps to the raw
+    // scroll value so labels/opacities stay in lockstep with the CSS timeline.
+    // Engines without support keep the original RAF-driven rotation. Desktop
+    // never sees any of this: IS_MOBILE gate + the injected rules live inside
+    // a max-width media query. The `contain` range of a view-timeline equals
+    // getProgress() for a taller-than-viewport subject (top hits viewport top
+    // → bottom hits viewport bottom).
+    // window.CSS explicitly: script.js declares a top-level `const CSS = {…}`
+    // that shadows the native CSS object for every classic script on the page.
+    const SCROLL_DRIVEN = IS_MOBILE && window.CSS && window.CSS.supports &&
+        window.CSS.supports('animation-timeline: view()');
+    if (SCROLL_DRIVEN) {
+        // ≈ the JS easeIO quadratic in-out, applied per keyframe interval.
+        const EASE = 'cubic-bezier(0.45, 0, 0.55, 1)';
+        const frames = STOPS.map((s, i) =>
+            `${((i / (N - 1)) * GALLERY_END * 100).toFixed(4)}% { transform: rotateX(${s.rx}deg) rotateY(${s.ry}deg); }`
+        );
+        // Hold the last stop through the frozen exit + handoff bands.
+        const last = STOPS[N - 1];
+        frames.push(`100% { transform: rotateX(${last.rx}deg) rotateY(${last.ry}deg); }`);
+        const st = document.createElement('style');
+        st.textContent =
+            '@media (max-width: 768px) {\n' +
+            '  #illustration { view-timeline: --illus-cube-tl block; }\n' +
+            `  @keyframes illus-cube-scroll-rotate {\n  ${frames.join('\n  ')}\n  }\n` +
+            '  #illustration .illus-cube {\n' +
+            `    animation: illus-cube-scroll-rotate ${EASE} both;\n` +
+            '    animation-timeline: --illus-cube-tl;\n' +
+            '    animation-range: contain 0% contain 100%;\n' +
+            '  }\n' +
+            '}\n';
+        document.head.appendChild(st);
+    }
+
     // Auto-handoff: once the gallery has slid out (raw past GALLERY_END) leaving
     // only the particle background, drive the cross-dissolve into #contact on a
     // timer so a *stopped* scroll never parks the viewport on the bare background.
@@ -392,7 +433,12 @@
         const a = STOPS[i], b = STOPS[i + 1];
         const curRxDeg = a.rx + (b.rx - a.rx) * f;
         const curRyDeg = a.ry + (b.ry - a.ry) * f;
-        cube.style.transform = `rotateX(${curRxDeg}deg) rotateY(${curRyDeg}deg)`;
+        // Scroll-driven phones: the CSS timeline owns the cube transform; JS
+        // still computes the angles below for the label counter-rotation and
+        // the per-face opacity dot products.
+        if (!SCROLL_DRIVEN) {
+            cube.style.transform = `rotateX(${curRxDeg}deg) rotateY(${curRyDeg}deg)`;
+        }
 
         // The gallery label lives inside the top face (INTRO_FACE). Its face transform
         // (rotateX(-90deg)) turns the cube's accumulated ry into a Z-spin on the label,
@@ -804,13 +850,54 @@
     let   lbOpen  = false;
     let   lbElecTimer = null;
 
+    // Phone lightbox layout (owner 2026-07-10): large image on top, the
+    // piece's title / description / links below, in a scrollable column.
+    // The info is cloned at open time from the stop's hidden .illus-card, so
+    // it always reflects the current i18n language. The close button moves out
+    // of the (scale-transformed) frame so position:fixed can pin it to the
+    // viewport while the column scrolls. Desktop lightbox is untouched.
+    let lbInfo = null;
+    if (IS_MOBILE) {
+        lbInfo = document.createElement('div');
+        lbInfo.className = 'illus-lightbox-info';
+        lbInfo.hidden = true;
+        lb.querySelector('.illus-lightbox-frame').appendChild(lbInfo);
+        lb.appendChild(lb.querySelector('.illus-lightbox-close'));
+    }
+
+    function fillLbInfo(stop) {
+        if (!lbInfo) return;
+        lbInfo.innerHTML = '';
+        const card = (stop != null && stop >= 1)
+            ? illus.querySelector(`.illus-section[data-idx="${stop}"] .illus-card`)
+            : null;
+        if (!card) { lbInfo.hidden = true; return; }
+        [...card.children].forEach(el => {
+            if (el.classList.contains('illus-cta-row') ||
+                el.classList.contains('illus-h-line')) return;
+            const clone = el.cloneNode(true);
+            // Flatten any Splitting.js char spans back to plain text — the
+            // lightbox reads as a static caption, no per-char glitch runs here.
+            if (clone.matches('[data-splitting]')) {
+                clone.textContent = clone.textContent;
+            }
+            clone.querySelectorAll('[data-splitting]').forEach(g => {
+                g.textContent = g.textContent;
+            });
+            lbInfo.appendChild(clone);
+        });
+        lbInfo.hidden = false;
+    }
+
     // Frame scale animation uses cubic-bezier(0.34, 1.56, 0.64, 1) over 0.5s.
     // The spring overshoots before settling; 620ms covers the full settle window.
     const LB_SETTLE_MS = 620;
 
-    function lbShow(src, alt) {
+    function lbShow(src, alt, stop) {
         lbImg.src = src;
         lbImg.alt = alt || '';
+        fillLbInfo(stop);
+        lb.scrollTop = 0;
         lb.setAttribute('aria-hidden', 'false');
         lb.classList.add('open');
         lbOpen = true;
@@ -868,7 +955,7 @@
     clickZone.addEventListener('click', () => {
         const stop = Math.max(0, lastStop);
         const img  = faces[FACE_MAP[stop]]?.querySelector('img.illus-main-img');
-        if (img?.src) lbShow(img.src, img.alt);
+        if (img?.src) lbShow(img.src, img.alt, stop);
     });
     clickZone.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickZone.click(); }
@@ -996,8 +1083,15 @@
             }
         }
 
-        smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));
-        smooth   = Math.max(0, Math.min(1, smooth));
+        if (SCROLL_DRIVEN) {
+            // The CSS timeline rotates the cube off the raw scroll value (native
+            // momentum already smooths touch scrolling) — keep the JS state in
+            // lockstep so swaps/opacities/glitches don't trail the rotation.
+            smooth = tgt;
+        } else {
+            smooth += (tgt - smooth) * (1 - Math.exp(-dt * 8));
+            smooth  = Math.max(0, Math.min(1, smooth));
+        }
 
         // Phone idle short-circuit: snap the asymptotic tail of the ease, then
         // skip every per-frame DOM write while the cube is parked on a stop —
