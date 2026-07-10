@@ -1826,24 +1826,40 @@
     height: calc(100svh - var(--header-height, 60px));
   }
 
-  /* Hide desktop-only UI elements: the HUD, the snake leader line, and the
-     scroll cue are all tied to desktop interactions (mouse-follow, scroll-based
-     navigation) that don't exist on the simplified mobile view. */
+  /* Owner directive (2026-07-10): on phones #illustration shows ONLY the
+     particle background, the cube with its images, and the Enter / Back-Next
+     buttons. Everything else is desktop UI chrome — hide it. The CRT overlays
+     (.scanlines / .vhs-static) stay: they read as part of the background.
+     Cards keep only their .illus-cta-row (that's where the buttons live). */
   #illustration .illus-hud,
   #illus-snake,
-  .illus-scroll-cue {
+  .illus-scroll-cue,
+  #illustration .illus-svg-bar,
+  #illustration .illus-strip,
+  #illustration .illus-info-svg,
+  #illustration .illus-title-float,
+  #illustration .illus-expand-hint,
+  #illustration .illus-card > :not(.illus-cta-row) {
     display: none;
   }
 
-  /* Center the cube scene and its content cards. On desktop, the scene is
-     offset to make room for side panels; on mobile, it should be centered. */
-  .illus-scene {
-    left: 0;
-    right: 0;
+  /* With only the buttons left, strip the card chrome (box, border, side
+     placement) and pin the CTA row bottom-center, clear of the centered cube. */
+  .illus-section {
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 1rem max(2.5rem, env(safe-area-inset-bottom)) 1rem;
   }
-  .illus-card {
-    max-width: 90%;
-    margin: 0 auto;
+  #illustration .illus-card {
+    background: none;
+    border: none;
+    padding: 0;
+    max-width: none;
+    margin: 0;
+  }
+  #illustration .illus-card .illus-cta-row {
+    margin-block-start: 0;
+    justify-content: center;
   }
 
   /* Tappable close button, clear of the notch. */
@@ -1852,17 +1868,6 @@
     min-height: 44px;
     top: max(var(--spacing-sm), env(safe-area-inset-top));
     right: max(var(--spacing-sm), env(safe-area-inset-right));
-  }
-
-  /* Justify the illustration piece descriptions edge-to-edge like the #about
-     paragraphs (owner 2026-07-05). Some .illus-body carry .glitch-text, whose
-     white-space:pre blocks wrapping (so justify can't act) — reset it to normal,
-     same escape hatch used for the #about bio. */
-  #illustration .illus-body {
-    text-align: justify;
-    -webkit-hyphens: none;
-            hyphens: none;
-    white-space: normal;
   }
 }
 
