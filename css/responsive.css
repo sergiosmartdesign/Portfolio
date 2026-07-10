@@ -2102,6 +2102,23 @@
   #contact.ct-handoff-in {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    /* Opaque sky: the base section is background:transparent, and past the
+       scene's one-viewport height the page BEHIND the fixed backdrop (intro
+       chrome) bled through at the end of the inner scroll (owner 2026-07-10). */
+    background: var(--ct-sky-dark, #001219);
+  }
+
+  /* Landscape pinned to the scroller viewport: as an absolute (out of flow)
+     layer it scrolled away with the content, ending the backdrop after one
+     viewport. Sticky keeps it covering the screen for the whole inner scroll;
+     the negative margin cancels its in-flow height so the content column
+     starts on top of it, unchanged. Content (z:50) paints above scene (z:1). */
+  #contact .ct-scene {
+    position: sticky;
+    top: 0;
+    inset-inline: auto;
+    height: calc(100svh - var(--header-height, 60px));
+    margin-bottom: calc(-100svh + var(--header-height, 60px));
   }
 
   /* In-flow footer: its absolute bottom:0 anchors to the (viewport-high)
