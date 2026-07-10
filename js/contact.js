@@ -1112,24 +1112,31 @@
       // in while #lines, #colors and #holo are all class-hidden. The glitch
       // runs in a sub-timeline so it can sit at an absolute position while
       // the background tweens keep appending sequentially after it.
-      const HOLO_AT = 0.1;
-      const holoTl = gsap.timeline({ defaults: { ease: 'none' } });
-      glitchIn(holoTl, '.ct-cockpit', 0);
-      tl.add(holoTl, HOLO_AT);
+      // Phones: the cockpit is display:none (responsive.css, owner directive
+      // 2026-07-10) but its build used to stretch the timeline ~5s, so the
+      // title/form appeared over an empty sky long after the landscape. Skip
+      // the whole cockpit act — content enters right after the ground.
+      const isPhone = !!(window.App && App.BrowserDetect && App.BrowserDetect.isMobile);
+      if (!isPhone) {
+        const HOLO_AT = 0.1;
+        const holoTl = gsap.timeline({ defaults: { ease: 'none' } });
+        glitchIn(holoTl, '.ct-cockpit', 0);
+        tl.add(holoTl, HOLO_AT);
 
-      // Cockpit build: the teal wireframe fades in first, then the color art
-      // underneath, then the lines settle back to their original colors, and
-      // finally the blue holo windshield beam reveals last — all while the
-      // landscape finishes behind.
-      const holoEnd = HOLO_AT + holoTl.duration();
-      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-lines'),
-              null, holoEnd + 0.3);
-      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-no-colors'),
-              null, holoEnd + 1.3);
-      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-lines-teal'),
-              null, holoEnd + 2.6);
-      tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-holo'),
-              null, holoEnd + 3.6);
+        // Cockpit build: the teal wireframe fades in first, then the color art
+        // underneath, then the lines settle back to their original colors, and
+        // finally the blue holo windshield beam reveals last — all while the
+        // landscape finishes behind.
+        const holoEnd = HOLO_AT + holoTl.duration();
+        tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-lines'),
+                null, holoEnd + 0.3);
+        tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-no-colors'),
+                null, holoEnd + 1.3);
+        tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-lines-teal'),
+                null, holoEnd + 2.6);
+        tl.call(() => cockpitEl && cockpitEl.classList.remove('ct-hide-holo'),
+                null, holoEnd + 3.6);
+      }
 
       // Content entrance (fade + form-part stagger + glitch + title) is appended
       // after the landscape/cockpit build so it reveals last. Factored out so a

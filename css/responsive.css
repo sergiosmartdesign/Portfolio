@@ -127,10 +127,19 @@
   .hamburger-btn[aria-expanded="true"]::after {
     content: "[X]";
     font-family: 'Funnel Display', sans-serif;
-    font-size: 1rem;
+    /* Owner 2026-07-10: bigger, bold, site orange/red. */
+    font-size: 1.25rem;
+    font-weight: 700;
     letter-spacing: 0.05em;
     line-height: 1;
-    color: var(--white);
+    color: var(--orange, #ff3c00);
+  }
+
+  /* Drawer rows (owner 2026-07-10): larger + semibold; animations (lineGrow
+     replay, char glitch) and colors untouched. */
+  .main-nav .nav-btn {
+    font-size: 1.15rem;
+    font-weight: 600;
   }
 
   /* Vertical electric-static line on the drawer's left edge — the desktop
@@ -2084,8 +2093,22 @@
     padding: 0.8em 1em;
   }
 
-  /* Footer clears the home-indicator on notched phones. */
+  /* The illustration handoff leaves #contact as a PERMANENT fixed backdrop
+     (viewport-high, overflow hidden). Desktop content fits; the phone column
+     (title + form + links) is taller than the viewport, so the fixed section
+     becomes its own scroller — once the page scroll bottoms out, swipes keep
+     scrolling the contact content. */
+  #contact,
+  #contact.ct-handoff-in {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* In-flow footer: its absolute bottom:0 anchors to the (viewport-high)
+     padding box, which lands mid-content inside the scroller. In flow it
+     simply ends the column. Clears the home-indicator on notched phones. */
   .ct-footer {
+    position: static;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
   }
 }
