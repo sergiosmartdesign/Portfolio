@@ -1575,9 +1575,16 @@
      full-size bar overlapped the intro text (starts at left:24px). Shrink it
      to fit the free gutter with a small clearance (18px → ~6px gap; height
      follows the SVG aspect ratio). gsap animates translateX/opacity on this
-     element, not width, so this override is safe (owner 2026-07-04). */
+     element, not width, so this override is safe (owner 2026-07-04).
+     Moved to the RIGHT gutter with its top aligned to the intro paragraph
+     (owner 2026-07-09): intro top = overlay padding-top 145px + 4px column
+     inset = 149px — keep in sync if that padding changes. gsap still slides
+     x:-40→0, which now reads as a short slide toward the right edge. */
   #photo .photo-section-bar-img {
     width: 18px;
+    left: auto;
+    right: 0;
+    top: 149px;
   }
 
   /* Remove the whole polaroids region on phones (owner 2026-07-04): the
