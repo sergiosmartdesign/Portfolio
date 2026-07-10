@@ -1862,6 +1862,19 @@
     justify-content: center;
   }
 
+  /* Intro face word-art ("INTERDIMENSIONAL CUBE GALLERY…"): the desktop
+     metrics (line-height 4, 32px insets, 0.2em tracking) overflow the ~290px
+     phone face. Tighten box + type so the whole title sits inside the face.
+     transform is NOT touched here — illus-cube.js counter-rotates it inline. */
+  #illustration .illus-face-label--gallery {
+    left: 12px;
+    right: 12px;
+    padding: 12px 14px;
+    font-size: 0.62rem;
+    line-height: 2.6;
+    letter-spacing: 0.12em;
+  }
+
   /* The intro ENTER button sat ON TOP of the centered cube: illus-cube.css's
      own mobile block (≤900px) centers .illus-section[data-idx="0"] vertically
      (specificity 0,2,0). Re-pin it to the bottom like the Back/Next rows
