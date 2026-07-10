@@ -2024,6 +2024,66 @@
    ════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  /* Owner directive (2026-07-10): phones show ONLY the landscape background
+     (stars/sky, horizon glow, mountains, sun, virtual-floor grid), the
+     animated "Sergio Ayala / Let's get in touch!" title at full viewport
+     width, the form below it, and the social buttons below that. The ship
+     cockpit, hands and the CRT/grain overlays are desktop-only. */
+  #contact .ct-cockpit,
+  #contact .ct-hand,
+  #contact .ct-grain,
+  #contact .scanlines,
+  #contact .vhs-static,
+  #contact .ct-capsule,
+  #contact .ct-contact-bar {
+    display: none;
+  }
+
+  /* Content leaves the windshield: back to normal flow so the section grows
+     with it; .ct-scene (absolute, inset 0) keeps painting the landscape
+     behind at whatever height results. */
+  #contact .ct-content {
+    position: relative;
+    inset: auto;
+    min-height: calc(100svh - var(--header-height, 60px));
+    justify-content: flex-start;
+    padding: 1.5rem 0 4.5rem;   /* bottom clears the absolute footer */
+  }
+
+  /* Title at full viewport width — keeps the -10° rotation and the GSAP
+     per-letter entrance from contact.js. Sizes tuned e2e so SERGIO/AYALA
+     span edge to edge without horizontal overflow. */
+  #contact .ct-form-row,
+  #contact .ct-title,
+  #contact .ct-stack {
+    width: 100%;
+  }
+  #contact .ct-stack-line {
+    font-size: 16.5vw;
+  }
+  #contact .ct-stack-line--tag {
+    font-size: 7vw;
+  }
+
+  /* Form below the title, comfortably wide. */
+  #contact .ct-form-col {
+    width: min(480px, 92vw);
+  }
+
+  /* Social buttons: organized as full-width stacked tap targets. */
+  #contact .ct-links--mini {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  #contact .ct-links--mini .ct-link {
+    text-align: center;
+    font-size: 0.78rem;
+    padding: 0.8em 1em;
+  }
+
   /* Footer clears the home-indicator on notched phones. */
   .ct-footer {
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));

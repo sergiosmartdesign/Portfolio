@@ -262,5 +262,14 @@
   "ad.3d.02.sub": "Commissioned character sculpted for 3D printing",
   "ad.3d.02.desc": "Tib is a cartoon shark sculpted in ZBrush, commissioned by a private client for 3D printing. The piece was built around its expression: the grin packed with teeth and the defiant look had to read just as well on screen as in the printed figure. You can examine the model in 360° right here.",
   "ad.3d.03.sub": "Marvel's frog Thor, sculpted for 3D printing",
-  "ad.3d.03.desc": "The frog version of Marvel's Thor, sculpted in ZBrush and commissioned by a private client for 3D printing. Winged helmet, armor discs on the chest and the anatomy of an amphibian warrior, presented in neutral gray so that volume and detail speak for themselves."
+  "ad.3d.03.desc": "The frog version of Marvel's Thor, sculpted in ZBrush and commissioned by a private client for 3D printing. Winged helmet, armor discs on the chest and the anatomy of an amphibian warrior, presented in neutral gray so that volume and detail speak for themselves.",
+  "ct.form.title":        "// NEW_MESSAGE",
+  "ct.form.name":         "[>>>] NAME",
+  "ct.form.email":        "[>>>] EMAIL",
+  "ct.form.message":      "[>>>] MESSAGE",
+  "ct.form.send":         "[ ▸ s e n d ]",
+  "ct.form.successTitle": "✓ MESSAGE SENT",
+  "ct.form.successSub":   "Thanks, I'll get back to you within 24h.",
+  "ct.form.successReset": "[ · s e n d   a n o t h e r · ]",
+  "ct.form.fallback":     "[ · w r i t e   m e   d i r e c t l y · ]"
 }

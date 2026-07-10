@@ -821,7 +821,7 @@
     <link rel="stylesheet" href="css/inf-bracket.css?v=1773ce6b">
     <link rel="stylesheet" href="css/illus-snake.css?v=a1d99486">
     <link rel="stylesheet" href="css/section-transition.css?v=12838d30">
-    <link rel="stylesheet" href="css/responsive.css?v=e14f99fd">
+    <link rel="stylesheet" href="css/responsive.css?v=8da65dda">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -3314,27 +3314,27 @@
                     <div class="ct-form-col">
                     <form class="ct-form" id="ct-form" novalidate>
                     <div class="ct-form-head" aria-hidden="true">
-                        <span class="ct-form-title glitch-text" data-splitting>// NEW_MESSAGE</span>
+                        <span class="ct-form-title glitch-text" data-splitting data-i18n-split="ct.form.title">// NEW_MESSAGE</span>
                         <span class="ct-form-feed">BOGOTÁ ▸ WORLDWIDE<i class="ct-form-dot"></i></span>
                     </div>
 
                     <div class="ct-form-grid">
                         <div class="ct-field">
-                            <label for="ct-f-name" class="glitch-text" data-splitting>[&gt;&gt;&gt;] NAME</label>
+                            <label for="ct-f-name" class="glitch-text" data-splitting data-i18n-split="ct.form.name">[&gt;&gt;&gt;] NAME</label>
                             <input id="ct-f-name" name="name" type="text" required
                                    autocomplete="name" spellcheck="false" maxlength="80"
                                    placeholder="_" aria-describedby="ct-f-name-err">
                             <p class="ct-field-err" id="ct-f-name-err"></p>
                         </div>
                         <div class="ct-field">
-                            <label for="ct-f-email" class="glitch-text" data-splitting>[&gt;&gt;&gt;] EMAIL</label>
+                            <label for="ct-f-email" class="glitch-text" data-splitting data-i18n-split="ct.form.email">[&gt;&gt;&gt;] EMAIL</label>
                             <input id="ct-f-email" name="email" type="email" required
                                    autocomplete="email" spellcheck="false" maxlength="120"
                                    placeholder="_" aria-describedby="ct-f-email-err">
                             <p class="ct-field-err" id="ct-f-email-err"></p>
                         </div>
                         <div class="ct-field ct-field--msg">
-                            <label for="ct-f-msg" class="glitch-text" data-splitting>[&gt;&gt;&gt;] MESSAGE</label>
+                            <label for="ct-f-msg" class="glitch-text" data-splitting data-i18n-split="ct.form.message">[&gt;&gt;&gt;] MESSAGE</label>
                             <textarea id="ct-f-msg" name="message" required
                                       maxlength="2000" placeholder="_"
                                       aria-describedby="ct-f-msg-err"></textarea>
@@ -3348,13 +3348,13 @@
                     <div class="ct-turnstile" id="ct-turnstile"></div>
 
                     <div class="ct-form-foot">
-                        <button type="submit" class="ct-send glitch-text" data-splitting aria-label="Send message">[ ▸ s e n d ]</button>
+                        <button type="submit" class="ct-send glitch-text" data-splitting data-i18n-split="ct.form.send" aria-label="Send message">[ ▸ s e n d ]</button>
                         <p class="ct-form-log"><span class="ct-log-text" aria-hidden="true">&gt; READY</span></p>
                         <!-- Shown by contact.js only if the backend send fails, so the
                              visitor always has a direct way to reach the inbox. -->
                         <a class="ct-link ct-mail-fallback" id="ct-mail-fallback"
                            href="#" data-eml hidden
-                           aria-label="Email Sergio Ayala directly">[ · w r i t e &nbsp; m e &nbsp; d i r e c t l y · ]</a>
+                           aria-label="Email Sergio Ayala directly" data-i18n="ct.form.fallback">[ · w r i t e &nbsp; m e &nbsp; d i r e c t l y · ]</a>
                     </div>
 
                     <!-- Screen-reader status mirror (typed log is decorative) -->
@@ -3363,10 +3363,10 @@
                     <input class="ct-hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
 
                     <div class="ct-form-success" id="ct-form-success" hidden>
-                        <p class="ct-success-title" tabindex="-1">✓ MESSAGE SENT</p>
-                        <p class="ct-success-sub">Thanks — I'll get back to you within 24h.</p>
+                        <p class="ct-success-title" tabindex="-1" data-i18n="ct.form.successTitle">✓ MESSAGE SENT</p>
+                        <p class="ct-success-sub" data-i18n="ct.form.successSub">Thanks — I'll get back to you within 24h.</p>
                         <button type="button" class="ct-link ct-success-reset"
-                                aria-label="Send another message">[ · s e n d &nbsp; a n o t h e r · ]</button>
+                                aria-label="Send another message" data-i18n="ct.form.successReset">[ · s e n d &nbsp; a n o t h e r · ]</button>
                     </div>
                 </form>
 
@@ -3471,7 +3471,7 @@
     <script defer src="js/photo-portfolio.js?v=9097b847"></script>
     <script defer src="js/scroll-hint.js?v=ba916d8c"></script>
     <script defer src="js/ascii-ripple.js?v=13667c29"></script>
-    <script defer src="js/contact.js?v=ec3cc494"></script>
+    <script defer src="js/contact.js?v=b573c650"></script>
     <script defer src="js/illustration-ink-cursor.js?v=386555dc"></script>
     <script defer src="js/illus-cube.js?v=f9488c6d"></script>
 

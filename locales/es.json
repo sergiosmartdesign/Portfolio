@@ -211,5 +211,14 @@
   "ad.disc.identity": "Identidad",
   "ad.disc.web": "Web",
   "ad.disc.editorial": "Editorial",
-  "ad.disc.3d": "3D & Motion"
+  "ad.disc.3d": "3D & Motion",
+  "ct.form.title":        "// NUEVO_MENSAJE",
+  "ct.form.name":         "[>>>] NOMBRE",
+  "ct.form.email":        "[>>>] EMAIL",
+  "ct.form.message":      "[>>>] MENSAJE",
+  "ct.form.send":         "[ ▸ e n v i a r ]",
+  "ct.form.successTitle": "✓ MENSAJE ENVIADO",
+  "ct.form.successSub":   "Gracias, te respondo en menos de 24h.",
+  "ct.form.successReset": "[ · e n v i a r   o t r o · ]",
+  "ct.form.fallback":     "[ · e s c r í b e m e   d i r e c t o · ]"
 }

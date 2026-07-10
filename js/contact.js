@@ -1255,10 +1255,57 @@
     const resetBtn  = form.querySelector('.ct-success-reset');
     const honeypot  = form.querySelector('.ct-hp');
 
+    // Bilingual UI strings, resolved at call time from <html lang> so the
+    // [EN]/[ES] toggle also covers the typed log lines, validation errors and
+    // screen-reader announcements (the static markup is handled by data-i18n /
+    // data-i18n-split + locales/*.json).
+    const CT_TEXTS = {
+      en: {
+        ready:       '> READY',
+        checkFields: '> ERROR :: CHECK FIELDS',
+        connecting:  '> CONNECTING…',
+        sendingMsg:  '> SENDING MESSAGE…',
+        sent:        '> MESSAGE SENT ✓',
+        failed:      '> SEND FAILED — WRITE ME DIRECTLY ↓',
+        nameReq:     'ERR: name is required',
+        emailReq:    'ERR: email is required',
+        emailInv:    'ERR: invalid email address',
+        msgReq:      'ERR: message is empty',
+        aFields:     'Some fields need attention.',
+        aSending:    'Sending message…',
+        aSent:       'Message sent. Expect a reply within 24 hours.',
+        aFailed:     'Sending failed. Please use the direct email link below.',
+      },
+      es: {
+        ready:       '> LISTO',
+        checkFields: '> ERROR :: REVISA LOS CAMPOS',
+        connecting:  '> CONECTANDO…',
+        sendingMsg:  '> ENVIANDO MENSAJE…',
+        sent:        '> MENSAJE ENVIADO ✓',
+        failed:      '> FALLÓ EL ENVÍO :: ESCRÍBEME DIRECTO ↓',
+        nameReq:     'ERR: el nombre es obligatorio',
+        emailReq:    'ERR: el email es obligatorio',
+        emailInv:    'ERR: email no válido',
+        msgReq:      'ERR: el mensaje está vacío',
+        aFields:     'Algunos campos necesitan atención.',
+        aSending:    'Enviando mensaje…',
+        aSent:       'Mensaje enviado. Te respondo en menos de 24 horas.',
+        aFailed:     'El envío falló. Usa el enlace de email directo abajo.',
+      },
+    };
+    const ctT = k => (CT_TEXTS[document.documentElement.lang] || CT_TEXTS.en)[k];
+
+    // Keep the idle log line in the active language when the toggle fires.
+    document.addEventListener('languagechanged', () => {
+      if (logText && /^> (READY|LISTO)$/.test(logText.textContent.trim())) {
+        logText.textContent = ctT('ready');
+      }
+    });
+
     const fields = [
-      { el: document.getElementById('ct-f-name'),  empty: 'ERR: name is required' },
-      { el: document.getElementById('ct-f-email'), empty: 'ERR: email is required', invalid: 'ERR: invalid email address' },
-      { el: document.getElementById('ct-f-msg'),   empty: 'ERR: message is empty' },
+      { el: document.getElementById('ct-f-name'),  empty: 'nameReq' },
+      { el: document.getElementById('ct-f-email'), empty: 'emailReq', invalid: 'emailInv' },
+      { el: document.getElementById('ct-f-msg'),   empty: 'msgReq' },
     ];
     if (!sendBtn || !successEl || fields.some(f => !f.el)) return;
 
@@ -1394,8 +1441,8 @@
       let firstBad = null;
       fields.forEach(f => {
         let msg = '';
-        if (!f.el.value.trim())          msg = f.empty;
-        else if (!f.el.checkValidity())  msg = f.invalid || f.empty;
+        if (!f.el.value.trim())          msg = ctT(f.empty);
+        else if (!f.el.checkValidity())  msg = ctT(f.invalid || f.empty);
         setFieldError(f, msg);
         if (msg && !firstBad) firstBad = f.el;
       });
@@ -1415,8 +1462,8 @@
       if (honeypot && honeypot.value) return;   // bot — drop silently
 
       if (!validate()) {
-        typeLog('> ERROR :: CHECK FIELDS');
-        announce('Some fields need attention.');
+        typeLog(ctT('checkFields'));
+        announce(ctT('aFields'));
         return;
       }
 
@@ -1424,7 +1471,7 @@
       form.classList.add('is-sending');
       sendBtn.disabled = true;
       if (mailFallbackLink) mailFallbackLink.hidden = true;
-      announce('Sending message…');
+      announce(ctT('aSending'));
 
       const payload = {
         name:    fields[0].el.value.trim(),
@@ -1434,21 +1481,21 @@
       };
 
       try {
-        await typeLog('> CONNECTING…');
+        await typeLog(ctT('connecting'));
         await wait(reducedMotion.matches ? 0 : 250);
-        await typeLog('> SENDING MESSAGE…');
+        await typeLog(ctT('sendingMsg'));
         await sendTransmission(payload);
-        await typeLog('> MESSAGE SENT ✓');
+        await typeLog(ctT('sent'));
 
         form.classList.add('is-sent');
         successEl.hidden = false;
-        announce('Message sent. Expect a reply within 24 hours.');
+        announce(ctT('aSent'));
         const title = successEl.querySelector('.ct-success-title');
         if (title) title.focus();
       } catch (err) {
         console.error('[contact] transmission failed:', err);
-        await typeLog('> SEND FAILED — WRITE ME DIRECTLY ↓');
-        announce('Sending failed. Please use the direct email link below.');
+        await typeLog(ctT('failed'));
+        announce(ctT('aFailed'));
         if (mailFallbackLink) {
           mailFallbackLink.href   = mailtoHref(payload);
           mailFallbackLink.hidden = false;
@@ -1470,7 +1517,7 @@
         sendBtn.disabled = false;
         if (mailFallbackLink) mailFallbackLink.hidden = true;
         resetTurnstile();
-        typeLog('> READY');
+        typeLog(ctT('ready'));
         announce('');
         fields[0].el.focus();
       });
