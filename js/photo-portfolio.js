@@ -1073,19 +1073,20 @@
         item.style.opacity = '0.5';
 
         if (!window.matchMedia('(max-width: 768px)').matches) {
-          textEls.forEach((el, i) => {
-            gsap.killTweensOf(el);
-            gsap.to(el, {
-              duration: 0.8,
-              scrambleText: {
-                text:        originalTexts[i],
-                chars:       'qwerty1337h@ck3r',
-                revealDelay: 0.3,
-                speed:       0.4
-              }
-            });
-          });
-        }
+                  if (!window.matchMedia('(max-width: 768px)').matches) {
+                    textEls.forEach((el, i) => {
+                      gsap.killTweensOf(el);
+                      gsap.to(el, {
+                        duration: 0.8,
+                        scrambleText: {
+                          text:        originalTexts[i],
+                          chars:       'qwerty1337h@ck3r',
+                          revealDelay: 0.3,
+                          speed:       0.4
+                        }
+                      });
+                    });
+                  }        }
 
         if (item.dataset.image) this.showBackgroundImage(item.dataset.image);
       });
