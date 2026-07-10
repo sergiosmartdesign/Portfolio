@@ -42,3 +42,10 @@ example/images/*.mp4
 
 # Brief local del agente Robotino (notas de sesión responsive) — NO subir a GitHub
 RESPONSIVE-SESSION.md
+
+# Documentos locales de agentes / memoria IA — NO subir a GitHub
+LA-ABSOLUTA-TEMPLATE.yml
+LUCIEN-PROTOCOL.md
+PROJECT-STATE.md
+TERMINATOR-INBOX.md
+la-absoluta.yml
