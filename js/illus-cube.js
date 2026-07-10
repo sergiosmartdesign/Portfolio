@@ -538,12 +538,10 @@
         }
 
         // Re-trigger the expand hint and float title glitch on every new image face landing.
-        // Phone: both elements are display:none — skip (first call would run
-        // Splitting.js, creating hundreds of spans + CSS vars right at landing).
-        if (!IS_MOBILE) {
-            triggerExpandHintGlitch();
-            triggerTitleFloatGlitch();
-        }
+        // Phone: the hint stays visible (owner 2026-07-10) so its glitch fires
+        // too; the float title is display:none — skip its Splitting.js work.
+        triggerExpandHintGlitch();
+        if (!IS_MOBILE) triggerTitleFloatGlitch();
 
         const img = face?.querySelector('img.illus-main-img');
         if (!img) return;

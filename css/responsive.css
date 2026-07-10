@@ -1828,9 +1828,10 @@
 
   /* Owner directive (2026-07-10): on phones #illustration shows ONLY the
      particle background, the cube with its images, and the Enter / Back-Next
-     buttons. Everything else is desktop UI chrome — hide it. The CRT overlays
-     (.scanlines / .vhs-static) stay: they read as part of the background.
-     Cards keep only their .illus-cta-row (that's where the buttons live). */
+     buttons. Everything else is desktop UI chrome — hide it.
+     Cards keep only their .illus-cta-row (that's where the buttons live).
+     The "[ · click to expand · ]" hint STAYS, same as desktop (owner
+     2026-07-10); the CRT overlays moved to the perf block below. */
   #illustration .illus-hud,
   #illus-snake,
   .illus-scroll-cue,
@@ -1838,7 +1839,6 @@
   #illustration .illus-strip,
   #illustration .illus-info-svg,
   #illustration .illus-title-float,
-  #illustration .illus-expand-hint,
   #illustration .illus-card > :not(.illus-cta-row) {
     display: none;
   }
