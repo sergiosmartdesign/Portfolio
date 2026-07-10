@@ -1826,6 +1826,26 @@
     height: calc(100svh - var(--header-height, 60px));
   }
 
+  /* Hide desktop-only UI elements: the HUD, the snake leader line, and the
+     scroll cue are all tied to desktop interactions (mouse-follow, scroll-based
+     navigation) that don't exist on the simplified mobile view. */
+  #illustration .illus-hud,
+  #illus-snake,
+  .illus-scroll-cue {
+    display: none;
+  }
+
+  /* Center the cube scene and its content cards. On desktop, the scene is
+     offset to make room for side panels; on mobile, it should be centered. */
+  .illus-scene {
+    left: 0;
+    right: 0;
+  }
+  .illus-card {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
   /* Tappable close button, clear of the notch. */
   .illus-lightbox-close {
     min-width: 44px;
