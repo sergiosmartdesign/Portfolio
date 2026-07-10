@@ -122,7 +122,12 @@
     // Scale section height to number of images. Scroll progress is normalized to
     // offsetHeight (see _update), so a shorter per-stop height on phones just
     // makes the cube scroll brisker without breaking the choreography.
-    const stopVh = (App.BrowserDetect && App.BrowserDetect.isMobile) ? 65 : 100;
+    // Phone perf mode: skip per-frame writes to HUD nodes hidden by
+    // responsive.css, the electric-border driver (its faces are display:none on
+    // phones), the Splitting.js glitches on hidden hint/title, and DOM writes
+    // while the cube is parked. Desktop path is untouched.
+    const IS_MOBILE = !!(App.BrowserDetect && App.BrowserDetect.isMobile);
+    const stopVh = IS_MOBILE ? 65 : 100;
     // Reserve a frozen exit band at the very end of the section. The tunnel stays
     // pinned through this band (the section bottom hasn't reached the viewport
     // bottom yet), so while scrolling it the entrance choreography plays in
@@ -204,6 +209,9 @@
     IMAGES.forEach(src => preloadImage(src));
 
     const faceImgIdx = new Array(6).fill(-1);
+    // Phone-only cache of each face's <img> so updateFaceOpacities doesn't run
+    // 6 querySelectors per RAF frame. Written in setFaceImage, read when IS_MOBILE.
+    const faceImgEls = new Array(6).fill(null);
 
     // Returns the CSS transform needed to counter the cube's accumulated rotation
     // so each image always appears right-side-up to the viewer.
@@ -327,6 +335,7 @@
         if (faceImgIdx[faceIdx] !== imgIdx) return;
         let img = faces[faceIdx].querySelector('img.illus-main-img');
         if (!img) { img = new Image(); img.className = 'illus-main-img'; faces[faceIdx].appendChild(img); }
+        if (IS_MOBILE) faceImgEls[faceIdx] = img;
         // Release any forwards-fill from a previous scan animation so the per-frame
         // dot-product opacity can take back control of this face's image.
         img.classList.remove('illus-img-enter');
@@ -422,7 +431,8 @@
     function updateFaceOpacities() {
         const rx = _rxRad, ry = _ryRad;
         for (let fi = 0; fi < 6; fi++) {
-            const img = faces[fi]?.querySelector('img.illus-main-img');
+            const img = IS_MOBILE ? faceImgEls[fi]
+                                  : faces[fi]?.querySelector('img.illus-main-img');
             // Skip faces with no image or still running the scan-reveal animation
             // (the animation's fill-mode controls opacity while it is active).
             if (!img || !img.src || img.classList.contains('illus-img-enter')) continue;
@@ -437,9 +447,14 @@
     let lastLustColorIdx = -1;
 
     function updateUI(s) {
-        const pct  = Math.round(s * 100);
-        hudPct.textContent      = String(pct).padStart(3, '0') + '%';
-        progFill.style.width    = pct + '%';
+        // Phone: the whole HUD (pct, progress bar, scene label) is display:none
+        // in responsive.css — skip its per-frame DOM writes (they still cost a
+        // style recalc on hidden nodes).
+        if (!IS_MOBILE) {
+            const pct  = Math.round(s * 100);
+            hudPct.textContent      = String(pct).padStart(3, '0') + '%';
+            progFill.style.width    = pct + '%';
+        }
 
         const stop = Math.min(N - 1, Math.round(s * (N - 1)));
         if (stop === lastStop) return;
@@ -447,7 +462,7 @@
 
         // Randomise "LUST" accent color on every stop change — pick from palette,
         // never repeat the same color twice in a row.
-        if (lustEl) {
+        if (lustEl && !IS_MOBILE) {
             let idx;
             do { idx = Math.floor(Math.random() * FACE_COLORS.length); }
             while (idx === lastLustColorIdx);
@@ -458,7 +473,8 @@
         const name   = FACE_NAMES[stop] ?? '';
         const spaced = name.split('').join(' ');
 
-        sceneLabel.textContent   = stop === 0 ? INTRO_LABEL : name;
+        // Phone: the scene label lives in the hidden HUD — skip the write.
+        if (!IS_MOBILE) sceneLabel.textContent = stop === 0 ? INTRO_LABEL : name;
 
         imgGlitchPending = true;
         // Hide the image-name caption on the gallery-title face (stop 0 has no photo)
@@ -466,15 +482,19 @@
         if (!tunnel.classList.contains('illus-info-revealed')) {
             tunnel.classList.add('illus-info-revealed');
         }
-        // Float title: entry animation on first reveal from stop 0; hide on return.
-        if (stop === 0) {
-            titleFloat.classList.remove('illus-title-float--visible');
-        } else if (!titleFloat.classList.contains('illus-title-float--visible')) {
-            void titleFloat.offsetWidth;
-            titleFloat.classList.add('illus-title-float--visible');
+        // Phone: float title, hint/strip sides and nav dots are display:none in
+        // responsive.css — skip their DOM work entirely.
+        if (!IS_MOBILE) {
+            // Float title: entry animation on first reveal from stop 0; hide on return.
+            if (stop === 0) {
+                titleFloat.classList.remove('illus-title-float--visible');
+            } else if (!titleFloat.classList.contains('illus-title-float--visible')) {
+                void titleFloat.offsetWidth;
+                titleFloat.classList.add('illus-title-float--visible');
+            }
+            setHintSide(stop);
+            allDots.forEach((d, i)  => d.classList.toggle('active', i === stop));
         }
-        setHintSide(stop);
-        allDots.forEach((d, i)      => d.classList.toggle('active', i === stop));
         allSections.forEach((sec, i) => sec.classList.toggle('active', i === stop));
     }
 
@@ -517,9 +537,13 @@
             return;
         }
 
-        // Re-trigger the expand hint and float title glitch on every new image face landing
-        triggerExpandHintGlitch();
-        triggerTitleFloatGlitch();
+        // Re-trigger the expand hint and float title glitch on every new image face landing.
+        // Phone: both elements are display:none — skip (first call would run
+        // Splitting.js, creating hundreds of spans + CSS vars right at landing).
+        if (!IS_MOBILE) {
+            triggerExpandHintGlitch();
+            triggerTitleFloatGlitch();
+        }
 
         const img = face?.querySelector('img.illus-main-img');
         if (!img) return;
@@ -544,6 +568,7 @@
     let elecActive    = false;
     let elecTimer     = null;
     let prevSmooth    = smooth;
+    let lastAppliedSmooth = -1;   // phone idle short-circuit (see frame loop)
     let introSeenOnce     = false;  // both stages fired — entrance complete
     let stageContentFired = false;  // Stage A (text + SVG) latched at 40% coverage
     let stageCubeFired    = false;  // Stage B (3D cube) latched at 90% coverage
@@ -754,7 +779,7 @@
         entranceTimer = setTimeout(() => {
             stageCubeFired = true;
             illus.classList.add('illus-stage-cube');
-            if (!prefersReducedMotion) startIntroElecFlicker();
+            if (!prefersReducedMotion && !IS_MOBILE) startIntroElecFlicker();
             entranceTimer = null;
         }, 900);
     }
@@ -968,7 +993,7 @@
             if (!stageCubeFired && coverage >= 0.90) {
                 stageCubeFired = true;
                 illus.classList.add('illus-stage-cube');
-                if (!prefersReducedMotion) startIntroElecFlicker();
+                if (!prefersReducedMotion && !IS_MOBILE) startIntroElecFlicker();
                 introSeenOnce = true;               // entrance complete — latch
             }
         }
@@ -976,9 +1001,22 @@
         smooth  += (tgt - smooth) * (1 - Math.exp(-dt * 8));
         smooth   = Math.max(0, Math.min(1, smooth));
 
-        const vel = Math.abs(smooth - prevSmooth);
-        prevSmooth = smooth;
-        if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
+        // Phone idle short-circuit: snap the asymptotic tail of the ease, then
+        // skip every per-frame DOM write while the cube is parked on a stop —
+        // no transform/opacity/class churn between scrolls. Desktop unchanged.
+        if (IS_MOBILE) {
+            if (Math.abs(tgt - smooth) < 0.0004) smooth = tgt;
+            if (smooth === lastAppliedSmooth && !imgGlitchPending) return;
+            lastAppliedSmooth = smooth;
+        }
+
+        // Phone: the electric-border faces are display:none in responsive.css —
+        // skip the velocity tracking + class/timer churn that drives them.
+        if (!IS_MOBILE) {
+            const vel = Math.abs(smooth - prevSmooth);
+            prevSmooth = smooth;
+            if (vel > 0.0002) { elecOn(); } else if (elecActive) { elecOff(); }
+        }
 
         setCubeTransform(smooth);
         updateFaceOpacities();

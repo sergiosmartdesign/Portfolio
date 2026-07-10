@@ -1862,6 +1862,27 @@
     justify-content: center;
   }
 
+  /* The intro ENTER button sat ON TOP of the centered cube: illus-cube.css's
+     own mobile block (≤900px) centers .illus-section[data-idx="0"] vertically
+     (specificity 0,2,0). Re-pin it to the bottom like the Back/Next rows
+     (owner 2026-07-10). */
+  #illustration .illus-section[data-idx="0"] {
+    align-items: flex-end;
+    padding: 0 1rem max(2.5rem, env(safe-area-inset-bottom)) 1rem;
+  }
+
+  /* PERF (owner 2026-07-10, cube laggy on phone) — cut GPU fill-rate cost.
+     .scanlines/.vhs-static are two full-viewport layers with infinite
+     transform animations compositing over the particle canvas + 3D scene
+     every frame; .illus-face-elec is 6 extra 3D-transformed layers with
+     triple box-shadow glows toggled on every scroll-velocity change.
+     illus-cube.js also skips their JS drivers on isMobile. Desktop keeps all. */
+  #illustration .scanlines,
+  #illustration .vhs-static,
+  #illustration .illus-face-elec {
+    display: none;
+  }
+
   /* Tappable close button, clear of the notch. */
   .illus-lightbox-close {
     min-width: 44px;
