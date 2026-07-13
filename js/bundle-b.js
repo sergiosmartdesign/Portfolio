@@ -991,6 +991,19 @@ class ArtWorksPanel {
         this.modalBg     = this.modal.querySelector('.ad-pm-bg');
         this.modalStage  = this.modal.querySelector('.ad-pm-stage');
         this.modalStageImg = this.modal.querySelector('.ad-pm-stage-img');
+        // Missing-image void: a 404 on the stage image reveals the black-hole
+        // placeholder; a successful load clears it. Src assignments elsewhere
+        // pre-clear .has-void so a stale void never bleeds into the next image.
+        if (this.modalStageImg) {
+            this.modalStageImg.addEventListener('error', () => {
+                if (this.modalStageImg.getAttribute('src')) {
+                    this.modalStage.classList.add('has-void');
+                }
+            });
+            this.modalStageImg.addEventListener('load', () => {
+                this.modalStage.classList.remove('has-void');
+            });
+        }
         this.modalNum    = this.modal.querySelector('.ad-pm-num');
         this.modalCat    = this.modal.querySelector('.ad-pm-cat');
         this.modalTitle  = this.modal.querySelector('.ad-pm-title');
@@ -1096,6 +1109,7 @@ class ArtWorksPanel {
         else if (useFlip) this._mountFlipbook(work);
 
         if (this.modalStageImg) {
+            this.modalStage.classList.remove('has-void');
             if (work.bg && !work.model && !useFlip) {
                 this.modalStageImg.src = work.bg;
                 this.modalStageImg.alt = `${work.title} — project image`;
@@ -1242,6 +1256,7 @@ class ArtWorksPanel {
             this.modalBg.style.backgroundImage = `url('${src}')`;
         }
         if (this.modalStageImg) {
+            this.modalStage.classList.remove('has-void');
             this.modalStageImg.src = src;
         }
         if (this.modalThumbs) {
