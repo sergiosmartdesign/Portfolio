@@ -3540,6 +3540,7 @@
     <!-- App registry — must be first; all modules write/read App.* -->
     <!-- defer on all scripts: parallel downloads, preserved execution order, unblocks rendering -->
     <script defer src="js/bundle-a.js?v=795c4fc8"></script>
+    <script defer src="js/audio-engine.js?v=a8302e84"></script>
 
     <script defer src="js/lib/splitting.min.js?v=3b5ba9d3"></script>
     <script defer src="js/lib/scroll-out.min.js?v=a0c46cba"></script>
@@ -3548,7 +3549,7 @@
          on first 3D selection — do NOT load it here: the Draco decoder location
          (js/lib/draco/) must be configured before the module evaluates, or it
          locks to Google's CDN which CSP blocks and models never load. -->
-    <script defer src="js/bundle-b.js?v=cece5798"></script>
+    <script defer src="js/bundle-b.js?v=b8967141"></script>
     <script defer src="js/lib/mulberry32.js?v=56570b30"></script>
     <script defer src="js/bundle-c.js?v=7af77b1f"></script>
     <script defer src="js/lib/gsap.min.js?v=5e6e6cba"></script>

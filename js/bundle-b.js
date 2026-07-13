@@ -5786,7 +5786,13 @@ App.LanguageManager.ready.then(() => {
     const soundToggle = document.getElementById('sound-toggle');
     if (!soundToggle) return;
     soundToggle.addEventListener('click', () => {
-      const isActive = soundToggle.classList.toggle('active');
+      // SonicPalette (audio-engine.js) owns the mute state + persistence; the
+      // button just reflects it. Fall back to a visual toggle if the engine
+      // failed to load (no Web Audio).
+      const isActive = window.SonicPalette
+        ? window.SonicPalette.toggle()
+        : soundToggle.classList.toggle('active');
+      soundToggle.classList.toggle('active', isActive);
       soundToggle.setAttribute('aria-pressed', String(isActive));
     });
   });
