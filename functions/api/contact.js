@@ -24,6 +24,13 @@
 const DEFAULT_TO   = 'mail@sergio-ayala.com';
 const DEFAULT_FROM = 'Portfolio <contact@sergio-ayala.com>';
 
+// Browser same-origin defense-in-depth: only accept form POSTs coming from our
+// own pages. A missing Origin (curl, server-to-server) is left to Turnstile.
+const ALLOWED_ORIGINS = new Set([
+  'https://sergio-ayala.com',
+  'https://www.sergio-ayala.com',
+]);
+
 const MAX = { name: 80, email: 120, message: 2000 };
 // Pragmatic email shape check; the real validation is that a reply actually sends.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,6 +43,15 @@ function json(body, status = 200) {
 }
 
 export async function onRequestPost({ request, env }) {
+  // ── 0. Origin gate ───────────────────────────────────────────────────────
+  // Block cross-site browser submissions. Only enforced when an Origin header
+  // is present (browsers always send one on this fetch); other clients still
+  // have to pass the Turnstile check below.
+  const origin = request.headers.get('Origin');
+  if (origin && !ALLOWED_ORIGINS.has(origin)) {
+    return json({ ok: false, error: 'Request not allowed.' }, 403);
+  }
+
   // ── 1. Parse body ────────────────────────────────────────────────────────
   let data;
   try {
@@ -66,7 +82,8 @@ export async function onRequestPost({ request, env }) {
 
   // ── 3. Verify Turnstile ──────────────────────────────────────────────────
   if (!env.TURNSTILE_SECRET_KEY) {
-    return json({ ok: false, error: 'Server missing TURNSTILE_SECRET_KEY.' }, 500);
+    console.error('[contact] Missing TURNSTILE_SECRET_KEY env var');
+    return json({ ok: false, error: 'Server is temporarily unavailable.' }, 500);
   }
   try {
     const form = new FormData();
@@ -89,7 +106,8 @@ export async function onRequestPost({ request, env }) {
 
   // ── 4. Relay via Resend ──────────────────────────────────────────────────
   if (!env.RESEND_API_KEY) {
-    return json({ ok: false, error: 'Server missing RESEND_API_KEY.' }, 500);
+    console.error('[contact] Missing RESEND_API_KEY env var');
+    return json({ ok: false, error: 'Server is temporarily unavailable.' }, 500);
   }
 
   const to   = env.CONTACT_TO   || DEFAULT_TO;
