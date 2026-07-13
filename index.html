@@ -812,9 +812,115 @@
     </script>
 
     <link rel="stylesheet" href="css/main.css?v=e9e0a21e">
+
+    <!-- Fault screen critical CSS — inlined so the "page failed to load" fallback
+         (#site-fault, revealed by js/fault-guard.js) still renders even if
+         main.css itself failed to load. Self-contained: no external deps. -->
+    <style id="sf-css">
+      #site-fault{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:6vh 6vw;background:#001219;color:#EE9B00;font-family:'Funnel Display',system-ui,sans-serif;opacity:0;transition:opacity .5s ease;overflow:hidden}
+      #site-fault:not([hidden]){display:flex}
+      #site-fault.is-active{opacity:1}
+      html.site-faulted,html.site-faulted body{overflow:hidden}
+      .sf-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(22px,4.5vh,44px);text-align:center;max-width:660px;width:100%}
+      .sf-hole{position:relative;width:clamp(104px,15vw,164px);aspect-ratio:1;display:grid;place-items:center}
+      .sf-disk{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(238,155,0,0) 0%,rgba(238,155,0,.9) 12%,rgba(0,213,223,.7) 30%,rgba(238,155,0,0) 46%,rgba(214,40,57,.7) 66%,rgba(238,155,0,.9) 84%,rgba(238,155,0,0) 100%);-webkit-mask:radial-gradient(closest-side,transparent 55%,#000 60%,#000 92%,transparent 100%);mask:radial-gradient(closest-side,transparent 55%,#000 60%,#000 92%,transparent 100%);animation:sf-spin 4.5s linear infinite}
+      .sf-disk-b{inset:12%;opacity:.7;filter:blur(1.2px);animation-duration:7s;animation-direction:reverse}
+      .sf-core{position:relative;width:46%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#000 58%,rgba(238,155,0,.18) 82%,rgba(238,155,0,0) 100%);box-shadow:0 0 0 1.5px rgba(238,155,0,.85),0 0 22px 4px rgba(238,155,0,.45),inset 0 0 24px 6px rgba(0,0,0,.95);animation:sf-pulse 3.4s ease-in-out infinite}
+      .sf-msg{font-size:clamp(.8rem,1.9vw,1.16rem);letter-spacing:2.5px;text-transform:uppercase;line-height:1.6;text-shadow:-1px 0 rgba(0,213,223,.9),1px 0 rgba(214,40,57,.9);animation:sf-glitch 2.6s steps(1,end) infinite}
+      .sf-code{margin-top:8px;font-size:clamp(.56rem,1vw,.72rem);letter-spacing:3px;color:rgba(238,155,0,.42);text-transform:uppercase;animation:sf-blink 1.4s steps(1,end) infinite}
+      .sf-robot-row{display:flex;flex-direction:column;align-items:center;gap:12px}
+      .sf-robot{width:clamp(160px,28vw,232px);height:auto;display:block}
+      .sf-work{font-size:clamp(.6rem,1.15vw,.78rem);letter-spacing:2.5px;text-transform:uppercase;color:rgba(238,155,0,.88)}
+      .sf-work .sf-dots::after{content:'';animation:sf-dots 1.4s steps(1,end) infinite}
+      .sf-retry{margin-top:6px;background:transparent;border:1.5px solid rgba(238,155,0,.55);color:#EE9B00;font:inherit;font-size:.72rem;letter-spacing:2.5px;text-transform:uppercase;padding:11px 26px;border-radius:2px;cursor:pointer;transition:background .2s,border-color .2s}
+      .sf-retry:hover{background:rgba(238,155,0,.12);border-color:#EE9B00}
+      .sf-es-txt{display:none}
+      #site-fault.sf-es .sf-en{display:none}
+      #site-fault.sf-es .sf-es-txt{display:inline}
+      .sf-arm{transform-box:view-box;transform-origin:146px 120px;animation:sf-swing 1.3s cubic-bezier(.45,0,.85,.5) infinite}
+      .sf-spark{opacity:0;animation:sf-spark 1.3s steps(1,end) infinite}
+      .sf-rock-hit{transform-box:view-box;transform-origin:214px 164px;animation:sf-rock 1.3s ease-in-out infinite}
+      @keyframes sf-spin{to{transform:rotate(360deg)}}
+      @keyframes sf-pulse{0%,100%{box-shadow:0 0 0 1.5px rgba(238,155,0,.85),0 0 22px 4px rgba(238,155,0,.45),inset 0 0 24px 6px rgba(0,0,0,.95)}50%{box-shadow:0 0 0 1.5px rgba(238,155,0,1),0 0 34px 7px rgba(238,155,0,.6),inset 0 0 20px 5px rgba(0,0,0,.9)}}
+      @keyframes sf-glitch{0%,46%,100%{transform:translateX(0);text-shadow:-1px 0 rgba(0,213,223,.9),1px 0 rgba(214,40,57,.9)}48%{transform:translateX(1.5px);text-shadow:-2.5px 0 rgba(0,213,223,.95),2.5px 0 rgba(214,40,57,.95)}50%{transform:translateX(-1.5px);text-shadow:2px 0 rgba(0,213,223,.95),-2px 0 rgba(214,40,57,.95)}}
+      @keyframes sf-blink{0%,60%{opacity:.42}70%,100%{opacity:.12}}
+      @keyframes sf-dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+      @keyframes sf-swing{0%{transform:rotate(-52deg)}30%{transform:rotate(6deg)}42%{transform:rotate(-12deg)}55%{transform:rotate(-4deg)}100%{transform:rotate(-52deg)}}
+      @keyframes sf-spark{0%,28%{opacity:0}31%{opacity:1}44%{opacity:0}100%{opacity:0}}
+      @keyframes sf-rock{0%,28%{transform:translateY(0)}32%{transform:translateY(2px)}46%{transform:translateY(0)}}
+      @media (prefers-reduced-motion:reduce){.sf-disk,.sf-disk-b,.sf-core,.sf-msg,.sf-code,.sf-arm,.sf-spark,.sf-rock-hit,.sf-work .sf-dots::after{animation:none}.sf-spark{opacity:.5}}
+    </style>
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
+
+    <!-- Global fault fallback. Armed FIRST (before preloader) so its error
+         handlers catch boot failures from the deferred bundles. Revealed only
+         when the app fails to boot; dormant once running. See js/fault-guard.js. -->
+    <script src="js/fault-guard.js?v=b62fa208"></script>
+    <div id="site-fault" hidden role="alertdialog" aria-label="Loading error">
+      <div class="sf-wrap">
+        <div class="sf-hole" aria-hidden="true">
+          <span class="sf-disk"></span>
+          <span class="sf-disk sf-disk-b"></span>
+          <span class="sf-core"></span>
+        </div>
+        <div>
+          <div class="sf-msg">
+            <span class="sf-en">THE FILE WAS EATEN BY A BLACK HOLE</span><span class="sf-es-txt">UN AGUJERO NEGRO SE COMIÓ EL ARCHIVO</span>
+          </div>
+          <div class="sf-code">
+            <span class="sf-en">· SIGNAL LOST · SYSTEM DOWN ·</span><span class="sf-es-txt">· SEÑAL PERDIDA · SISTEMA CAÍDO ·</span>
+          </div>
+        </div>
+        <div class="sf-robot-row">
+          <svg class="sf-robot" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <line x1="24" y1="178" x2="276" y2="178" stroke="rgba(238,155,0,.35)" stroke-width="1.5" stroke-dasharray="4 6"/>
+            <rect x="104" y="158" width="10" height="20" rx="2" fill="#04222b" stroke="#EE9B00" stroke-width="2.5"/>
+            <rect x="126" y="158" width="10" height="20" rx="2" fill="#04222b" stroke="#EE9B00" stroke-width="2.5"/>
+            <rect x="99" y="175" width="20" height="6" rx="2" fill="#EE9B00"/>
+            <rect x="121" y="175" width="20" height="6" rx="2" fill="#EE9B00"/>
+            <rect x="92" y="112" width="56" height="50" rx="9" fill="#04222b" stroke="#EE9B00" stroke-width="3"/>
+            <rect x="101" y="123" width="38" height="16" rx="3" fill="#001219" stroke="rgba(238,155,0,.5)" stroke-width="1.5"/>
+            <circle cx="111" cy="131" r="2.3" fill="#00d5df"/>
+            <circle cx="120" cy="131" r="2.3" fill="#EE9B00"/>
+            <circle cx="129" cy="131" r="2.3" fill="#d62839"/>
+            <rect x="108" y="148" width="24" height="5" rx="2.5" fill="rgba(238,155,0,.3)"/>
+            <rect x="112" y="104" width="16" height="10" fill="#04222b" stroke="#EE9B00" stroke-width="2"/>
+            <rect x="96" y="74" width="48" height="34" rx="8" fill="#04222b" stroke="#EE9B00" stroke-width="3"/>
+            <rect x="103" y="82" width="34" height="14" rx="5" fill="#001219" stroke="rgba(238,155,0,.5)" stroke-width="1.5"/>
+            <circle cx="114" cy="89" r="3.3" fill="#EE9B00"/>
+            <circle cx="126" cy="89" r="3.3" fill="#EE9B00"/>
+            <line x1="120" y1="74" x2="120" y2="63" stroke="#EE9B00" stroke-width="2.5"/>
+            <circle cx="120" cy="60" r="3.5" fill="#00d5df"/>
+            <g class="sf-rock-hit">
+              <path d="M196 176 L192 158 L206 150 L222 156 L236 164 L233 176 Z" fill="#04222b" stroke="#EE9B00" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M206 150 L214 163 L222 156" stroke="rgba(238,155,0,.5)" stroke-width="1.5"/>
+              <path d="M214 163 L213 176" stroke="rgba(238,155,0,.5)" stroke-width="1.5"/>
+            </g>
+            <g class="sf-arm">
+              <line x1="146" y1="120" x2="182" y2="140" stroke="#EE9B00" stroke-width="7" stroke-linecap="round"/>
+              <circle cx="184" cy="141" r="5" fill="#04222b" stroke="#EE9B00" stroke-width="2.5"/>
+              <line x1="181" y1="139" x2="212" y2="151" stroke="#a06a34" stroke-width="4" stroke-linecap="round"/>
+              <path d="M200 137 Q213 149 211 160 Q224 150 226 139" fill="none" stroke="#cfd6d8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <g class="sf-spark" stroke="#EE9B00" stroke-width="2" stroke-linecap="round">
+              <line x1="211" y1="150" x2="217" y2="141"/>
+              <line x1="211" y1="150" x2="222" y2="150"/>
+              <line x1="211" y1="150" x2="217" y2="159"/>
+              <line x1="211" y1="150" x2="203" y2="143"/>
+            </g>
+          </svg>
+          <div class="sf-work">
+            <span class="sf-en">A robot is working to fix the error<span class="sf-dots"></span></span><span class="sf-es-txt">Un robot está trabajando para arreglar el error<span class="sf-dots"></span></span>
+          </div>
+        </div>
+        <button type="button" class="sf-retry">
+          <span class="sf-en">Retry</span><span class="sf-es-txt">Reintentar</span>
+        </button>
+      </div>
+    </div>
+
     <script src="js/preloader.js?v=6e7f016e"></script>
     <header>
         <nav aria-label="Main navigation">
@@ -3442,7 +3548,7 @@
          on first 3D selection — do NOT load it here: the Draco decoder location
          (js/lib/draco/) must be configured before the module evaluates, or it
          locks to Google's CDN which CSP blocks and models never load. -->
-    <script defer src="js/bundle-b.js?v=fc0866c4"></script>
+    <script defer src="js/bundle-b.js?v=cece5798"></script>
     <script defer src="js/lib/mulberry32.js?v=56570b30"></script>
     <script defer src="js/bundle-c.js?v=7af77b1f"></script>
     <script defer src="js/lib/gsap.min.js?v=5e6e6cba"></script>

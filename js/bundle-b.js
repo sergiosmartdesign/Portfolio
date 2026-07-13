@@ -5777,6 +5777,11 @@ App.LanguageManager.ready.then(() => {
   initArtDirectionEntrance(document.getElementById('art-direction'));
   if (glitchSystem) App.glitchSystem = glitchSystem;
 
+  // Signal a successful boot to the fault guard (js/fault-guard.js): the core
+  // managers initialized, so the app is alive. This disarms the watchdog and
+  // makes late/minor errors non-fatal (they no longer trigger #site-fault).
+  window.__SITE_BOOTED__ = true;
+
   safeInit('sound-toggle', () => {
     const soundToggle = document.getElementById('sound-toggle');
     if (!soundToggle) return;
